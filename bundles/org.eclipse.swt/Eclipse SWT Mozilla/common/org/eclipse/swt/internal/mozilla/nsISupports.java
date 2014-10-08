@@ -46,6 +46,10 @@ public class nsISupports {
 	protected static boolean IsXULRunner24 () {
 		return MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR24, true);
 	}
+	
+	protected static boolean IsXULRunner31 () {
+		return MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR31, true);
+	}
 
 	public static final String NS_ISUPPORTS_IID_STR = "00000000-0000-0000-c000-000000000046";
 	

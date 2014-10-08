@@ -2139,17 +2139,22 @@ void initXPCOM (String mozillaPath, boolean isXULRunner) {
 		rc = XPCOM.XPCOMGlueLoadXULFunctions (ptr);
 		if (rc == XPCOM.NS_OK) { /* > 3.x */
 			result[0] = 0;
-			rc = localFile.QueryInterface (IIDStore.GetIID (nsIFile.class, MozillaVersion.VERSION_XR24, true), result);
-			if (rc == XPCOM.NS_OK) { /* 24.x */
-				MozillaVersion.SetCurrentVersion (MozillaVersion.VERSION_XR24);
-			} else { /* 10.x */
-				rc = localFile.QueryInterface (IIDStore.GetIID (nsILocalFile.class, MozillaVersion.VERSION_XR10), result);
-				if (rc != XPCOM.NS_OK) {
-					/* appears to be an unsupported version */
-					browser.dispose ();
-					error (rc);
+			rc = localFile.QueryInterface (IIDStore.GetIID (nsIFile.class, MozillaVersion.VERSION_XR31, true), result);
+			if (rc == XPCOM.NS_OK) { /* 31.x */
+				MozillaVersion.SetCurrentVersion (MozillaVersion.VERSION_XR31);
+			} else {
+				rc = localFile.QueryInterface (IIDStore.GetIID (nsIFile.class, MozillaVersion.VERSION_XR24, true), result);
+				if (rc == XPCOM.NS_OK) { /* 24.x */
+					MozillaVersion.SetCurrentVersion (MozillaVersion.VERSION_XR24);
+				} else { /* 10.x */
+					rc = localFile.QueryInterface (IIDStore.GetIID (nsILocalFile.class, MozillaVersion.VERSION_XR10), result);
+					if (rc != XPCOM.NS_OK) {
+						/* appears to be an unsupported version */
+						browser.dispose ();
+						error (rc);
+					}
+					MozillaVersion.SetCurrentVersion (MozillaVersion.VERSION_XR10);
 				}
-				MozillaVersion.SetCurrentVersion (MozillaVersion.VERSION_XR10);
 			}
 			if (result[0] != 0) new nsISupports (result[0]).Release();
 			result[0] = 0;
@@ -2182,7 +2187,7 @@ void initXPCOM (String mozillaPath, boolean isXULRunner) {
 			error (XPCOM.NS_ERROR_NULL_POINTER);
 		}
 
-		if (MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR24, true)) {
+		if (MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR24, true) || MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR31, true)) {
 			Library.loadLibrary("swt-xulrunner24"); //$NON-NLS-1$
 		}
 		MozillaDelegate.loadAdditionalLibraries (mozillaPath, true);
