@@ -56,22 +56,22 @@ public class nsIPrefBranch extends nsISupports {
 	}
 
 	public int GetIntPref(byte[] aPrefName, int[] _retval) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 8 : 7), getAddress(), aPrefName, _retval);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 8 : 7), getAddress(), aPrefName, _retval);
 	}
 
 	public int SetIntPref(byte[] aPrefName, int aValue) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 9 : 8), getAddress(), aPrefName, aValue);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 9 : 8), getAddress(), aPrefName, aValue);
 	}
 
 	public int GetComplexValue(byte[] aPrefName, nsID aType, long /*int*/[] aValue) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 10 : 9), getAddress(), aPrefName, aType, aValue);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 10 : 9), getAddress(), aPrefName, aType, aValue);
 	}
 
 	public int SetComplexValue(byte[] aPrefName, nsID aType, long /*int*/ aValue) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 11 : 10), getAddress(), aPrefName, aType, aValue);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 11 : 10), getAddress(), aPrefName, aType, aValue);
 	}
 
 	public int ClearUserPref(byte[] aPrefName) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 12 : 11), getAddress(), aPrefName);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 12 : 11), getAddress(), aPrefName);
 	}
 }

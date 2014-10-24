@@ -58,7 +58,7 @@ public class nsIVariant extends nsISupports {
 
 	public int GetAsBool(int[] _retval) {
 		/* mozilla's representation of boolean changed from 4 bytes to 1 byte as of XULRunner 4.x */
-		if (nsISupports.IsXULRunner10() || nsISupports.IsXULRunner24()) {
+		if (nsISupports.IsXULRunner10() || nsISupports.IsXULRunner24() || nsISupports.IsXULRunner31()) {
 			byte[] byteValue = new byte[1];
 			int rc = XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 12, getAddress(), byteValue);
 			_retval[0] = (int)byteValue[0];
@@ -68,10 +68,10 @@ public class nsIVariant extends nsISupports {
 	}
 
 	public int GetAsArray(short[] type, long /*int*/ iid, int[] count, long /*int*/[] ptr) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner10() || IsXULRunner24()) ? 25 : 24), getAddress(), type, iid, count, ptr);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner10() || IsXULRunner31() || IsXULRunner24()) ? 25 : 24), getAddress(), type, iid, count, ptr);
 	}
 
 	public int GetAsWStringWithSize(int[] size, long /*int*/[] str) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner10() || IsXULRunner24()) ? 27 : 26), getAddress(), size, str);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner10() || IsXULRunner31() || IsXULRunner24()) ? 27 : 26), getAddress(), size, str);
 	}
 }

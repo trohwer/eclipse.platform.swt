@@ -56,14 +56,14 @@ public class nsIScriptSecurityManager extends nsIXPCSecurityManager {
 	public static final int DISALLOW_SCRIPT = 8;
 
 	public int GetSystemPrincipal(long /*int*/[] _retval) {
-		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + (IsXULRunner24() ? 8 : (IsXULRunner10() ? 10 : 11)), getAddress(), _retval);
+		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 8 : (IsXULRunner10() ? 10 : 11)), getAddress(), _retval);
 	}
 	
 	public int GetSubjectPrincipal(long /*int*/[] _retval) {
-		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + (IsXULRunner24() ? 7 : (IsXULRunner10() ? 10 : 11)), getAddress(), _retval);
+		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 7 : (IsXULRunner10() ? 10 : 11)), getAddress(), _retval);
 	}
 	public int GetObjectPrincipal(long /*int*/ cx, long /*int*/ object, long /*int*/[] _retval) {
-		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + (IsXULRunner24() ? 14 : (IsXULRunner10() ? 10 : 11)), getAddress(), cx, object, _retval);
+		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 14 : (IsXULRunner10() ? 10 : 11)), getAddress(), cx, object, _retval);
 	}
 //	public int GetSystemPrincipal(long /*int*/[] _retval) {
 //		return XPCOM.VtblCall(nsIXPCSecurityManager.LAST_METHOD_ID + (IsXULRunner24 ? 8 : (IsXULRunner10 ? 10 : 11)), getAddress(), _retval);

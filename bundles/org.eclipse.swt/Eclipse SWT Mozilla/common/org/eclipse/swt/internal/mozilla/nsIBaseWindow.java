@@ -67,7 +67,7 @@ public class nsIBaseWindow extends nsISupports {
 	}
 
 	public int SetVisibility(int aVisibility) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 17 : 16), getAddress(), aVisibility);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 17 : 16), getAddress(), aVisibility);
 	}
 
 	public int SetFocus() {

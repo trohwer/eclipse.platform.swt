@@ -51,6 +51,6 @@ public class nsIXPConnect extends nsISupports {
 	}
 
 	public int VariantToJS(long /*int*/ ctx, long /*int*/ scope, long /*int*/ value, long /*int*/ _retval) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 26 : 33), getAddress(), ctx, scope, value, _retval);
+		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 26 : 33), getAddress(), ctx, scope, value, _retval);
 	}
 }

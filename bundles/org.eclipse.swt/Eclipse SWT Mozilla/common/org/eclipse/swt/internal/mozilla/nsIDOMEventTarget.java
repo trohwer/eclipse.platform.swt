@@ -30,7 +30,7 @@ package org.eclipse.swt.internal.mozilla;
 
 public class nsIDOMEventTarget extends nsISupports {
 
-	static final int LAST_METHOD_ID = nsISupports.LAST_METHOD_ID + (IsXULRunner24() ? 5 : 3);
+	static final int LAST_METHOD_ID = nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 5 : 3);
 
 	static final String NS_IDOMEVENTTARGET_IID_STR = "1c773b30-d1cf-11d2-bd95-00805f8ae3f4";
 	static final String NS_IDOMEVENTTARGET_10_IID_STR = "1797d5a4-b12a-428d-9eef-a0e13839728c";

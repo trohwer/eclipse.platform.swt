@@ -752,7 +752,7 @@ public void create (Composite parent, int style) {
 		}
 
 		/* notify mozilla that the profile directory has been changed from its default value */
-		initProfile (serviceManager, IsXULRunner);
+//		initProfile (serviceManager, IsXULRunner);
 
 		/* init preference values that give desired mozilla behaviours */ 
 		initPreferences (serviceManager, componentManager);
@@ -795,7 +795,7 @@ public void create (Composite parent, int style) {
 	result[0] = 0;
 
 	/* create the nsIWebBrowser instance */
-	rc = componentManager.CreateInstance (XPCOM.NS_IWEBBROWSER_CID, 0, IIDStore.GetIID (nsIWebBrowser.class), result);
+	rc = componentManager.CreateInstance (MozillaVersion.CheckVersion(MozillaVersion.VERSION_XR31) ? XPCOM.NS_IWEBBROWSER_31_CID : XPCOM.NS_IWEBBROWSER_CID, 0, IIDStore.GetIID (nsIWebBrowser.class), result);
 	if (rc != XPCOM.NS_OK) {
 		browser.dispose ();
 		error (rc);
@@ -1140,7 +1140,9 @@ void createCOMInterfaces () {
 		@Override
 		public long /*int*/ method1 (long /*int*/[] args) {return AddRef ();}
 		@Override
-		public long /*int*/ method2 (long /*int*/[] args) {return Release ();}
+		public long /*int*/ method2 (long /*int*/[] args) {
+			return Release ();
+		}
 		@Override
 		public long /*int*/ method3 (long /*int*/[] args) {return SetStatus ((int)/*64*/args[0], args[1]);}
 		@Override
