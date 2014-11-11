@@ -30,7 +30,7 @@ package org.eclipse.swt.internal.mozilla;
 
 public class nsIHttpChannel extends nsIChannel {
 
-	static final int LAST_METHOD_ID = nsIChannel.LAST_METHOD_ID + (IsXULRunner24() ? 20 : 19);
+	static final int LAST_METHOD_ID = nsIChannel.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 20 : 19);
 
 	static final String NS_IHTTPCHANNEL_IID_STR = "9277fe09-f0cc-4cd9-bbce-581dd94b0260";
 	static final String NS_IHTTPCHANNEL_24_IID_STR = "a01362a0-5c45-11e2-bcfd-0800200c9a66";
