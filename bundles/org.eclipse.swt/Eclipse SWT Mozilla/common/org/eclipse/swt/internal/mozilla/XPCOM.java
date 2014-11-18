@@ -106,6 +106,7 @@ public class XPCOM extends C {
 	public static final String NS_FILEPICKER_CONTRACTID = "@mozilla.org/filepicker;1"; //$NON-NLS-1$
 	public static final String NS_FOCUSMANAGER_CONTRACTID = "@mozilla.org/focus-manager;1"; //$NON-NLS-1$
 	public static final String NS_HELPERAPPLAUNCHERDIALOG_CONTRACTID = "@mozilla.org/helperapplauncherdialog;1"; //$NON-NLS-1$
+	public static final String NS_INTERFACEINFOMANAGER_CONTRACTID = "@mozilla.org/xpti/interfaceinfomanager-service;1";
 	public static final String NS_MEMORY_CONTRACTID = "@mozilla.org/xpcom/memory-service;1"; //$NON-NLS-1$
 	public static final String NS_MIMEINPUTSTREAM_CONTRACTID = "@mozilla.org/network/mime-input-stream;1"; //$NON-NLS-1$
 	public static final String NS_SCRIPTSECURITYMANAGER_CONTRACTID = "@mozilla.org/scriptsecuritymanager;1"; //$NON-NLS-1$
@@ -2654,6 +2655,16 @@ static final int VtblCall(int fnNumber, long /*int*/ ppVtbl, long arg0, int arg1
 	lock.lock();
 	try {
 		return _VtblCall(fnNumber, ppVtbl, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16);
+	} finally {
+		lock.unlock();
+	}
+}
+
+static final native int _VtblCall(int fnNumber, long /*int*/ ppVtbl, Object[] args);
+static final int VtblCall(int fnNumber, long /*int*/ ppVtbl, Object[] args) {
+	lock.lock();
+	try {
+		return _VtblCall(fnNumber, ppVtbl, args);
 	} finally {
 		lock.unlock();
 	}
