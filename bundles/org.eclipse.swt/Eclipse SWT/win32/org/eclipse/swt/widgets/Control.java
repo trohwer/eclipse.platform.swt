@@ -64,10 +64,11 @@ public abstract class Control extends Widget implements Drawable {
 	String toolTipText;
 	Object layoutData;
 	Accessible accessible;
-	Image backgroundImage;
+	Image backgroundImage, transparentBackgroundImage;
 	Region region;
 	Font font;
-	int drawCount, foreground, background;
+	int drawCount, foreground, background, transparentBackground;
+	boolean isTransparentBackground;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -541,8 +542,8 @@ void checkBackground () {
 	Composite composite = parent;
 	do {
 		int mode = composite.backgroundMode;
-		if (mode != 0) {
-			if (mode == SWT.INHERIT_DEFAULT) {
+		if (mode != 0 || isTransparentBackground) {
+			if (mode == SWT.INHERIT_DEFAULT || isTransparentBackground) {
 				Control control = this;
 				do {
 					if ((control.state & THEME_BACKGROUND) == 0) {
@@ -1166,9 +1167,16 @@ public Accessible getAccessible () {
  */
 public Color getBackground () {
 	checkWidget ();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return Color.win32_new (display, control.getBackgroundPixel ());
+	if (isTransparentBackground) {
+		Color color =  Color.win32_new (display, transparentBackground);
+		color.trasparent = true;
+		return color;
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return Color.win32_new (display, control.getBackgroundPixel ());
+	}
 }
 
 /**
@@ -1185,9 +1193,14 @@ public Color getBackground () {
  */
 public Image getBackgroundImage () {
 	checkWidget ();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return control.backgroundImage;
+	if (isTransparentBackground) {
+		return transparentBackgroundImage;
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return control.backgroundImage;
+	}
 }
 
 int getBackgroundPixel () {
@@ -3008,6 +3021,13 @@ void setBackground () {
  */
 public void setBackground (Color color) {
 	checkWidget ();
+	_setBackground (color);
+	if (color != null && isTransparentBackground != color.isTransparent()) {
+		setBackgroundTransparent (color.isTransparent());
+	}
+}
+
+private void _setBackground (Color color) {
 	int pixel = -1;
 	if (color != null) {
 		if (color.isDisposed()) error(SWT.ERROR_INVALID_ARGUMENT);
@@ -3016,6 +3036,22 @@ public void setBackground (Color color) {
 	if (pixel == background) return;
 	background = pixel;
 	updateBackgroundColor ();
+}
+
+private void setBackgroundTransparent (boolean transparent) {
+		if (transparent) {
+			// clear background
+			if (backgroundImage != null) {
+				transparentBackgroundImage = getBackgroundImage();
+				setBackgroundImage (null);
+			} 
+			if (getBackground () != null) {
+				transparentBackground = getBackgroundPixel();
+				_setBackground (null);
+			}
+		} 
+		isTransparentBackground = transparent;
+		this.updateBackgroundMode();
 }
 
 /**

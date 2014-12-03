@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public final class Color extends Resource {
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	public int handle;
+	public boolean trasparent;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -111,6 +112,34 @@ public Color (Device device, RGB rgb) {
 	if (rgb == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	init(rgb.red, rgb.green, rgb.blue);
 	init();
+}
+
+/**	 
+ * Constructs a new instance of this class given a device, an
+ * <code>RGB</code> describing the desired red, green and blue values
+ * and transparent boolean as true or false. 
+ * On limited color devices, the color instance created by this call
+ * may not have the same RGB values as the ones specified by the
+ * argument. The RGB values on the returned instance will be the color
+ * values of the operating system color.
+ * <p>
+ * You must dispose the color when it is no longer required. 
+ * </p>
+ *
+ * @param device the device on which to allocate the color
+ * @param rgb the RGB values of the desired color
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the rgb argument is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the red, green or blue components of the argument are not between 0 and 255</li>
+ * </ul>
+ *
+ * @see #dispose
+ */
+public Color(Device device, RGB rgb, boolean transparent) {
+	this(device, rgb);
+	this.trasparent = transparent;
 }
 
 void destroy() {
@@ -290,6 +319,17 @@ void init(int red, int green, int blue) {
  */
 public boolean isDisposed() {
 	return handle == -1;
+}
+
+/**
+ * Returns <code>true</code> if the color is transparent,
+ * and <code>false</code> otherwise.
+ * <p>
+ *
+ * @return <code>true</code> when the color is transparent and <code>false</code> otherwise
+ */
+public boolean isTransparent() {
+	return this.trasparent;
 }
 
 /**
