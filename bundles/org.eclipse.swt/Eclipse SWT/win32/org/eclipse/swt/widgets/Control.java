@@ -3022,7 +3022,7 @@ void setBackground () {
 public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
-	if (color != null && isTransparentBackground != color.isTransparent()) {
+	if (color != null) {
 		setBackgroundTransparent (color.isTransparent());
 	}
 }

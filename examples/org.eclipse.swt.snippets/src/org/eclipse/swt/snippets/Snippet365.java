@@ -105,7 +105,10 @@ public class Snippet365 {
 				list.setBackground(new Color(display, list.getBackground().getRGB(), transparent));
 				label.setBackground(new Color(display, label.getBackground().getRGB(), transparent));
 				radio.setBackground(new Color(display, radio.getBackground().getRGB(), transparent));
-				check.setBackground(new Color(display, check.getBackground().getRGB(), transparent));
+				if (transparent)
+					check.setBackground(new Color(display, check.getBackground().getRGB(), transparent));
+				else
+					check.setBackgroundImage(check.getBackgroundImage());
 				push.setBackground(new Color(display, push.getBackground().getRGB(), transparent));
 				text.setBackground(new Color(display, text.getBackground().getRGB(), transparent));
 			}
