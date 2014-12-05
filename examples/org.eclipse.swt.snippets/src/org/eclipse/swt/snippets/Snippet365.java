@@ -134,10 +134,11 @@ public class Snippet365 {
 		label.setText("Label");
 		radio = new Button(composite, SWT.RADIO);
 		radio.setText("Radio Button");
+		radio.setSelection(true);
 		radio.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 		check = new Button(composite, SWT.CHECK);
 		check.setText("Check box Button");
-
+		check.setSelection(true);
 		// Image
 		Rectangle rect = new Rectangle(0, 0, 115, 5);
 		Image newImage = new Image(display, Math.max(1, rect.width), 1);

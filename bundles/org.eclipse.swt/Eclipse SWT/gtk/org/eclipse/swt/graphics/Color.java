@@ -45,7 +45,7 @@ public final class Color extends Resource {
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	public GdkColor handle;
-	public boolean trasparent;
+	public boolean transparent;
 
 Color(Device device) {
 	super(device);
@@ -135,7 +135,7 @@ public Color(Device device, RGB rgb) {
  */
 public Color(Device device, RGB rgb, boolean transparent) {
 	this(device, rgb);
-	this.trasparent = transparent;
+	this.transparent = transparent;
 }
 
 @Override
@@ -322,7 +322,7 @@ public boolean isDisposed() {
  * @return <code>true</code> when the color is transparent and <code>false</code> otherwise
  */
 public boolean isTransparent() {
-	return this.trasparent;
+	return this.transparent;
 }
 
 /**

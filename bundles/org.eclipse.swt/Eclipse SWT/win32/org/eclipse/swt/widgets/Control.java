@@ -1169,7 +1169,7 @@ public Color getBackground () {
 	checkWidget ();
 	if (isTransparentBackground) {
 		Color color =  Color.win32_new (display, transparentBackground);
-		color.trasparent = true;
+		color.transparent = true;
 		return color;
 	}
 	else {
@@ -3023,14 +3023,14 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparent (color.isTransparent());
+		setBackgroundTransparent (color.isTransparent ());
 	}
 }
 
 private void _setBackground (Color color) {
 	int pixel = -1;
 	if (color != null) {
-		if (color.isDisposed()) error(SWT.ERROR_INVALID_ARGUMENT);
+		if (color.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
 		pixel = color.handle;
 	}
 	if (pixel == background) return;
@@ -3042,16 +3042,16 @@ private void setBackgroundTransparent (boolean transparent) {
 		if (transparent) {
 			// clear background
 			if (backgroundImage != null) {
-				transparentBackgroundImage = getBackgroundImage();
+				transparentBackgroundImage = getBackgroundImage ();
 				setBackgroundImage (null);
 			} 
 			if (getBackground () != null) {
-				transparentBackground = getBackgroundPixel();
+				transparentBackground = getBackgroundPixel ();
 				_setBackground (null);
 			}
 		} 
 		isTransparentBackground = transparent;
-		this.updateBackgroundMode();
+		this.updateBackgroundMode ();
 }
 
 /**

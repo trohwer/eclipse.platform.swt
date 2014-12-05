@@ -46,11 +46,12 @@ import org.eclipse.swt.internal.gtk.*;
 public abstract class Control extends Widget implements Drawable {
 	long /*int*/ fixedHandle;
 	long /*int*/ redrawWindow, enableWindow, provider;
-	int drawCount, transparentBackground;
+	int drawCount;
 	Composite parent;
 	Cursor cursor;
 	Menu menu;
 	Image backgroundImage, transparentBackgroundImage;
+	GdkColor transparentBackground;
 	boolean isTransparentBackground;
 	Font font;
 	Region region;
@@ -2494,9 +2495,16 @@ boolean forceFocus (long /*int*/ focusHandle) {
  */
 public Color getBackground () {
 	checkWidget();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return Color.gtk_new (display, control.getBackgroundColor ());
+	if (isTransparentBackground) {
+		Color color = Color.gtk_new (display, transparentBackground);
+		color.transparent = true;
+		return color;
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return Color.gtk_new (display, control.getBackgroundColor ());
+	}
 }
 
 GdkColor getBackgroundColor () {
@@ -2517,9 +2525,14 @@ GdkColor getBackgroundColor () {
  */
 public Image getBackgroundImage () {
 	checkWidget ();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return control.backgroundImage;
+	if (isTransparentBackground) {
+		return transparentBackgroundImage;
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return control.backgroundImage;
+	}
 }
 
 GdkColor getContextBackground () {
@@ -4005,7 +4018,7 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparent (color.isTransparent());
+		setBackgroundTransparent (color.isTransparent ());
 	}
 }
 
@@ -4047,16 +4060,16 @@ private void setBackgroundTransparent (boolean transparent) {
 	if (transparent) {
 		// clear background
 		if (backgroundImage != null) {
-			transparentBackgroundImage = getBackgroundImage();
+			transparentBackgroundImage = getBackgroundImage ();
 			setBackgroundImage (null);
 		} 
 		if (getBackground () != null) {
-			transparentBackground = getBackgroundPixel();
+			transparentBackground = getBackground ().handle;
 			_setBackground (null);
 		}
 	} 
 	isTransparentBackground = transparent;
-	this.updateBackgroundMode();
+	this.updateBackgroundMode ();
 }
 
 void setBackgroundColor (long /*int*/ context, long /*int*/ handle, GdkRGBA rgba) {
