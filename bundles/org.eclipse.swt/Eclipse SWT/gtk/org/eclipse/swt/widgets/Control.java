@@ -46,11 +46,12 @@ import org.eclipse.swt.internal.gtk.*;
 public abstract class Control extends Widget implements Drawable {
 	long /*int*/ fixedHandle;
 	long /*int*/ redrawWindow, enableWindow, provider;
-	int drawCount;
+	int drawCount, transparentBackground;
 	Composite parent;
 	Cursor cursor;
 	Menu menu;
-	Image backgroundImage;
+	Image backgroundImage, transparentBackgroundImage;
+	boolean isTransparentBackground;
 	Font font;
 	Region region;
 	String toolTipText;
@@ -618,8 +619,8 @@ void checkBackground () {
 	Composite composite = parent;
 	do {
 		int mode = composite.backgroundMode;
-		if (mode != SWT.INHERIT_NONE) {
-			if (mode == SWT.INHERIT_DEFAULT) {
+		if (mode != SWT.INHERIT_NONE || isTransparentBackground) {
+			if (mode == SWT.INHERIT_DEFAULT || isTransparentBackground) {
 				Control control = this;
 				do {
 					if ((control.state & THEME_BACKGROUND) == 0) {
@@ -4001,7 +4002,14 @@ void setBackground () {
  * </ul>
  */
 public void setBackground (Color color) {
-	checkWidget();
+	checkWidget ();
+	_setBackground (color);
+	if (color != null) {
+		setBackgroundTransparent (color.isTransparent());
+	}
+}
+
+private void _setBackground (Color color) {
 	if (((state & BACKGROUND) == 0) && color == null) return;
 	GdkColor gdkColor = null;
 	if (color != null) {
@@ -4033,6 +4041,22 @@ public void setBackground (Color color) {
 		setBackgroundColor (gdkColor);
 		redrawChildren ();
 	}
+}
+
+private void setBackgroundTransparent (boolean transparent) {
+	if (transparent) {
+		// clear background
+		if (backgroundImage != null) {
+			transparentBackgroundImage = getBackgroundImage();
+			setBackgroundImage (null);
+		} 
+		if (getBackground () != null) {
+			transparentBackground = getBackgroundPixel();
+			_setBackground (null);
+		}
+	} 
+	isTransparentBackground = transparent;
+	this.updateBackgroundMode();
 }
 
 void setBackgroundColor (long /*int*/ context, long /*int*/ handle, GdkRGBA rgba) {
