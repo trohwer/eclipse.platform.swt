@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,15 +60,15 @@ public abstract class Control extends Widget implements Drawable {
 	Object layoutData;
 	int drawCount;
 	Menu menu;
-	double /*float*/ [] foreground, background;
-	Image backgroundImage;
+	double /*float*/ [] foreground, background, transparentBackground;
+	Image backgroundImage, transparentBackgroundImage;
 	Font font;
 	Cursor cursor;
 	Region region;
 	NSBezierPath regionPath;
 	long /*int*/ visibleRgn;
 	Accessible accessible;
-	boolean touchEnabled;
+	boolean touchEnabled, isTransparentBackground;
 	
 	final static int CLIPPING = 1 << 10;
 	final static int VISIBLE_REGION = 1 << 12;
@@ -812,8 +812,8 @@ void checkBackground () {
 	Composite composite = parent;
 	do {
 		int mode = composite.backgroundMode;
-		if (mode != 0) {
-			if (mode == SWT.INHERIT_DEFAULT) {
+		if (mode != 0 || isTransparentBackground) {
+			if (mode == SWT.INHERIT_DEFAULT || isTransparentBackground) {
 				Control control = this;
 				do {
 					if ((control.state & THEME_BACKGROUND) == 0) {
@@ -1546,9 +1546,16 @@ public Accessible getAccessible () {
  */
 public Color getBackground () {
 	checkWidget();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return control.getBackgroundColor ();
+	if (isTransparentBackground) {
+		Color color = Color.cocoa_new (display, transparentBackground);
+		color.transparent = true;
+		return color;		
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return control.getBackgroundColor ();
+	}
 }
 
 Color getBackgroundColor () {
@@ -1569,9 +1576,14 @@ Color getBackgroundColor () {
  */
 public Image getBackgroundImage () {
 	checkWidget();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return control.backgroundImage;
+	if (isTransparentBackground) {
+		return transparentBackgroundImage;
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return control.backgroundImage;
+	}
 }
 
 /**
@@ -3474,7 +3486,14 @@ void setBackground () {
  * </ul>
  */
 public void setBackground (Color color) {
-	checkWidget();
+	checkWidget ();
+	_setBackground (color);
+	if (color != null) {
+		setBackgroundTransparent (color.isTransparent ());
+	}
+}
+
+private void _setBackground (Color color) {
 	if (color != null) {
 		if (color.isDisposed()) error(SWT.ERROR_INVALID_ARGUMENT);
 	}
@@ -3483,6 +3502,22 @@ public void setBackground (Color color) {
 	this.background = background;
 	updateBackgroundColor ();
 	redrawWidget(view, true);
+}
+
+private void setBackgroundTransparent (boolean transparent) {
+	if (transparent) {
+		// clear background
+		if (backgroundImage != null) {
+			transparentBackgroundImage = getBackgroundImage ();
+			setBackgroundImage (null);
+		} 
+		if (getBackground () != null) {
+			transparentBackground = background;
+			_setBackground (null);
+		}
+	} 
+	isTransparentBackground = transparent;
+	this.updateBackgroundMode ();
 }
 
 /**
