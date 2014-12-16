@@ -67,8 +67,7 @@ public abstract class Control extends Widget implements Drawable {
 	Image backgroundImage, transparentBackgroundImage;
 	Region region;
 	Font font;
-	int drawCount, foreground, background, transparentBackground;
-	boolean isTransparentBackground;
+	int drawCount, foreground, background, transparentBackground, backgroundAlpha = 255;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -542,8 +541,8 @@ void checkBackground () {
 	Composite composite = parent;
 	do {
 		int mode = composite.backgroundMode;
-		if (mode != 0 || isTransparentBackground) {
-			if (mode == SWT.INHERIT_DEFAULT || isTransparentBackground) {
+		if (mode != 0 || backgroundAlpha == 0) {
+			if (mode == SWT.INHERIT_DEFAULT || backgroundAlpha == 0) {
 				Control control = this;
 				do {
 					if ((control.state & THEME_BACKGROUND) == 0) {
@@ -1167,9 +1166,8 @@ public Accessible getAccessible () {
  */
 public Color getBackground () {
 	checkWidget ();
-	if (isTransparentBackground) {
-		Color color =  Color.win32_new (display, transparentBackground);
-		color.transparent = true;
+	if (backgroundAlpha == 0) {
+		Color color =  Color.win32_new (display, transparentBackground, 0);
 		return color;
 	}
 	else {
@@ -1193,7 +1191,7 @@ public Color getBackground () {
  */
 public Image getBackgroundImage () {
 	checkWidget ();
-	if (isTransparentBackground) {
+	if (backgroundAlpha == 0) {
 		return transparentBackgroundImage;
 	}
 	else {
@@ -3023,7 +3021,7 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparent (color.isTransparent ());
+		setBackgroundTransparency (color.getAlpha());
 	}
 }
 
@@ -3038,19 +3036,19 @@ private void _setBackground (Color color) {
 	updateBackgroundColor ();
 }
 
-private void setBackgroundTransparent (boolean transparent) {
-		if (transparent) {
+private void setBackgroundTransparency (int alpha) {
+		if (alpha == 0) {
 			// clear background
 			if (backgroundImage != null) {
 				transparentBackgroundImage = getBackgroundImage ();
 				setBackgroundImage (null);
-			} 
+			}
 			if (getBackground () != null) {
 				transparentBackground = getBackgroundPixel ();
 				_setBackground (null);
 			}
 		} 
-		isTransparentBackground = transparent;
+		this.backgroundAlpha = alpha;
 		this.updateBackgroundMode ();
 }
 

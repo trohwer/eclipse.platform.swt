@@ -11,7 +11,6 @@
 package org.eclipse.swt.snippets;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -35,29 +34,6 @@ public class Snippet365 {
 	static Button check;
 	static Button push;
 	static Text text;
-
-	public static void main1(String[] args) {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout());
-		CTabFolder folder = new CTabFolder(shell, SWT.BORDER);
-		folder.setBackground(
-				new Color[] { display.getSystemColor(SWT.COLOR_RED), display.getSystemColor(SWT.COLOR_YELLOW) },
-				new int[] { 90 }, true);
-
-		CTabItem item = new CTabItem(folder, SWT.CLOSE);
-		item.setText("Item");
-
-		Composite comp = new Composite(folder, SWT.NONE);
-		comp.setLayout(new RowLayout(SWT.HORIZONTAL));
-		shell.pack();
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
-	}
 
 	public static void main(String[] args) {
 		final Display display = new Display();
@@ -98,19 +74,20 @@ public class Snippet365 {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean transparent = ((Button) e.getSource()).getSelection();
-				composite.setBackground(new Color(display, composite.getBackground().getRGB(), transparent));
+				int alpha = transparent ? 0 : 255;
+				composite.setBackground(new Color(display, composite.getBackground().getRGB(), alpha));
 				buttonCheckBox.setBackground(new Color(Display.getDefault(), buttonCheckBox.getBackground().getRGB(),
-						transparent));
-				bar.setBackground(new Color(display, bar.getBackground().getRGB(), transparent));
-				list.setBackground(new Color(display, list.getBackground().getRGB(), transparent));
-				label.setBackground(new Color(display, label.getBackground().getRGB(), transparent));
-				radio.setBackground(new Color(display, radio.getBackground().getRGB(), transparent));
+						alpha));
+				bar.setBackground(new Color(display, bar.getBackground().getRGB(), alpha));
+				list.setBackground(new Color(display, list.getBackground().getRGB(), alpha));
+				label.setBackground(new Color(display, label.getBackground().getRGB(), alpha));
+				radio.setBackground(new Color(display, radio.getBackground().getRGB(), alpha));
 				if (transparent)
-					check.setBackground(new Color(display, check.getBackground().getRGB(), transparent));
+					check.setBackground(new Color(display, check.getBackground().getRGB(), alpha));
 				else
 					check.setBackgroundImage(check.getBackgroundImage());
-				push.setBackground(new Color(display, push.getBackground().getRGB(), transparent));
-				text.setBackground(new Color(display, text.getBackground().getRGB(), transparent));
+				push.setBackground(new Color(display, push.getBackground().getRGB(), alpha));
+				text.setBackground(new Color(display, text.getBackground().getRGB(), alpha));
 			}
 
 			@Override

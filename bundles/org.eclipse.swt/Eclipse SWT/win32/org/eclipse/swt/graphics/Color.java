@@ -46,7 +46,7 @@ public final class Color extends Resource {
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	public int handle;
-	public boolean transparent;
+	int alpha = 255;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -81,7 +81,38 @@ Color(Device device) {
  */
 public Color (Device device, int red, int green, int blue) {
 	super(device);
-	init(red, green, blue);
+	init(red, green, blue, 255);
+	init();
+}
+
+/**	 
+ * Constructs a new instance of this class given a device and the
+ * desired red, green, blue & alpha values expressed as ints in the range
+ * 0 to 255 (where 0 is black and 255 is full brightness). On limited
+ * color devices, the color instance created by this call may not have
+ * the same RGB values as the ones specified by the arguments. The
+ * RGB values on the returned instance will be the color values of 
+ * the operating system color.
+ * <p>
+ * You must dispose the color when it is no longer required. 
+ * </p>
+ *
+ * @param device the device on which to allocate the color
+ * @param red the amount of red in the color
+ * @param green the amount of green in the color
+ * @param blue the amount of blue in the color
+ * @param alpha the amount of alpha in the color
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the red, green, blue or alpha argument is not between 0 and 255</li>
+ * </ul>
+ *
+ * @see #dispose
+ */
+public Color (Device device, int red, int green, int blue, int alpha) {
+	super(device);
+	init(red, green, blue, alpha);
 	init();
 }
 
@@ -110,14 +141,14 @@ public Color (Device device, int red, int green, int blue) {
 public Color (Device device, RGB rgb) {
 	super(device);
 	if (rgb == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	init(rgb.red, rgb.green, rgb.blue);
+	init(rgb.red, rgb.green, rgb.blue, 255);
 	init();
 }
 
 /**	 
  * Constructs a new instance of this class given a device, an
- * <code>RGB</code> describing the desired red, green and blue values
- * and transparent boolean as true or false. 
+ * <code>RGB</code> describing the desired red, green and blue values,
+ * alpha specifying the level of transparency. 
  * On limited color devices, the color instance created by this call
  * may not have the same RGB values as the ones specified by the
  * argument. The RGB values on the returned instance will be the color
@@ -128,18 +159,19 @@ public Color (Device device, RGB rgb) {
  *
  * @param device the device on which to allocate the color
  * @param rgb the RGB values of the desired color
+ * @param alpha the alpha value of the desired color
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
  *    <li>ERROR_NULL_ARGUMENT - if the rgb argument is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the red, green or blue components of the argument are not between 0 and 255</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the red, green, blue or alpha components of the argument are not between 0 and 255</li>
  * </ul>
  *
  * @see #dispose
  */
-public Color(Device device, RGB rgb, boolean transparent) {
+public Color(Device device, RGB rgb, int alpha) {
 	this(device, rgb);
-	this.transparent = transparent;
+	this.alpha = alpha;
 }
 
 void destroy() {
@@ -174,7 +206,20 @@ public boolean equals (Object object) {
 	if (object == this) return true;
 	if (!(object instanceof Color)) return false;
 	Color color = (Color) object;
-	return device == color.device && (handle & 0xFFFFFF) == (color.handle & 0xFFFFFF);
+	return device == color.device && (handle & 0xFFFFFF) == (color.handle & 0xFFFFFF) && (alpha == color.alpha);
+}
+
+/**
+ * Returns the amount of alpha in the color, from 0 to 255.
+ *
+ * @return the alpha component of the color
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ */
+public int getAlpha () {
+	return this.alpha;
 }
 
 /**
@@ -255,18 +300,20 @@ public int hashCode () {
  * @param red the amount of red in the color
  * @param green the amount of green in the color
  * @param blue the amount of blue in the color
+ * @param alpha the amount of alpha in the color
  *
  * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the red, green or blue argument is not between 0 and 255</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the red, green, blue or alpha argument is not between 0 and 255</li>
  * </ul>
  *
  * @see #dispose
  */
-void init(int red, int green, int blue) {
-	if (red > 255 || red < 0 || green > 255 || green < 0 || blue > 255 || blue < 0) {
+void init(int red, int green, int blue, int alpha) {
+	if (red > 255 || red < 0 || green > 255 || green < 0 || blue > 255 || blue < 0 || alpha > 255 || alpha < 0) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	handle = (red & 0xFF) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 16);
+	this.alpha = alpha;
 	
 	/* If this is not a palette-based device, return */
 	long /*int*/ hPal = device.hPalette;
@@ -322,17 +369,6 @@ public boolean isDisposed() {
 }
 
 /**
- * Returns <code>true</code> if the color is transparent,
- * and <code>false</code> otherwise.
- * <p>
- *
- * @return <code>true</code> when the color is transparent and <code>false</code> otherwise
- */
-public boolean isTransparent() {
-	return this.transparent;
-}
-
-/**
  * Returns a string containing a concise, human-readable
  * description of the receiver.
  *
@@ -360,8 +396,30 @@ public String toString () {
  * @noreference This method is not intended to be referenced by clients.
  */
 public static Color win32_new(Device device, int handle) {
+	return win32_new(device, handle, 255);
+}
+
+/**	 
+ * Invokes platform specific functionality to allocate a new color.
+ * <p>
+ * <b>IMPORTANT:</b> This method is <em>not</em> part of the public
+ * API for <code>Color</code>. It is marked public only so that it
+ * can be shared within the packages provided by SWT. It is not
+ * available on all platforms, and should never be called from
+ * application code.
+ * </p>
+ *
+ * @param device the device on which to allocate the color
+ * @param handle the handle for the color
+ * @param alpha the int for the alpha content in the color
+ * @return a new color object containing the specified device and handle
+ * 
+ * @noreference This method is not intended to be referenced by clients.
+ */
+public static Color win32_new(Device device, int handle, int alpha) {
 	Color color = new Color(device);
 	color.handle = handle;
+	color.alpha = alpha;
 	return color;
 }
 
