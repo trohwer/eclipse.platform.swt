@@ -46,13 +46,12 @@ import org.eclipse.swt.internal.gtk.*;
 public abstract class Control extends Widget implements Drawable {
 	long /*int*/ fixedHandle;
 	long /*int*/ redrawWindow, enableWindow, provider;
-	int drawCount;
+	int drawCount, backgroundAlpha = 255;
 	Composite parent;
 	Cursor cursor;
 	Menu menu;
 	Image backgroundImage, transparentBackgroundImage;
 	GdkColor transparentBackground;
-	boolean isTransparentBackground;
 	Font font;
 	Region region;
 	String toolTipText;
@@ -620,8 +619,8 @@ void checkBackground () {
 	Composite composite = parent;
 	do {
 		int mode = composite.backgroundMode;
-		if (mode != SWT.INHERIT_NONE || isTransparentBackground) {
-			if (mode == SWT.INHERIT_DEFAULT || isTransparentBackground) {
+		if (mode != SWT.INHERIT_NONE || backgroundAlpha == 0) {
+			if (mode == SWT.INHERIT_DEFAULT || backgroundAlpha == 0) {
 				Control control = this;
 				do {
 					if ((control.state & THEME_BACKGROUND) == 0) {
@@ -2495,9 +2494,8 @@ boolean forceFocus (long /*int*/ focusHandle) {
  */
 public Color getBackground () {
 	checkWidget();
-	if (isTransparentBackground) {
-		Color color = Color.gtk_new (display, transparentBackground);
-		color.transparent = true;
+	if (backgroundAlpha == 0) {
+		Color color = Color.gtk_new (display, transparentBackground, 0);
 		return color;
 	}
 	else {
@@ -2525,7 +2523,7 @@ GdkColor getBackgroundColor () {
  */
 public Image getBackgroundImage () {
 	checkWidget ();
-	if (isTransparentBackground) {
+	if (backgroundAlpha == 0) {
 		return transparentBackgroundImage;
 	}
 	else {
@@ -4018,7 +4016,7 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparent (color.isTransparent ());
+		setBackgroundTransparency (color.getAlpha ());
 	}
 }
 
@@ -4056,8 +4054,8 @@ private void _setBackground (Color color) {
 	}
 }
 
-private void setBackgroundTransparent (boolean transparent) {
-	if (transparent) {
+private void setBackgroundTransparency (int alpha) {
+	if (alpha == 0) {
 		// clear background
 		if (backgroundImage != null) {
 			transparentBackgroundImage = getBackgroundImage ();
@@ -4068,7 +4066,7 @@ private void setBackgroundTransparent (boolean transparent) {
 			_setBackground (null);
 		}
 	} 
-	isTransparentBackground = transparent;
+	this.backgroundAlpha = alpha;
 	this.updateBackgroundMode ();
 }
 

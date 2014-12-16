@@ -58,7 +58,7 @@ public abstract class Control extends Widget implements Drawable {
 	Composite parent;
 	String toolTipText;
 	Object layoutData;
-	int drawCount;
+	int drawCount, backgroundAlpha = 255;
 	Menu menu;
 	double /*float*/ [] foreground, background, transparentBackground;
 	Image backgroundImage, transparentBackgroundImage;
@@ -68,7 +68,7 @@ public abstract class Control extends Widget implements Drawable {
 	NSBezierPath regionPath;
 	long /*int*/ visibleRgn;
 	Accessible accessible;
-	boolean touchEnabled, isTransparentBackground;
+	boolean touchEnabled;
 	
 	final static int CLIPPING = 1 << 10;
 	final static int VISIBLE_REGION = 1 << 12;
@@ -812,8 +812,8 @@ void checkBackground () {
 	Composite composite = parent;
 	do {
 		int mode = composite.backgroundMode;
-		if (mode != 0 || isTransparentBackground) {
-			if (mode == SWT.INHERIT_DEFAULT || isTransparentBackground) {
+		if (mode != 0 || backgroundAlpha == 0) {
+			if (mode == SWT.INHERIT_DEFAULT || backgroundAlpha == 0) {
 				Control control = this;
 				do {
 					if ((control.state & THEME_BACKGROUND) == 0) {
@@ -1546,9 +1546,8 @@ public Accessible getAccessible () {
  */
 public Color getBackground () {
 	checkWidget();
-	if (isTransparentBackground) {
-		Color color = Color.cocoa_new (display, transparentBackground);
-		color.transparent = true;
+	if (backgroundAlpha == 0) {
+		Color color = Color.cocoa_new (display, transparentBackground, 0);
 		return color;		
 	}
 	else {
@@ -1576,7 +1575,7 @@ Color getBackgroundColor () {
  */
 public Image getBackgroundImage () {
 	checkWidget();
-	if (isTransparentBackground) {
+	if (backgroundAlpha == 0) {
 		return transparentBackgroundImage;
 	}
 	else {
@@ -3489,7 +3488,7 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparent (color.isTransparent ());
+		setBackgroundTransparency (color.getAlpha ());
 	}
 }
 
@@ -3504,8 +3503,8 @@ private void _setBackground (Color color) {
 	redrawWidget(view, true);
 }
 
-private void setBackgroundTransparent (boolean transparent) {
-	if (transparent) {
+private void setBackgroundTransparency (int alpha) {
+	if (alpha == 0) {
 		// clear background
 		if (backgroundImage != null) {
 			transparentBackgroundImage = getBackgroundImage ();
@@ -3516,7 +3515,7 @@ private void setBackgroundTransparent (boolean transparent) {
 			_setBackground (null);
 		}
 	} 
-	isTransparentBackground = transparent;
+	this.backgroundAlpha = alpha;
 	this.updateBackgroundMode ();
 }
 
