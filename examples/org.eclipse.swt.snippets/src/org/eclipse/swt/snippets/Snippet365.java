@@ -34,6 +34,7 @@ public class Snippet365 {
 	static Button check;
 	static Button push;
 	static Text text;
+	static Image newImage;
 
 	public static void main(String[] args) {
 		final Display display = new Display();
@@ -41,7 +42,7 @@ public class Snippet365 {
 		shell.setText("Shell.setBackgroundMode()");
 		shell.setLayout(new RowLayout(SWT.VERTICAL));
 		// Standard color background for Shell
-		shell.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+//		shell.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 
 		// Gradient background for Shell
 		shell.addListener(SWT.Resize, new Listener() {
@@ -75,19 +76,24 @@ public class Snippet365 {
 			public void widgetSelected(SelectionEvent e) {
 				boolean transparent = ((Button) e.getSource()).getSelection();
 				int alpha = transparent ? 0 : 255;
-				composite.setBackground(new Color(display, composite.getBackground().getRGB(), alpha));
-				buttonCheckBox.setBackground(new Color(Display.getDefault(), buttonCheckBox.getBackground().getRGB(),
-						alpha));
-				bar.setBackground(new Color(display, bar.getBackground().getRGB(), alpha));
-				list.setBackground(new Color(display, list.getBackground().getRGB(), alpha));
-				label.setBackground(new Color(display, label.getBackground().getRGB(), alpha));
-				radio.setBackground(new Color(display, radio.getBackground().getRGB(), alpha));
-				if (transparent)
-					check.setBackground(new Color(display, check.getBackground().getRGB(), alpha));
-				else
-					check.setBackgroundImage(check.getBackgroundImage());
-				push.setBackground(new Color(display, push.getBackground().getRGB(), alpha));
-				text.setBackground(new Color(display, text.getBackground().getRGB(), alpha));
+				if (transparent){
+					composite.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					buttonCheckBox.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					bar.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					list.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					label.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					// radio widget have custom background
+					radio.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					check.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+//					check.setBackgroundImage(getBackgroundImage(display));
+					push.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					text.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+				}
+				else {
+					composite.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					radio.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					check.setBackgroundImage(getBackgroundImage(display));
+				}
 			}
 
 			@Override
@@ -117,15 +123,7 @@ public class Snippet365 {
 		check.setText("Check box Button");
 		check.setSelection(true);
 		// Image
-		Rectangle rect = new Rectangle(0, 0, 115, 5);
-		Image newImage = new Image(display, Math.max(1, rect.width), 1);
-		GC gc = new GC(newImage);
-		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
-		gc.fillGradientRectangle(rect.x, rect.y, rect.width, 1, false);
-		gc.dispose();
-		shell.setBackgroundImage(newImage);
-		check.setBackgroundImage(newImage);
+		check.setBackgroundImage(getBackgroundImage(display));
 
 		push = new Button(composite, SWT.PUSH);
 		push.setText("Push Button");
@@ -141,6 +139,19 @@ public class Snippet365 {
 				display.sleep();
 		}
 		display.dispose();
+	}
+
+	private static Image getBackgroundImage(final Display display) {
+		if (newImage == null) {
+			Rectangle rect = new Rectangle(0, 0, 115, 5);
+			newImage = new Image(display, Math.max(1, rect.width), 1);
+			GC gc = new GC(newImage);
+			gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
+			gc.fillGradientRectangle(rect.x, rect.y, rect.width, 1, false);
+			gc.dispose();
+		}
+		return newImage;
 	}
 
 }

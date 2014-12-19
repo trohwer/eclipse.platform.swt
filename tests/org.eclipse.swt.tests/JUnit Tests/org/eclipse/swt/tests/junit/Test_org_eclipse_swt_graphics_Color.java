@@ -219,11 +219,11 @@ public void test_isDisposed() {
 }
 
 public void test_toString() {
-	Color color = new Color(display, 0, 0, 255);
+	Color color = new Color(display, 0, 0, 255, 255);
 	try {
 		assertNotNull(color.toString());
 		assertTrue(color.toString().length() > 0);
-		assertEquals("Color {0, 0, 255}", color.toString());
+		assertEquals("Color {0, 0, 255, 255}", color.toString());
 	} finally {
 		color.dispose();
 	}

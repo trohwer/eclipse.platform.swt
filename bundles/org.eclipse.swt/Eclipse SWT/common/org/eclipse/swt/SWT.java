@@ -3262,6 +3262,13 @@ public class SWT {
 	public static final int COLOR_LINK_FOREGROUND = 36;
 	
 	/**
+	 * Color used to paint with alpha 0 (value is 37).
+	 * 
+	 * @since 3.104
+	 */
+	public static final int COLOR_TRANSPARENT = 37;
+	
+	/**
 	 * Draw constant indicating whether the drawing operation
 	 * should fill the background (value is 1&lt;&lt;0).
 	 */

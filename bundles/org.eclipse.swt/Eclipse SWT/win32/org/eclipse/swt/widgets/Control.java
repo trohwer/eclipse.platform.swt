@@ -64,10 +64,10 @@ public abstract class Control extends Widget implements Drawable {
 	String toolTipText;
 	Object layoutData;
 	Accessible accessible;
-	Image backgroundImage, transparentBackgroundImage;
+	Image backgroundImage;
 	Region region;
 	Font font;
-	int drawCount, foreground, background, transparentBackground, backgroundAlpha = 255;
+	int drawCount, foreground, background, backgroundAlpha = 255;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -997,7 +997,7 @@ void fillThemeBackground (long /*int*/ hDC, Control control, RECT rect) {
 }
 
 Control findBackgroundControl () {
-	if (background != -1 || backgroundImage != null) return this;
+	if ((background != -1 || backgroundImage != null) && backgroundAlpha > 0) return this;
 	return (state & PARENT_BACKGROUND) != 0 ? parent.findBackgroundControl () : null;
 }
 
@@ -1166,15 +1166,9 @@ public Accessible getAccessible () {
  */
 public Color getBackground () {
 	checkWidget ();
-	if (backgroundAlpha == 0) {
-		Color color =  Color.win32_new (display, transparentBackground, 0);
-		return color;
-	}
-	else {
-		Control control = findBackgroundControl ();
-		if (control == null) control = this;
-		return Color.win32_new (display, control.getBackgroundPixel ());
-	}
+	Control control = findBackgroundControl ();
+	if (control == null) control = this;
+	return Color.win32_new (display, control.getBackgroundPixel (), backgroundAlpha);
 }
 
 /**
@@ -1191,14 +1185,9 @@ public Color getBackground () {
  */
 public Image getBackgroundImage () {
 	checkWidget ();
-	if (backgroundAlpha == 0) {
-		return transparentBackgroundImage;
-	}
-	else {
-		Control control = findBackgroundControl ();
-		if (control == null) control = this;
-		return control.backgroundImage;
-	}
+	Control control = findBackgroundControl ();
+	if (control == null) control = this;
+	return control.backgroundImage;
 }
 
 int getBackgroundPixel () {
@@ -3037,19 +3026,8 @@ private void _setBackground (Color color) {
 }
 
 private void setBackgroundTransparency (int alpha) {
-		if (alpha == 0) {
-			// clear background
-			if (backgroundImage != null) {
-				transparentBackgroundImage = getBackgroundImage ();
-				setBackgroundImage (null);
-			}
-			if (getBackground () != null) {
-				transparentBackground = getBackgroundPixel ();
-				_setBackground (null);
-			}
-		} 
-		this.backgroundAlpha = alpha;
-		this.updateBackgroundMode ();
+	this.backgroundAlpha = alpha;
+	this.updateBackgroundMode ();
 }
 
 /**
@@ -3080,7 +3058,8 @@ public void setBackgroundImage (Image image) {
 		if (image.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
 		if (image.type != SWT.BITMAP) error (SWT.ERROR_INVALID_ARGUMENT);
 	}
-	if (backgroundImage == image) return;
+	if (backgroundImage == image && backgroundAlpha > 0) return;
+	backgroundAlpha = 255;
 	backgroundImage = image;
 	Shell shell = getShell ();
 	shell.releaseBrushes ();
