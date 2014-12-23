@@ -45,18 +45,18 @@ public class nsISSLStatus extends nsISupports {
 	}
 
 	public int GetServerCert(long /*int*/[] aServerCert) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 1, getAddress(), aServerCert);
+		return XPCOM.VtblCall(this.getGetterIndex("serverCert"), getAddress(), aServerCert);
 	}
 
 	public int GetIsDomainMismatch(int[] aIsDomainMismatch) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 5, getAddress(), aIsDomainMismatch);
+		return XPCOM.VtblCall(this.getGetterIndex("isDomainMismatch"), getAddress(), aIsDomainMismatch);
 	}
 
 	public int GetIsNotValidAtThisTime(int[] aIsNotValidAtThisTime) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 6, getAddress(), aIsNotValidAtThisTime);
+		return XPCOM.VtblCall(this.getGetterIndex("isNotValidAtThisTime"), getAddress(), aIsNotValidAtThisTime);
 	}
 
 	public int GetIsUntrusted(int[] aIsUntrusted) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 7, getAddress(), aIsUntrusted);
+		return XPCOM.VtblCall(this.getGetterIndex("isUntrusted"), getAddress(), aIsUntrusted);
 	}
 }

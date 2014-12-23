@@ -47,10 +47,10 @@ public class nsIComponentManager extends nsISupports {
 	}
 
 	public int CreateInstance(nsID aClass, long /*int*/ aDelegate, nsID aIID, long /*int*/[] result) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 3, getAddress(), aClass, aDelegate, aIID, result);
+		return XPCOM.VtblCall(this.getMethodIndex("createInstance"), getAddress(), aClass, aDelegate, aIID, result);
 	}
 
 	public int CreateInstanceByContractID(byte[] aContractID, long /*int*/ aDelegate, nsID aIID, long /*int*/[] result) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 4, getAddress(), aContractID, aDelegate, aIID, result);
+		return XPCOM.VtblCall(this.getMethodIndex("createInstanceByContractID"), getAddress(), aContractID, aDelegate, aIID, result);
 	}
 }

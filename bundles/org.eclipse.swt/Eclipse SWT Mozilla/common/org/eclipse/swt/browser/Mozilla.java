@@ -752,7 +752,7 @@ public void create (Composite parent, int style) {
 		}
 
 		/* notify mozilla that the profile directory has been changed from its default value */
-//		initProfile (serviceManager, IsXULRunner);
+		initProfile (serviceManager, IsXULRunner);
 
 		/* init preference values that give desired mozilla behaviours */ 
 		initPreferences (serviceManager, componentManager);
@@ -2980,7 +2980,7 @@ void navigate (long /*int*/ requestHandle) {
 			if (riid == 0 || ppvObject == 0) return XPCOM.NS_ERROR_NO_INTERFACE;
 			nsID guid = new nsID ();
 			XPCOM.memmove (guid, riid, nsID.sizeof);
-			if (guid.Equals (IIDStore.GetIID (nsISupports.class)) || guid.Equals (XPCOM.NS_IHTTPHEADERVISITOR_IID) || guid.Equals (XPCOM.NS_IHTTPHEADERVISITOR_10_IID)) {
+			if (guid.Equals (XPCOM.NS_ISUPPORTS_IID) || guid.Equals (XPCOM.NS_IHTTPHEADERVISITOR_IID) || guid.Equals (XPCOM.NS_IHTTPHEADERVISITOR_10_IID)) {
 				XPCOM.memmove (ppvObject, new long /*int*/[] {getAddress ()}, C.PTR_SIZEOF);
 				refCount++;
 				return XPCOM.NS_OK;
@@ -3575,7 +3575,7 @@ int QueryInterface (long /*int*/ riid, long /*int*/ ppvObject) {
 	nsID guid = new nsID ();
 	XPCOM.memmove (guid, riid, nsID.sizeof);
 
-	if (guid.Equals (IIDStore.GetIID (nsISupports.class))) {
+	if (guid.Equals (XPCOM.NS_ISUPPORTS_IID)) {
 		XPCOM.memmove (ppvObject, new long /*int*/[] {supports.getAddress ()}, C.PTR_SIZEOF);
 		AddRef ();
 		return XPCOM.NS_OK;

@@ -45,10 +45,10 @@ public class nsIWindowWatcher extends nsISupports {
 	}
 
 	public int SetWindowCreator(long /*int*/ creator) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 7, getAddress(), creator);
+		return XPCOM.VtblCall(this.getMethodIndex("setWindowCreator"), getAddress(), creator);
 	}
 
 	public int GetChromeForWindow(long /*int*/ aWindow, long /*int*/[] _retval) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner31 () ? 9 : 8), getAddress(), aWindow, _retval);
+		return XPCOM.VtblCall(this.getMethodIndex("getChromeForWindow"), getAddress(), aWindow, _retval);
 	}
 }

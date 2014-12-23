@@ -47,15 +47,15 @@ public class nsIX509Cert extends nsISupports {
 	}
 
 	public int GetCommonName(long /*int*/ aCommonName) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 6, getAddress(), aCommonName);
+		return XPCOM.VtblCall(this.getGetterIndex("commonName"), getAddress(), aCommonName);
 	}
 
 	public int GetIssuerCommonName(long /*int*/ aIssuerCommonName) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 14, getAddress(), aIssuerCommonName);
+		return XPCOM.VtblCall(this.getGetterIndex("issuerCommonName"), getAddress(), aIssuerCommonName);
 	}
 
 	public int GetValidity(long /*int*/[] aValidity) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 18, getAddress(), aValidity);
+		return XPCOM.VtblCall(this.getGetterIndex("validity"), getAddress(), aValidity);
 	}
 
 	public static final int UNKNOWN_CERT = 0;

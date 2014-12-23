@@ -49,20 +49,20 @@ public class nsIDOMWindow extends nsISupports {
 	}
 
 	public int GetDocument(long /*int*/[] aDocument) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + ((IsXULRunner10() || IsXULRunner24() || IsXULRunner31 ()) ? 3 : 1), getAddress(), aDocument);
+		return XPCOM.VtblCall(this.getGetterIndex("document"), getAddress(), aDocument);
 	}
 
 	public int GetTop(long /*int*/[] aTop) {
-		if (IsXULRunner24() || IsXULRunner31 ()) return GetRealTop(aTop);
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner10() ? 21 : 3), getAddress(), aTop);
+		if (IsXULRVersionOrLater(24)) return GetRealTop(aTop);
+		return XPCOM.VtblCall(this.getGetterIndex("top"), getAddress(), aTop);
 	}
 	
 	public int GetRealTop(long /*int*/[] aTop) {
-		if (!(IsXULRunner24() || IsXULRunner31 ())) return XPCOM.NS_ERROR_NOT_IMPLEMENTED;
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 22, getAddress(), aTop);
+		if (!IsXULRVersionOrLater(24)) return XPCOM.NS_ERROR_NOT_IMPLEMENTED;
+		return XPCOM.VtblCall(this.getGetterIndex("realTop"), getAddress(), aTop);
 	}
 	
 	public int GetFrames(long /*int*/[] aFrames) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + (IsXULRunner31 () ? 70 : (IsXULRunner24() ? 66 : (IsXULRunner10() ? 62 : 5))), getAddress(), aFrames);
+		return XPCOM.VtblCall(this.getGetterIndex("frames"), getAddress(), aFrames);
 	}
 }

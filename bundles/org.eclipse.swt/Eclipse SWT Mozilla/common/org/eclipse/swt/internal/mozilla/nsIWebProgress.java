@@ -58,6 +58,6 @@ public class nsIWebProgress extends nsISupports {
 	public static final int NOTIFY_ALL = 255;
 
 	public int GetDOMWindow(long /*int*/[] aDOMWindow) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 3, getAddress(), aDOMWindow);
+		return XPCOM.VtblCall(this.getGetterIndex("DOMWindow"), getAddress(), aDOMWindow);
 	}
 }

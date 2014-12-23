@@ -27,6 +27,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.eclipse.swt.internal.mozilla;
 
+import org.eclipse.swt.SWTError;
+
 
 public class nsISupports {
 
@@ -105,7 +107,9 @@ public class nsISupports {
 		long /*int*/[] dummy = new long /*int*/[1];
 		rc = info.GetMethodInfoForName (toByteArray (methodString), index, dummy);
 		info.Release ();
-		if (rc != XPCOM.NS_OK) return -1;
+		if (rc != XPCOM.NS_OK) {
+			throw new SWTError(rc);
+		}
 		
 		return index[0];
 	}
@@ -114,7 +118,7 @@ public class nsISupports {
 
 	public nsISupports(long /*int*/ address) {
 		this.address = address;
-	}
+	}	
 
 	public long /*int*/ getAddress() {
 		return this.address;

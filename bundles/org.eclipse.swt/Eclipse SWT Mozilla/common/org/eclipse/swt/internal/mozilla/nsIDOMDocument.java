@@ -49,6 +49,6 @@ public class nsIDOMDocument extends nsIDOMNode {
 	}
 
 	public int GetDocumentElement(long /*int*/[] aDocumentElement) {
-		return XPCOM.VtblCall(nsIDOMNode.LAST_METHOD_ID + 3, getAddress(), aDocumentElement);
+		return XPCOM.VtblCall(this.getGetterIndex("documentElement"), getAddress(), aDocumentElement);
 	}
 }

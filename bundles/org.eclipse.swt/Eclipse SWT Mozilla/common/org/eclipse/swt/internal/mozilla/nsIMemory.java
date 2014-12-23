@@ -30,7 +30,7 @@ package org.eclipse.swt.internal.mozilla;
 
 public class nsIMemory extends nsISupports {
 
-	static final int LAST_METHOD_ID = nsISupports.LAST_METHOD_ID + ((IsXULRunner31() || IsXULRunner24()) ? 6 : 5);
+	static final int LAST_METHOD_ID = nsISupports.LAST_METHOD_ID + (IsXULRVersionOrLater(24) ? 6 : 5);
 
 	static final String NS_IMEMORY_IID_STR = "59e7e77a-38e4-11d4-8cf5-0060b0fc14a3";
 	static final String NS_IMEMORY_24_IID_STR = "6aef11c4-8615-44a6-9711-98f43805693d";
@@ -49,6 +49,6 @@ public class nsIMemory extends nsISupports {
 	}
 
 	public int Free(long /*int*/ ptr) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 3, getAddress(), ptr);
+		return XPCOM.VtblCall(this.getMethodIndex("free"), getAddress(), ptr);
 	}
 }

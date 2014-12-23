@@ -57,6 +57,6 @@ public class nsIDocShell extends nsISupports {
 	}
 
 	public int LoadStream(long /*int*/ aStream, long /*int*/ aURI, long /*int*/ aContentType, long /*int*/ aContentCharset, long /*int*/ aLoadInfo) {
-		return XPCOM.VtblCall(nsISupports.LAST_METHOD_ID + 2, getAddress(), aStream, aURI, aContentType, aContentCharset, aLoadInfo);
+		return XPCOM.VtblCall(this.getMethodIndex("loadStream"), getAddress(), aStream, aURI, aContentType, aContentCharset, aLoadInfo);
 	}
 }
