@@ -1166,9 +1166,15 @@ public Accessible getAccessible () {
  */
 public Color getBackground () {
 	checkWidget ();
-	Control control = findBackgroundControl ();
-	if (control == null) control = this;
-	return Color.win32_new (display, control.getBackgroundPixel (), backgroundAlpha);
+	if (backgroundAlpha == 0) {
+		Color color =  Color.win32_new (display, background, 0);
+		return color;
+	}
+	else {
+		Control control = findBackgroundControl ();
+		if (control == null) control = this;
+		return Color.win32_new (display, control.getBackgroundPixel (), backgroundAlpha);
+	}
 }
 
 /**
@@ -3010,25 +3016,24 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparency (color.getAlpha());
+		this.updateBackgroundMode ();
 	}
 }
 
 private void _setBackground (Color color) {
 	int pixel = -1;
+	int alpha = 255;
 	if (color != null) {
 		if (color.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
 		pixel = color.handle;
+		alpha = color.getAlpha();
 	}
-	if (pixel == background) return;
+	if (pixel == background && alpha == backgroundAlpha) return;
 	background = pixel;
+	backgroundAlpha = alpha;
 	updateBackgroundColor ();
 }
 
-private void setBackgroundTransparency (int alpha) {
-	this.backgroundAlpha = alpha;
-	this.updateBackgroundMode ();
-}
 
 /**
  * Sets the receiver's background image to the image specified

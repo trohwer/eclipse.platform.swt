@@ -50,8 +50,7 @@ public abstract class Control extends Widget implements Drawable {
 	Composite parent;
 	Cursor cursor;
 	Menu menu;
-	Image backgroundImage, transparentBackgroundImage;
-	GdkColor transparentBackground;
+	Image backgroundImage;
 	Font font;
 	Region region;
 	String toolTipText;
@@ -2392,7 +2391,7 @@ boolean filterKey (int keyval, long /*int*/ event) {
 }
 
 Control findBackgroundControl () {
-	if ((state & BACKGROUND) != 0 || backgroundImage != null) return this;
+	if (((state & BACKGROUND) != 0 || backgroundImage != null) && backgroundAlpha > 0) return this;
 	return (state & PARENT_BACKGROUND) != 0 ? parent.findBackgroundControl () : null;
 }
 
@@ -2495,13 +2494,13 @@ boolean forceFocus (long /*int*/ focusHandle) {
 public Color getBackground () {
 	checkWidget();
 	if (backgroundAlpha == 0) {
-		Color color = Color.gtk_new (display, transparentBackground, 0);
+		Color color = Color.gtk_new (display, this.getBackgroundColor (), 0);
 		return color;
 	}
 	else {
 		Control control = findBackgroundControl ();
 		if (control == null) control = this;
-		return Color.gtk_new (display, control.getBackgroundColor ());
+		return Color.gtk_new (display, control.getBackgroundColor (), backgroundAlpha);
 	}
 }
 
@@ -2523,14 +2522,9 @@ GdkColor getBackgroundColor () {
  */
 public Image getBackgroundImage () {
 	checkWidget ();
-	if (backgroundAlpha == 0) {
-		return transparentBackgroundImage;
-	}
-	else {
-		Control control = findBackgroundControl ();
-		if (control == null) control = this;
-		return control.backgroundImage;
-	}
+	Control control = findBackgroundControl ();
+	if (control == null) control = this;
+	return control.backgroundImage;
 }
 
 GdkColor getContextBackground () {
@@ -4016,7 +4010,7 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparency (color.getAlpha ());
+		this.updateBackgroundMode ();
 	}
 }
 
@@ -4026,6 +4020,7 @@ private void _setBackground (Color color) {
 	if (color != null) {
 		if (color.isDisposed ()) error(SWT.ERROR_INVALID_ARGUMENT);
 		gdkColor = color.handle;
+		backgroundAlpha = color.getAlpha ();
 	}
 	boolean set = false;
 	if (OS.GTK3) {
@@ -4052,22 +4047,6 @@ private void _setBackground (Color color) {
 		setBackgroundColor (gdkColor);
 		redrawChildren ();
 	}
-}
-
-private void setBackgroundTransparency (int alpha) {
-	if (alpha == 0) {
-		// clear background
-		if (backgroundImage != null) {
-			transparentBackgroundImage = getBackgroundImage ();
-			setBackgroundImage (null);
-		} 
-		if (getBackground () != null) {
-			transparentBackground = getBackground ().handle;
-			_setBackground (null);
-		}
-	} 
-	this.backgroundAlpha = alpha;
-	this.updateBackgroundMode ();
 }
 
 void setBackgroundColor (long /*int*/ context, long /*int*/ handle, GdkRGBA rgba) {
@@ -4101,9 +4080,12 @@ void setBackgroundColor (long /*int*/ handle, GdkColor color) {
 				color = control.getBackgroundColor();
 			}
 		}
+		else {
+			alpha = backgroundAlpha;
+		}
 		if (color != null) {
 			rgba = new GdkRGBA ();
-			rgba.alpha = alpha;
+			rgba.alpha = alpha / (float)255;
 			rgba.red = (color.red & 0xFFFF) / (float)0xFFFF;
 			rgba.green = (color.green & 0xFFFF) / (float)0xFFFF;
 			rgba.blue = (color.blue & 0xFFFF) / (float)0xFFFF;
@@ -4171,7 +4153,8 @@ void setBackgroundColor (GdkColor color) {
 public void setBackgroundImage (Image image) {
 	checkWidget ();
 	if (image != null && image.isDisposed ()) error(SWT.ERROR_INVALID_ARGUMENT);
-	if (image == backgroundImage) return;
+	if (image == backgroundImage && backgroundAlpha > 0) return;
+	backgroundAlpha = 255;
 	this.backgroundImage = image;
 	if (backgroundImage != null) {
 		setBackgroundPixmap (backgroundImage);

@@ -75,22 +75,19 @@ public class Snippet365 {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean transparent = ((Button) e.getSource()).getSelection();
-				int alpha = transparent ? 0 : 255;
 				if (transparent){
 					composite.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					buttonCheckBox.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					bar.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
-					list.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					label.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
-					// radio widget have custom background
 					radio.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					check.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
-//					check.setBackgroundImage(getBackgroundImage(display));
-					push.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
-					text.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 				}
 				else {
 					composite.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					buttonCheckBox.setBackground(null);
+					bar.setBackground(null);
+					label.setBackground(null);
 					radio.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 					check.setBackgroundImage(getBackgroundImage(display));
 				}

@@ -60,8 +60,8 @@ public abstract class Control extends Widget implements Drawable {
 	Object layoutData;
 	int drawCount, backgroundAlpha = 255;
 	Menu menu;
-	double /*float*/ [] foreground, background, transparentBackground;
-	Image backgroundImage, transparentBackgroundImage;
+	double /*float*/ [] foreground, background;
+	Image backgroundImage;
 	Font font;
 	Cursor cursor;
 	Region region;
@@ -1326,7 +1326,7 @@ Cursor findCursor () {
 }
 
 Control findBackgroundControl () {
-	if (backgroundImage != null || background != null) return this;
+	if ((backgroundImage != null || background != null) && backgroundAlpha > 0) return this;
 	return (!isTransparent() && (state & PARENT_BACKGROUND) != 0) ? parent.findBackgroundControl () : null;
 }
 
@@ -1547,7 +1547,7 @@ public Accessible getAccessible () {
 public Color getBackground () {
 	checkWidget();
 	if (backgroundAlpha == 0) {
-		Color color = Color.cocoa_new (display, transparentBackground, 0);
+		Color color = Color.cocoa_new (display, background, 0);
 		return color;		
 	}
 	else {
@@ -1558,7 +1558,7 @@ public Color getBackground () {
 }
 
 Color getBackgroundColor () {
-	return background != null ? Color.cocoa_new (display, background) : defaultBackground ();
+	return background != null ? Color.cocoa_new (display, background, backgroundAlpha) : defaultBackground ();
 }
 
 /**
@@ -1575,14 +1575,9 @@ Color getBackgroundColor () {
  */
 public Image getBackgroundImage () {
 	checkWidget();
-	if (backgroundAlpha == 0) {
-		return transparentBackgroundImage;
-	}
-	else {
-		Control control = findBackgroundControl ();
-		if (control == null) control = this;
-		return control.backgroundImage;
-	}
+	Control control = findBackgroundControl ();
+	if (control == null) control = this;
+	return control.backgroundImage;
 }
 
 /**
@@ -3488,7 +3483,7 @@ public void setBackground (Color color) {
 	checkWidget ();
 	_setBackground (color);
 	if (color != null) {
-		setBackgroundTransparency (color.getAlpha ());
+		this.updateBackgroundMode ();
 	}
 }
 
@@ -3497,26 +3492,12 @@ private void _setBackground (Color color) {
 		if (color.isDisposed()) error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	double /*float*/ [] background = color != null ? color.handle : null;
-	if (equals (background, this.background)) return;
+	int alpha = color != null ? color.getAlpha() : 255;
+	if (equals (background, this.background) && alpha == this.backgroundAlpha) return;
 	this.background = background;
+	this.backgroundAlpha = alpha;
 	updateBackgroundColor ();
 	redrawWidget(view, true);
-}
-
-private void setBackgroundTransparency (int alpha) {
-	if (alpha == 0) {
-		// clear background
-		if (backgroundImage != null) {
-			transparentBackgroundImage = getBackgroundImage ();
-			setBackgroundImage (null);
-		} 
-		if (getBackground () != null) {
-			transparentBackground = background;
-			_setBackground (null);
-		}
-	} 
-	this.backgroundAlpha = alpha;
-	this.updateBackgroundMode ();
 }
 
 /**
