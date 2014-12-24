@@ -39,7 +39,7 @@ public class Snippet365 {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setText("Shell.setBackgroundMode()");
+		shell.setText("Transparent Background");
 		shell.setLayout(new RowLayout(SWT.VERTICAL));
 		// Standard color background for Shell
 //		shell.setBackground(display.getSystemColor(SWT.COLOR_CYAN));

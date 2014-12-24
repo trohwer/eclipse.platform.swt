@@ -45,7 +45,6 @@ public final class Color extends Resource {
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	public double /*float*/ [] handle;
-	int alpha = 255;
 
 Color(Device device) {
 	super(device);
@@ -167,7 +166,7 @@ public Color(Device device, RGB rgb) {
  */
 public Color(Device device, RGB rgb, int alpha) {
 	this(device, rgb);
-	this.alpha = alpha;
+	this.handle[3] = alpha;
 }
 
 void destroy() {
@@ -194,7 +193,8 @@ public boolean equals(Object object) {
 		(int)(handle[0] * 255) == (int)(rgbColor[0] * 255) &&
 		(int)(handle[1] * 255) == (int)(rgbColor[1] * 255) &&
 		(int)(handle[2] * 255) == (int)(rgbColor[2] * 255) &&
-		alpha == color.alpha;
+		(int)(handle[3] * 255) == (int)(rgbColor[3] * 255);
+
 }
 
 /**
@@ -208,7 +208,7 @@ public boolean equals(Object object) {
  */
 public int getAlpha() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return alpha;
+	return (int)(handle[3] * 255);
 }
 
 /**
@@ -265,7 +265,7 @@ public int getRed() {
  */
 public int hashCode() {
 	if (isDisposed()) return 0;
-	return (int)(handle[0] * 255) ^ (int)(handle[1] * 255) ^ (int)(handle[2] * 255) ^ alpha;
+	return (int)(handle[0] * 255) ^ (int)(handle[1] * 255) ^ (int)(handle[2] * 255) ^ (int)(handle[3] * 255);
 }
 
 /**
@@ -321,7 +321,7 @@ public static Color cocoa_new(Device device, double /*float*/ [] handle, int alp
 	double /*float*/ [] rgbColor = handle;
 	Color color = new Color(device);
 	color.handle = rgbColor;
-	color.alpha = alpha;
+	color.handle[3] = alpha;
 	return color;
 }
 
@@ -352,7 +352,7 @@ void init(int red, int green, int blue, int alpha) {
 	rgbColor[0] = red / 255f;
 	rgbColor[1] = green / 255f;
 	rgbColor[2] = blue / 255f;
-	rgbColor[3] = 1; // alpha / 255
+	rgbColor[3] = alpha / 255f;
 	handle = rgbColor;
 }
 

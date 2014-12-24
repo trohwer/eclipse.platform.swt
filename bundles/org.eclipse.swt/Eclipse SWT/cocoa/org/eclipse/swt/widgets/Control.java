@@ -3525,7 +3525,8 @@ private void _setBackground (Color color) {
 public void setBackgroundImage (Image image) {
 	checkWidget();
 	if (image != null && image.isDisposed()) error(SWT.ERROR_INVALID_ARGUMENT);
-	if (image == backgroundImage) return;
+	if (image == backgroundImage && backgroundAlpha > 0) return;
+	backgroundAlpha = 255;
 	backgroundImage = image;
 	updateBackgroundImage();
 }
