@@ -165,8 +165,10 @@ public Color(Device device, RGB rgb) {
  * @see #dispose
  */
 public Color(Device device, RGB rgb, int alpha) {
-	this(device, rgb);
-	this.handle[3] = alpha;
+	super(device);
+	if (rgb == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	init(rgb.red, rgb.green, rgb.blue, alpha);
+	init();
 }
 
 void destroy() {

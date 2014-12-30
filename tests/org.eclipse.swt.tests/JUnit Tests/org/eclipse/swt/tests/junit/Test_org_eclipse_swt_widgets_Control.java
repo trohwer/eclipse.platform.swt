@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -372,6 +372,13 @@ public void test_setBackgroundLorg_eclipse_swt_graphics_Color() {
 	Color color = new Color(control.getDisplay(), 255, 0, 0);
 	control.setBackground(color);
 	assertEquals("getBackground not equal color after setBackground(color)", color, control.getBackground());
+	control.setBackground(null);
+	assertTrue("getBackground unchanged after setBackground(null)", !control.getBackground().equals(color));
+	color.dispose();
+	// With alpha
+	color = new Color(control.getDisplay(), 255, 0, 0, 0);
+	control.setBackground(color);
+	assertEquals("getBackground not equal color after setBackground(color) with 0 alpha", color, control.getBackground());
 	control.setBackground(null);
 	assertTrue("getBackground unchanged after setBackground(null)", !control.getBackground().equals(color));
 	color.dispose();
