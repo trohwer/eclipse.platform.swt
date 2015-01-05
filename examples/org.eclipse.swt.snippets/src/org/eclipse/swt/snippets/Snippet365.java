@@ -88,7 +88,8 @@ public class Snippet365 {
 					buttonCheckBox.setBackground(null);
 					bar.setBackground(null);
 					label.setBackground(null);
-					radio.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					RGB rgb = display.getSystemColor(SWT.COLOR_CYAN).getRGB();
+					radio.setBackground(new Color (display, new RGBA(rgb.red, rgb.blue, rgb.green, 255)));
 					check.setBackgroundImage(getBackgroundImage(display));
 				}
 			}

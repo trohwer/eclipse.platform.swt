@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -218,6 +219,92 @@ public void test_ConstructorLorg_eclipse_swt_graphics_DeviceLorg_eclipse_swt_gra
 		color = new Color(display, null, 0);
 		color.dispose();
 		fail("No exception thrown for rgb == null with alpha");
+	}
+	catch (IllegalArgumentException e) {
+	}
+}
+
+public void test_ConstructorLorg_eclipse_swt_graphics_DeviceLorg_eclipse_swt_graphics_RGBA() {
+	// Test new Color(Device device, RGBA rgba)
+	// IllegalArgumentException if the red, green, blue or alpha argument is not between 0 and 255; or rgba is null
+	
+	// valid color (black)
+	Color color = new Color(display, new RGBA(0, 0, 0, 255));
+	color.dispose();
+	
+	// valid color (black with alpha)
+	color = new Color(display, new RGBA(0, 0, 0, 0));
+	color.dispose();
+	
+	// valid color (white)
+	color = new Color(display, new RGBA(255, 255, 255, 255));
+	color.dispose();
+	
+	// valid color (white with alpha)
+	color = new Color(display, new RGBA(255, 255, 255, 0));
+	color.dispose();
+	
+	// valid color (random grey)
+	color = new Color(display, new RGBA(10, 10, 10, 10));
+	color.dispose();
+	
+	// valid color (random grey with alpha)
+	color = new Color(display, new RGBA(10, 10, 10, 0));
+	color.dispose();
+	
+	// valid color (random)
+	color = new Color(display, new RGBA(102, 255, 0, 255));
+	color.dispose();
+	
+	// valid color (random with alpha)
+	color = new Color(display, new RGBA(102, 255, 0, 0));
+	color.dispose();
+	
+	// device == null (valid)
+	color = new Color(null, new RGBA(0, 0, 0, 255));
+	color.dispose();
+	
+	// device == null (valid with alpha)
+	color = new Color(null, new RGBA(0, 0, 0, 0));
+	color.dispose();
+	
+	// illegal argument, rgba < 0
+	try {
+		color = new Color(display, new RGBA(-10, -10, -10, -10));
+		color.dispose();
+		fail("No exception thrown for rgba < 0");
+	}
+	catch (IllegalArgumentException e) {
+	}
+	// illegal argument, alpha < 0
+	try {
+		color = new Color(display, new RGBA(0, 0, 0, -10));
+		color.dispose();
+		fail("No exception thrown for alpha < 0");
+	}
+	catch (IllegalArgumentException e) {
+	}
+	// illegal argument, rgba > 255
+	try {
+		color = new Color(display, new RGBA(1000, 2000, 3000, 4000));
+		color.dispose();
+		fail("No exception thrown for rgba > 255");
+	}
+	catch (IllegalArgumentException e) {
+	}
+	// illegal argument, blue > 255
+	try {
+		color = new Color(display, new RGBA(10, 10, 256, 10));
+		color.dispose();
+		fail("No exception thrown for blue > 255");
+	}
+	catch (IllegalArgumentException e) {
+	}
+	// illegal argument, alpha > 255
+	try {
+		color = new Color(display, new RGBA(10, 10, 10, 256));
+		color.dispose();
+		fail("No exception thrown for alpha > 255");
 	}
 	catch (IllegalArgumentException e) {
 	}

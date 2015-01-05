@@ -11,6 +11,7 @@
 package org.eclipse.swt.graphics;
 
 
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.gtk.*;
 import org.eclipse.swt.*;
 
@@ -97,7 +98,7 @@ public Color(Device device, int red, int green, int blue) {
  * @param red the amount of red in the color
  * @param green the amount of green in the color
  * @param blue the amount of blue in the color
- * @param alpha the amount of alpha in the color
+ * @param alpha the amount of alpha in the color(Currently SWT honors extreme values for alpha ie. 0 or 255)
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
@@ -105,6 +106,7 @@ public Color(Device device, int red, int green, int blue) {
  * </ul>
  *
  * @see #dispose
+ * @since 3.104
  */
 public Color(Device device, int red, int green, int blue, int alpha) {
 	super(device);
@@ -142,6 +144,36 @@ public Color(Device device, RGB rgb) {
 }
 
 /**	 
+ * Constructs a new instance of this class given a device and an
+ * <code>RGBA</code> describing the desired red, green, blue & alpah values.
+ * On limited color devices, the color instance created by this call
+ * may not have the same RGBA values as the ones specified by the
+ * argument. The RGBA values on the returned instance will be the color
+ * values of the operating system color + alpha.
+ * <p>
+ * You must dispose the color when it is no longer required. 
+ * </p>
+ *
+ * @param device the device on which to allocate the color
+ * @param rgba the RGBA values of the desired color
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the rgba argument is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the red, green, blue or alpha components of the argument are not between 0 and 255</li>
+ * </ul>
+ *
+ * @see #dispose
+ * @since 3.104
+ */
+public Color(Device device, RGBA rgba) {
+	super(device);
+	if (rgba == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	init(rgba.rgb.red, rgba.rgb.green, rgba.rgb.blue, rgba.alpha);
+	init();
+}
+
+/**	 
  * Constructs a new instance of this class given a device, an
  * <code>RGB</code> describing the desired red, green and blue values,
  * alpha specifying the level of transparency. 
@@ -155,7 +187,7 @@ public Color(Device device, RGB rgb) {
  *
  * @param device the device on which to allocate the color
  * @param rgb the RGB values of the desired color
- * @param alpha the alpha value of the desired color
+ * @param alpha the alpha value of the desired color(Currently SWT honors extreme values for alpha ie. 0 or 255)
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
@@ -164,6 +196,7 @@ public Color(Device device, RGB rgb) {
  * </ul>
  *
  * @see #dispose
+ * @since 3.104
  */
 public Color(Device device, RGB rgb, int alpha) {
 	super(device);
@@ -296,6 +329,21 @@ public RGB getRGB () {
 	return new RGB(getRed(), getGreen(), getBlue());
 }
 
+/**
+ * Returns an <code>RGBA</code> representing the receiver.
+ *
+ * @return the RGBA for the color
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * @since 3.104
+ */
+public RGBA getRGBA () {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	return new RGBA(getRed(), getGreen(), getBlue(), getAlpha());
+}
+
 /**	 
  * Invokes platform specific functionality to allocate a new color.
  * <p>
@@ -327,7 +375,7 @@ public static Color gtk_new(Device device, GdkColor gdkColor) {
  *
  * @param device the device on which to allocate the color
  * @param gdkColor the handle for the color
- * @param alpha the int for the alpha content in the color
+ * @param alpha the int for the alpha content in the color(Currently SWT honors extreme values for alpha ie. 0 or 255)
  * 
  * @noreference This method is not intended to be referenced by clients.
  */
