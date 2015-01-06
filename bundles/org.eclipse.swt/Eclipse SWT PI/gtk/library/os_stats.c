@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved.
  * The contents of this file are made available under the terms
  * of the GNU Lesser General Public License (LGPL) Version 2.1 that
  * accompanies this distribution (lgpl-v21.txt).  The LGPL is also
@@ -571,6 +571,7 @@ char * OS_nativeFunctionNames[] = {
 	"_1gdk_1screen_1get_1monitor_1at_1point",
 	"_1gdk_1screen_1get_1monitor_1at_1window",
 	"_1gdk_1screen_1get_1monitor_1geometry",
+	"_1gdk_1screen_1get_1monitor_1width_1mm",
 	"_1gdk_1screen_1get_1n_1monitors",
 	"_1gdk_1screen_1height",
 	"_1gdk_1screen_1width",

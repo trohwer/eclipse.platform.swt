@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved.
  * The contents of this file are made available under the terms
  * of the GNU Lesser General Public License (LGPL) Version 2.1 that
  * accompanies this distribution (lgpl-v21.txt).  The LGPL is also
@@ -7597,6 +7597,26 @@ JNIEXPORT void JNICALL OS_NATIVE(_1gdk_1screen_1get_1monitor_1geometry)
 fail:
 	if (arg2 && lparg2) setGdkRectangleFields(env, arg2, lparg2);
 	OS_NATIVE_EXIT(env, that, _1gdk_1screen_1get_1monitor_1geometry_FUNC);
+}
+#endif
+
+#ifndef NO__1gdk_1screen_1get_1monitor_1width_1mm
+JNIEXPORT jint JNICALL OS_NATIVE(_1gdk_1screen_1get_1monitor_1width_1mm)
+	(JNIEnv *env, jclass that, jintLong arg0, jint arg1)
+{
+	jint rc = 0;
+	OS_NATIVE_ENTER(env, that, _1gdk_1screen_1get_1monitor_1width_1mm_FUNC);
+/*
+	rc = (jint)gdk_screen_get_monitor_width_mm((GdkScreen *)arg0, arg1);
+*/
+	{
+		OS_LOAD_FUNCTION(fp, gdk_screen_get_monitor_width_mm)
+		if (fp) {
+			rc = (jint)((jint (CALLING_CONVENTION*)(GdkScreen *, jint))fp)((GdkScreen *)arg0, arg1);
+		}
+	}
+	OS_NATIVE_EXIT(env, that, _1gdk_1screen_1get_1monitor_1width_1mm_FUNC);
+	return rc;
 }
 #endif
 
