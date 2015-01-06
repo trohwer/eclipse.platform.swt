@@ -2181,6 +2181,10 @@ public Monitor getPrimaryMonitor () {
 		monitor.clientY = rect.top;
 		monitor.clientWidth = rect.right - rect.left;
 		monitor.clientHeight = rect.bottom - rect.top;
+		long /*int*/ hDC = internal_new_GC (null);
+		monitor.dpi = OS.GetDeviceCaps (hDC, OS.LOGPIXELSX);
+		internal_dispose_GC (hDC, null);
+
 		return monitor;
 	}
 	monitors = new Monitor [4];
@@ -3439,6 +3443,10 @@ long /*int*/ monitorEnumProc (long /*int*/ hmonitor, long /*int*/ hdc, long /*in
 	monitor.clientY = lpmi.rcWork_top;
 	monitor.clientWidth = lpmi.rcWork_right - lpmi.rcWork_left;
 	monitor.clientHeight = lpmi.rcWork_bottom - lpmi.rcWork_top;
+	long /*int*/ hDC = internal_new_GC (null);
+	monitor.dpi = OS.GetDeviceCaps (hDC, OS.LOGPIXELSX);
+	internal_dispose_GC (hDC, null);
+
 	monitors [monitorCount++] = monitor;
 	return 1;
 }

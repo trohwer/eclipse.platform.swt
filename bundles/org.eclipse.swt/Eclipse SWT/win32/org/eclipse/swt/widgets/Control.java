@@ -1463,6 +1463,10 @@ public Monitor getMonitor () {
 	monitor.clientY = lpmi.rcWork_top;
 	monitor.clientWidth = lpmi.rcWork_right - lpmi.rcWork_left;
 	monitor.clientHeight = lpmi.rcWork_bottom - lpmi.rcWork_top;
+	long /*int*/ hDC = internal_new_GC (null);
+	monitor.dpi = OS.GetDeviceCaps (hDC, OS.LOGPIXELSX);
+	internal_dispose_GC (hDC, null);
+
 	return monitor;
 }
 
