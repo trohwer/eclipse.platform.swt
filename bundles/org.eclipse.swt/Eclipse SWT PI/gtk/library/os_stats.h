@@ -583,6 +583,7 @@ typedef enum {
 	_1gdk_1screen_1get_1monitor_1geometry_FUNC,
 	_1gdk_1screen_1get_1monitor_1width_1mm_FUNC,
 	_1gdk_1screen_1get_1n_1monitors_FUNC,
+	_1gdk_1screen_1get_1primary_1monitor_FUNC,
 	_1gdk_1screen_1height_FUNC,
 	_1gdk_1screen_1width_FUNC,
 	_1gdk_1screen_1width_1mm_FUNC,
