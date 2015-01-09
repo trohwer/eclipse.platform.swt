@@ -635,7 +635,7 @@ protected void init () {
 	}
 	
 	/* Create the standard colors */
-	COLOR_TRANSPARENT = new Color (this, 0,0,0,0);
+	COLOR_TRANSPARENT = new Color (this, 0xFF,0xFF,0xFF,0);
 	COLOR_BLACK = new Color (this, 0,0,0);
 	COLOR_DARK_RED = new Color (this, 0x80,0,0);
 	COLOR_DARK_GREEN = new Color (this, 0,0x80,0);

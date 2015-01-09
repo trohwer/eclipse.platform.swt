@@ -607,8 +607,8 @@ public Color getSystemColor (int id) {
 	int pixel = 0x00000000;
 	int alpha = 255;
 	switch (id) {
-		case SWT.COLOR_WHITE:				pixel = 0x00FFFFFF;  break;
 		case SWT.COLOR_TRANSPARENT:			alpha = 0;
+		case SWT.COLOR_WHITE:				pixel = 0x00FFFFFF;  break;
 		case SWT.COLOR_BLACK:				pixel = 0x00000000;  break;
 		case SWT.COLOR_RED:					pixel = 0x000000FF;  break;
 		case SWT.COLOR_DARK_RED:			pixel = 0x00000080;  break;

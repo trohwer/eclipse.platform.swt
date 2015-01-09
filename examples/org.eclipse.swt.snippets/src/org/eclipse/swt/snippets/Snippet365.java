@@ -56,7 +56,6 @@ public class Snippet365 {
 	static Slider slider;
 	static List list;
 	static CCombo ccombo;
-
 	public static void main(String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
@@ -108,6 +107,7 @@ public class Snippet365 {
 					group.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					sash.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					slider.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					list.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 
 					// Custom
 					customGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
@@ -115,13 +115,12 @@ public class Snippet365 {
 					cTab.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
 					gradientCTab.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
 
-					// AsDesigned
+					// Default
 					push.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					defaultBackgroundGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					combo.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					progressBar.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					dateTime.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
-					list.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					ccombo.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					text.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					styledText.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
@@ -138,6 +137,7 @@ public class Snippet365 {
 					group.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 					sash.setBackground(display.getSystemColor(SWT.COLOR_DARK_CYAN));
 					slider.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					list.setBackground(null);
 
 					// Custom
 					customGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -152,6 +152,12 @@ public class Snippet365 {
 					// AsDesigned
 					defaultBackgroundGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 					push.setBackground(null);
+					text.setBackground(null);
+					combo.setBackground(null);
+					ccombo.setBackground(null);
+					dateTime.setBackground(null);
+					progressBar.setBackground(null);
+
 				}
 			}
 
@@ -209,7 +215,20 @@ public class Snippet365 {
 
 		// Scale
 		scale = new Scale(nativeGroup, SWT.None);
+		scale.setMaximum(100);
+		scale.setSelection(20);
 
+		// Link
+		link = new Link(nativeGroup, SWT.NONE);
+		link.setText("<A>Sample link</A>");
+
+		// List
+		list = new List(nativeGroup, SWT.BORDER);
+		list.add("one");
+		list.add("two");
+		list.add("three");
+		list.add("four");
+		
 		// Group
 		group = new Group(nativeGroup, SWT.NONE);
 		group.setText("Group");
@@ -219,10 +238,6 @@ public class Snippet365 {
 		sash.setBackground(display.getSystemColor(SWT.COLOR_DARK_CYAN));
 		sash.setLayoutData(new RowData(100, 100));
 		sash.setToolTipText("Sash");
-
-		// Link
-		link = new Link(nativeGroup, SWT.NONE);
-		link.setText("<A>Sample link</A>");
 
 		// Text
 		text = new Text(defaultBackgroundGroup, SWT.BORDER);
@@ -242,16 +257,9 @@ public class Snippet365 {
 		dateTime = new DateTime(defaultBackgroundGroup, SWT.NONE);
 		
 		// Slider
-		slider = new Slider(nativeGroup, SWT.HORIZONTAL | SWT.BORDER);
+		slider = new Slider(nativeGroup, SWT.VERTICAL | SWT.BORDER);
 		slider.setSelection(20);
 		slider.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
-
-		// List
-		list = new List(defaultBackgroundGroup, SWT.BORDER);
-		list.add("one");
-		list.add("two");
-		list.add("three");
-		list.add("four");
 
 		// CCombo
 		ccombo = new CCombo(defaultBackgroundGroup, SWT.BORDER);
