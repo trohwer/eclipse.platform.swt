@@ -380,6 +380,7 @@ void deregister () {
  * @since 3.6
  */
 public void drawBackground (GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
+	int imageRepSelector = 0;
 	checkWidget ();
 	if (gc == null) error (SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
@@ -394,9 +395,9 @@ public void drawBackground (GC gc, int x, int y, int width, int height, int offs
 				Cairo.cairo_translate (cairo, -pt.x - offsetX, -pt.y - offsetY);
 				x += pt.x + offsetX;
 				y += pt.y + offsetY;
-				long /*int*/ surface = control.backgroundImage.surface;
+				long /*int*/ surface = control.backgroundImage.surface[imageRepSelector];
 				if (surface == 0) {
-					long /*int*/ drawable = control.backgroundImage.pixmap;
+					long /*int*/ drawable = control.backgroundImage.pixmap[imageRepSelector];
 					int [] w = new int [1], h = new int [1];
 					gdk_pixmap_get_size (drawable, w, h);
 					if (OS.GDK_WINDOWING_X11 () && !OS.GDK_WINDOWING_WAYLAND ()) {
@@ -436,7 +437,7 @@ public void drawBackground (GC gc, int x, int y, int width, int height, int offs
 				Point pt = display.map (this, control, 0, 0);
 				OS.gdk_gc_set_fill (gdkGC, OS.GDK_TILED);
 				OS.gdk_gc_set_ts_origin (gdkGC, -pt.x - offsetX, -pt.y - offsetY);
-				OS.gdk_gc_set_tile (gdkGC, control.backgroundImage.pixmap);
+				OS.gdk_gc_set_tile (gdkGC, control.backgroundImage.pixmap[imageRepSelector]);
 				OS.gdk_draw_rectangle (data.drawable, gdkGC, 1, x, y, width, height);
 				OS.gdk_gc_set_fill (gdkGC, values.fill);
 				OS.gdk_gc_set_ts_origin (gdkGC, values.ts_x_origin, values.ts_y_origin);

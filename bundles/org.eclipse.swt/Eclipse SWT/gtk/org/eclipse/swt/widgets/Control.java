@@ -114,6 +114,7 @@ void drawBackground (Control control, long /*int*/ window, long /*int*/ region, 
 }
 
 void drawBackground (Control control, long /*int*/ window, long /*int*/ cr, long /*int*/ region, int x, int y, int width, int height) {
+	int imageRepSelector =0;
 	if (OS.USE_CAIRO) {
 		long /*int*/ cairo = cr != 0 ? cr : OS.gdk_cairo_create(window);
 		if (cairo == 0) error (SWT.ERROR_NO_HANDLES);
@@ -126,7 +127,7 @@ void drawBackground (Control control, long /*int*/ window, long /*int*/ cr, long
 			Cairo.cairo_translate (cairo, -pt.x, -pt.y);
 			x += pt.x;
 			y += pt.y;
-			long /*int*/ pattern = Cairo.cairo_pattern_create_for_surface (control.backgroundImage.surface);
+			long /*int*/ pattern = Cairo.cairo_pattern_create_for_surface (control.backgroundImage.surface[imageRepSelector]);
 			if (pattern == 0) error (SWT.ERROR_NO_HANDLES);
 			Cairo.cairo_pattern_set_extend (pattern, Cairo.CAIRO_EXTEND_REPEAT);
 			if ((style & SWT.MIRRORED) != 0) {
@@ -150,7 +151,7 @@ void drawBackground (Control control, long /*int*/ window, long /*int*/ cr, long
 		Point pt = display.map (this, control, 0, 0);
 		OS.gdk_gc_set_fill (gdkGC, OS.GDK_TILED);
 		OS.gdk_gc_set_ts_origin (gdkGC, -pt.x, -pt.y);
-		OS.gdk_gc_set_tile (gdkGC, control.backgroundImage.pixmap);
+		OS.gdk_gc_set_tile (gdkGC, control.backgroundImage.pixmap[imageRepSelector]);
 		OS.gdk_draw_rectangle (window, gdkGC, 1, x, y, width, height);
 	} else {
 		GdkColor color = control.getBackgroundColor ();
@@ -4171,13 +4172,14 @@ public void setBackgroundImage (Image image) {
 }
 
 void setBackgroundPixmap (Image image) {
+	int imageRepSelector = 0;
 	long /*int*/ window = gtk_widget_get_window (paintHandle ());
 	if (window != 0) {
-		if (image.pixmap != 0) {
-			OS.gdk_window_set_back_pixmap (window, image.pixmap, false);
-		} else if (image.surface != 0) {
+		if (image.pixmap [imageRepSelector] != 0) {
+			OS.gdk_window_set_back_pixmap (window, image.pixmap[imageRepSelector], false);
+		} else if (image.surface[imageRepSelector] != 0) {
 			if (OS.GTK3) {
-				long /*int*/ pattern = Cairo.cairo_pattern_create_for_surface(image.surface);
+				long /*int*/ pattern = Cairo.cairo_pattern_create_for_surface(image.surface[imageRepSelector]);
 				if (pattern == 0) SWT.error(SWT.ERROR_NO_HANDLES);
 				Cairo.cairo_pattern_set_extend(pattern, Cairo.CAIRO_EXTEND_REPEAT);
 				OS.gdk_window_set_background_pattern(window, pattern);

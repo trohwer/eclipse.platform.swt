@@ -285,6 +285,7 @@ protected void checkSubclass () {
 }
 
 void drag(Event dragEvent) {
+	int imageRepSelector = 0;
 	moveData = false;	
 	DNDEvent event = new DNDEvent();
 	event.widget = this;	
@@ -306,7 +307,7 @@ void drag(Event dragEvent) {
 	}
 	if (context != 0 && image != null) {
 		if (OS.GTK3) {
-			OS.gtk_drag_set_icon_surface(context, image.surface);
+			OS.gtk_drag_set_icon_surface(context, image.surface[imageRepSelector]);
 		} else {
 			long /*int*/ pixbuf = ImageList.createPixbuf(image);
 			OS.gtk_drag_set_icon_pixbuf(context, pixbuf, 0, 0);

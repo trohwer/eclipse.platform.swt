@@ -27,7 +27,8 @@ public ImageList() {
 }
 
 public static long /*int*/ convertSurface(Image image) {
-	long /*int*/ newSurface = image.surface;
+	int imageRepSelector = 0;
+	long /*int*/ newSurface = image.surface[imageRepSelector];
 	int type = Cairo.cairo_surface_get_type(newSurface);
 	if (type != Cairo.CAIRO_SURFACE_TYPE_IMAGE) {
 		Rectangle bounds = image.getBounds();
@@ -37,7 +38,7 @@ public static long /*int*/ convertSurface(Image image) {
 		long /*int*/ cairo = Cairo.cairo_create(newSurface);
 		if (cairo == 0) SWT.error(SWT.ERROR_NO_HANDLES);
 		Cairo.cairo_set_operator(cairo, Cairo.CAIRO_OPERATOR_SOURCE);
-		Cairo.cairo_set_source_surface (cairo, image.surface, 0, 0);
+		Cairo.cairo_set_source_surface (cairo, image.surface[imageRepSelector], 0, 0);
 		Cairo.cairo_paint (cairo);
 		Cairo.cairo_destroy(cairo);
 	} else {
@@ -48,6 +49,7 @@ public static long /*int*/ convertSurface(Image image) {
 
 public static long /*int*/ createPixbuf(Image image) {
 	long /*int*/ pixbuf;
+	int imageRepSelector = 0;
 	if (OS.USE_CAIRO) {
 		long /*int*/ surface = convertSurface(image);
 		int format = Cairo.cairo_image_surface_get_format(surface);
@@ -103,19 +105,19 @@ public static long /*int*/ createPixbuf(Image image) {
 	} else {
 		int [] w = new int [1], h = new int [1];
 		if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
-			OS.gdk_pixmap_get_size(image.pixmap, w, h);
+			OS.gdk_pixmap_get_size(image.pixmap[imageRepSelector], w, h);
 		} else {
-			OS.gdk_drawable_get_size (image.pixmap, w, h);
+			OS.gdk_drawable_get_size (image.pixmap[imageRepSelector], w, h);
 		}
 		long /*int*/ colormap = OS.gdk_colormap_get_system ();
-		boolean hasMask = image.mask != 0 && OS.gdk_drawable_get_depth (image.mask) == 1;
+		boolean hasMask = image.mask [imageRepSelector] != 0 && OS.gdk_drawable_get_depth (image.mask[imageRepSelector]) == 1;
 		if (hasMask) {
 			pixbuf = OS.gdk_pixbuf_new (OS.GDK_COLORSPACE_RGB, true, 8, w [0], h [0]);
 			if (pixbuf == 0) SWT.error (SWT.ERROR_NO_HANDLES);
-			OS.gdk_pixbuf_get_from_drawable (pixbuf, image.pixmap, colormap, 0, 0, 0, 0, w [0], h [0]);
+			OS.gdk_pixbuf_get_from_drawable (pixbuf, image.pixmap[imageRepSelector], colormap, 0, 0, 0, 0, w [0], h [0]);
 			long /*int*/ maskPixbuf = OS.gdk_pixbuf_new(OS.GDK_COLORSPACE_RGB, false, 8, w [0], h [0]);
 			if (maskPixbuf == 0) SWT.error (SWT.ERROR_NO_HANDLES);
-			OS.gdk_pixbuf_get_from_drawable(maskPixbuf, image.mask, 0, 0, 0, 0, 0, w [0], h [0]);
+			OS.gdk_pixbuf_get_from_drawable(maskPixbuf, image.mask[imageRepSelector], 0, 0, 0, 0, 0, w [0], h [0]);
 			int stride = OS.gdk_pixbuf_get_rowstride(pixbuf);
 			long /*int*/ pixels = OS.gdk_pixbuf_get_pixels(pixbuf);
 			byte[] line = new byte[stride];
@@ -140,7 +142,7 @@ public static long /*int*/ createPixbuf(Image image) {
 			boolean hasAlpha = data.getTransparencyType () == SWT.TRANSPARENCY_ALPHA;
 			pixbuf = OS.gdk_pixbuf_new (OS.GDK_COLORSPACE_RGB, hasAlpha, 8, w [0], h [0]);
 			if (pixbuf == 0) SWT.error (SWT.ERROR_NO_HANDLES);
-			OS.gdk_pixbuf_get_from_drawable (pixbuf, image.pixmap, colormap, 0, 0, 0, 0, w [0], h [0]);
+			OS.gdk_pixbuf_get_from_drawable (pixbuf, image.pixmap [imageRepSelector], colormap, 0, 0, 0, 0, w [0], h [0]);
 			if (hasAlpha) {
 				byte [] alpha = data.alphaData;
 				int stride = OS.gdk_pixbuf_get_rowstride (pixbuf);

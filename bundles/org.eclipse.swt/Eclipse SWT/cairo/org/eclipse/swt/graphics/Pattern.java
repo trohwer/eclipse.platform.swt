@@ -77,14 +77,15 @@ public class Pattern extends Resource {
  */
 public Pattern(Device device, Image image) {
 	super(device);
+	int imageRepSelector = 0;
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	this.device.checkCairo();
 	image.createSurface();
-	handle = Cairo.cairo_pattern_create_for_surface(image.surface);
+	handle = Cairo.cairo_pattern_create_for_surface(image.surface[imageRepSelector]);
 	if (handle == 0) SWT.error(SWT.ERROR_NO_HANDLES);
 	Cairo.cairo_pattern_set_extend(handle, Cairo.CAIRO_EXTEND_REPEAT);
-	surface = image.surface;
+	surface = image.surface[imageRepSelector];
 	init();
 }
 

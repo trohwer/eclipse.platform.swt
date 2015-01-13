@@ -99,12 +99,16 @@ boolean drawCaret () {
 	if (parent == null) return false;
 	if (parent.isDisposed ()) return false;
 	long /*int*/ window = parent.paintWindow ();
+	long /*int*/ localSurface = image.surface[0];
+	long /*int*/ localPixmap = image.pixmap[0];
+	long /*int*/ localMask = image.mask[0];
+	
 	if (OS.USE_CAIRO) {
 		long /*int*/ cairo = OS.gdk_cairo_create(window);
 		if (cairo == 0) error(SWT.ERROR_NO_HANDLES);
 		Cairo.cairo_set_source_rgb(cairo, 1, 1, 1);
 		Cairo.cairo_set_operator(cairo, Cairo.CAIRO_OPERATOR_DIFFERENCE);
-		if (image != null && !image.isDisposed() && image.mask == 0) {
+		if (image != null && !image.isDisposed() && localMask == 0) {
 			long /*int*/ surface = Cairo.cairo_get_target(cairo);
 			int nWidth = 0;
 			switch (Cairo.cairo_surface_get_type(surface)) {
@@ -118,7 +122,7 @@ boolean drawCaret () {
 			int nX = x;
 			if ((parent.style & SWT.MIRRORED) != 0) nX = parent.getClientWidth () - nWidth - nX;
 			Cairo.cairo_translate(cairo, nX, y); 
-			Cairo.cairo_set_source_surface(cairo, image.surface, 0, 0);
+			Cairo.cairo_set_source_surface(cairo, localSurface, 0, 0);
 			Cairo.cairo_paint(cairo);
 		} else {
 			int nWidth = width, nHeight = height;
@@ -140,12 +144,12 @@ boolean drawCaret () {
 	OS.gdk_colormap_alloc_color (colormap, color, true, true);
 	OS.gdk_gc_set_foreground (gc, color);
 	OS.gdk_gc_set_function (gc, OS.GDK_XOR);
-	if (image != null && !image.isDisposed() && image.mask == 0) {
+	if (image != null && !image.isDisposed() && localMask == 0) {
 		int[] width = new int[1]; int[] height = new int[1];
-		gdk_pixmap_get_size (image.pixmap, width, height);
+		gdk_pixmap_get_size (localPixmap, width, height);
 	 	int nX = x;
 		if ((parent.style & SWT.MIRRORED) != 0) nX = parent.getClientWidth () - width[0] - nX;
-	 	OS.gdk_draw_drawable(window, gc, image.pixmap, 0, 0, nX, y, width[0], height[0]);
+	 	OS.gdk_draw_drawable(window, gc, localPixmap, 0, 0, nX, y, width[0], height[0]);
 	} else {
 		int nWidth = width, nHeight = height;
 		if (nWidth <= 0) nWidth = DEFAULT_WIDTH;

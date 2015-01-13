@@ -287,14 +287,15 @@ long /*int*/ gtk_button_press_event (long /*int*/ widget, long /*int*/ eventPtr)
 
 @Override
 long /*int*/ gtk_size_allocate (long /*int*/ widget, long /*int*/ allocation) {
-	if (image != null && image.mask != 0) {
-		if (OS.gdk_drawable_get_depth (image.mask) == 1) {
+	int imageRepSelector = 0;
+	if (image != null && image.mask[imageRepSelector] != 0) {
+		if (OS.gdk_drawable_get_depth (image.mask[imageRepSelector]) == 1) {
 			GtkAllocation widgetAllocation = new GtkAllocation ();
 			gtk_widget_get_allocation (widget, widgetAllocation);
 			int xoffset = (int) Math.floor (widgetAllocation.x + ((widgetAllocation.width -OS.GTK_WIDGET_REQUISITION_WIDTH (widget)) * 0.5) + 0.5);
 			int yoffset = (int) Math.floor (widgetAllocation.y + ((widgetAllocation.height - OS.GTK_WIDGET_REQUISITION_HEIGHT (widget)) * 0.5) + 0.5);
 			Rectangle b = image.getBounds();
-			long /*int*/ gdkImagePtr = OS.gdk_drawable_get_image (image.mask, 0, 0, b.width, b.height);
+			long /*int*/ gdkImagePtr = OS.gdk_drawable_get_image (image.mask[imageRepSelector], 0, 0, b.width, b.height);
 			if (gdkImagePtr == 0) error(SWT.ERROR_NO_HANDLES);
 			GdkImage gdkImage = new GdkImage();
 			OS.memmove (gdkImage, gdkImagePtr);
