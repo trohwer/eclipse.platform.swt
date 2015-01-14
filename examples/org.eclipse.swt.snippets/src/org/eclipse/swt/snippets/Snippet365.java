@@ -26,7 +26,17 @@ import org.eclipse.swt.widgets.*;
 public class Snippet365 {
 	static Image oldImage;
 	static Image newImage;
-
+	
+	// Containers
+	static Group containerGroup;
+	static Canvas canvas;
+	static Composite composite;
+	static TabFolder tabFolder;
+	static Group group;
+	static Sash sash;
+	static CTabFolder cTab;
+	static CTabFolder gradientCTab;
+	
 	// Native
 	static Group nativeGroup;
 	static Button buttonCheckBox;
@@ -37,16 +47,19 @@ public class Snippet365 {
 	static Button radio;
 	static Button check;
 	static Button push;
-	static Group group;
-	static Sash sash;
-
+	static Table table;
+	static Tree tree;
+	static ExpandBar expandBar;
+	
 	// Custom
 	static Group customGroup;
 	static CLabel cLabel;
 	static StyledText styledText;
-	static CTabFolder cTab;
-	static CTabFolder gradientCTab;
+	static SashForm sashForm;
 
+	// Item
+	static Group itemGroup;
+	
 	// As Designed
 	static Group defaultBackgroundGroup;
 	static Text text;
@@ -56,10 +69,11 @@ public class Snippet365 {
 	static Slider slider;
 	static List list;
 	static CCombo ccombo;
+	
 	public static void main(String[] args) {
 		final Display display = new Display();
 		final Shell shell = new Shell(display);
-		shell.setText("Transparent Background");
+		shell.setText("Snippet365 - Transparent Background");
 		RowLayout layout = new RowLayout(SWT.VERTICAL);
 		layout.spacing = 20;
 		layout.marginWidth = 10;
@@ -96,6 +110,15 @@ public class Snippet365 {
 			public void widgetSelected(SelectionEvent e) {
 				boolean transparent = ((Button) e.getSource()).getSelection();
 				if (transparent) {
+					// ContainerGroup
+					containerGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					canvas.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					composite.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					tabFolder.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					for (TabItem item : tabFolder.getItems()) {
+						item.getControl().setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					}
+					
 					// Native
 					nativeGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					bar.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
@@ -113,8 +136,12 @@ public class Snippet365 {
 					customGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					cLabel.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					cTab.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
+					cTab.setSelectionBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
 					gradientCTab.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
-
+					sashForm.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
+					for (Control control : sashForm.getChildren()) {
+						control.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
+					}
 					// Default
 					push.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					defaultBackgroundGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
@@ -124,6 +151,12 @@ public class Snippet365 {
 					ccombo.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					text.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					styledText.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					expandBar.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					table.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					tree.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
+					
+					// ItemGroup
+					itemGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 				} else {
 					// Native
 					nativeGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -138,26 +171,44 @@ public class Snippet365 {
 					sash.setBackground(display.getSystemColor(SWT.COLOR_DARK_CYAN));
 					slider.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 					list.setBackground(null);
-
+					text.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					
+					// ContainerGroup
+					containerGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					canvas.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					composite.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					tabFolder.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					for (TabItem item : tabFolder.getItems()) {
+						item.getControl().setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					}
 					// Custom
 					customGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 					cLabel.setBackground((Color) null);
 					styledText.setBackground((Color) null);
+					sashForm.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					for (Control control : sashForm.getChildren()) {
+						control.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					}
 					cTab.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+					cTab.setSelectionBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
 					gradientCTab.setBackground(
 							new Color[] { display.getSystemColor(SWT.COLOR_RED),
 									display.getSystemColor(SWT.COLOR_WHITE) }, new int[] { 90 }, true);
 
-					// AsDesigned
+					// Default
 					defaultBackgroundGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-					push.setBackground(null);
-					text.setBackground(null);
+					push.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 					combo.setBackground(null);
 					ccombo.setBackground(null);
 					dateTime.setBackground(null);
 					progressBar.setBackground(null);
-
+					expandBar.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					table.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					tree.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+					
+					// ItemGroup
+					itemGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 				}
 			}
 
@@ -166,13 +217,20 @@ public class Snippet365 {
 			}
 		});
 
+		// ContainerGroup
+		containerGroup = new Group(shell, SWT.NONE);
+		containerGroup.setText("CONTAINER");
+		layout = new RowLayout();
+		layout.spacing = 20;
+		containerGroup.setLayout(layout);
+		
 		// Native
 		nativeGroup = new Group(shell, SWT.NONE);
 		nativeGroup.setText("NATIVE");
 		layout = new RowLayout();
 		layout.spacing = 20;
 		nativeGroup.setLayout(layout);
-
+		
 		// Custom
 		customGroup = new Group(shell, SWT.NONE);
 		customGroup.setText("CUSTOM");
@@ -187,6 +245,13 @@ public class Snippet365 {
 		layout.spacing = 20;
 		defaultBackgroundGroup.setLayout(layout);
 
+		// ItemGroup
+		itemGroup = new Group(shell, SWT.NONE);
+		itemGroup.setText("ITEM");
+		layout = new RowLayout();
+		layout.spacing = 20;
+		itemGroup.setLayout(layout);
+		
 		// Label
 		label = new Label(nativeGroup, SWT.NONE);
 		label.setText("Label");
@@ -217,7 +282,7 @@ public class Snippet365 {
 		scale = new Scale(nativeGroup, SWT.None);
 		scale.setMaximum(100);
 		scale.setSelection(20);
-
+		
 		// Link
 		link = new Link(nativeGroup, SWT.NONE);
 		link.setText("<A>Sample link</A>");
@@ -229,40 +294,80 @@ public class Snippet365 {
 		list.add("three");
 		list.add("four");
 		
+		// Canvas
+		canvas = new Canvas (containerGroup, SWT.NONE);
+		canvas.setToolTipText("Canvas");
+		canvas.addPaintListener(new PaintListener () {
+			public void paintControl(PaintEvent e) {
+				GC gc = e.gc;
+				gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
+				gc.drawRectangle(e.x+1, e.y+1, e.width-2, e.height-2);
+				gc.drawArc(2, 2, e.width-4, e.height-4, 0, 360);
+			}
+		});
+		
+		// Composite
+		composite = new Composite(containerGroup, SWT.BORDER);
+		composite.setToolTipText("Composite");
+		
+		// TabFolder
+		tabFolder = new TabFolder(itemGroup, SWT.BORDER);
+		tabFolder.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		for (int i=0; i < 2; i++) {
+			TabItem tabItem = new TabItem (tabFolder, SWT.NONE);
+			tabItem.setText ("TabItem " + i);
+			Label label = new Label (tabFolder, SWT.PUSH);
+			label.setText ("Page " + i);
+			tabItem.setControl (label);
+			tabItem.getControl().setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		}
+		tabFolder.pack ();
+		
 		// Group
-		group = new Group(nativeGroup, SWT.NONE);
+		group = new Group(containerGroup, SWT.NONE);
 		group.setText("Group");
 
 		// Sash
-		sash = new Sash(nativeGroup, SWT.HORIZONTAL | SWT.BORDER);
+		sash = new Sash(containerGroup, SWT.HORIZONTAL | SWT.BORDER);
 		sash.setBackground(display.getSystemColor(SWT.COLOR_DARK_CYAN));
 		sash.setLayoutData(new RowData(100, 100));
 		sash.setToolTipText("Sash");
+		
+		// SashForm
+		sashForm = new SashForm(containerGroup, SWT.HORIZONTAL | SWT.BORDER);
+		Label leftLabel = new Label(sashForm, SWT.NONE);
+		leftLabel.setText("SashForm\nLeft\n...\n...\n...\n...\n...");
+		Label rightLabel = new Label(sashForm, SWT.NONE);
+		rightLabel.setText("SashForm\nRight\n...\n...\n...\n...\n...");
 
+		// DateTime
+		dateTime = new DateTime(defaultBackgroundGroup, SWT.NONE);
+		dateTime.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		
 		// Text
-		text = new Text(defaultBackgroundGroup, SWT.BORDER);
+		text = new Text(nativeGroup, SWT.BORDER);
+		text.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 		text.setText("text");
-
-		// Combo
-		combo = new Combo(defaultBackgroundGroup, SWT.BORDER);
-		combo.add("combo");
-		combo.setText("combo");
 		
 		// ProgressBar
 		progressBar = new ProgressBar(defaultBackgroundGroup, SWT.NONE);
 		progressBar.setMaximum(100);
 		progressBar.setSelection(80);
 		
-		// DateTime
-		dateTime = new DateTime(defaultBackgroundGroup, SWT.NONE);
+		// Combo
+		combo = new Combo(defaultBackgroundGroup, SWT.BORDER);
+		combo.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		combo.add("combo");
+		combo.setText("combo");
 		
 		// Slider
-		slider = new Slider(nativeGroup, SWT.VERTICAL | SWT.BORDER);
+		slider = new Slider(nativeGroup, SWT.HORIZONTAL | SWT.BORDER);
 		slider.setSelection(20);
 		slider.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 
 		// CCombo
 		ccombo = new CCombo(defaultBackgroundGroup, SWT.BORDER);
+		ccombo.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
 		ccombo.add("ccombo");
 		ccombo.setText("ccombo");
 
@@ -283,11 +388,11 @@ public class Snippet365 {
 		styledText.append("Two_Three");
 
 		// CTabFolder
-		cTab = new CTabFolder(customGroup, SWT.BORDER);
-		CTabItem cTabItem = new CTabItem(cTab, SWT.CLOSE, 0);
-		cTabItem.setText("Item1");
-		cTabItem = new CTabItem(cTab, SWT.NONE, 1);
-		cTabItem.setText("Item2");
+		cTab = new CTabFolder(containerGroup, SWT.BORDER);
+		for (int i = 0; i < 2; i++) {
+			CTabItem cTabItem = new CTabItem(cTab, SWT.CLOSE, i);
+			cTabItem.setText("CTabItem " + (i + 1));
+		}
 		cTab.setSelection(0);
 
 		// Gradient CTabFolder
@@ -295,12 +400,43 @@ public class Snippet365 {
 		gradientCTab.setBackground(
 				new Color[] { display.getSystemColor(SWT.COLOR_WHITE), display.getSystemColor(SWT.COLOR_RED) },
 				new int[] { 90 }, true);
-		cTabItem = new CTabItem(gradientCTab, SWT.CLOSE, 0);
-		cTabItem.setText("Item1");
-		cTabItem = new CTabItem(gradientCTab, SWT.NONE, 1);
-		cTabItem.setText("Item2");
+		for (int i = 0; i < 2; i++) {
+			CTabItem cTabItem = new CTabItem(gradientCTab, SWT.CLOSE, i);
+			cTabItem.setText("CTabItem " + (i + 1));
+		}
 		gradientCTab.setSelection(0);
 
+		// Table
+		table = new Table(itemGroup, SWT.V_SCROLL);
+		table.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
+		TableItem tableItem = new TableItem(table, SWT.NONE);
+		tableItem.setText("TableItem - One");
+		tableItem = new TableItem(table, SWT.NONE);
+		tableItem.setText("TableItem - Two");
+		
+		// Tree
+		tree = new Tree(itemGroup, SWT.NONE);
+		TreeItem treeItem = new TreeItem (tree, SWT.NONE);
+		treeItem.setText("Parent");
+		TreeItem childItem = new TreeItem (treeItem, SWT.NONE);
+		childItem.setText("Child1");
+		childItem = new TreeItem (treeItem, SWT.NONE);
+		childItem.setText("Child2");
+		treeItem.setExpanded(true);
+		tree.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		
+		// ExpandBar
+		expandBar = new ExpandBar (itemGroup, SWT.V_SCROLL);
+		expandBar.setBackground(display.getSystemColor(SWT.COLOR_CYAN));
+		for (int i = 1; i <= 2; i++) {
+			ExpandItem item1 = new ExpandItem(expandBar, SWT.NONE, 0);
+			item1.setText("Expand_Bar_Entry " + i);
+			item1.setExpanded(true);
+			item1.setHeight(20);
+		}
+		
 		shell.pack();
 		shell.open();
 		while (!shell.isDisposed()) {

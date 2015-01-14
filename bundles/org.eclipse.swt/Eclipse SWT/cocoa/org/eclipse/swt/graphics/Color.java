@@ -347,7 +347,7 @@ public RGBA getRGBA () {
  * @noreference This method is not intended to be referenced by clients.
  */
 public static Color cocoa_new(Device device, double /*float*/ [] handle) {
-	return cocoa_new(device, handle, 1);
+	return cocoa_new(device, handle, 255);
 }
 
 /**	 
@@ -370,7 +370,7 @@ public static Color cocoa_new(Device device, double /*float*/ [] handle, int alp
 	double /*float*/ [] rgbColor = handle;
 	Color color = new Color(device);
 	color.handle = rgbColor;
-	color.handle[3] = alpha / 255f;
+	color.handle[3] = alpha;
 	return color;
 }
 
