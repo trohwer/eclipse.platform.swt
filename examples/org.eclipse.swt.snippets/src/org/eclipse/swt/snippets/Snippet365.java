@@ -31,11 +31,8 @@ public class Snippet365 {
 	static Group containerGroup;
 	static Canvas canvas;
 	static Composite composite;
-	static TabFolder tabFolder;
 	static Group group;
 	static Sash sash;
-	static CTabFolder cTab;
-	static CTabFolder gradientCTab;
 	
 	// Native
 	static Group nativeGroup;
@@ -47,18 +44,21 @@ public class Snippet365 {
 	static Button radio;
 	static Button check;
 	static Button push;
-	static Table table;
-	static Tree tree;
-	static ExpandBar expandBar;
-	
+
 	// Custom
 	static Group customGroup;
 	static CLabel cLabel;
 	static StyledText styledText;
 	static SashForm sashForm;
+	static CTabFolder cTab;
+	static CTabFolder gradientCTab;
 
 	// Item
 	static Group itemGroup;
+	static TabFolder tabFolder;
+	static Table table;
+	static Tree tree;
+	static ExpandBar expandBar;
 	
 	// As Designed
 	static Group defaultBackgroundGroup;
@@ -136,7 +136,6 @@ public class Snippet365 {
 					customGroup.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					cLabel.setBackground(display.getSystemColor(SWT.COLOR_TRANSPARENT));
 					cTab.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
-					cTab.setSelectionBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
 					gradientCTab.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
 					sashForm.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_TRANSPARENT));
 					for (Control control : sashForm.getChildren()) {
@@ -190,7 +189,6 @@ public class Snippet365 {
 						control.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 					}
 					cTab.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-					cTab.setSelectionBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 
 					gradientCTab.setBackground(
 							new Color[] { display.getSystemColor(SWT.COLOR_RED),
@@ -219,6 +217,7 @@ public class Snippet365 {
 
 		// ContainerGroup
 		containerGroup = new Group(shell, SWT.NONE);
+		containerGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		containerGroup.setText("CONTAINER");
 		layout = new RowLayout();
 		layout.spacing = 20;
@@ -226,6 +225,7 @@ public class Snippet365 {
 		
 		// Native
 		nativeGroup = new Group(shell, SWT.NONE);
+		nativeGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		nativeGroup.setText("NATIVE");
 		layout = new RowLayout();
 		layout.spacing = 20;
@@ -233,6 +233,7 @@ public class Snippet365 {
 		
 		// Custom
 		customGroup = new Group(shell, SWT.NONE);
+		customGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		customGroup.setText("CUSTOM");
 		layout = new RowLayout();
 		layout.spacing = 20;
@@ -240,6 +241,7 @@ public class Snippet365 {
 
 		// AsDesigned
 		defaultBackgroundGroup = new Group(shell, SWT.NONE);
+		defaultBackgroundGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		defaultBackgroundGroup.setText("Default Background");
 		layout = new RowLayout();
 		layout.spacing = 20;
@@ -247,6 +249,7 @@ public class Snippet365 {
 
 		// ItemGroup
 		itemGroup = new Group(shell, SWT.NONE);
+		itemGroup.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		itemGroup.setText("ITEM");
 		layout = new RowLayout();
 		layout.spacing = 20;
@@ -437,8 +440,8 @@ public class Snippet365 {
 			item1.setHeight(20);
 		}
 		
-		shell.pack();
 		shell.open();
+		shell.pack();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
