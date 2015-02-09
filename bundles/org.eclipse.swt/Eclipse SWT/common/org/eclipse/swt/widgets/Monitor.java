@@ -27,7 +27,7 @@ public final class Monitor {
 	int clientX, clientY, clientWidth, clientHeight;
 	// High dpi attributes
 	int dpi;
-	float scaleFactor;
+	int imageSelector;
 	
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -102,8 +102,8 @@ public int getDpi () {
 /**
  * @since 3.104
  */
-public float getScaleFactor () {
-	return scaleFactor;
+public int getImageselector () {
+	return imageSelector;
 }
 
 }
