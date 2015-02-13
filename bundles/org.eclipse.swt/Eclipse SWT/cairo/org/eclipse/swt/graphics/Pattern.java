@@ -77,7 +77,7 @@ public class Pattern extends Resource {
  */
 public Pattern(Device device, Image image) {
 	super(device);
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	this.device.checkCairo();

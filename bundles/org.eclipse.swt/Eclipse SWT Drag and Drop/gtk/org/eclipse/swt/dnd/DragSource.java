@@ -285,7 +285,7 @@ protected void checkSubclass () {
 }
 
 void drag(Event dragEvent) {
-	int imageRepSelector = 0;
+	int imageRepSelector = getDisplay ().getImageSelector ();
 	moveData = false;	
 	DNDEvent event = new DNDEvent();
 	event.widget = this;	

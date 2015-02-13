@@ -380,7 +380,7 @@ void deregister () {
  * @since 3.6
  */
 public void drawBackground (GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
-	int imageRepSelector = 0;
+	int imageRepSelector = display.getImageSelector ();
 	checkWidget ();
 	if (gc == null) error (SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);

@@ -954,4 +954,17 @@ static long /*int*/ XIOErrorProc (long /*int*/ xDisplay) {
 	return 0;
 }
 
+public int getImageSelector() {
+	Point currentDpi = getScreenDPI ();
+
+	if (currentDpi.x < 144) {
+		return 0;
+	} else if ((currentDpi.x >= 144)&&(currentDpi.x < 192)) {
+		return 1;
+	} else if (currentDpi.x >= 192) {
+		return 2;
+	}
+	return 0;
+}
+
 }

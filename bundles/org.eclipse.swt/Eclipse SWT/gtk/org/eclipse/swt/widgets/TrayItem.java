@@ -287,7 +287,7 @@ long /*int*/ gtk_button_press_event (long /*int*/ widget, long /*int*/ eventPtr)
 
 @Override
 long /*int*/ gtk_size_allocate (long /*int*/ widget, long /*int*/ allocation) {
-	int imageRepSelector = 0;
+	int imageRepSelector = display.getImageSelector ();
 	if (image != null && image.mask[imageRepSelector] != 0) {
 		if (OS.gdk_drawable_get_depth (image.mask[imageRepSelector]) == 1) {
 			GtkAllocation widgetAllocation = new GtkAllocation ();

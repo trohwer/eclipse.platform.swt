@@ -114,7 +114,7 @@ void drawBackground (Control control, long /*int*/ window, long /*int*/ region, 
 }
 
 void drawBackground (Control control, long /*int*/ window, long /*int*/ cr, long /*int*/ region, int x, int y, int width, int height) {
-	int imageRepSelector =0;
+	int imageRepSelector = display.getImageSelector ();
 	if (OS.USE_CAIRO) {
 		long /*int*/ cairo = cr != 0 ? cr : OS.gdk_cairo_create(window);
 		if (cairo == 0) error (SWT.ERROR_NO_HANDLES);
@@ -4179,7 +4179,7 @@ public void setBackgroundImage (Image image) {
 }
 
 void setBackgroundPixmap (Image image) {
-	int imageRepSelector = 0;
+	int imageRepSelector = display.getImageSelector ();
 	long /*int*/ window = gtk_widget_get_window (paintHandle ());
 	if (window != 0) {
 		if (image.pixmap [imageRepSelector] != 0) {

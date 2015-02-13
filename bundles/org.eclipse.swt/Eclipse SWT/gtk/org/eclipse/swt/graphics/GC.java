@@ -471,7 +471,7 @@ long /*int*/ convertRgn(long /*int*/ rgn, double[] matrix) {
  * </ul>
  */
 public void copyArea(Image image, int x, int y) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.type != SWT.BITMAP || image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -551,7 +551,7 @@ public void copyArea(int srcX, int srcY, int width, int height, int destX, int d
  * @since 3.1 
  */
 public void copyArea(int srcX, int srcY, int width, int height, int destX, int destY, boolean paint) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width <= 0 || height <= 0) return;
 	int deltaX = destX - srcX, deltaY = destY - srcY;
@@ -877,7 +877,7 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 }
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	int imgWidth, imgHeight;
 	if (OS.USE_CAIRO){
 	 	imgWidth = srcImage.width;
@@ -1010,7 +1010,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	}
 }
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	if (srcWidth == destWidth && srcHeight == destHeight) {
 		OS.gdk_draw_drawable(data.drawable, handle, srcImage.pixmap[imageRepSelector], srcX, srcY, destX, destY, destWidth, destHeight);
 	} else {
@@ -1026,7 +1026,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	}
 }
 void drawImageAlpha(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	if (srcImage.alpha == 0) return;
 	if (srcImage.alpha == 255) {
 		drawImage(srcImage, srcX, srcY, srcWidth, srcHeight, destX, destY, destWidth, destHeight, simple, imgWidth, imgHeight);
@@ -1063,7 +1063,7 @@ void drawImageAlpha(Image srcImage, int srcX, int srcY, int srcWidth, int srcHei
 	OS.g_object_unref(pixbuf);
 }
 void drawImageMask(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	long /*int*/ drawable = data.drawable;
 	long /*int*/ colorPixmap = srcImage.pixmap[imageRepSelector];
 	/* Generate the mask if necessary. */
@@ -1159,7 +1159,7 @@ void drawImageMask(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeig
 	if (srcImage.transparentPixel != -1 && srcImage.memGC != null) srcImage.destroyMask();
 }
 void drawImageXRender(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight, long /*int*/ maskPixmap, int maskType) {
-	int imageRepSelector = 0;
+	int imageRepSelector = device.getImageSelector ();
 	int translateX = 0, translateY = 0;
 	long /*int*/ drawable = data.drawable;
 	if (data.image == null && !data.realDrawable) {
