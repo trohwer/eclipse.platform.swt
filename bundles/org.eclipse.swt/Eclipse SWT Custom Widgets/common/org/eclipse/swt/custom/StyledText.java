@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,6 +157,12 @@ public class StyledText extends Canvas {
 	int alignmentMargin;
 	int newOrientation = SWT.NONE;
 	int accCaretOffset;
+	Accessible acc;
+	AccessibleControlAdapter accControlAdapter;
+	AccessibleAttributeAdapter accAttributeAdapter;
+	AccessibleEditableTextListener accEditableTextListener;
+	AccessibleTextExtendedAdapter accTextExtendedAdapter;
+	AccessibleAdapter accAdapter;
 	
 	//block selection
 	boolean blockSelection;
@@ -673,7 +679,8 @@ public class StyledText extends Canvas {
 	class RTFWriter extends TextWriter {
 		static final int DEFAULT_FOREGROUND = 0;
 		static final int DEFAULT_BACKGROUND = 1;
-		Vector colorTable, fontTable;
+		Vector<Color> colorTable;
+		Vector<Font> fontTable;
 		boolean WriteUnicode;
 		
 	/**
@@ -687,11 +694,11 @@ public class StyledText extends Canvas {
 	 */
 	public RTFWriter(int start, int length) {
 		super(start, length);
-		colorTable = new Vector();
-		fontTable = new Vector();
-		colorTable.addElement(getForeground());
-		colorTable.addElement(getBackground());
-		fontTable.addElement(getFont());
+		colorTable = new Vector<Color>();
+		fontTable = new Vector<Font>();
+		colorTable.add(getForeground());
+		colorTable.add(getBackground());
+		fontTable.add(getFont());
 		setUnicode();
 	}
 	/**
@@ -720,7 +727,7 @@ public class StyledText extends Canvas {
 		int index = colorTable.indexOf(color);
 		if (index == -1) {
 			index = colorTable.size();
-			colorTable.addElement(color);
+			colorTable.add(color);
 		}
 		return index;
 	}
@@ -736,7 +743,7 @@ public class StyledText extends Canvas {
 		int index = fontTable.indexOf(font);
 		if (index == -1) {
 			index = fontTable.size();
-			fontTable.addElement(font);
+			fontTable.add(font);
 		}
 		return index;
 	}
@@ -831,13 +838,13 @@ public class StyledText extends Canvas {
 			header.append("\\f");
 			header.append(i);
 			header.append(" ");
-			FontData fd = ((Font)fontTable.elementAt(i)).getFontData()[0];
+			FontData fd = fontTable.get(i).getFontData()[0];
 			header.append(fd.getName());
 			header.append(";");			
 		}
 		header.append("}}\n{\\colortbl");
 		for (int i = 0; i < colorTable.size(); i++) {
-			Color color = (Color) colorTable.elementAt(i);
+			Color color = colorTable.get(i);
 			header.append("\\red");
 			header.append(color.getRed());
 			header.append("\\green");
@@ -6376,8 +6383,9 @@ void handleVerticalScroll(Event event) {
  * Add accessibility support for the widget.
  */
 void initializeAccessible() {
-	final Accessible accessible = getAccessible();
-	accessible.addAccessibleListener(new AccessibleAdapter() {
+	acc = getAccessible();
+
+	accAdapter = new AccessibleAdapter() {
 		@Override
 		public void getName (AccessibleEvent e) {
 			String name = null;
@@ -6403,8 +6411,10 @@ void initializeAccessible() {
 			}
 			e.result = shortcut;
 		}
-	});
-	accessible.addAccessibleTextListener(new AccessibleTextExtendedAdapter() {
+	};
+	acc.addAccessibleListener(accAdapter);
+
+	accTextExtendedAdapter = new AccessibleTextExtendedAdapter() {
 		@Override
 		public void getCaretOffset(AccessibleTextEvent e) {
 			e.offset = StyledText.this.getCaretOffset();
@@ -6743,8 +6753,10 @@ void initializeAccessible() {
 			st.setHorizontalPixel(horizontalPixel);
 			e.result = ACC.OK;
 		}
-	});
-	accessible.addAccessibleEditableTextListener(new AccessibleEditableTextListener() {
+	};
+	acc.addAccessibleTextListener(accTextExtendedAdapter);
+
+	accEditableTextListener = new AccessibleEditableTextListener() {
 		public void setTextAttributes(AccessibleTextAttributeEvent e) {
 			// This method must be implemented by the application
 			e.result = ACC.OK;
@@ -6772,8 +6784,10 @@ void initializeAccessible() {
             st.copy();
             e.result = ACC.OK;
 		}
-	});
-	accessible.addAccessibleAttributeListener(new AccessibleAttributeAdapter() {
+	};
+	acc.addAccessibleEditableTextListener(accEditableTextListener);
+
+	accAttributeAdapter = new AccessibleAttributeAdapter() {
 		@Override
 		public void getAttributes(AccessibleAttributeEvent e) {
 			StyledText st = StyledText.this;
@@ -6860,8 +6874,10 @@ void initializeAccessible() {
 				}
 			}
 		}
-	});
-	accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
+	};
+	acc.addAccessibleAttributeListener(accAttributeAdapter);
+
+	accControlAdapter = new AccessibleControlAdapter() {
 		@Override
 		public void getRole(AccessibleControlEvent e) {
 			e.detail = ACC.ROLE_TEXT;
@@ -6881,13 +6897,32 @@ void initializeAccessible() {
 		public void getValue(AccessibleControlEvent e) {
 			e.result = StyledText.this.getText();
 		}
-	});	
+	};
+	acc.addAccessibleControlListener(accControlAdapter);
+
 	addListener(SWT.FocusIn, new Listener() {
 		public void handleEvent(Event event) {
-			accessible.setFocus(ACC.CHILDID_SELF);
+			acc.setFocus(ACC.CHILDID_SELF);
 		}
 	});	
 }
+
+@Override
+public void dispose() {
+	/*
+	 * Note: It is valid to attempt to dispose a widget more than once.
+	 * Added check for this.
+	 */
+	if (!isDisposed()) {
+		acc.removeAccessibleControlListener(accControlAdapter);
+		acc.removeAccessibleAttributeListener(accAttributeAdapter);
+		acc.removeAccessibleEditableTextListener(accEditableTextListener);
+		acc.removeAccessibleTextListener(accTextExtendedAdapter);
+		acc.removeAccessibleListener(accAdapter);
+	}
+	super.dispose();
+}
+
 /* 
  * Return the Label immediately preceding the receiver in the z-order, 
  * or null if none. 

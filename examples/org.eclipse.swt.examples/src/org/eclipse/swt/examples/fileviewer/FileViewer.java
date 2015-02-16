@@ -11,18 +11,60 @@
 package org.eclipse.swt.examples.fileviewer;
 
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.*;
-import org.eclipse.swt.widgets.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.TreeAdapter;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * File Viewer example
@@ -404,6 +446,7 @@ public class FileViewer {
 		tree.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 
 		tree.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				final TreeItem[] selection = tree.getSelection();
 				if (selection != null && selection.length != 0) {
@@ -413,6 +456,7 @@ public class FileViewer {
 					notifySelectedDirectory(file);
 				}
 			}
+			@Override
 			public void widgetDefaultSelected(SelectionEvent event) {
 				final TreeItem[] selection = tree.getSelection();
 				if (selection != null && selection.length != 0) {
@@ -452,6 +496,7 @@ public class FileViewer {
 		dragSource.addDragListener(new DragSourceListener() {
 			TreeItem[] dndSelection = null;
 			String[] sourceNames = null;
+			@Override
 			public void dragStart(DragSourceEvent event){
 				dndSelection = tree.getSelection();
 				sourceNames = null;
@@ -459,6 +504,7 @@ public class FileViewer {
 				isDragging = true;
 				processedDropFiles = null;
 			}
+			@Override
 			public void dragFinished(DragSourceEvent event){
 				dragSourceHandleDragFinished(event, sourceNames);
 				dndSelection = null;
@@ -467,6 +513,7 @@ public class FileViewer {
 				processedDropFiles = null;
 				handleDeferredRefresh();
 			}
+			@Override
 			public void dragSetData(DragSourceEvent event){
 				if (dndSelection == null || dndSelection.length == 0) return;
 				if (! FileTransfer.getInstance().isSupportedType(event.dataType)) return;
@@ -760,12 +807,14 @@ public class FileViewer {
 		dragSource.addDragListener(new DragSourceListener() {
 			TableItem[] dndSelection = null;
 			String[] sourceNames = null;
+			@Override
 			public void dragStart(DragSourceEvent event){
 				dndSelection = table.getSelection();
 				sourceNames = null;
 				event.doit = dndSelection.length > 0;
 				isDragging = true;
 			}
+			@Override
 			public void dragFinished(DragSourceEvent event){
 				dragSourceHandleDragFinished(event, sourceNames);
 				dndSelection = null;
@@ -773,6 +822,7 @@ public class FileViewer {
 				isDragging = false;
 				handleDeferredRefresh();
 			}
+			@Override
 			public void dragSetData(DragSourceEvent event){
 				if (dndSelection == null || dndSelection.length == 0) return;
 				if (! FileTransfer.getInstance().isSupportedType(event.dataType)) return;
@@ -878,7 +928,7 @@ public class FileViewer {
 		 * If not already expanded, recursively expands the parents of the specified
 		 * directory until it is visible.
 		 */
-		Vector <File> path = new Vector<File>();
+		List <File> path = new ArrayList<File>();
 		// Build a stack of paths from the root of the tree
 		while (dir != null) {
 			path.add(dir);
@@ -888,7 +938,7 @@ public class FileViewer {
 		TreeItem[] items = tree.getItems();
 		TreeItem lastItem = null;
 		for (int i = path.size() - 1; i >= 0; --i) {
-			final File pathElement = path.elementAt(i);
+			final File pathElement = path.get(i);
 
 			// Search for a particular File in the array of tree items
 			// No guarantee that the items are sorted in any recognizable fashion, so we'll
@@ -1124,7 +1174,7 @@ public class FileViewer {
 		progressDialog.open();
 
 		// Copy each file
-		Vector /* of File */<File> processedFiles = new Vector<File>();
+		List<File> processedFiles = new ArrayList<File>();
 		for (int i = 0; (i < sourceNames.length) && (! progressDialog.isCancelled()); i++){
 			final File source = new File(sourceNames[i]);
 			final File dest = new File(targetFile, source.getName());
@@ -1245,7 +1295,7 @@ public class FileViewer {
 		 * -- PORTABILITY ISSUES HERE --
 		 */
 		if (System.getProperty ("os.name").indexOf ("Windows") != -1) {
-			Vector /* of File */<File> list = new Vector<File>();
+			List<File> list = new ArrayList<File>();
 			list.add(new File(DRIVE_A));
 			list.add(new File(DRIVE_B));
 			for (char i = 'c'; i <= 'z'; ++i) {
@@ -1503,6 +1553,7 @@ public class FileViewer {
 	 * Manages the worker's thread
 	 */
 	private final Runnable workerRunnable = new Runnable() {
+		@Override
 		public void run() {
 			while (! workerStopped) {
 				synchronized(workerLock) {
@@ -1531,6 +1582,7 @@ public class FileViewer {
 		File[] dirList;
 		// Clear existing information
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				tableContentsOfLabel.setText(FileViewer.getResourceString("details.ContentsOf.text",
 					new Object[] { workerStateDir.getPath() }));
@@ -1583,6 +1635,7 @@ public class FileViewer {
 		final String[] strings = new String[] { nameString, sizeString, typeString, dateString };
 
 		display.syncExec(new Runnable() {
+			@Override
 			public void run () {
 				// guard against the shell being closed before this runs
 				if (shell.isDisposed()) return;

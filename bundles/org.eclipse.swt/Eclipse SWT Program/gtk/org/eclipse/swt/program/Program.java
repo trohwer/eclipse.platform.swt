@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Instances of this class represent programs and
@@ -42,10 +43,10 @@ public final class Program {
 	 * false if expects a path
 	 */
 	boolean gnomeExpectUri;
-	
+
 	static long /*int*/ modTime;
 	static Hashtable mimeTable;
-	
+
 	static long /*int*/ cdeShell;
 
 	static final String[] CDE_ICON_EXT = { ".m.pm",   ".l.pm",   ".s.pm",   ".t.pm" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -59,7 +60,7 @@ public final class Program {
 	static final int DESKTOP_GIO = 2;
 	static final int DESKTOP_CDE = 3;
 	static final int PREFERRED_ICON_SIZE = 16;
-	
+
 /**
  * Prevents uninitialized instances from being created outside the package.
  */
@@ -68,7 +69,7 @@ Program() {
 
 /* Determine the desktop for the given display. */
 static int getDesktop(final Display display) {
-	if (display == null) return DESKTOP_UNKNOWN;	
+	if (display == null) return DESKTOP_UNKNOWN;
 	Integer desktopValue = (Integer)display.getData(DESKTOP_DATA);
 	if (desktopValue != null) return desktopValue.intValue();
 	int desktop = DESKTOP_UNKNOWN;
@@ -78,7 +79,7 @@ static int getDesktop(final Display display) {
 		display.setData(DESKTOP_DATA, new Integer(desktop));
 		return desktop;
 	}
-	
+
 	/* Get the list of properties on the root window. */
 	long /*int*/ xDisplay = OS.gdk_x11_display_get_xdisplay(OS.gdk_display_get_default());
 	long /*int*/ rootWindow = OS.XDefaultRootWindow(xDisplay);
@@ -94,13 +95,13 @@ static int getDesktop(final Display display) {
 	 * Feature in Linux Desktop. There is currently no official way to
 	 * determine whether the Gnome window manager or gnome-vfs is
 	 * available. Earlier versions including Red Hat 9 and Suse 9 provide
-	 * a documented Gnome specific property on the root window 
+	 * a documented Gnome specific property on the root window
 	 * WIN_SUPPORTING_WM_CHECK. This property is no longer supported in newer
 	 * versions such as Fedora Core 2.
-	 * The workaround is to simply check that the window manager is a 
-	 * compliant one (property _NET_SUPPORTING_WM_CHECK) and to attempt to load 
+	 * The workaround is to simply check that the window manager is a
+	 * compliant one (property _NET_SUPPORTING_WM_CHECK) and to attempt to load
 	 * our native library that depends on gnome-vfs.
-	 * 
+	 *
 	 * Note: GIO is used when available instead of gnome-vfs.
 	 */
 	if (desktop == DESKTOP_UNKNOWN) {
@@ -127,7 +128,7 @@ static int getDesktop(final Display display) {
 				}
 				OS.dlclose(libgio);
 			}
-			
+
 			if (desktop == DESKTOP_UNKNOWN && gnome_init()) {
 				desktop = DESKTOP_GNOME;
 				long /*int*/ icon_theme = GNOME.gnome_icon_theme_new();
@@ -137,7 +138,7 @@ static int getDesktop(final Display display) {
 						LONG gnomeIconTheme = (LONG)display.getData(ICON_THEME_DATA);
 						if (gnomeIconTheme == null) return;
 						display.setData(ICON_THEME_DATA, null);
-						/* 
+						/*
 						 * Note.  gnome_icon_theme_new uses g_object_new to allocate the
 						 * data it returns. Use g_object_unref to free the pointer it returns.
 						 */
@@ -149,7 +150,7 @@ static int getDesktop(final Display display) {
 	}
 
 	/*
-	* On CDE, the atom below may exist without DTWM running. If the atom 
+	* On CDE, the atom below may exist without DTWM running. If the atom
 	* below is defined, the CDE database exists and the available
 	* applications can be queried.
 	*/
@@ -216,7 +217,7 @@ static Hashtable cde_getDataTypeInfo() {
 	long /*int*/ dataTypeList = CDE.DtDtsDataTypeNames();
 	if (dataTypeList != 0) {
 		/* For each data type name in the list */
-		index = 0; 
+		index = 0;
 		long /*int*/ [] dataType = new long /*int*/ [1];
 		OS.memmove(dataType, dataTypeList + (index++ * 4), 4);
 		while (dataType[0] != 0) {
@@ -225,20 +226,20 @@ static Hashtable cde_getDataTypeInfo() {
 			OS.memmove(dataTypeBuf, dataType[0], length);
 			/* Use the character encoding for the default locale */
 			String dataTypeName = new String(Converter.mbcsToWcs(null, dataTypeBuf));
-     		
+
 			/* The data type is valid if it is not an action, and it has an extension and an action. */
 			String extension = cde_getExtension(dataTypeName);
 			if (!CDE.DtDtsDataTypeIsAction(dataTypeBuf) &&
 				extension != null && cde_getAction(dataTypeName) != null) {
-				Vector exts = new Vector();
-				exts.addElement(extension);
+				List<String> exts = new ArrayList<String>();
+				exts.add(extension);
 				dataTypeInfo.put(dataTypeName, exts);
 			}
 			OS.memmove(dataType, dataTypeList + (index++ * 4), 4);
 		}
 		CDE.DtDtsFreeDataTypeNames(dataTypeList);
 	}
-	
+
 	return dataTypeInfo;
 }
 
@@ -251,7 +252,7 @@ static String cde_getExtension(String dataType) {
 
 /**
  * CDE - Get Image Data
- * 
+ *
  * This method returns the image data of the icon associated with
  * the data type. Since CDE supports multiple sizes of icons, several
  * attempts are made to locate an icon of the desired size and format.
@@ -262,7 +263,7 @@ static String cde_getExtension(String dataType) {
  */
 ImageData cde_getImageData() {
 	// TODO
-	return null;	
+	return null;
 }
 
 static String cde_getMimeType(String extension) {
@@ -272,9 +273,9 @@ static String cde_getMimeType(String extension) {
 	Enumeration keys = mimeInfo.keys();
 	while (mimeType == null && keys.hasMoreElements()) {
 		String type = (String)keys.nextElement();
-		Vector mimeExts = (Vector)mimeInfo.get(type);
+		List<String> mimeExts = (ArrayList<String>)mimeInfo.get(type);
 		for (int index = 0; index < mimeExts.size(); index++){
-			if (extension.equals(mimeExts.elementAt(index))) {
+			if (extension.equals(mimeExts.get(index))) {
 				mimeType = type;
 				break;
 			}
@@ -327,7 +328,7 @@ static boolean cde_isExecutable(String fileName) {
 }
 
 static String[] parseCommand(String cmd) {
-	Vector args = new Vector();
+	List<String> args = new ArrayList<String>();
 	int sIndex = 0;
 	int eIndex;
 	while (sIndex < cmd.length()) {
@@ -343,14 +344,14 @@ static String[] parseCommand(String cmd) {
 				 */
 				eIndex = sIndex + 1;
 				while (eIndex < cmd.length() && cmd.charAt(eIndex) != cmd.charAt(sIndex)) eIndex++;
-				if (eIndex >= cmd.length()) { 
+				if (eIndex >= cmd.length()) {
 					/* The terminating quote was not found
 					 * Add the argument as is with only one initial quote.
 					 */
-					args.addElement(cmd.substring(sIndex, eIndex));
+					args.add(cmd.substring(sIndex, eIndex));
 				} else {
 					/* Add the argument, trimming off the quotes. */
-					args.addElement(cmd.substring(sIndex + 1, eIndex));
+					args.add(cmd.substring(sIndex + 1, eIndex));
 				}
 				sIndex = eIndex + 1;
 			}
@@ -358,21 +359,17 @@ static String[] parseCommand(String cmd) {
 				/* Use white space for the delimiters. */
 				eIndex = sIndex;
 				while (eIndex < cmd.length() && !Compatibility.isWhitespace(cmd.charAt(eIndex))) eIndex++;
-				args.addElement(cmd.substring(sIndex, eIndex));
+				args.add(cmd.substring(sIndex, eIndex));
 				sIndex = eIndex + 1;
 			}
 		}
 	}
-	
-	String[] strings = new String[args.size()];
-	for (int index =0; index < args.size(); index++) {
-		strings[index] = (String)args.elementAt(index);
-	}
-	return strings;
+
+	return args.toArray(new String[args.size()]);
 }
 
 /**
- * GNOME 2.4 - Execute the program for the given file. 
+ * GNOME 2.4 - Execute the program for the given file.
  */
 boolean gnome_execute(String fileName) {
 	byte[] mimeTypeBuffer = Converter.wcsToMbcs(null, name, true);
@@ -388,7 +385,7 @@ boolean gnome_execute(String fileName) {
 }
 
 /**
- * GNOME 2.4 - Launch the default program for the given file. 
+ * GNOME 2.4 - Launch the default program for the given file.
  */
 static boolean gnome_launch(String fileName) {
 	byte[] fileNameBuffer = Converter.wcsToMbcs(null, fileName, true);
@@ -400,8 +397,8 @@ static boolean gnome_launch(String fileName) {
 
 /**
  * GNOME - Get Image Data
- * 
- */ 
+ *
+ */
 ImageData gnome_getImageData() {
 	if (iconPath == null) return null;
 	try {
@@ -441,17 +438,17 @@ static Program gnome_getProgram(Display display, String mimeType) {
 			int length = OS.strlen(application.command);
 			if (length > 0) {
 				byte[] buffer = new byte[length];
-				OS.memmove(buffer, application.command, length);		
+				OS.memmove(buffer, application.command, length);
 				program.command = new String(Converter.mbcsToWcs(null, buffer));
 			}
 		}
 		program.gnomeExpectUri = application.expects_uris == GNOME.GNOME_VFS_MIME_APPLICATION_ARGUMENT_TYPE_URIS;
-		
+
 		int length = OS.strlen(application.id);
 		byte[] buffer = new byte[length + 1];
 		OS.memmove(buffer, application.id, length);
 		LONG gnomeIconTheme = (LONG)display.getData(ICON_THEME_DATA);
-		long /*int*/ icon_name = GNOME.gnome_icon_lookup(gnomeIconTheme.value, 0, null, buffer, 0, mimeTypeBuffer, 
+		long /*int*/ icon_name = GNOME.gnome_icon_lookup(gnomeIconTheme.value, 0, null, buffer, 0, mimeTypeBuffer,
 				GNOME.GNOME_ICON_LOOKUP_FLAGS_NONE, null);
 		long /*int*/ path = 0;
 		if (icon_name != 0) path = GNOME.gnome_icon_theme_lookup_icon(gnomeIconTheme.value, icon_name, PREFERRED_ICON_SIZE, null, null);
@@ -467,7 +464,7 @@ static Program gnome_getProgram(Display display, String mimeType) {
 		if (icon_name != 0) OS.g_free(icon_name);
 		GNOME.gnome_vfs_mime_application_free(ptr);
 	}
-	
+
 	return program != null && program.command != null ? program : null;
 }
 
@@ -483,12 +480,12 @@ static boolean gnome_isExecutable(String fileName) {
 	/* check if the file is executable */
 	byte [] fileNameBuffer = Converter.wcsToMbcs(null, fileName, true);
 	if (!GNOME.gnome_vfs_is_executable_command_string(fileNameBuffer)) return false;
-	
+
 	/* check if the mime type is executable */
 	long /*int*/ uri = GNOME.gnome_vfs_make_uri_from_input(fileNameBuffer);
 	long /*int*/ mimeType = GNOME.gnome_vfs_get_mime_type(uri);
 	OS.g_free(uri);
-	
+
 	byte[] exeType = Converter.wcsToMbcs (null, "application/x-executable", true); //$NON-NLS-1$
 	boolean result = GNOME.gnome_vfs_mime_type_get_equivalence(mimeType, exeType) != GNOME.GNOME_VFS_MIME_UNRELATED;
 	if (!result) {
@@ -566,24 +563,20 @@ static String[] getExtensions(Display display) {
 	if (mimeInfo == null) return new String[0];
 
 	/* Create a unique set of the file extensions. */
-	Vector extensions = new Vector();
+	List<String> extensions = new ArrayList<String>();
 	Enumeration keys = mimeInfo.keys();
 	while (keys.hasMoreElements()) {
 		String mimeType = (String)keys.nextElement();
-		Vector mimeExts = (Vector)mimeInfo.get(mimeType);
+		List<String> mimeExts = (List<String>)mimeInfo.get(mimeType);
 		for (int index = 0; index < mimeExts.size(); index++){
-			if (!extensions.contains(mimeExts.elementAt(index))) {
-				extensions.addElement(mimeExts.elementAt(index));
+			if (!extensions.contains(mimeExts.get(index))) {
+				extensions.add(mimeExts.get(index));
 			}
 		}
 	}
-			
+
 	/* Return the list of extensions. */
-	String[] extStrings = new String[extensions.size()];
-	for (int index = 0; index < extensions.size(); index++) {
-		extStrings[index] = (String)extensions.elementAt(index);
-	}			
-	return extStrings;
+	return extensions.toArray(new String[extensions.size()]);
 }
 
 /**
@@ -610,7 +603,7 @@ static Program[] getPrograms(Display display) {
 		case DESKTOP_CDE: mimeInfo = cde_getDataTypeInfo(); break;
 	}
 	if (mimeInfo == null) return new Program[0];
-	Vector programs = new Vector();
+	List<Program> programs = new ArrayList<Program>();
 	Enumeration keys = mimeInfo.keys();
 	while (keys.hasMoreElements()) {
 		String mimeType = (String)keys.nextElement();
@@ -618,13 +611,10 @@ static Program[] getPrograms(Display display) {
 		switch (desktop) {
 			case DESKTOP_CDE: program = cde_getProgram(display, mimeType); break;
 		}
-		if (program != null) programs.addElement(program);
+		if (program != null) programs.add(program);
 	}
-	Program[] programList = new Program[programs.size()];
-	for (int index = 0; index < programList.length; index++) {
-		programList[index] = (Program)programs.elementAt(index);
-	}
-	return programList;
+
+	return programs.toArray(new Program[programs.size()]);
 }
 
 ImageData gio_getImageData() {
@@ -636,7 +626,7 @@ ImageData gio_getImageData() {
 	if (gicon != 0) {
 		long /*int*/ gicon_info = OS.gtk_icon_theme_lookup_by_gicon (icon_theme, gicon, 16/*size*/, 0);
 		if (gicon_info != 0) {
-			long /*int*/ pixbuf = OS.gtk_icon_info_load_icon(gicon_info, null);		
+			long /*int*/ pixbuf = OS.gtk_icon_info_load_icon(gicon_info, null);
 			if (pixbuf != 0) {
 				int stride = OS.gdk_pixbuf_get_rowstride(pixbuf);
 				long /*int*/ pixels = OS.gdk_pixbuf_get_pixels(pixbuf);
@@ -676,9 +666,9 @@ ImageData gio_getImageData() {
 static Hashtable gio_getMimeInfo() {
 	long /*int*/ mimeDatabase = 0, fileInfo = 0;
 	/*
-	* The file 'globs' contain the file extensions  
-	* associated to the mime-types. Each line that has 
-	* to be parsed corresponds to a different extension 
+	* The file 'globs' contain the file extensions
+	* associated to the mime-types. Each line that has
+	* to be parsed corresponds to a different extension
 	* of a mime-type. The template of such line is -
 	* application/pdf:*.pdf
 	*/
@@ -698,17 +688,17 @@ static Hashtable gio_getMimeInfo() {
 				modTime = modTimestamp[0];
 				long /*int*/ reader = OS.g_data_input_stream_new (fileInputStream);
 				long /*int*/ [] length = new long /*int*/ [1];
-				
+
 				if (reader != 0) {
 					long /*int*/ linePtr = OS.g_data_input_stream_read_line (reader, length, 0, 0);
 					while (linePtr != 0) {
 						byte[] lineBytes = new byte[(int) length[0]];
 						OS.memmove(lineBytes, linePtr, (int) length[0]);
 						String line = new String (Converter.mbcsToWcs (null, lineBytes));
-			
+
 						int separatorIndex = line.indexOf (':');
 						if (separatorIndex > 0) {
-							Vector mimeTypes = new Vector ();
+							List<String> mimeTypes = new ArrayList<String> ();
 						    String mimeType = line.substring (0, separatorIndex);
 							String extensionFormat = line.substring (separatorIndex+1);
 							int extensionIndex = extensionFormat.indexOf (".");
@@ -717,9 +707,9 @@ static Hashtable gio_getMimeInfo() {
 								if (mimeTable.containsKey (extension)) {
 									/*
 									 * If mimeType already exists, it is required to update
-									 * the existing key (mime-type) with the new extension. 
+									 * the existing key (mime-type) with the new extension.
 									 */
-									Vector value = (Vector) mimeTable.get (extension);
+									List<String> value = (List<String>) mimeTable.get (extension);
 									mimeTypes.addAll (value);
 								}
 								mimeTypes.add (mimeType);
@@ -733,7 +723,7 @@ static Hashtable gio_getMimeInfo() {
 				if (reader != 0) OS.g_object_unref (reader);
 				return mimeTable;
 			}
-		} 
+		}
 		return null;
 	} finally {
 		if (fileInfo != 0) OS.g_object_unref(fileInfo);
@@ -746,8 +736,8 @@ static String gio_getMimeType(String extension) {
 	String mimeType = null;
 	Hashtable h = gio_getMimeInfo();
 	if (h != null && h.containsKey(extension)) {
-		Vector mimeTypes = (Vector) h.get(extension);
-		mimeType = (String) mimeTypes.get(0);
+		List<String> mimeTypes = (ArrayList<String>) h.get(extension);
+		mimeType = mimeTypes.get(0);
 	}
 	return mimeType;
 }
@@ -807,14 +797,14 @@ static Program[] gio_getPrograms(Display display) {
 	long /*int*/ applicationList = OS.g_app_info_get_all ();
 	long /*int*/ list = applicationList;
 	Program program;
-	Vector programs = new Vector();
+	List<Program> programs = new ArrayList<Program>();
 	while (list != 0) {
 		long /*int*/ application = OS.g_list_data(list);
 		if (application != 0) {
 			//TODO: Should the list be filtered or not?
 //			if (OS.g_app_info_should_show(application)) {
 				program = gio_getProgram(display, application);
-				if (program != null) programs.addElement(program);
+				if (program != null) programs.add(program);
 //			}
 		}
 		list = OS.g_list_next(list);
@@ -822,7 +812,7 @@ static Program[] gio_getPrograms(Display display) {
 	if (applicationList != 0) OS.g_list_free(applicationList);
 	Program[] programList = new Program[programs.size()];
 	for (int index = 0; index < programList.length; index++) {
-		programList[index] = (Program)programs.elementAt(index);
+		programList[index] = programs.get(index);
 	}
 	return programList;
 }
@@ -854,7 +844,7 @@ static boolean gio_isExecutable(String fileName) {
 }
 
 /**
- * GNOME 2.4 - Launch the default program for the given file. 
+ * GNOME 2.4 - Launch the default program for the given file.
  */
 static boolean gio_launch(String fileName) {
 	boolean result = false;
@@ -872,7 +862,7 @@ static boolean gio_launch(String fileName) {
 }
 
 /**
- * GIO - Execute the program for the given file. 
+ * GIO - Execute the program for the given file.
  */
 boolean gio_execute(String fileName) {
 	boolean result = false;
@@ -906,18 +896,14 @@ static String[] gio_getExtensions() {
 	Hashtable mimeInfo = gio_getMimeInfo();
 	if (mimeInfo == null) return new String[0];
 	/* Create a unique set of the file extensions. */
-	Vector extensions = new Vector();
+	List<String> extensions = new ArrayList<String>();
 	Enumeration keys = mimeInfo.keys();
 	while (keys.hasMoreElements()) {
 		String extension = (String)keys.nextElement();
 		extensions.add(extension);
 	}
 	/* Return the list of extensions. */
-	String [] extStrings = new String[extensions.size()];
-	for (int index = 0; index < extensions.size(); index++) {
-		extStrings[index] = (String)extensions.elementAt(index);
-	}	
-	return extStrings;
+	return extensions.toArray(new String[extensions.size()]);
 }
 
 static boolean isExecutable(Display display, String fileName) {
@@ -937,7 +923,7 @@ static boolean isExecutable(Display display, String fileName) {
  *
  * @param fileName the file or program name or URL (http:// or https://)
  * @return <code>true</code> if the file is launched, otherwise <code>false</code>
- * 
+ *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT when fileName is null</li>
  * </ul>
@@ -958,11 +944,11 @@ public static boolean launch(String fileName) {
  * @param fileName the file name or program name or URL (http:// or https://)
  * @param workingDir the name of the working directory or null
  * @return <code>true</code> if the file is launched, otherwise <code>false</code>
- * 
+ *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT when fileName is null</li>
  * </ul>
- * 
+ *
  * @since 3.6
  */
 public static boolean launch (String fileName, String workingDir) {
@@ -992,7 +978,7 @@ static boolean launch (Display display, String fileName, String workingDir) {
 			int index = fileName.lastIndexOf ('.');
 			if (index != -1) {
 				String extension = fileName.substring (index);
-				Program program = Program.findProgram (display, extension); 
+				Program program = Program.findProgram (display, extension);
 				if (program != null && program.execute (fileName)) return true;
 			}
 			String lowercaseName = fileName.toLowerCase ();
@@ -1035,12 +1021,12 @@ public boolean equals(Object other) {
 /**
  * Executes the program with the file as the single argument
  * in the operating system.  It is the responsibility of the
- * programmer to ensure that the file contains valid data for 
+ * programmer to ensure that the file contains valid data for
  * this program.
  *
  * @param fileName the file or program name
  * @return <code>true</code> if the file is launched, otherwise <code>false</code>
- * 
+ *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT when fileName is null</li>
  * </ul>
@@ -1085,8 +1071,8 @@ public String getName() {
 }
 
 /**
- * Returns an integer hash code for the receiver. Any two 
- * objects that return <code>true</code> when passed to 
+ * Returns an integer hash code for the receiver. Any two
+ * objects that return <code>true</code> when passed to
  * <code>equals</code> must return the same value for this
  * method.
  *

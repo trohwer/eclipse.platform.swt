@@ -10721,25 +10721,25 @@ JNIEXPORT void JNICALL OS_NATIVE(_1gtk_1entry_1set_1has_1frame)
 }
 #endif
 
-#ifndef NO__1gtk_1entry_1set_1icon_1from_1stock
-JNIEXPORT void JNICALL OS_NATIVE(_1gtk_1entry_1set_1icon_1from_1stock)
+#ifndef NO__1gtk_1entry_1set_1icon_1from_1icon_1name
+JNIEXPORT void JNICALL OS_NATIVE(_1gtk_1entry_1set_1icon_1from_1icon_1name)
 	(JNIEnv *env, jclass that, jintLong arg0, jint arg1, jbyteArray arg2)
 {
 	jbyte *lparg2=NULL;
-	OS_NATIVE_ENTER(env, that, _1gtk_1entry_1set_1icon_1from_1stock_FUNC);
+	OS_NATIVE_ENTER(env, that, _1gtk_1entry_1set_1icon_1from_1icon_1name_FUNC);
 	if (arg2) if ((lparg2 = (*env)->GetByteArrayElements(env, arg2, NULL)) == NULL) goto fail;
 /*
-	gtk_entry_set_icon_from_stock(arg0, arg1, lparg2);
+	gtk_entry_set_icon_from_icon_name((GtkEntry *)arg0, (gint)arg1, (const gchar *)lparg2);
 */
 	{
-		OS_LOAD_FUNCTION(fp, gtk_entry_set_icon_from_stock)
+		OS_LOAD_FUNCTION(fp, gtk_entry_set_icon_from_icon_name)
 		if (fp) {
-			((void (CALLING_CONVENTION*)(jintLong, jint, jbyte *))fp)(arg0, arg1, lparg2);
+			((void (CALLING_CONVENTION*)(GtkEntry *, gint, const gchar *))fp)((GtkEntry *)arg0, (gint)arg1, (const gchar *)lparg2);
 		}
 	}
 fail:
 	if (arg2 && lparg2) (*env)->ReleaseByteArrayElements(env, arg2, lparg2, 0);
-	OS_NATIVE_EXIT(env, that, _1gtk_1entry_1set_1icon_1from_1stock_FUNC);
+	OS_NATIVE_EXIT(env, that, _1gtk_1entry_1set_1icon_1from_1icon_1name_FUNC);
 }
 #endif
 
@@ -17740,6 +17740,18 @@ JNIEXPORT jintLong JNICALL OS_NATIVE(_1gtk_1tree_1view_1get_1expander_1column)
 }
 #endif
 
+#ifndef NO__1gtk_1tree_1view_1get_1grid_1lines
+JNIEXPORT jint JNICALL OS_NATIVE(_1gtk_1tree_1view_1get_1grid_1lines)
+	(JNIEnv *env, jclass that, jintLong arg0)
+{
+	jint rc = 0;
+	OS_NATIVE_ENTER(env, that, _1gtk_1tree_1view_1get_1grid_1lines_FUNC);
+	rc = (jint)gtk_tree_view_get_grid_lines((GtkTreeView*)arg0);
+	OS_NATIVE_EXIT(env, that, _1gtk_1tree_1view_1get_1grid_1lines_FUNC);
+	return rc;
+}
+#endif
+
 #ifndef NO__1gtk_1tree_1view_1get_1headers_1visible
 JNIEXPORT jboolean JNICALL OS_NATIVE(_1gtk_1tree_1view_1get_1headers_1visible)
 	(JNIEnv *env, jclass that, jintLong arg0)
@@ -17783,7 +17795,15 @@ JNIEXPORT jboolean JNICALL OS_NATIVE(_1gtk_1tree_1view_1get_1rules_1hint)
 {
 	jboolean rc = 0;
 	OS_NATIVE_ENTER(env, that, _1gtk_1tree_1view_1get_1rules_1hint_FUNC);
+/*
 	rc = (jboolean)gtk_tree_view_get_rules_hint((GtkTreeView *)arg0);
+*/
+	{
+		OS_LOAD_FUNCTION(fp, gtk_tree_view_get_rules_hint)
+		if (fp) {
+			rc = (jboolean)((jboolean (CALLING_CONVENTION*)(GtkTreeView *))fp)((GtkTreeView *)arg0);
+		}
+	}
 	OS_NATIVE_EXIT(env, that, _1gtk_1tree_1view_1get_1rules_1hint_FUNC);
 	return rc;
 }
@@ -17954,7 +17974,15 @@ JNIEXPORT void JNICALL OS_NATIVE(_1gtk_1tree_1view_1set_1rules_1hint)
 	(JNIEnv *env, jclass that, jintLong arg0, jboolean arg1)
 {
 	OS_NATIVE_ENTER(env, that, _1gtk_1tree_1view_1set_1rules_1hint_FUNC);
+/*
 	gtk_tree_view_set_rules_hint((GtkTreeView *)arg0, arg1);
+*/
+	{
+		OS_LOAD_FUNCTION(fp, gtk_tree_view_set_rules_hint)
+		if (fp) {
+			((void (CALLING_CONVENTION*)(GtkTreeView *, jboolean))fp)((GtkTreeView *)arg0, arg1);
+		}
+	}
 	OS_NATIVE_EXIT(env, that, _1gtk_1tree_1view_1set_1rules_1hint_FUNC);
 }
 #endif

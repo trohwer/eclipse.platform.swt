@@ -28,10 +28,10 @@ import org.eclipse.swt.graphics.*;
  * </p><p>
  * IMPORTANT: This class is <em>not</em> intended to be subclassed.
  * </p>
- * 
+ *
  * @see ExpandBar
  * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
- * 
+ *
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -53,7 +53,7 @@ public class ExpandItem extends Item {
  * <p>
  * The style value is either one of the style constants defined in
  * class <code>SWT</code> which is applicable to instances of this
- * class, or must be built by <em>bitwise OR</em>'ing together 
+ * class, or must be built by <em>bitwise OR</em>'ing together
  * (that is, using the <code>int</code> "|" operator) two or more
  * of those <code>SWT</code> style constants. The class description
  * lists the style constants that are applicable to the class.
@@ -87,7 +87,7 @@ public ExpandItem (ExpandBar parent, int style) {
  * <p>
  * The style value is either one of the style constants defined in
  * class <code>SWT</code> which is applicable to instances of this
- * class, or must be built by <em>bitwise OR</em>'ing together 
+ * class, or must be built by <em>bitwise OR</em>'ing together
  * (that is, using the <code>int</code> "|" operator) two or more
  * of those <code>SWT</code> style constants. The class description
  * lists the style constants that are applicable to the class.
@@ -128,7 +128,7 @@ void createHandle (int index) {
 	if (handle == 0) error (SWT.ERROR_NO_HANDLES);
 	clientHandle = OS.g_object_new (display.gtk_fixed_get_type (), 0);
 	if (clientHandle == 0) error (SWT.ERROR_NO_HANDLES);
-	OS.gtk_container_add (handle, clientHandle);	
+	OS.gtk_container_add (handle, clientHandle);
 	boxHandle = gtk_box_new (OS.GTK_ORIENTATION_HORIZONTAL, false, 4);
 	if (boxHandle == 0) error (SWT.ERROR_NO_HANDLES);
 	labelHandle = OS.gtk_label_new (null);
@@ -155,6 +155,19 @@ void deregister() {
 	display.removeWidget (boxHandle);
 	display.removeWidget (labelHandle);
 	display.removeWidget (imageHandle);
+}
+
+@Override
+void release (boolean destroy) {
+	if (OS.GTK3) {
+		//454940 ExpandBar DND fix.
+		//Since controls are now nested under the Item,
+		//Item is responsible for it's release.
+		if (control != null && !control.isDisposed ()) {
+			control.release (destroy);
+		}
+	}
+	super.release (destroy);
 }
 
 @Override
@@ -259,9 +272,9 @@ public boolean getExpanded () {
 }
 
 /**
- * Returns the height of the receiver's header 
+ * Returns the height of the receiver's header
  *
- * @return the height of the header 
+ * @return the height of the header
  *
  * @exception SWTException <ul>
  *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
@@ -399,21 +412,32 @@ void resizeControl (int yScroll) {
 		if (visible) {
 			GtkAllocation allocation = new GtkAllocation ();
 			gtk_widget_get_allocation (clientHandle, allocation);
-			int x = allocation.x;
-			int y = allocation.y;
+
+			//454940 change in hierarchy
+			/* SWT's calls to gtk_widget_size_allocate and gtk_widget_set_allocation
+			* causes GTK+ to move the clientHandle's SwtFixed down by the size of the label.
+			* These calls can come up from 'shell' and ExpandItem has no control over these calls.
+			* This is an undesired side-effect. Client handle's x & y positions should never
+			* be incremented as this is an internal sub-container.
+			* As of GTK3, the hierarchy is changed, this affected child-size allocation and a fix
+			* is now neccessary.
+			* See also other 454940 notes and similar fix in: 453827 */
+			int x = (OS.GTK3) ? 0 : allocation.x;
+			int y = (OS.GTK3) ? 0 : allocation.y;
+
 			if (x != -1 && y != -1) {
 				int width = allocation.width;
-				int height = allocation.height;	
+				int height = allocation.height;
 				int [] property = new int [1];
-				OS.gtk_widget_style_get (handle, OS.focus_line_width, property, 0);				
+				OS.gtk_widget_style_get (handle, OS.focus_line_width, property, 0);
 				y += property [0] * 2;
 				height -= property [0] * 2;
-				
+
 				/*
 				* Feature in GTK. When the ExpandBar is resize too small the control
-				* shows up on top of the vertical scrollbar. This happen because the 
+				* shows up on top of the vertical scrollbar. This happen because the
 				* GtkExpander does not set the size of child smaller than the request
-				* size of its parent and because the control is not parented in the 
+				* size of its parent and because the control is not parented in the
 				* hierarchy of the GtkScrolledWindow.
 				* The fix is calculate the width ourselves when the scrollbar is visible.
 				*/
@@ -421,7 +445,7 @@ void resizeControl (int yScroll) {
 				if (vBar != null) {
 					if (gtk_widget_get_visible (vBar.handle)) {
 						gtk_widget_get_allocation (parent.scrolledHandle, allocation);
-						width = allocation.width - parent.vScrollBarWidth () - 2 * parent.spacing;	
+						width = allocation.width - parent.vScrollBarWidth () - 2 * parent.spacing;
 					}
 				}
 				control.setBounds (x, y - yScroll, width, Math.max (0, height), true, true);
@@ -459,7 +483,7 @@ void setBounds (int x, int y, int width, int height, boolean move, boolean size)
  * @param control the new control (or null)
  *
  * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li> 
+ *    <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
  *    <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
  * </ul>
  * @exception SWTException <ul>
@@ -474,12 +498,28 @@ public void setControl (Control control) {
 		if (control.parent != parent) error (SWT.ERROR_INVALID_PARENT);
 	}
 	if (this.control == control) return;
+
+
 	this.control = control;
 	if (control != null) {
 		control.setVisible (expanded);
+		if (OS.GTK3) {
+			//454940 ExpandBar DND fix.
+			//Reparenting on the GTK side.
+			//Proper hierachy on gtk side is required for DND to function properly.
+			//As ExpandItem's child can be created before the ExpandItem, our only
+			//option is to reparent the child upon the setControl(..) call.
+			//This is simmilar to TabFolder.
+			gtk_widget_reparent (control.topHandle (), clientHandle ());
+		}
 	}
 	parent.layoutItems (0, true);
 }
+
+long /*int*/ clientHandle () {
+	return clientHandle;
+}
+
 
 /**
  * Sets the expanded state of the receiver.
@@ -522,7 +562,7 @@ void setForegroundColor (GdkColor color) {
 }
 
 /**
- * Sets the height of the receiver. This is height of the item when it is expanded, 
+ * Sets the height of the receiver. This is height of the item when it is expanded,
  * excluding the height of the header.
  *
  * @param height the new height
@@ -569,7 +609,7 @@ void setOrientation (boolean create) {
 		OS.gtk_container_forall (handle, display.setDirectionProc, dir);
 	}
 }
-	
+
 @Override
 public void setText (String string) {
 	super.setText (string);
@@ -578,12 +618,14 @@ public void setText (String string) {
 }
 
 void showWidget (int index) {
-	OS.gtk_widget_show (handle);
-	OS.gtk_widget_show (clientHandle);
-	OS.gtk_container_add (parent.handle, handle);
-	OS.gtk_box_set_child_packing (parent.handle, handle, false, false, 0, OS.GTK_PACK_START);
-	if (boxHandle != 0) OS.gtk_widget_show (boxHandle);
-	if (labelHandle != 0) OS.gtk_widget_show (labelHandle);
+		OS.gtk_widget_show (handle);
+		OS.gtk_widget_show (clientHandle);
+		if (labelHandle != 0)
+			OS.gtk_widget_show (labelHandle);
+		if (boxHandle != 0)
+			OS.gtk_widget_show (boxHandle);
+		OS.gtk_container_add (parent.handle, handle);
+		OS.gtk_box_set_child_packing (parent.handle, handle, false, false, 0, OS.GTK_PACK_START);
 }
 
 @Override

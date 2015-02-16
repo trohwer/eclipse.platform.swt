@@ -11,10 +11,11 @@
 package org.eclipse.swt.examples.paint;
 
 
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * The superclass for paint tools that contruct objects from individually
@@ -24,7 +25,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	/**
 	 * The set of control points making up the segmented selection
 	 */
-	private Vector<Point> controlPoints = new Vector<Point>();
+	private List<Point> controlPoints = new ArrayList<Point>();
 
 	/**
 	 * The previous figure (so that we can abort with right-button)
@@ -48,6 +49,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	/**
 	 * Activates the tool.
 	 */
+	@Override
 	public void beginSession() {
 		getPaintSurface().setStatusMessage(PaintExample.getResourceString(
 			"session.SegmentedInteractivePaint.message.anchorMode"));
@@ -59,6 +61,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	/**
 	 * Deactivates the tool.
      */
+	@Override
 	public void endSession() {
 		getPaintSurface().clearRubberbandSelection();
 		if (previousFigure != null) getPaintSurface().drawFigure(previousFigure);
@@ -68,6 +71,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	 * Resets the tool.
 	 * Aborts any operation in progress.
 	 */
+	@Override
 	public void resetSession() {
 		getPaintSurface().clearRubberbandSelection();
 		if (previousFigure != null) getPaintSurface().drawFigure(previousFigure);
@@ -84,6 +88,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	 * 
 	 * @param event the mouse event detail information
 	 */
+	@Override
 	public void mouseDown(MouseEvent event) {
 		if (event.button != 1) return;
 
@@ -92,7 +97,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 		previousFigure = currentFigure;
 
 		if (controlPoints.size() > 0) {
-			final Point lastPoint = controlPoints.elementAt(controlPoints.size() - 1);
+			final Point lastPoint = controlPoints.get(controlPoints.size() - 1);
 			if (lastPoint.x == event.x || lastPoint.y == event.y) return; // spurious event
 		}
 		controlPoints.add(new Point(event.x, event.y));
@@ -103,6 +108,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	 * 
 	 * @param event the mouse event detail information
 	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent event) {
 		if (event.button != 1) return;
 		if (controlPoints.size() >= 2) {
@@ -119,6 +125,7 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	 * 
 	 * @param event the mouse event detail information
 	 */
+	@Override
 	public void mouseUp(MouseEvent event) {
 		if (event.button != 1) {
 			resetSession(); // abort if right or middle mouse button pressed
@@ -131,13 +138,14 @@ public abstract class SegmentedPaintSession extends BasicPaintSession {
 	 * 
 	 * @param event the mouse event detail information
 	 */
+	@Override
 	public void mouseMove(MouseEvent event) {
 		final PaintSurface ps = getPaintSurface();
 		if (controlPoints.size() == 0) {
 			ps.setStatusCoord(ps.getCurrentPosition());
 			return; // spurious event
 		}
-		ps.setStatusCoordRange(controlPoints.elementAt(controlPoints.size() - 1),
+		ps.setStatusCoordRange(controlPoints.get(controlPoints.size() - 1),
 			ps.getCurrentPosition());
 		ps.clearRubberbandSelection();
 		Point[] points = controlPoints.toArray(new Point[controlPoints.size() + 1]);

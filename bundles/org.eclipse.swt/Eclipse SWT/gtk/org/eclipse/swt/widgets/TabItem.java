@@ -47,7 +47,7 @@ public class TabItem extends Item {
  * <p>
  * The style value is either one of the style constants defined in
  * class <code>SWT</code> which is applicable to instances of this
- * class, or must be built by <em>bitwise OR</em>'ing together 
+ * class, or must be built by <em>bitwise OR</em>'ing together
  * (that is, using the <code>int</code> "|" operator) two or more
  * of those <code>SWT</code> style constants. The class description
  * lists the style constants that are applicable to the class.
@@ -83,7 +83,7 @@ public TabItem (TabFolder parent, int style) {
  * <p>
  * The style value is either one of the style constants defined in
  * class <code>SWT</code> which is applicable to instances of this
- * class, or must be built by <em>bitwise OR</em>'ing together 
+ * class, or must be built by <em>bitwise OR</em>'ing together
  * (that is, using the <code>int</code> "|" operator) two or more
  * of those <code>SWT</code> style constants. The class description
  * lists the style constants that are applicable to the class.
@@ -149,7 +149,7 @@ void destroyWidget () {
  *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
- * 
+ *
  * @since 3.4
  */
 public Rectangle getBounds () {
@@ -236,6 +236,19 @@ void register () {
 	if (labelHandle != 0) display.addWidget (labelHandle, this);
 }
 
+
+@Override
+void release (boolean destroy) {
+	if (OS.GTK3) {
+		//Since controls are now nested under the tabItem,
+		//tabItem is responsible for it's release.
+		if (control != null && !control.isDisposed ()) {
+			control.release (destroy);
+		}
+	}
+	super.release (destroy);
+}
+
 @Override
 void releaseHandle () {
 	super.releaseHandle ();
@@ -259,7 +272,7 @@ void releaseParent () {
  * @param control the new control (or null)
  *
  * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li> 
+ *    <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
  *    <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
  * </ul>
  * @exception SWTException <ul>
@@ -273,6 +286,47 @@ public void setControl (Control control) {
 		if (control.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
 		if (control.parent != parent) error (SWT.ERROR_INVALID_PARENT);
 	}
+
+	if (control != null && OS.GTK3) {
+		/*
+		* Bug 454936 (see also other 454936 references in TabFolder)
+		* Architecture Fix:
+		*  We reparent the child to be a child of the 'tab' rather than tabfolder's parent swtFixed container.
+		*  Note, this reparenting is only on the GTK side, not on the SWT side.
+		*
+		*  Note, GTK2 and GTK3 child nesting behaviour is different now.
+		*  GTK2:
+		*    swtFixed
+		*    |-- GtkNoteBook
+		*    |   |-- tabLabel1
+		*    |   |-- tabLabel2
+		*    |-- swtFixed (child1)  //child is sibling of Notebook
+		*    |-- swtFixed (child2)
+		*
+		*  GTK3+:
+		*  	swtFixed
+		*  	|--	GtkNoteBook
+		*  		|-- tabLabel1
+		*  		|-- tabLabel2
+		*  		|-- swtFixed (child1) //child now child of Notebook.
+		*  		|-- swtFixed (child2)
+		*
+		*  This corrects the hierarchy so that children are beneath gtkNotebook (as oppose to
+		*  being siblings) and thus fixes DND and background color issues.
+		*  In gtk2, reparenting doesn't function properly (tab content appear blank),
+		*  so this is a gtk3-specific behavior.
+		*
+		*  Note about the reason for reparenting:
+		*   Reparenting (as oppose to adding widget to a tab in the first place) is neccessary
+		*   because you can have a situation where you create a widget before you create a tab. e.g
+		*     TabFolder tabFolder = new TabFolder(shell, 0);
+		*     Composite composite = new Composite(tabFolder, 0);
+		*     TabItem tabItem = new TabItem(tabFolder, 0);
+		*     tabitem.setControl(composite);
+		*/
+		OS.gtk_widget_reparent (control.topHandle (), pageHandle);
+	}
+
 	Control oldControl = this.control, newControl = control;
 	this.control = control;
 	int index = parent.indexOf (this), selectionIndex = parent.getSelectionIndex();
@@ -290,7 +344,9 @@ public void setControl (Control control) {
 		newControl.setBounds (parent.getClientArea ());
 		newControl.setVisible (true);
 	}
-	if (oldControl != null) oldControl.setVisible (false);
+
+	if (oldControl != null && newControl != null && oldControl != newControl)
+		oldControl.setVisible (false);
 }
 
 void setFontDescription (long /*int*/ font) {
@@ -351,7 +407,7 @@ void setOrientation (boolean create) {
  * escaped by doubling it in the string, causing a single
  * '&amp;' to be displayed.
  * </p>
- * 
+ *
  * @param string the new text
  *
  * @exception IllegalArgumentException <ul>
@@ -361,7 +417,7 @@ void setOrientation (boolean create) {
  *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
- * 
+ *
  */
 @Override
 public void setText (String string) {
@@ -380,17 +436,17 @@ public void setText (String string) {
 
 /**
  * Sets the receiver's tool tip text to the argument, which
- * may be null indicating that the default tool tip for the 
+ * may be null indicating that the default tool tip for the
  * control will be shown. For a control that has a default
  * tool tip, such as the Tree control on Windows, setting
  * the tool tip text to an empty string replaces the default,
  * causing no tool tip text to be shown.
  * <p>
  * The mnemonic indicator (character '&amp;') is not displayed in a tool tip.
- * To display a single '&amp;' in the tool tip, the character '&amp;' can be 
+ * To display a single '&amp;' in the tool tip, the character '&amp;' can be
  * escaped by doubling it in the string.
  * </p>
- * 
+ *
  * @param string the new tool tip text (or null)
  *
  * @exception SWTException <ul>

@@ -10,17 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.tools.internal;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.io.*;
+import java.util.*;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class DOMWriter {
 
@@ -110,13 +103,14 @@ public class DOMWriter {
 				NodeList children = node.getChildNodes();
 				if (children != null) {
 					int len = children.getLength();
-					ArrayList<Node> nodes = new ArrayList<Node>();
+					List<Node> nodes = new ArrayList<Node>();
 					for (int i = 0; i < len; i++) {
 						Node child = children.item(i);
 						if (child.getNodeType() == Node.ELEMENT_NODE) nodes.add(child);
 					}
 					int count = nodes.size();
 					Collections.sort(nodes, new Comparator<Node>() {
+						@Override
 						public int compare(Node a, Node b) {
 							String nameA = a.getNodeName();
 							String nameB = b.getNodeName();
@@ -160,6 +154,7 @@ public class DOMWriter {
 			result[i] = (Attr) attrs.item(i);
 		}
 		Arrays.sort(result, new Comparator<Node>() {
+			@Override
 			public int compare(Node arg0, Node arg1) {
 				return nodeName(arg0).compareTo(nodeName(arg1));
 			}

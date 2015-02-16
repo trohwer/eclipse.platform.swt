@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public abstract class Device implements Drawable {
 	boolean disposed, warnings;
 	
 	Color COLOR_BLACK, COLOR_DARK_RED, COLOR_DARK_GREEN, COLOR_DARK_YELLOW, COLOR_DARK_BLUE;
-	Color COLOR_DARK_MAGENTA, COLOR_DARK_CYAN, COLOR_GRAY, COLOR_DARK_GRAY, COLOR_RED;
+	Color COLOR_DARK_MAGENTA, COLOR_DARK_CYAN, COLOR_GRAY, COLOR_DARK_GRAY, COLOR_RED, COLOR_TRANSPARENT;
 	Color COLOR_GREEN, COLOR_YELLOW, COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE;
 
 	/* System Font */
@@ -364,6 +364,8 @@ NSScreen getPrimaryScreen () {
 public FontData[] getFontList (String faceName, boolean scalable) {
 	checkDevice ();
 	if (!scalable) return new FontData[0];
+	String systemFontName = systemFont.getFontData()[0].getName();
+	boolean systemFontIncluded = false;
 	int count = 0;
 	NSArray families = NSFontManager.sharedFontManager().availableFontFamilies();
 	FontData[] fds = new FontData[100];
@@ -387,6 +389,9 @@ public FontData[] getFontList (String faceName, boolean scalable) {
 					if (faceName == null || Compatibility.equalsIgnoreCase(faceName, name)) {
 						FontData data = new FontData(name, 0, style);
 						data.nsName = nsName;
+						if (Compatibility.equalsIgnoreCase(systemFontName, name)) {
+							systemFontIncluded = true;
+						}
 						if (count == fds.length) {
 							FontData[] newFds = new FontData[fds.length + 100];
 							System.arraycopy(fds, 0, newFds, 0, fds.length);
@@ -397,6 +402,18 @@ public FontData[] getFontList (String faceName, boolean scalable) {
 				}
 			}
 		}
+	}
+	if (!systemFontIncluded && (faceName == null || Compatibility.equalsIgnoreCase(faceName, systemFontName))) {
+		/*
+		 * Feature in Mac OS X 10.10: The default system font ".Helvetica Neue DeskInterface"
+		 * is not available from the NSFontManager. The fix is to include it manually if necessary.
+		 */
+		if (count == fds.length) {
+			FontData[] newFds = new FontData[fds.length + 1];
+			System.arraycopy(fds, 0, newFds, 0, fds.length);
+			fds = newFds;
+		}
+		fds[count++] = systemFont.getFontData()[0];
 	}
 	if (count == fds.length) return fds;
 	FontData[] result = new FontData[count];
@@ -437,6 +454,7 @@ Point getScreenDPI () {
 public Color getSystemColor (int id) {
 	checkDevice ();
 	switch (id) {
+		case SWT.COLOR_TRANSPARENT: 		return COLOR_TRANSPARENT;
 		case SWT.COLOR_BLACK: 				return COLOR_BLACK;
 		case SWT.COLOR_DARK_RED: 			return COLOR_DARK_RED;
 		case SWT.COLOR_DARK_GREEN:	 		return COLOR_DARK_GREEN;
@@ -512,6 +530,7 @@ public boolean getWarnings () {
  */
 protected void init () {
 	/* Create the standard colors */
+	COLOR_TRANSPARENT = new Color (this, 0xFF,0xFF,0xFF,0);
 	COLOR_BLACK = new Color (this, 0,0,0);
 	COLOR_DARK_RED = new Color (this, 0x80,0,0);
 	COLOR_DARK_GREEN = new Color (this, 0,0x80,0);

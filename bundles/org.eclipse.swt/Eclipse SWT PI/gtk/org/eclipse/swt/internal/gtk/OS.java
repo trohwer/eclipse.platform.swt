@@ -644,9 +644,14 @@ public class OS extends C {
 	public static final byte[] xalign = ascii("xalign");
 	public static final byte[] ypad = ascii("ypad");
 	public static final byte[] GTK_PRINT_SETTINGS_OUTPUT_URI = ascii("output-uri");
-	public static final byte[] GTK_STOCK_FIND = ascii("gtk-find");
-	public static final byte[] GTK_STOCK_CANCEL = ascii("gtk-cancel");
-	public static final byte[] GTK_STOCK_CLEAR = ascii("gtk-clear");
+
+	/* Named icons.
+	 * See https://docs.google.com/spreadsheet/pub?key=0AsPAM3pPwxagdGF4THNMMUpjUW5xMXZfdUNzMXhEa2c&output=html
+	 * See http://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html#names
+	 * */
+	public static final byte[] GTK_NAMED_ICON_FIND = ascii("edit-find");  //Replacement of GTK_STOCK_FIND
+	public static final byte[] GTK_NAMED_ICON_CLEAR = ascii("edit-clear"); //Replacement of GTK_STOCK_CLEAR
+
 
 	/* GVariant Types */
 	public static final byte[] G_VARIANT_TYPE_BOOLEAN = ascii("b");
@@ -671,7 +676,7 @@ public class OS extends C {
 			initCairo  = GTK_VERSION >= VERSION(2, 17, 0);
 		}
 		INIT_CAIRO = initCairo;
-		
+
 		System.setProperty("org.eclipse.swt.internal.gtk.version",
 				(GTK_VERSION >>> 16) + "." + (GTK_VERSION >>> 8 & 0xFF) + "." + (GTK_VERSION & 0xFF));
 	}
@@ -7048,9 +7053,9 @@ public static final void gtk_color_selection_set_has_palette(long /*int*/ colors
 		lock.unlock();
 	}
 }
-/**	
-* @param combo cast=(GtkComboBox *)	
-* @param val cast=(gboolean)	
+/**
+* @param combo cast=(GtkComboBox *)
+* @param val cast=(gboolean)
 */
 public static final native void _gtk_combo_box_set_focus_on_click(long /*int*/ combo, boolean val);
 public static final void gtk_combo_box_set_focus_on_click(long /*int*/ combo, boolean val) {
@@ -7151,8 +7156,8 @@ public static final void gtk_combo_box_text_remove_all(long /*int*/ combo_box) {
 		lock.unlock();
 	}
 }
-/**	
-* @param combo_box cast=(GtkComboBox *)	
+/**
+* @param combo_box cast=(GtkComboBox *)
 */
 public static final native int _gtk_combo_box_get_active(long /*int*/ combo_box);
 public static final int gtk_combo_box_get_active(long /*int*/ combo_box) {
@@ -7163,8 +7168,8 @@ public static final int gtk_combo_box_get_active(long /*int*/ combo_box) {
 		lock.unlock();
 	}
 }
-/**	
-* @param combo_box cast=(GtkComboBox *)	
+/**
+* @param combo_box cast=(GtkComboBox *)
 */
 public static final native long /*int*/ _gtk_combo_box_get_model(long /*int*/ combo_box);
 public static final long /*int*/ gtk_combo_box_get_model(long /*int*/ combo_box) {
@@ -7175,8 +7180,8 @@ public static final long /*int*/ gtk_combo_box_get_model(long /*int*/ combo_box)
 		lock.unlock();
 	}
 }
-/**	
-* @param combo_box cast=(GtkComboBox *)	
+/**
+* @param combo_box cast=(GtkComboBox *)
 * @param index cast=(gint)
 */
 public static final native void _gtk_combo_box_set_active(long /*int*/ combo_box, int index);
@@ -7201,8 +7206,8 @@ public static final void gtk_combo_box_set_wrap_width(long /*int*/ combo_box, in
 		lock.unlock();
 	}
 }
-/**	
-* @param combo_box cast=(GtkComboBox *)	
+/**
+* @param combo_box cast=(GtkComboBox *)
 */
 public static final native void _gtk_combo_box_popup(long /*int*/ combo_box);
 public static final void gtk_combo_box_popup(long /*int*/ combo_box) {
@@ -7213,8 +7218,8 @@ public static final void gtk_combo_box_popup(long /*int*/ combo_box) {
 		lock.unlock();
 	}
 }
-/**	
-* @param combo_box cast=(GtkComboBox *)	
+/**
+* @param combo_box cast=(GtkComboBox *)
 */
 public static final native void _gtk_combo_box_popdown(long /*int*/ combo_box);
 public static final void gtk_combo_box_popdown(long /*int*/ combo_box) {
@@ -7772,16 +7777,23 @@ public static final void gtk_entry_set_has_frame(long /*int*/ entry, boolean set
 		lock.unlock();
 	}
 }
-/** @method flags=dynamic */
-public static final native void _gtk_entry_set_icon_from_stock(long /*int*/ entry, int icon, byte[] stock);
-public static final void gtk_entry_set_icon_from_stock(long /*int*/ entry, int icon, byte[] stock) {
+
+/**
+ * @method flags=dynamic
+ * @param entry cast=(GtkEntry *)
+ * @param iconPos cast=(gint)
+ * @param stock cast=(const gchar *)
+ */
+public static final native void _gtk_entry_set_icon_from_icon_name(long /*int*/ entry, int iconPos, byte[] stock);
+public static final void gtk_entry_set_icon_from_icon_name(long /*int*/ entry, int iconPos, byte[] iconName) {
 	lock.lock();
 	try {
-		_gtk_entry_set_icon_from_stock(entry, icon, stock);
+		_gtk_entry_set_icon_from_icon_name(entry, iconPos, iconName);
 	} finally {
 		lock.unlock();
 	}
 }
+
 /** @method flags=dynamic */
 public static final native void _gtk_entry_set_icon_sensitive(long /*int*/ entry, int icon_pos, boolean sensitive);
 public static final void gtk_entry_set_icon_sensitive(long /*int*/ entry, int icon_pos, boolean sensitive) {
@@ -9510,7 +9522,7 @@ public static final long /*int*/ gtk_page_setup_new () {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  */
 public static final native int _gtk_page_setup_get_orientation(long /*int*/ setup);
@@ -9522,7 +9534,7 @@ public static final int gtk_page_setup_get_orientation(long /*int*/ setup) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param orientation cast=(GtkPageOrientation)
  */
@@ -9535,7 +9547,7 @@ public static final void gtk_page_setup_set_orientation(long /*int*/ setup, int 
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  */
 public static final native long /*int*/ _gtk_page_setup_get_paper_size(long /*int*/ setup);
@@ -9547,7 +9559,7 @@ public static final long /*int*/ gtk_page_setup_get_paper_size(long /*int*/ setu
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param size cast=(GtkPaperSize *)
  */
@@ -9560,7 +9572,7 @@ public static final void gtk_page_setup_set_paper_size(long /*int*/ setup, long 
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -9573,7 +9585,7 @@ public static final double gtk_page_setup_get_top_margin(long /*int*/ setup, int
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param margin cast=(gdouble)
  * @param unit cast=(GtkUnit)
@@ -9590,7 +9602,7 @@ public static final void gtk_page_setup_set_top_margin(long /*int*/ setup, doubl
 /**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
- *  
+ *
  */
 public static final native double _gtk_page_setup_get_bottom_margin(long /*int*/ setup, int unit);
 public static final double gtk_page_setup_get_bottom_margin(long /*int*/ setup, int unit) {
@@ -9601,7 +9613,7 @@ public static final double gtk_page_setup_get_bottom_margin(long /*int*/ setup, 
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param margin cast=(gdouble)
  * @param unit cast=(GtkUnit)
@@ -9615,7 +9627,7 @@ public static final void gtk_page_setup_set_bottom_margin(long /*int*/ setup, do
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -9628,7 +9640,7 @@ public static final double gtk_page_setup_get_left_margin(long /*int*/ setup, in
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param margin cast=(gdouble)
  * @param unit cast=(GtkUnit)
@@ -9642,7 +9654,7 @@ public static final void gtk_page_setup_set_left_margin(long /*int*/ setup, doub
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -9655,7 +9667,7 @@ public static final double gtk_page_setup_get_right_margin(long /*int*/ setup, i
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param margin cast=(gdouble)
  * @param unit cast=(GtkUnit)
@@ -9669,7 +9681,7 @@ public static final void gtk_page_setup_set_right_margin(long /*int*/ setup, dou
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -9682,7 +9694,7 @@ public static final double gtk_page_setup_get_paper_width(long /*int*/ setup, in
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -9695,7 +9707,7 @@ public static final double gtk_page_setup_get_paper_height(long /*int*/ setup, i
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -9708,7 +9720,7 @@ public static final double gtk_page_setup_get_page_width(long /*int*/ setup, int
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param setup cast=(GtkPageSetup *)
  * @param unit cast=(GtkUnit)
  */
@@ -10127,7 +10139,7 @@ public static final void gtk_render_line(long /*int*/ context, long /*int*/ cr, 
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  */
 public static final native void _gtk_paper_size_free(long /*int*/ size);
@@ -10139,7 +10151,7 @@ public static final void gtk_paper_size_free(long /*int*/ size) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param name cast=(const gchar *)
  */
 public static final native long /*int*/ _gtk_paper_size_new(byte [] name);
@@ -10151,7 +10163,7 @@ public static final long /*int*/ gtk_paper_size_new(byte [] name) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param ppd_name cast=(const gchar *)
  * @param ppd_display_name cast=(const gchar *)
  * @param width cast=(gdouble)
@@ -10166,7 +10178,7 @@ public static final long /*int*/ gtk_paper_size_new_from_ppd(byte [] ppd_name, b
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param name cast=(const gchar *)
  * @param display_name cast=(const gchar *)
  * @param width cast=(gdouble)
@@ -10182,7 +10194,7 @@ public static final long /*int*/ gtk_paper_size_new_custom(byte [] name, byte []
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  */
 public static final native long /*int*/ _gtk_paper_size_get_name(long /*int*/ size);
@@ -10194,7 +10206,7 @@ public static final long /*int*/ gtk_paper_size_get_name(long /*int*/ size) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  */
 public static final native long /*int*/ _gtk_paper_size_get_display_name(long /*int*/ size);
@@ -10206,7 +10218,7 @@ public static final long /*int*/ gtk_paper_size_get_display_name(long /*int*/ si
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  */
 public static final native long /*int*/ _gtk_paper_size_get_ppd_name(long /*int*/ size);
@@ -10218,7 +10230,7 @@ public static final long /*int*/ gtk_paper_size_get_ppd_name(long /*int*/ size) 
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  * @param unit cast=(GtkUnit)
  */
@@ -10231,7 +10243,7 @@ public static final double gtk_paper_size_get_width(long /*int*/ size, int unit)
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  * @param unit cast=(GtkUnit)
  */
@@ -10244,7 +10256,7 @@ public static final double gtk_paper_size_get_height(long /*int*/ size, int unit
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param size cast=(GtkPaperSize *)
  */
 public static final native boolean _gtk_paper_size_is_custom(long /*int*/ size);
@@ -10265,7 +10277,7 @@ public static final long /*int*/ gtk_plug_new(long /*int*/ socket_id) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param printer cast=(GtkPrinter *)
  */
 public static final native long /*int*/ _gtk_printer_get_backend(long /*int*/ printer);
@@ -10277,7 +10289,7 @@ public static final long /*int*/ gtk_printer_get_backend(long /*int*/ printer) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param printer cast=(GtkPrinter *)
  */
 public static final native long /*int*/ _gtk_printer_get_name(long /*int*/ printer);
@@ -10289,7 +10301,7 @@ public static final long /*int*/ gtk_printer_get_name(long /*int*/ printer) {
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param printer cast=(GtkPrinter *)
  */
 public static final native boolean _gtk_printer_is_default(long /*int*/ printer);
@@ -10597,7 +10609,7 @@ public static final void gtk_print_unix_dialog_set_embed_page_setup(long /*int*/
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  * @param page_setup cast=(GtkPageSetup *)
  */
@@ -10610,7 +10622,7 @@ public static final void gtk_print_unix_dialog_set_page_setup(long /*int*/ dialo
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  */
 public static final native long /*int*/ _gtk_print_unix_dialog_get_page_setup(long /*int*/ dialog);
@@ -10635,7 +10647,7 @@ public static final void gtk_print_unix_dialog_set_current_page(long /*int*/ dia
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  */
 public static final native int _gtk_print_unix_dialog_get_current_page(long /*int*/ dialog);
@@ -10647,7 +10659,7 @@ public static final int gtk_print_unix_dialog_get_current_page(long /*int*/ dial
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  * @param settings cast=(GtkPrintSettings *)
  */
@@ -10660,7 +10672,7 @@ public static final void gtk_print_unix_dialog_set_settings(long /*int*/ dialog,
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  */
 public static final native long /*int*/ _gtk_print_unix_dialog_get_settings(long /*int*/ dialog);
@@ -10672,7 +10684,7 @@ public static final long /*int*/ gtk_print_unix_dialog_get_settings(long /*int*/
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  */
 public static final native long /*int*/ _gtk_print_unix_dialog_get_selected_printer(long /*int*/ dialog);
@@ -10684,7 +10696,7 @@ public static final long /*int*/ gtk_print_unix_dialog_get_selected_printer(long
 		lock.unlock();
 	}
 }
-/** 
+/**
  * @param dialog cast=(GtkPrintUnixDialog *)
  * @param capabilities cast=(GtkPrintCapabilities)
  */
@@ -13680,7 +13692,10 @@ public static final boolean gtk_tree_view_get_path_at_pos(long /*int*/ tree_view
 		lock.unlock();
 	}
 }
-/** @param tree_view cast=(GtkTreeView *) */
+/**
+ * @method flags=dynamic
+ * @param tree_view cast=(GtkTreeView *)
+ */
 public static final native boolean _gtk_tree_view_get_rules_hint(long /*int*/ tree_view);
 public static final boolean gtk_tree_view_get_rules_hint(long /*int*/ tree_view) {
 	lock.lock();
@@ -13835,6 +13850,21 @@ public static final void gtk_tree_view_set_grid_lines(long /*int*/ tree_view, in
 		lock.unlock();
 	}
 }
+
+/**
+ * @param tree_view cast=(GtkTreeView*)
+ */
+public static final native int _gtk_tree_view_get_grid_lines(long /*int*/ tree_view);
+public static final int gtk_tree_view_get_grid_lines(long /*int*/ tree_view) {
+	lock.lock();
+	try {
+		return _gtk_tree_view_get_grid_lines(tree_view);
+	} finally {
+		lock.unlock();
+	}
+}
+
+
 /**
  * @param tree_view cast=(GtkTreeView *)
  * @param visible cast=(gboolean)
@@ -13861,7 +13891,10 @@ public static final void gtk_tree_view_set_model(long /*int*/ tree_view, long /*
 		lock.unlock();
 	}
 }
-/** @param tree_view cast=(GtkTreeView *) */
+/**
+ * @method flags=dynamic
+ * @param tree_view cast=(GtkTreeView *)
+ * */
 public static final native void _gtk_tree_view_set_rules_hint(long /*int*/ tree_view, boolean setting);
 public static final void gtk_tree_view_set_rules_hint(long /*int*/ tree_view, boolean setting) {
 	lock.lock();

@@ -11,14 +11,32 @@
 package org.eclipse.swt.examples.accessibility;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Instances of this class represent a very simple accessible bar chart.
@@ -26,7 +44,7 @@ import org.eclipse.swt.accessibility.*;
  */
 public class BarChart extends Canvas {
 	static ResourceBundle bundle = ResourceBundle.getBundle("examples_accessibility");
-	Vector<Object[]> data = new Vector<Object[]>();
+	List<Object[]> data = new ArrayList<Object[]>();
 	String title;
 	int color = SWT.COLOR_RED;
 	int selectedItem = -1;
@@ -51,6 +69,7 @@ public class BarChart extends Canvas {
 
 	void addListeners() {
 		addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				GC gc = e.gc;
 				Rectangle rect = getClientArea();
@@ -77,7 +96,7 @@ public class BarChart extends Canvas {
 				// draw the x axis and item labels
 				gc.drawLine(leftX, bottomY, rect.x + rect.width - GAP, bottomY);
 				for (int i = 0; i < count; i++) {
-					Object [] dataItem = data.elementAt(i);
+					Object [] dataItem = data.get(i);
 					String itemLabel = (String)dataItem[0];
 					int x = leftX + AXIS_WIDTH + GAP + i * (unitWidth + GAP);
 					gc.drawString(itemLabel, x, bottomY + GAP);
@@ -85,7 +104,7 @@ public class BarChart extends Canvas {
 				// draw the bars
 				gc.setBackground(display.getSystemColor(color));
 				for (int i = 0; i < count; i++) {
-					Object [] dataItem = data.elementAt(i);
+					Object [] dataItem = data.get(i);
 					int itemValue = ((Integer)dataItem[1]).intValue();
 					int x = leftX + AXIS_WIDTH + GAP + i * (unitWidth + GAP);
 					gc.fillRectangle(x, bottomY - AXIS_WIDTH - itemValue * unitHeight, unitWidth, itemValue * unitHeight);
@@ -96,7 +115,7 @@ public class BarChart extends Canvas {
 						gc.drawFocus(rect.x, rect.y, rect.width, rect.height);
 					} else {
 						// draw the focus rectangle around the selected item
-						Object [] dataItem = data.elementAt(selectedItem);
+						Object [] dataItem = data.get(selectedItem);
 						int itemValue = ((Integer)dataItem[1]).intValue();
 						int x = leftX + AXIS_WIDTH + GAP + selectedItem * (unitWidth + GAP);
 						gc.drawFocus(x, bottomY - itemValue * unitHeight - AXIS_WIDTH, unitWidth, itemValue * unitHeight + AXIS_WIDTH + GAP + valueSize.y);
@@ -174,6 +193,7 @@ public class BarChart extends Canvas {
 		});
 		
 		addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				switch (e.detail) {
 					case SWT.TRAVERSE_TAB_NEXT:
@@ -193,7 +213,7 @@ public class BarChart extends Canvas {
 				if (childID == ACC.CHILDID_SELF) {
 					e.result = title;
 				} else {
-					Object [] item = data.elementAt(childID);
+					Object [] item = data.get(childID);
 					e.result = formatter.format(item);
 				}
 			}
@@ -201,7 +221,7 @@ public class BarChart extends Canvas {
 			public void getDescription(AccessibleEvent e) {
 				int childID = e.childID;
 				if (childID != ACC.CHILDID_SELF) {
-					Object [] item = data.elementAt(childID);
+					Object [] item = data.get(childID);
 					String value = item[1].toString();
 					String colorName = bundle.getString("color" + color); //$NON_NLS$
 					MessageFormat formatter = new MessageFormat("");  //$NON_NLS$
@@ -287,7 +307,7 @@ public class BarChart extends Canvas {
 			public void getValue(AccessibleControlEvent e) {
 				int childID = e.childID;
 				if (childID != ACC.CHILDID_SELF) {
-					Object [] dataItem = data.elementAt(childID);
+					Object [] dataItem = data.get(childID);
 					e.result = ((Integer)dataItem[1]).toString();					
 				}
 			}
@@ -313,7 +333,7 @@ public class BarChart extends Canvas {
 		Point valueSize = gc.stringExtent (new Integer(valueMax).toString());
 		int itemWidth = 0;
 		for (int i = 0; i < count; i++) {
-			Object [] dataItem = data.elementAt(i);
+			Object [] dataItem = data.get(i);
 			String itemLabel = (String)dataItem[0];
 			itemWidth = Math.max(itemWidth, gc.stringExtent (itemLabel).x);
 		}
@@ -402,7 +422,7 @@ public class BarChart extends Canvas {
 		int bottomY = rect.y + rect.height - 2 * GAP - valueSize.y;
 		int unitWidth = (rect.width - 4 * GAP - valueSize.x - AXIS_WIDTH) / data.size() - GAP;
 		int unitHeight = (rect.height - 3 * GAP - AXIS_WIDTH - 2 * valueSize.y) / ((valueMax - valueMin) / valueIncrement);
-		Object [] dataItem = data.elementAt(index);
+		Object [] dataItem = data.get(index);
 		int itemValue = ((Integer)dataItem[1]).intValue();
 		int x = leftX + AXIS_WIDTH + GAP + index * (unitWidth + GAP);
 		return new Rectangle(x, bottomY - itemValue * unitHeight - AXIS_WIDTH, unitWidth, itemValue * unitHeight + AXIS_WIDTH + GAP + valueSize.y);

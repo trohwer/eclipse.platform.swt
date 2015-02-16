@@ -192,6 +192,7 @@ void createHandle () {
 	scrollWidget.setDrawsBackground(false);
 	scrollWidget.setAutoresizesSubviews (true);
 	scrollWidget.setBorderType(hasBorder() ? OS.NSBezelBorder : OS.NSNoBorder);
+	if (OS.VERSION_MMB >= OS.VERSION_MMB(10, 7, 0))	scrollWidget.setVerticalScrollElasticity(OS.NSScrollElasticityNone);
 
 	NSTextView widget = (NSTextView)new SWTTextView().alloc();
 	widget.init();
@@ -573,6 +574,12 @@ int parseMnemonics (char[] buffer, int start, int end, StringBuffer result) {
 		index++;
 	}
 	return mnemonic;
+}
+
+@Override
+void scrollWheel(long id, long sel, long theEvent) {
+	super.scrollWheel(id, sel, theEvent);
+	parent.scrollWheel(parent.view.id, sel, theEvent);
 }
 
 void sendFocusEvent(int type) {
