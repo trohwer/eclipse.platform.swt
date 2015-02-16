@@ -160,6 +160,20 @@ public final class Image extends Resource implements Drawable {
 	 * Specifies the default scanline padding.
 	 */
 	static final int DEFAULT_SCANLINE_PAD = 4;
+	
+	/**
+	 * Specifies default file extension separator
+	 */
+	
+	static final char FILE_EXTENSION_SEPARATOR = '.';
+	
+	/**
+	 * zoom level identifiers
+	 */
+	
+	static final String FILE_ONE_HALF_IDENTIFIER = "@1.5x";
+	static final String FILE_DOUBLE_IDENTIFIER = "@2x";
+
 
 Image(Device device) {
 	super(device);
@@ -649,8 +663,11 @@ public Image(Device device, InputStream stream) {
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a single image only. If the specified file contains
- * multiple images, only the first one will be used.
+ * a image only. If the specified file contains multiple images, 
+ * only the first one will be used. This constructor will search for 
+ * other representations at the same location with the pattern 
+ * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
+ * 2 represents double size 
  *
  * @param device the device on which to create the image
  * @param filename the name of the file to load the image from
@@ -673,8 +690,80 @@ public Image(Device device, String filename) {
 	super(device);
 	initLocalData ();
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	initNative(filename);
-	if (this.pixmap [0] == 0 && this.surface [0] == 0) init(new ImageData(filename));
+
+	int separatorLoc = filename.lastIndexOf (FILE_EXTENSION_SEPARATOR);
+	String fileExtension = "";
+	String fileNameFullPath = "";
+	if (separatorLoc != -1) {
+		fileExtension = filename.substring (separatorLoc + 1);
+		fileNameFullPath = filename.substring (0, separatorLoc);
+	}
+
+	File f = new File (fileNameFullPath + FILE_EXTENSION_SEPARATOR + fileExtension);
+	if ( f.exists () && !f.isDirectory ()){
+		initNative(filename);
+		if (this.pixmap [0] == 0 && this.surface [0] == 0) init(new ImageData(filename));
+	}
+	
+	f = new File (fileNameFullPath + FILE_ONE_HALF_IDENTIFIER + FILE_EXTENSION_SEPARATOR + fileExtension);
+	if ( f.exists () && !f.isDirectory ()){
+		initNative(filename);
+		if (this.pixmap [1] == 0 && this.surface [1] == 0) init(new ImageData(filename));
+	}
+	
+	f = new File (fileNameFullPath + FILE_DOUBLE_IDENTIFIER + FILE_EXTENSION_SEPARATOR + fileExtension);
+	if ( f.exists () && !f.isDirectory ()){
+		initNative(filename);
+		if (this.pixmap [2] == 0 && this.surface [2] == 0) init(new ImageData(filename));
+	}
+	init();
+}
+
+/**
+ * Constructs an instance of this class by loading its representation
+ * from the file with the specified name. Throws an error if an error
+ * occurs while loading the image, or if the result is an image
+ * of an unsupported type.
+ * <p>
+ * This constructor is provided for convenience when loading
+ * a image only. If the specified file contains multiple images, 
+ * only the first one will be used. This constructor will search for 
+ * other representations at the same location with the pattern 
+ * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
+ * 2 represents double size 
+ *
+ * @param device the device on which to create the image
+ * @param filenames the array of the filenames to load the image from
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @exception SWTError <ul>
+ *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
+ * </ul>
+ * @since 3.104
+ */
+public Image(Device device, String[] filenames) {
+	super(device);
+	initLocalData ();
+	if (filenames == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+
+	File f;
+	for (int i = 0; i < 3; i++){
+		f = new File (filenames [i]);
+		if ( f.exists () && !f.isDirectory ()){
+			initNative(filenames [i]);
+			if (this.pixmap [i] == 0 && this.surface [i] == 0) init(new ImageData(filenames [i]));
+		}
+	}
+	
 	init();
 }
 
@@ -693,6 +782,104 @@ void initNative(String filename) {
 			}
 		}
 	} catch (SWTException e) {}
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(Image srcImage) {
+	this.addRepresentation (srcImage, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(Image srcImage, int zoom) {
+	ImageData imageData = srcImage.getImageData ();
+	this.addRepresentation (imageData, zoom);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(ImageData srcImageData) {
+	this.addRepresentation (srcImageData, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(ImageData srcImageData, int zoom) {
+	int imageRepSelector;
+	switch (zoom) {
+		case 200:
+			imageRepSelector = 2;
+			break;
+		case 150:
+			imageRepSelector = 1;
+			break;
+		case 100:
+		default:
+			imageRepSelector = 0;
+			break;
+	}
+	init (srcImageData, imageRepSelector);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(InputStream stream) {
+	this.addRepresentation (stream, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(InputStream stream, int zoom) {
+	int imageRepSelector;
+	switch (zoom) {
+		case 200:
+			imageRepSelector = 2;
+			break;
+		case 150:
+			imageRepSelector = 1;
+			break;
+		case 100:
+		default:
+			imageRepSelector = 0;
+			break;
+	}
+	init (new ImageData(stream), imageRepSelector);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(String fileName) {
+	this.addRepresentation (fileName, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation(String fileName, int zoom) {
+	int imageRepSelector;
+	switch (zoom) {
+		case 200:
+			imageRepSelector = 2;
+			break;
+		case 150:
+			imageRepSelector = 1;
+			break;
+		case 100:
+		default:
+			imageRepSelector = 0;
+			break;
+	}
+	initNative(fileName);
+	if (this.pixmap [imageRepSelector] == 0 && this.surface [imageRepSelector] == 0) init(new ImageData(fileName));
+	
 }
 
 void createAlphaMask (int width, int height) {
@@ -1130,9 +1317,50 @@ public Rectangle getBounds() {
  * </ul>
  *
  * @see ImageData
+ * @since 3.104
  */
 public ImageData getImageData() {
+	return getImageData(100);
+}
+
+/**
+ * @since 3.104
+ */
+public ImageData getDefaultImageData() {
+	int imageSelector = device.getImageSelector ();
+	
+	int zoom = 100;
+	switch (imageSelector) {
+		case 2:
+			zoom = 200;
+			break;
+		case 1:
+			zoom = 150;
+			break;
+		case 0:
+		default:
+			zoom = 100;
+			break;
+	}
+	return getImageData (zoom);
+}
+/**
+ * @since 3.104
+ */
+public ImageData getImageData(int zoom) {
 	int imageRepSelector = 0;
+	switch (zoom) {
+		case 200:
+			imageRepSelector = 2;
+			break;
+		case 150:
+			imageRepSelector = 1;
+			break;
+		case 100:
+		default:
+			imageRepSelector = 0;
+			break;
+	}
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
 	if (OS.USE_CAIRO) {
@@ -1373,7 +1601,10 @@ void initLocalData () {
 }
 
 void init(ImageData image) {
-	int imageRepSelector = 0;
+	init (image, 0);
+}
+
+void init(ImageData image, int imageRepSelector) {
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	int width = this.width = image.width;
 	int height = this.height = image.height;
