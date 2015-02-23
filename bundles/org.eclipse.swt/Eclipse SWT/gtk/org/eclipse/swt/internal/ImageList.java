@@ -27,7 +27,7 @@ public ImageList() {
 }
 
 public static long /*int*/ convertSurface(Image image) {
-	int imageRepSelector = 0;
+	int imageRepSelector = image.getDevice ().getImageSelector ();
 	long /*int*/ newSurface = image.surface[imageRepSelector];
 	int type = Cairo.cairo_surface_get_type(newSurface);
 	if (type != Cairo.CAIRO_SURFACE_TYPE_IMAGE) {
@@ -49,7 +49,7 @@ public static long /*int*/ convertSurface(Image image) {
 
 public static long /*int*/ createPixbuf(Image image) {
 	long /*int*/ pixbuf;
-	int imageRepSelector = 0;
+	int imageRepSelector = image.getDevice ().getImageSelector ();
 	if (OS.USE_CAIRO) {
 		long /*int*/ surface = convertSurface(image);
 		int format = Cairo.cairo_image_surface_get_format(surface);
