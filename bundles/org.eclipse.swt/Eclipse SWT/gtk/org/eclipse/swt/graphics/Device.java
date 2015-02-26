@@ -956,14 +956,23 @@ static long /*int*/ XIOErrorProc (long /*int*/ xDisplay) {
 	return 0;
 }
 
+int getActualDPI () {
+	long /*int*/ screen = OS.gdk_screen_get_default();
+	int monitor = OS.gdk_screen_get_primary_monitor(screen);
+	
+	GdkRectangle dest = new GdkRectangle ();
+	OS.gdk_screen_get_monitor_geometry(screen, monitor, dest);
+	int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
+	return Compatibility.round (254 * dest.width, widthMM * 10);
+}
 public int getImageSelector() {
-	Point currentDpi = getScreenDPI ();
+	int currentDpi = getActualDPI();
 
-	if (currentDpi.x < 144) {
+	if (currentDpi < 144) {
 		return 0;
-	} else if ((currentDpi.x >= 144)&&(currentDpi.x < 192)) {
+	} else if ((currentDpi >= 144)&&(currentDpi < 192)) {
 		return 1;
-	} else if (currentDpi.x >= 192) {
+	} else if (currentDpi >= 192) {
 		return 2;
 	}
 	return 0;
