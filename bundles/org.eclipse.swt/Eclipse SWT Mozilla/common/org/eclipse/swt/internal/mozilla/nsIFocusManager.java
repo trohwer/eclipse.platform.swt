@@ -49,7 +49,7 @@ public class nsIFocusManager extends nsISupports {
 	}
 
 	public int SetFocus(long /*int*/ aElement, int aFlags) {
-		return XPCOM.VtblCall(this.getSetterIndex("focus"), getAddress(), aElement, aFlags);
+		return XPCOM.VtblCall(this.getMethodIndex("setFocus"), getAddress(), aElement, aFlags);
 	}
 
 	public static final int FLAG_RAISE = 1;

@@ -35,11 +35,13 @@ public class nsIDOMKeyEvent extends nsIDOMUIEvent {
 	static final String NS_IDOMKEYEVENT_IID_STR = "028e0e6e-8b01-11d3-aae7-0010838a3123";
 	static final String NS_IDOMKEYEVENT_10_IID_STR = "def974c3-b491-481b-bc67-29174af4b26a";
 	static final String NS_IDOMKEYEVENT_24_IID_STR = "91a3d7f2-223b-4e09-a566-634e7ee0a31d";
+	static final String NS_IDOMKEYEVENT_31_IID_STR = "d2b3e35f-8627-4732-a92d-cda54c8f8054";
 
 	static {
 		IIDStore.RegisterIID(nsIDOMKeyEvent.class, MozillaVersion.VERSION_BASE, new nsID(NS_IDOMKEYEVENT_IID_STR));
 		IIDStore.RegisterIID(nsIDOMKeyEvent.class, MozillaVersion.VERSION_XR10, new nsID(NS_IDOMKEYEVENT_10_IID_STR));
 		IIDStore.RegisterIID(nsIDOMKeyEvent.class, MozillaVersion.VERSION_XR24, new nsID(NS_IDOMKEYEVENT_24_IID_STR));
+		IIDStore.RegisterIID(nsIDOMKeyEvent.class, MozillaVersion.VERSION_XR31, new nsID(NS_IDOMKEYEVENT_31_IID_STR));
 	}
 
 	public nsIDOMKeyEvent(long /*int*/ address) {

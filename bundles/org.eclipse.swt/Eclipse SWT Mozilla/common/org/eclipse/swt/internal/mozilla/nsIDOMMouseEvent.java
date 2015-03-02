@@ -35,11 +35,13 @@ public class nsIDOMMouseEvent extends nsIDOMUIEvent {
 	static final String NS_IDOMMOUSEEVENT_IID_STR = "ff751edc-8b02-aae7-0010-8301838a3123";
 	static final String NS_IDOMMOUSEEVENT_10_IID_STR = "7f57aa45-6792-4d8b-ba5b-201533cf0b2f";
 	static final String NS_IDOMMOUSEEVENT_24_IID_STR = "afb2e57b-2822-4969-b2a9-0cada6859534";
+	static final String NS_IDOMMOUSEEVENT_31_IID_STR = "df068636-9a5b-11e3-b71f-2c27d728e7f9";
 
 	static {
 		IIDStore.RegisterIID(nsIDOMMouseEvent.class, MozillaVersion.VERSION_BASE, new nsID(NS_IDOMMOUSEEVENT_IID_STR));
 		IIDStore.RegisterIID(nsIDOMMouseEvent.class, MozillaVersion.VERSION_XR10, new nsID(NS_IDOMMOUSEEVENT_10_IID_STR));
 		IIDStore.RegisterIID(nsIDOMMouseEvent.class, MozillaVersion.VERSION_XR24, new nsID(NS_IDOMMOUSEEVENT_24_IID_STR));
+		IIDStore.RegisterIID(nsIDOMMouseEvent.class, MozillaVersion.VERSION_XR31, new nsID(NS_IDOMMOUSEEVENT_31_IID_STR));
 	}
 
 	public nsIDOMMouseEvent(long /*int*/ address) {

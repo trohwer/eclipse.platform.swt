@@ -51,6 +51,6 @@ public class nsIMIMEInputStream extends nsIInputStream {
 	}
 
 	public int SetData(long /*int*/ stream) {
-		return XPCOM.VtblCall(this.getSetterIndex("data"), getAddress(), stream);
+		return XPCOM.VtblCall(this.getMethodIndex("setData"), getAddress(), stream);
 	}
 }
