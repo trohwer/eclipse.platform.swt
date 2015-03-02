@@ -702,21 +702,30 @@ public Image(Device device, String filename) {
 
 	File f = new File (fileNameFullPath + FILE_EXTENSION_SEPARATOR + fileExtension);
 	if ( f.exists () && !f.isDirectory ()){
-		initNative(filename);
+		initNative(filename, 0);
 		if (this.pixmap [0] == 0 && this.surface [0] == 0) init(new ImageData(filename));
 	}
 	
-	f = new File (fileNameFullPath + FILE_ONE_HALF_IDENTIFIER + FILE_EXTENSION_SEPARATOR + fileExtension);
+	String filename1 = fileNameFullPath + FILE_ONE_HALF_IDENTIFIER + FILE_EXTENSION_SEPARATOR +fileExtension;	
+	f = new File (filename1);
 	if ( f.exists () && !f.isDirectory ()){
-		initNative(filename);
-		if (this.pixmap [1] == 0 && this.surface [1] == 0) init(new ImageData(filename));
+		initNative(filename1, 1);
+		if (this.pixmap [1] == 0 && this.surface [1] == 0) init(new ImageData(filename1), 1);
+	} else {
+		initNative (filename, 1);
+		if (this.pixmap [1] == 0 && this.surface [1] == 0) init(new ImageData(filename), 1);
 	}
 	
-	f = new File (fileNameFullPath + FILE_DOUBLE_IDENTIFIER + FILE_EXTENSION_SEPARATOR + fileExtension);
+	String filename2 = fileNameFullPath + FILE_DOUBLE_IDENTIFIER + FILE_EXTENSION_SEPARATOR +fileExtension;	
+	f = new File (filename2);
 	if ( f.exists () && !f.isDirectory ()){
-		initNative(filename);
-		if (this.pixmap [2] == 0 && this.surface [2] == 0) init(new ImageData(filename));
+		initNative(filename2, 2);
+		if (this.pixmap [2] == 0 && this.surface [2] == 0) init(new ImageData(filename2), 2);
+	} else {
+		initNative (filename, 2);
+		if (this.pixmap [2] == 0 && this.surface [2] == 0) init(new ImageData(filename), 2);
 	}
+
 	init();
 }
 
@@ -769,6 +778,9 @@ public Image(Device device, String[] filenames) {
 }
 
 void initNative(String filename) {
+	initNative(filename, 0);
+}
+void initNative(String filename, int imageRepSelector) {
 	try {
 		int length = filename.length ();
 		char [] chars = new char [length];
@@ -777,7 +789,7 @@ void initNative(String filename) {
 		long /*int*/ pixbuf = OS.gdk_pixbuf_new_from_file(buffer, null);
 		if (pixbuf != 0) {
 			try {
-				createFromPixbuf (SWT.BITMAP, pixbuf);
+				createFromPixbuf (SWT.BITMAP, pixbuf, imageRepSelector);
 			} finally {
 				if (pixbuf != 0) OS.g_object_unref (pixbuf);
 			}
@@ -916,19 +928,21 @@ void createAlphaMask (int width, int height) {
 }
 
 void createFromPixbuf(int type, long /*int*/ pixbuf) {
+	createFromPixbuf(type, pixbuf, 0);
+}
+void createFromPixbuf(int type, long /*int*/ pixbuf, int imageRepSelector) {
 	this.type = type;
 	boolean hasAlpha = OS.gdk_pixbuf_get_has_alpha(pixbuf);
-	int imageRepselection = 0;
 	if (OS.USE_CAIRO) {
 		int width = this.width = OS.gdk_pixbuf_get_width(pixbuf);
 		int height = this.height = OS.gdk_pixbuf_get_height(pixbuf);
 		int stride = OS.gdk_pixbuf_get_rowstride(pixbuf);
 		long /*int*/ pixels = OS.gdk_pixbuf_get_pixels(pixbuf);
 		int format = hasAlpha ? Cairo.CAIRO_FORMAT_ARGB32 : Cairo.CAIRO_FORMAT_RGB24;
-		surface[imageRepselection] = Cairo.cairo_image_surface_create(format, width, height);
-		if (surface[imageRepselection] == 0) SWT.error(SWT.ERROR_NO_HANDLES);
-		long /*int*/ data = Cairo.cairo_image_surface_get_data(surface[imageRepselection]);
-		int cairoStride = Cairo.cairo_image_surface_get_stride(surface[imageRepselection]);
+		surface[imageRepSelector] = Cairo.cairo_image_surface_create(format, width, height);
+		if (surface[imageRepSelector] == 0) SWT.error(SWT.ERROR_NO_HANDLES);
+		long /*int*/ data = Cairo.cairo_image_surface_get_data(surface[imageRepSelector]);
+		int cairoStride = Cairo.cairo_image_surface_get_stride(surface[imageRepSelector]);
 		int oa = 0, or = 0, og = 0, ob = 0;
 		if (OS.BIG_ENDIAN) {
 			oa = 0; or = 1; og = 2; ob = 3;
@@ -971,7 +985,7 @@ void createFromPixbuf(int type, long /*int*/ pixbuf) {
 				OS.memmove(data + (y * cairoStride), cairoLine, cairoStride);
 			}
 		}
-		Cairo.cairo_surface_mark_dirty(surface[imageRepselection]);
+		Cairo.cairo_surface_mark_dirty(surface[imageRepSelector]);
 	} else {
 		if (hasAlpha) {
 			/*
@@ -999,8 +1013,8 @@ void createFromPixbuf(int type, long /*int*/ pixbuf) {
 		}
 		long /*int*/ [] pixmap_return = new long /*int*/ [1];
 		OS.gdk_pixbuf_render_pixmap_and_mask(pixbuf, pixmap_return, null, 0);
-		this.pixmap [imageRepselection] = pixmap_return[0];
-		if (pixmap [imageRepselection] == 0) SWT.error(SWT.ERROR_NO_HANDLES);
+		this.pixmap [imageRepSelector] = pixmap_return[0];
+		if (pixmap [imageRepSelector] == 0) SWT.error(SWT.ERROR_NO_HANDLES);
 	}
 }
 
@@ -1291,8 +1305,11 @@ public Color getBackground() {
  * </ul>
  */
 public Rectangle getBounds() {
-	int imageRepSelector = 0;
+	return getBounds(0);
+}
+public Rectangle getBounds (int imageRepSelector) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
 	}
@@ -1365,7 +1382,7 @@ public ImageData getImageData(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
 	if (OS.USE_CAIRO) {
-		long /*int*/ surface = ImageList.convertSurface(this);
+		long /*int*/ surface = ImageList.convertSurface(this, imageRepSelector);
 		int format = Cairo.cairo_image_surface_get_format(surface);
 		int width = Cairo.cairo_image_surface_get_width(surface);
 		int height = Cairo.cairo_image_surface_get_height(surface);

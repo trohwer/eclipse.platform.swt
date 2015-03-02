@@ -27,11 +27,17 @@ public ImageList() {
 }
 
 public static long /*int*/ convertSurface(Image image) {
-	int imageRepSelector = image.getDevice ().getImageSelector ();
+	return convertSurface (image, 0);
+}
+
+public static long /*int*/ convertSurface (Image image, int imageRepSelector) {
 	long /*int*/ newSurface = image.surface[imageRepSelector];
+	if (newSurface == 0) {
+		newSurface = image.surface[0];
+	}
 	int type = Cairo.cairo_surface_get_type(newSurface);
 	if (type != Cairo.CAIRO_SURFACE_TYPE_IMAGE) {
-		Rectangle bounds = image.getBounds();
+		Rectangle bounds = image.getBounds(imageRepSelector);
 		int format = Cairo.cairo_surface_get_content(newSurface) == Cairo.CAIRO_CONTENT_COLOR ? Cairo.CAIRO_FORMAT_RGB24 : Cairo.CAIRO_FORMAT_ARGB32;
 		newSurface = Cairo.cairo_image_surface_create(format, bounds.width, bounds.height);
 		if (newSurface == 0) SWT.error(SWT.ERROR_NO_HANDLES);
@@ -51,7 +57,7 @@ public static long /*int*/ createPixbuf(Image image) {
 	long /*int*/ pixbuf;
 	int imageRepSelector = image.getDevice ().getImageSelector ();
 	if (OS.USE_CAIRO) {
-		long /*int*/ surface = convertSurface(image);
+		long /*int*/ surface = convertSurface(image, imageRepSelector);
 		int format = Cairo.cairo_image_surface_get_format(surface);
 		int width = Cairo.cairo_image_surface_get_width(surface);
 		int height = Cairo.cairo_image_surface_get_height(surface);
