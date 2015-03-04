@@ -11,12 +11,12 @@
 package org.eclipse.swt.graphics;
 
 
+import java.io.*;
+
+import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
-import org.eclipse.swt.*;
-
-import java.io.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -160,9 +160,17 @@ public final class Image extends Resource implements Drawable {
 	 * Specifies the default scanline padding.
 	 */
 	static final int DEFAULT_SCANLINE_PAD = 4;
+	
+	int dpiWidth[] = new int[DpiUtil.SIZE];
+	int dpiHeight[] = new int[DpiUtil.SIZE];
+	long /*int*/ dpiSurface[] = new long /*int*/ [DpiUtil.SIZE];
+	long /*int*/ dpiPixmap[] = new long /*int*/ [DpiUtil.SIZE];
+	String dpiFilename[] = new String [DpiUtil.SIZE];
+	long /*int*/ dpiMask[] = new long /*int*/ [DpiUtil.SIZE];
 
 Image(Device device) {
 	super(device);
+	copyImageDataToDpiImageStorage(0);
 }
 
 /**
@@ -198,6 +206,7 @@ Image(Device device) {
 public Image(Device device, int width, int height) {
 	super(device);
 	init(width, height);
+	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -236,6 +245,14 @@ public Image(Device device, Image srcImage, int flag) {
 	super(device);
 	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (srcImage.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	for (int i = 0; i < DpiUtil.SIZE; i++){
+		srcImage.copyImageDataFromDpiImageStorage(i);
+		copyImage(device, srcImage, flag);
+		copyImageDataToDpiImageStorage(i);
+	}
+}
+
+private void copyImage(Device device, Image srcImage, int flag) {
 	switch (flag) {
 		case SWT.IMAGE_COPY:
 		case SWT.IMAGE_DISABLE:
@@ -476,6 +493,7 @@ public Image(Device device, Image srcImage, int flag) {
 		OS.g_object_unref(pixbuf);
 		OS.g_object_unref(gdkGC);
 	}
+	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -513,6 +531,7 @@ public Image(Device device, Rectangle bounds) {
 	super(device);
 	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	init(bounds.width, bounds.height);
+	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -537,6 +556,7 @@ public Image(Device device, Rectangle bounds) {
 public Image(Device device, ImageData data) {
 	super(device);
 	init(data);
+	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -577,6 +597,7 @@ public Image(Device device, ImageData source, ImageData mask) {
 	image.maskPad = mask.scanlinePad;
 	image.maskData = mask.data;
 	init(image);
+	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -631,6 +652,7 @@ public Image(Device device, ImageData source, ImageData mask) {
 public Image(Device device, InputStream stream) {
 	super(device);
 	init(new ImageData(stream));
+	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -664,8 +686,21 @@ public Image(Device device, InputStream stream) {
 public Image(Device device, String filename) {
 	super(device);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	initNative(filename);
-	if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
+	String files[] = DpiUtil.getImageNames(filename);
+	for (int i = 0; i < DpiUtil.SIZE; i++) {
+		dpiFilename[i] = files [i];
+	}
+	copyImageDataFromDpiImageStorage(device.getImageSelector ());
+	init();
+}
+
+public Image(Device device, String[] filenames) {
+	super(device);
+	for (int i = 0; i < filenames.length; i++) {
+		if (filenames [i] == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		dpiFilename[i] = filenames [i];
+	}
+	copyImageDataFromDpiImageStorage(device.getImageSelector ());
 	init();
 }
 
@@ -1011,11 +1046,18 @@ void destroyMask() {
 @Override
 void destroy() {
 	if (memGC != null) memGC.dispose();
-	if (pixmap != 0) OS.g_object_unref(pixmap);
-	if (mask != 0) OS.g_object_unref(mask);
-	if (surface != 0) Cairo.cairo_surface_destroy(surface);
+	for (int i = 0; i < 3; i++) {
+		destroy (i);
+	}
 	surface = pixmap = mask = 0;
 	memGC = null;
+}
+
+private void destroy (int imageSelectorIndex) {
+	if (dpiPixmap[imageSelectorIndex] != 0) OS.g_object_unref(dpiPixmap[imageSelectorIndex]);
+	if (dpiMask[imageSelectorIndex] != 0) OS.g_object_unref(dpiMask[imageSelectorIndex]);
+	if (dpiSurface[imageSelectorIndex] != 0) Cairo.cairo_surface_destroy(dpiSurface[imageSelectorIndex]);
+	dpiSurface[imageSelectorIndex] = dpiPixmap[imageSelectorIndex] = dpiMask[imageSelectorIndex] = 0;
 }
 
 /**
@@ -1105,7 +1147,7 @@ public Rectangle getBounds() {
  *
  * @see ImageData
  */
-public ImageData getImageData() {
+public ImageData getDefaultImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
 	if (OS.USE_CAIRO) {
@@ -1698,4 +1740,94 @@ public String toString () {
 	}
 }
 
+void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
+	if ((dpiPixmap[imageSelectorIndex] != 0) 
+			|| (dpiSurface[imageSelectorIndex] != 0)) {
+		width = dpiWidth[imageSelectorIndex];
+		height = dpiHeight[imageSelectorIndex];
+		mask = dpiMask[imageSelectorIndex];
+		pixmap = dpiPixmap[imageSelectorIndex];
+		surface = dpiSurface[imageSelectorIndex];
+	} else {
+		/*
+		 * load the image from the file name
+		 */
+		String filename = dpiFilename[imageSelectorIndex];
+		if (filename == null) {
+			filename = dpiFilename[0];
+		}
+		if (filename != null) {
+			initNative(filename);
+			if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
+			copyImageDataToDpiImageStorage (imageSelectorIndex);
+		} else { // in case if we donot have filename and no other representations available
+			width = dpiWidth[0];
+			height = dpiHeight[0];
+			mask = dpiMask[0];
+			pixmap = dpiPixmap[0];
+			surface = dpiSurface[0];			
+		}
+	}
+}
+
+void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
+	dpiWidth[imageSelectorIndex] = width;
+	dpiHeight[imageSelectorIndex] = height;
+	dpiMask[imageSelectorIndex] = mask;
+	dpiPixmap[imageSelectorIndex] = pixmap;
+	dpiSurface[imageSelectorIndex] = surface;
+}
+
+public void addRepresentation (Image srcImage) {
+	addRepresentation(srcImage, 100);
+}
+public void addRepresentation (Image srcImage, int zoom) {
+	copyImage(device, srcImage, SWT.IMAGE_COPY);
+	copyImageDataToDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataFromDpiImageStorage(device.getImageSelector());
+}
+
+public void addRepresentation (ImageData srcImageData) {
+	addRepresentation(srcImageData, 100);
+}
+
+public void addRepresentation (ImageData srcImageData, int zoom) {
+	init(srcImageData);
+	copyImageDataToDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataFromDpiImageStorage(device.getImageSelector());
+}
+
+public void addRepresentation (InputStream srcStream) {
+	addRepresentation(srcStream, 100);
+}
+
+public void addRepresentation (InputStream srcStream, int zoom) {
+	init(new ImageData(srcStream));
+	copyImageDataToDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataFromDpiImageStorage(device.getImageSelector());	
+}
+
+public void addRepresentation (String filename) {
+	addRepresentation(filename, 100);
+}
+
+public void addRepresentation (String filename, int zoom) {
+	int imageSelctionIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	dpiFilename[imageSelctionIndex] = filename;
+	copyImageDataFromDpiImageStorage(device.getImageSelector());
+}
+
+public ImageData getImageData () {
+	copyImageDataFromDpiImageStorage(0);
+	ImageData returnVal = getDefaultImageData ();
+	copyImageDataFromDpiImageStorage(device.getImageSelector());
+	return returnVal;
+}
+
+public ImageData getImageData (int zoom) {
+	copyImageDataFromDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	ImageData returnVal = getDefaultImageData ();
+	copyImageDataFromDpiImageStorage(device.getImageSelector());
+	return returnVal;
+}
 }
