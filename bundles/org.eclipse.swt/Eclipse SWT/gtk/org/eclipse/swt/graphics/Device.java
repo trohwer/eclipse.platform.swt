@@ -965,16 +965,7 @@ int getActualDPI () {
 	return Compatibility.round (254 * dest.width, widthMM * 10);
 }
 public int getImageSelector() {
-	int currentDpi = getActualDPI();
-
-	if (currentDpi < 144) {
-		return 0;
-	} else if ((currentDpi >= 144)&&(currentDpi < 192)) {
-		return 1;
-	} else if (currentDpi >= 192) {
-		return 2;
-	}
-	return 0;
+	return DpiUtil.mapDpiToImageSelectorIndex(getActualDPI());
 }
 
 }
