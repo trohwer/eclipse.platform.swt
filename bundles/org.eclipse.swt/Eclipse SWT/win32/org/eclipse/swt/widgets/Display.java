@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2181,6 +2181,10 @@ public Monitor getPrimaryMonitor () {
 		monitor.clientY = rect.top;
 		monitor.clientWidth = rect.right - rect.left;
 		monitor.clientHeight = rect.bottom - rect.top;
+		long /*int*/ hDC = internal_new_GC (null);
+		monitor.dpi = (OS.GetDeviceCaps (hDC, OS.LOGPIXELSX));
+		monitor.imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex (monitor.dpi);
+		internal_dispose_GC (hDC, null);
 		return monitor;
 	}
 	monitors = new Monitor [4];
@@ -3439,6 +3443,10 @@ long /*int*/ monitorEnumProc (long /*int*/ hmonitor, long /*int*/ hdc, long /*in
 	monitor.clientY = lpmi.rcWork_top;
 	monitor.clientWidth = lpmi.rcWork_right - lpmi.rcWork_left;
 	monitor.clientHeight = lpmi.rcWork_bottom - lpmi.rcWork_top;
+	long /*int*/ hDC = internal_new_GC (null);
+	monitor.dpi = (OS.GetDeviceCaps (hDC, OS.LOGPIXELSX));
+	monitor.imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex (monitor.dpi);
+	internal_dispose_GC (hDC, null);
 	monitors [monitorCount++] = monitor;
 	return 1;
 }

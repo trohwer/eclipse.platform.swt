@@ -684,14 +684,7 @@ public Image(Device device, InputStream stream) {
  * </ul>
  */
 public Image(Device device, String filename) {
-	super(device);
-	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	String files[] = DpiUtil.getImageNames(filename);
-	for (int i = 0; i < DpiUtil.SIZE; i++) {
-		dpiFilename[i] = files [i];
-	}
-	copyImageDataFromDpiImageStorage(device.getImageSelector ());
-	init();
+	this (device, DpiUtil.getImageNames(filename));
 }
 
 public Image(Device device, String[] filenames) {
