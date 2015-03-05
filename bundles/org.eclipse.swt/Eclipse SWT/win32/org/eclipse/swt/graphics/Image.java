@@ -121,7 +121,7 @@ public final class Image extends Resource implements Drawable {
 	 * the image data used to create this image if it is a
 	 * icon. Used only in WinCE
 	 */
-	ImageData data;
+	ImageData data[] = new ImageData [DpiUtil.SIZE];
 	
 	/**
 	 * width of the image
@@ -263,7 +263,7 @@ public Image(Device device, Image srcImage, int flag) {
 					break;
 				case SWT.ICON:
 					if (OS.IsWinCE) {
-						init(srcImage.data);
+						init(srcImage.data[device.getImageSelector ()]);
 					} else {
 						handle = OS.CopyImage(srcImage.handle, OS.IMAGE_ICON, rect.width, rect.height, 0);
 						if (handle == 0) SWT.error(SWT.ERROR_NO_HANDLES);
@@ -645,7 +645,7 @@ public Image (Device device, String filename) {
 public Image(Device device, String[] filenames) {
 	super(device);
 	if (filenames == null || filenames.length == 0) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	int imageSelectorIndex = device.getImageSelector();
+	int imageSelectorIndex = device.getImageSelector ();
 	File file = new File (filenames [imageSelectorIndex]);
 	if (imageSelectorIndex > 0 && (!file.exists () || file.isDirectory ())) {
 		imageSelectorIndex = 0;
@@ -825,6 +825,97 @@ void initNative(String filename) {
 			}
 		}
 	}
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (Image srcImage) {
+	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.addRepresentation (srcImage.getImageData (), 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (Image srcImage, int zoom) {
+	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.addRepresentation (srcImage.getImageData (), zoom);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (ImageData srcImageData) {
+	if (srcImageData == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.addRepresentation (srcImageData, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (ImageData srcImageData, int zoom) {
+	if (srcImageData == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	if (imageSelectorIndex == device.getImageSelector ()) {
+		init(srcImageData);
+		init();
+	}
+	else {
+		data [imageSelectorIndex] = srcImageData;
+	}
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (InputStream stream) {
+	if (stream == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.addRepresentation (stream, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (String fileName) {
+	if (fileName == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.addRepresentation (fileName, 100);
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (String fileName, int zoom) {
+	if (fileName == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	if (imageSelectorIndex == device.getImageSelector ()) {
+		initNative (fileName);
+		addRepresentation (new ImageData(fileName), zoom);
+	}
+	else {
+		data [imageSelectorIndex] = new ImageData(fileName);
+	}
+}
+
+/**
+ * @since 3.104
+ */
+public void addRepresentation (InputStream stream, int zoom) {
+	if (stream == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	if (imageSelectorIndex == device.getImageSelector ()) {
+		addRepresentation (new ImageData(stream), zoom);
+	}
+	else {
+		data [imageSelectorIndex] = new ImageData(stream);
+	}
+}
+
+/**
+ * @since 3.104
+ */
+public ImageData getImageData (int zoom) {
+	return data[DpiUtil.mapZoomToImageSelectorIndex(zoom)];
 }
 
 /** 
@@ -1116,11 +1207,11 @@ long /*int*/ [] createGdipImage() {
 void destroy () {
 	if (memGC != null) memGC.dispose();
 	if (type == SWT.ICON) {
-		if (OS.IsWinCE) data = null;
 		OS.DestroyIcon (handle);
 	} else {
 		OS.DeleteObject (handle);
 	}
+	data = null;
 	handle = 0;
 	memGC = null;
 }
@@ -1247,7 +1338,8 @@ public Rectangle getBounds() {
 			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
 		case SWT.ICON:
 			if (OS.IsWinCE) {
-				return new Rectangle(0, 0, width = data.width, height = data.height);
+				int imageSelectorIndex = device.getImageSelector ();
+				return new Rectangle(0, 0, width = data[imageSelectorIndex].width, height = data[imageSelectorIndex].height);
 			} else {
 				ICONINFO info = new ICONINFO();
 				OS.GetIconInfo(handle, info);
@@ -1286,7 +1378,7 @@ public ImageData getImageData() {
 	int depth, width, height;
 	switch (type) {
 		case SWT.ICON: {
-			if (OS.IsWinCE) return data;
+			if (OS.IsWinCE) return data[device.getImageSelector ()];
 			ICONINFO info = new ICONINFO();	
 			if (OS.IsWinCE) SWT.error(SWT.ERROR_NOT_IMPLEMENTED);
 			OS.GetIconInfo(handle, info);
@@ -1707,7 +1799,7 @@ static long /*int*/ createDIB(int width, int height, int depth) {
  * if the regular GetIconInfo had been used.
  */
 static void GetIconInfo(Image image, ICONINFO info) {
-	long /*int*/ [] result = init(image.device, null, image.data);
+	long /*int*/ [] result = init(image.device, null, image.data[image.device.getImageSelector ()]);
 	info.hbmColor = result[0];
 	info.hbmMask = result[1];
 }
@@ -1919,7 +2011,7 @@ static long /*int*/ [] init(Device device, Image image, ImageData i) {
 			OS.DeleteObject(hMask);
 			image.handle = hIcon;
 			image.type = SWT.ICON;
-			if (OS.IsWinCE) image.data = i;
+			if (OS.IsWinCE) image.data [device.getImageSelector ()] = i;
 		}
 	} else {
 		if (image == null) {
