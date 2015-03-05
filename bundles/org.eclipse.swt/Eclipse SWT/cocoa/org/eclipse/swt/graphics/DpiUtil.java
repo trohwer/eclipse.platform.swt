@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,16 @@ public class DpiUtil {
 			return new String[0];
 
 		String[] fileNames = new String[SIZE];
+		/* Adding the default fileName as-is */
+		fileNames[0] = fileName;
+		
+		/* Creating high DPI fileNames as per pattern */
 		int separatorLoc = fileName.lastIndexOf (FILE_EXTENSION_SEPARATOR);
 		if (separatorLoc != -1) {
-			fileNames[0] = fileName;
-			fileNames[1] = fileName.substring (0, separatorLoc) + FILE_ONE_HALF_IDENTIFIER + FILE_EXTENSION_SEPARATOR
-					+ fileName.substring(separatorLoc + 1);
-			fileNames[2] = fileName.substring (0, separatorLoc) + FILE_DOUBLE_IDENTIFIER + FILE_EXTENSION_SEPARATOR
-					+ fileName.substring (separatorLoc + 1);
+			String name = fileName.substring (0, separatorLoc);
+			String ext = fileName.substring (separatorLoc + 1);
+			fileNames[1] = name + FILE_ONE_HALF_IDENTIFIER + FILE_EXTENSION_SEPARATOR + ext;
+			fileNames[2] = name + FILE_DOUBLE_IDENTIFIER + FILE_EXTENSION_SEPARATOR + ext;
 		}
 		return fileNames;
 	}

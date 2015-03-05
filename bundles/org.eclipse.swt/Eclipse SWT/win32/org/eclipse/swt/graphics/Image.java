@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -582,11 +582,11 @@ public Image (Device device, InputStream stream) {
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a single image only. If the specified file contains
- * multiple images, only the first one will be used.
- * <p>
- * You must dispose the image when it is no longer required. 
- * </p>
+ * a image only. If the specified file contains multiple images, 
+ * only the first one will be used. This constructor will search for 
+ * other representations at the same location with the pattern 
+ * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
+ * 2 represents double size 
  *
  * @param device the device on which to create the image
  * @param filename the name of the file to load the image from
@@ -608,10 +608,50 @@ public Image (Device device, InputStream stream) {
  * @see #dispose()
  */
 public Image (Device device, String filename) {
+	this (device, DpiUtil.getImageNames (filename));
+}
+
+/**
+ * Constructs an instance of this class by loading its representation
+ * from the file with the specified name. Throws an error if an error
+ * occurs while loading the image, or if the result is an image
+ * of an unsupported type.
+ * <p>
+ * This constructor is provided for convenience when loading
+ * a image only. If the specified file contains multiple images, 
+ * only the first one will be used. This constructor will search for 
+ * other representations at the same location with the pattern 
+ * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
+ * 2 represents double size 
+ *
+ * @param device the device on which to create the image
+ * @param filenames the array of the filenames to load the image from
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @exception SWTError <ul>
+ *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
+ * </ul>
+ * @since 3.104
+ */
+public Image(Device device, String[] filenames) {
 	super(device);
-	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	initNative(filename);
-	if (this.handle == 0) init(new ImageData(filename));
+	if (filenames == null || filenames.length == 0) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	int imageSelectorIndex = device.getImageSelector();
+	File file = new File (filenames [imageSelectorIndex]);
+	if (imageSelectorIndex > 0 && (!file.exists () || file.isDirectory ())) {
+		imageSelectorIndex = 0;
+	}
+	initNative (filenames [imageSelectorIndex]);
+	if (this.handle == 0) init(new ImageData (filenames [imageSelectorIndex]));
 	init();
 }
 

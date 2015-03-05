@@ -12,6 +12,7 @@ package org.eclipse.swt.graphics;
 
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gtk.*;
 
@@ -81,6 +82,7 @@ public abstract class Device implements Drawable {
 
 	/* Device dpi */
 	Point dpi;
+	private int imageSelectorIndex = -1;
 
 	long /*int*/ emptyTab;
 
@@ -964,8 +966,16 @@ int getActualDPI () {
 	int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
 	return Compatibility.round (254 * dest.width, widthMM * 10);
 }
+
+/**
+ * Returns the image selector index as per the DPI value.
+ * @since 3.104
+ */
 public int getImageSelector() {
-	return DpiUtil.mapDpiToImageSelectorIndex(getActualDPI());
+	if (imageSelectorIndex == -1) {
+		imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex(getActualDPI());
+	}
+	return imageSelectorIndex;
 }
 
 }
