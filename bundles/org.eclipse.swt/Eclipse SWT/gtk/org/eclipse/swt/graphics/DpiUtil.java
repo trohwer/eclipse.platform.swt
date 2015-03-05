@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.swt.graphics;
 
+import java.io.*;
+
 /**
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
  * functionality.
@@ -27,7 +29,7 @@ public class DpiUtil {
 	 * 
 	 * @return String[] image filenames
 	 */
-	public static String[] getImageNames (String fileName) {
+	static String[] getImageNames (String fileName) {
 		if (fileName == null || fileName.trim().length() == 0)
 			return new String[0];
 
@@ -51,7 +53,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	public static int mapDpiToImageSelectorIndex (int dpi) {
+	static int mapDpiToImageSelectorIndex (int dpi) {
 		int imageSelectorIndex;
 		if (dpi >= 192) {
 			imageSelectorIndex = 2;
@@ -68,7 +70,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	public static int mapZoomToImageSelectorIndex (int zoom) {
+	static int mapZoomToImageSelectorIndex (int zoom) {
 		int imageSelectorIndex = 0;
 		switch (zoom) {
 		case 200:
@@ -83,5 +85,16 @@ public class DpiUtil {
 			break;
 		}
 		return imageSelectorIndex;
+	}
+
+	static boolean fileExists (String filename) {
+		if (filename == null) {
+			return false;
+		}
+		File f = new File (filename);
+		if (( f.exists() ) && (!f.isDirectory())) {
+			return true;
+		}
+		return false;
 	}
 }

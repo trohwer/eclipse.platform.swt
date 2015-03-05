@@ -1746,7 +1746,8 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 		 * load the image from the file name
 		 */
 		String filename = dpiFilename[imageSelectorIndex];
-		if (filename == null) {
+		
+		if (!DpiUtil.fileExists(filename)) {
 			filename = dpiFilename[0];
 		}
 		if (filename != null) {
@@ -1761,6 +1762,7 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 			surface = dpiSurface[0];			
 		}
 	}
+	createAlphaMask(width, height);
 }
 
 void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
