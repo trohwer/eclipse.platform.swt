@@ -533,6 +533,7 @@ public Image(Device device, InputStream stream) {
  *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
  * </ul>
  */
+@SuppressWarnings("static-access")
 public Image(Device device, String filename) {
 	super(device);
 	NSAutoreleasePool pool = null;
@@ -542,6 +543,13 @@ public Image(Device device, String filename) {
 		initNative(filename);
 		if (this.handle == null) init(new ImageData(filename));
 		init();
+		String [] files = DpiUtil.getImageNames(filename);
+		for (int i = 1; i< DpiUtil.SIZE; i++) {
+			NSImageRep rep = (NSImageRep)new NSImageRep().alloc();
+			rep.imageRepWithContentsOfFile(NSString.stringWith(files [i]));
+			handle.addRepresentation(rep);
+			rep.release();
+		}
 	} finally {
 		if (pool != null) pool.release();
 	}

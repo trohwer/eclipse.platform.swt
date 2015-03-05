@@ -50,9 +50,9 @@ public class DpiUtil {
 	 */
 	public static int mapDpiToImageSelectorIndex (int dpi) {
 		int imageSelectorIndex;
-		if (dpi >= 192) {
+		if (dpi >= 144) {
 			imageSelectorIndex = 2;
-		} else if (dpi >= 144) {
+		} else if (dpi >= 108) {
 			imageSelectorIndex = 1;
 		} else {
 			imageSelectorIndex = 0;

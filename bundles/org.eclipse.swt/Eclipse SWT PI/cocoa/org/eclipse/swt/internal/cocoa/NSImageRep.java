@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,11 @@ public boolean drawInRect(NSRect rect) {
 
 public boolean hasAlpha() {
 	return OS.objc_msgSend_bool(this.id, OS.sel_hasAlpha);
+}
+
+public static id imageRepWithContentsOfFile(NSString filename) {
+	long /*int*/ result = OS.objc_msgSend(OS.class_NSImageRep, OS.sel_imageRepWithContentsOfFile_, filename != null ? filename.id : 0);
+	return result != 0 ? new id(result) : null;
 }
 
 public long /*int*/ pixelsHigh() {
