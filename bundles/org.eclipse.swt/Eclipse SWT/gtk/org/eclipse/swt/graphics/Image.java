@@ -14,6 +14,7 @@ package org.eclipse.swt.graphics;
 import java.io.*;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
@@ -1039,7 +1040,7 @@ void destroyMask() {
 @Override
 void destroy() {
 	if (memGC != null) memGC.dispose();
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < DpiUtil.SIZE; i++) {
 		destroy (i);
 	}
 	surface = pixmap = mask = 0;
