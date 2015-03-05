@@ -1114,9 +1114,10 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
 	NSImage imageHandle = srcImage.handle;
-	NSSize size = imageHandle.size();
- 	int imgWidth = (int)size.width;
- 	int imgHeight = (int)size.height;
+	NSImageRep rep= srcImage.getRepresentation();
+	//NSSize size = imageHandle.size();
+ 	int imgWidth = (int)rep.pixelsWide();
+ 	int imgHeight = (int)rep.pixelsHigh();
  	if (simple) {
  		srcWidth = destWidth = imgWidth;
  		srcHeight = destHeight = imgHeight;
