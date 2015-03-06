@@ -533,7 +533,6 @@ public Image(Device device, InputStream stream) {
  *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
  * </ul>
  */
-@SuppressWarnings("static-access")
 public Image(Device device, String filename) {
 	super(device);
 	NSAutoreleasePool pool = null;
@@ -545,10 +544,9 @@ public Image(Device device, String filename) {
 		init();
 		String [] files = DpiUtil.getImageNames(filename);
 		for (int i = 1; i< DpiUtil.SIZE; i++) {
-			NSImageRep rep = (NSImageRep)new NSImageRep().alloc();
-			rep.imageRepWithContentsOfFile(NSString.stringWith(files [i]));
+			id id = NSImageRep.imageRepWithContentsOfFile(NSString.stringWith(files[i]));
+			NSImageRep rep = new NSImageRep(id);
 			handle.addRepresentation(rep);
-			rep.release();
 		}
 	} finally {
 		if (pool != null) pool.release();
@@ -675,11 +673,8 @@ public Rectangle getBounds() {
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
-		if (width != -1 && height != -1) {
-			return new Rectangle(0, 0, width, height);
-		}
-		NSSize size = handle.size();
-		return new Rectangle(0, 0, width = (int)size.width, height = (int)size.height);
+		NSImageRep rep = getRepresentation();
+		return new Rectangle(0, 0, (int)rep.pixelsWide(), (int)rep.pixelsHigh());
 	} finally {
 		if (pool != null) pool.release();
 	}
