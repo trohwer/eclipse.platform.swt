@@ -1141,7 +1141,7 @@ public Rectangle getBounds() {
  *
  * @see ImageData
  */
-public ImageData getDefaultImageData() {
+public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
 	if (OS.USE_CAIRO) {
@@ -1811,13 +1811,6 @@ public void addRepresentation (String filename, int zoom) {
 	int imageSelctionIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
 	dpiFilename[imageSelctionIndex] = filename;
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
-}
-
-public ImageData getImageData () {
-	copyImageDataFromDpiImageStorage(0);
-	ImageData returnVal = getDefaultImageData ();
-	copyImageDataFromDpiImageStorage(device.getImageSelector());
-	return returnVal;
 }
 
 public ImageData getImageData (int zoom) {

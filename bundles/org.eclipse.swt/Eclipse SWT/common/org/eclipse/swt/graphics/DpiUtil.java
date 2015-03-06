@@ -24,12 +24,15 @@ public class DpiUtil {
 	public static final String FILE_DOUBLE_IDENTIFIER = "@2x";
 	public static final int SIZE = 3;
 
+	/* DPI Constants */
+	public static final int DPI_ZOOM_200 = 192;
+	public static final int DPI_ZOOM_150 = 144;
 	/**
 	 * Prepare an array of Image filenames for various DPI levels.
 	 * 
 	 * @return String[] image filenames
 	 */
-	static String[] getImageNames (String fileName) {
+	public static String[] getImageNames (String fileName) {
 		if (fileName == null || fileName.trim().length() == 0)
 			return new String[0];
 
@@ -53,11 +56,11 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	static int mapDpiToImageSelectorIndex (int dpi) {
+	public static int mapDpiToImageSelectorIndex (int dpi) {
 		int imageSelectorIndex;
-		if (dpi >= 192) {
+		if (dpi >= DPI_ZOOM_200) {
 			imageSelectorIndex = 2;
-		} else if (dpi >= 144) {
+		} else if (dpi >= DPI_ZOOM_150) {
 			imageSelectorIndex = 1;
 		} else {
 			imageSelectorIndex = 0;
@@ -70,7 +73,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	static int mapZoomToImageSelectorIndex (int zoom) {
+	public static int mapZoomToImageSelectorIndex (int zoom) {
 		int imageSelectorIndex = 0;
 		switch (zoom) {
 		case 200:
@@ -86,13 +89,19 @@ public class DpiUtil {
 		}
 		return imageSelectorIndex;
 	}
-
-	static boolean fileExists (String filename) {
+	
+	/**
+	 * Checks if filename is a valid file.
+	 * 
+	 * @param filename String name of the file
+	 * @return true if file exits
+	 */
+	public static boolean fileExists (String filename) {
 		if (filename == null) {
 			return false;
 		}
-		File f = new File (filename);
-		if (( f.exists() ) && (!f.isDirectory())) {
+		File file = new File (filename);
+		if (( file.exists() ) && (!file.isDirectory())) {
 			return true;
 		}
 		return false;

@@ -122,7 +122,9 @@ public final class Image extends Resource implements Drawable {
 	 * icon. Used only in WinCE
 	 */
 	ImageData data[] = new ImageData [DpiUtil.SIZE];
-	
+
+	String dpiFilename[] = new String [DpiUtil.SIZE];
+
 	/**
 	 * width of the image
 	 */
@@ -645,9 +647,10 @@ public Image (Device device, String filename) {
 public Image(Device device, String[] filenames) {
 	super(device);
 	if (filenames == null || filenames.length == 0) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	dpiFilename = filenames;
+
 	int imageSelectorIndex = device.getImageSelector ();
-	File file = new File (filenames [imageSelectorIndex]);
-	if (imageSelectorIndex > 0 && (!file.exists () || file.isDirectory ())) {
+	if (imageSelectorIndex > 0 && !DpiUtil.fileExists (filenames [imageSelectorIndex])) {
 		imageSelectorIndex = 0;
 	}
 	initNative (filenames [imageSelectorIndex]);
@@ -890,11 +893,9 @@ public void addRepresentation (String fileName, int zoom) {
 	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
 	if (imageSelectorIndex == device.getImageSelector ()) {
 		initNative (fileName);
-		addRepresentation (new ImageData(fileName), zoom);
 	}
-	else {
-		data [imageSelectorIndex] = new ImageData(fileName);
-	}
+	dpiFilename [imageSelectorIndex] = fileName;
+	addRepresentation (new ImageData(fileName), zoom);
 }
 
 /**
@@ -915,7 +916,11 @@ public void addRepresentation (InputStream stream, int zoom) {
  * @since 3.104
  */
 public ImageData getImageData (int zoom) {
-	return data[DpiUtil.mapZoomToImageSelectorIndex(zoom)];
+	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	if (data[imageSelectorIndex] == null && dpiFilename[imageSelectorIndex] != null) {
+		addRepresentation(dpiFilename[imageSelectorIndex], zoom);
+	}
+	return data[imageSelectorIndex];
 }
 
 /** 

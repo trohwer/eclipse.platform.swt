@@ -23,6 +23,7 @@ import java.io.*;
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -32,7 +33,7 @@ public class Snippet1 {
 public static void main (String [] args) {
 	Display display = new Display ();
 	File f = new File("collapseall.png");
-	Image image = new Image(display, f.getAbsolutePath());
+	final Image image = new Image(display, f.getAbsolutePath());
 	final Shell shell = new Shell (display);
 	shell.setLayout(new GridLayout());
 	final CTabFolder folder = new CTabFolder(shell, SWT.BORDER);
@@ -45,7 +46,7 @@ public static void main (String [] args) {
 		item.setText("Item "+i);
 		item.setImage(image);
 		Text text = new Text(folder, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		text.setText("Text for item "+i+"\n\none, two, three\n\nabcdefghijklmnop");
+		text.setText("Switch\nTabs:\n Image\nZooms...\n");
 		item.setControl(text);
 	}
 	folder.setMinimizeVisible(true);
@@ -69,6 +70,30 @@ public static void main (String [] args) {
 			folder.setMaximized(false);
 			folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 			shell.layout(true);
+		}
+	});
+	
+	folder.addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			super.widgetSelected(e);
+			int index = 0;
+			for (CTabItem item : folder.getItems()) {
+				if (item == e.item) break;
+				index++;
+			}
+			index = index % 3;
+			switch (index) {
+			case 2:
+				image.addRepresentation("./collapseall@2x.png");
+				break;
+			case 1:
+				image.addRepresentation("./collapseall@1.5x.png");
+				break;
+			case 0:
+				image.addRepresentation("./collapseall.png");
+				break;
+			}
 		}
 	});
 	shell.setSize(300, 300);
