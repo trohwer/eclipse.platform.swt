@@ -1815,7 +1815,7 @@ public void addRepresentation (String filename, int zoom) {
 
 public ImageData getImageData (int zoom) {
 	copyImageDataFromDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
-	ImageData returnVal = getDefaultImageData ();
+	ImageData returnVal = getImageData ();
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 	return returnVal;
 }
