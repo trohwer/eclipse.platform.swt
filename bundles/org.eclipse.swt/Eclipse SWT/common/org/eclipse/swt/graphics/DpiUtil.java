@@ -56,7 +56,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	public static int mapDpiToImageSelectorIndex (int dpi) {
+	static int mapDpiToImageSelectorIndex (int dpi) {
 		int imageSelectorIndex;
 		if (dpi >= DPI_ZOOM_200) {
 			imageSelectorIndex = 2;
