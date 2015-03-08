@@ -663,8 +663,10 @@ public Image(Device device, InputStream stream) {
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a single image only. If the specified file contains
- * multiple images, only the first one will be used.
+ * a image from image file only.This constructor will search for
+ * other representations at the same location with the pattern
+ * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
+ * and 2 represents double size
  *
  * @param device the device on which to create the image
  * @param filename the name of the file to load the image from
@@ -686,6 +688,33 @@ public Image(Device device, InputStream stream) {
 public Image(Device device, String filename) {
 	this (device, DPIUtil.getImageNames(filename));
 }
+
+/**
+ * Constructs an instance of this class by loading its representations
+ * from the files with the specified name. Throws an error if an error
+ * occurs while loading the image, or if the result is an image
+ * of an unsupported type.
+ * <p>
+ * This constructor is provided for convenience when loading
+ * a image from image files only.
+ *
+ * @param device the device on which to create the image
+ * @param filenames the name of the file to load the image from
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @exception SWTError <ul>
+ *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
+ * </ul>
+ */
 
 public Image(Device device, String[] filenames) {
 	super(device);
@@ -1773,44 +1802,73 @@ void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
 	dpiSurface[imageSelectorIndex] = surface;
 }
 
-public void addRepresentation (Image srcImage) {
-	addRepresentation(srcImage, 100);
-}
-public void addRepresentation (Image srcImage, int zoom) {
-	copyImage(device, srcImage, SWT.IMAGE_COPY);
-	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
-	copyImageDataFromDpiImageStorage(device.getImageSelector());
-}
-
+/**
+ * Adds a new image representation to the Image object using the 
+ * ImageData supplied. This will replaces the any existing Image data
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param srcImageData Image data for the representation
+ */
 public void addRepresentation (ImageData srcImageData) {
 	addRepresentation(srcImageData, 100);
 }
 
+/**
+ * Adds a new image representation to the Image object using the 
+ * ImageData supplied. This will replaces the any existing Image data
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param srcImageData image data for the representation
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ */
 public void addRepresentation (ImageData srcImageData, int zoom) {
 	init(srcImageData);
 	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 }
 
-public void addRepresentation (InputStream srcStream) {
-	addRepresentation(srcStream, 100);
-}
-
-public void addRepresentation (InputStream srcStream, int zoom) {
-	init(new ImageData(srcStream));
-	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
-	copyImageDataFromDpiImageStorage(device.getImageSelector());	
-}
-
+/**
+ * Adds a new image representation to the Image object using the 
+ * file supplied. This will replaces the any existing representation
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param filename fully qualified filename representing a image
+ */
 public void addRepresentation (String filename) {
 	addRepresentation(filename, 100);
 }
+
+/**
+ * Adds a new image representation to the Image object using the 
+ * file supplied. This will replaces the any existing representation
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param filename fully qualified filename representing a image
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ */
 
 public void addRepresentation (String filename, int zoom) {
 	int imageSelctionIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	dpiFilename[imageSelctionIndex] = filename;
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 }
+
+/**
+ * Returns an <code>ImageData</code> based on the receiver
+ * Modifications made to this <code>ImageData</code> will not
+ * affect the Image.
+ *
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ *
+ * @return an <code>ImageData</code> containing the image's data and attributes
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
+ */
 
 public ImageData getImageData (int zoom) {
 	copyImageDataFromDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
