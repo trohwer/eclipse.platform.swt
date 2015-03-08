@@ -14,7 +14,6 @@ package org.eclipse.swt.graphics;
 import java.io.*;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;

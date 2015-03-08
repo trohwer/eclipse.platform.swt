@@ -32,7 +32,7 @@ public class DpiUtil {
 	 * 
 	 * @return String[] image filenames
 	 */
-	public static String[] getImageNames (String fileName) {
+	static String[] getImageNames (String fileName) {
 		if (fileName == null || fileName.trim().length() == 0)
 			return new String[0];
 
@@ -73,7 +73,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	public static int mapZoomToImageSelectorIndex (int zoom) {
+	static int mapZoomToImageSelectorIndex (int zoom) {
 		int imageSelectorIndex = 0;
 		switch (zoom) {
 		case 200:
@@ -96,7 +96,7 @@ public class DpiUtil {
 	 * @param filename String name of the file
 	 * @return true if file exits
 	 */
-	public static boolean fileExists (String filename) {
+	static boolean fileExists (String filename) {
 		if (filename == null) {
 			return false;
 		}
