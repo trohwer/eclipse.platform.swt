@@ -972,7 +972,7 @@ int getActualDPI () {
  */
 public int getImageSelector() {
 	if (imageSelectorIndex == -1) {
-		imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex(getActualDPI());
+		imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex(getActualDPI());
 	}
 	return imageSelectorIndex;
 }

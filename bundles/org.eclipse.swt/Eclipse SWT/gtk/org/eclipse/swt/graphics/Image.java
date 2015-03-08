@@ -161,12 +161,12 @@ public final class Image extends Resource implements Drawable {
 	 */
 	static final int DEFAULT_SCANLINE_PAD = 4;
 	
-	int dpiWidth[] = new int[DpiUtil.SIZE];
-	int dpiHeight[] = new int[DpiUtil.SIZE];
-	long /*int*/ dpiSurface[] = new long /*int*/ [DpiUtil.SIZE];
-	long /*int*/ dpiPixmap[] = new long /*int*/ [DpiUtil.SIZE];
-	String dpiFilename[] = new String [DpiUtil.SIZE];
-	long /*int*/ dpiMask[] = new long /*int*/ [DpiUtil.SIZE];
+	int dpiWidth[] = new int[DPIUtil.SIZE];
+	int dpiHeight[] = new int[DPIUtil.SIZE];
+	long /*int*/ dpiSurface[] = new long /*int*/ [DPIUtil.SIZE];
+	long /*int*/ dpiPixmap[] = new long /*int*/ [DPIUtil.SIZE];
+	String dpiFilename[] = new String [DPIUtil.SIZE];
+	long /*int*/ dpiMask[] = new long /*int*/ [DPIUtil.SIZE];
 
 Image(Device device) {
 	super(device);
@@ -245,7 +245,7 @@ public Image(Device device, Image srcImage, int flag) {
 	super(device);
 	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (srcImage.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	for (int i = 0; i < DpiUtil.SIZE; i++){
+	for (int i = 0; i < DPIUtil.SIZE; i++){
 		srcImage.copyImageDataFromDpiImageStorage(i);
 		copyImage(device, srcImage, flag);
 		copyImageDataToDpiImageStorage(i);
@@ -684,7 +684,7 @@ public Image(Device device, InputStream stream) {
  * </ul>
  */
 public Image(Device device, String filename) {
-	this (device, DpiUtil.getImageNames(filename));
+	this (device, DPIUtil.getImageNames(filename));
 }
 
 public Image(Device device, String[] filenames) {
@@ -1039,7 +1039,7 @@ void destroyMask() {
 @Override
 void destroy() {
 	if (memGC != null) memGC.dispose();
-	for (int i = 0; i < DpiUtil.SIZE; i++) {
+	for (int i = 0; i < DPIUtil.SIZE; i++) {
 		destroy (i);
 	}
 	surface = pixmap = mask = 0;
@@ -1747,7 +1747,7 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 		 */
 		String filename = dpiFilename[imageSelectorIndex];
 		
-		if (!DpiUtil.fileExists(filename)) {
+		if (!DPIUtil.fileExists(filename)) {
 			filename = dpiFilename[0];
 		}
 		if (filename != null) {
@@ -1778,7 +1778,7 @@ public void addRepresentation (Image srcImage) {
 }
 public void addRepresentation (Image srcImage, int zoom) {
 	copyImage(device, srcImage, SWT.IMAGE_COPY);
-	copyImageDataToDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 }
 
@@ -1788,7 +1788,7 @@ public void addRepresentation (ImageData srcImageData) {
 
 public void addRepresentation (ImageData srcImageData, int zoom) {
 	init(srcImageData);
-	copyImageDataToDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 }
 
@@ -1798,7 +1798,7 @@ public void addRepresentation (InputStream srcStream) {
 
 public void addRepresentation (InputStream srcStream, int zoom) {
 	init(new ImageData(srcStream));
-	copyImageDataToDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
 	copyImageDataFromDpiImageStorage(device.getImageSelector());	
 }
 
@@ -1807,13 +1807,13 @@ public void addRepresentation (String filename) {
 }
 
 public void addRepresentation (String filename, int zoom) {
-	int imageSelctionIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	int imageSelctionIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	dpiFilename[imageSelctionIndex] = filename;
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 }
 
 public ImageData getImageData (int zoom) {
-	copyImageDataFromDpiImageStorage(DpiUtil.mapZoomToImageSelectorIndex(zoom));
+	copyImageDataFromDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
 	ImageData returnVal = getImageData ();
 	copyImageDataFromDpiImageStorage(device.getImageSelector());
 	return returnVal;

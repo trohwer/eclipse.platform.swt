@@ -1967,7 +1967,7 @@ public Monitor [] getMonitors () {
 				monitor.height = dest.height;
 				int widthMM = OS.gdk_screen_get_monitor_width_mm (screen, i);
 				monitor.dpi = Compatibility.round (254 * monitor.width, widthMM * 10);
-				monitor.imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex(monitor.dpi);
+				monitor.imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex(monitor.dpi);
 				if (i == 0 && workArea != null) {
 					monitor.clientX = workArea.x;
 					monitor.clientY = workArea.y;

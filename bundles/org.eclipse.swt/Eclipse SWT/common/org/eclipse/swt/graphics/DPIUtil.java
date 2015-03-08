@@ -18,7 +18,7 @@ import java.io.*;
  * 
  * @since 3.104
  */
-public class DpiUtil {
+public class DPIUtil {
 	public static final char FILE_EXTENSION_SEPARATOR = '.';
 	public static final String FILE_ONE_HALF_IDENTIFIER = "@1.5x";
 	public static final String FILE_DOUBLE_IDENTIFIER = "@2x";
@@ -32,7 +32,7 @@ public class DpiUtil {
 	 * 
 	 * @return String[] image filenames
 	 */
-	static String[] getImageNames (String fileName) {
+	public static String[] getImageNames (String fileName) {
 		if (fileName == null || fileName.trim().length() == 0)
 			return new String[0];
 
@@ -56,7 +56,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	static int mapDpiToImageSelectorIndex (int dpi) {
+	public static int mapDPIToImageSelectorIndex (int dpi) {
 		int imageSelectorIndex;
 		if (dpi >= DPI_ZOOM_200) {
 			imageSelectorIndex = 2;
@@ -73,7 +73,7 @@ public class DpiUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	static int mapZoomToImageSelectorIndex (int zoom) {
+	public static int mapZoomToImageSelectorIndex (int zoom) {
 		int imageSelectorIndex = 0;
 		switch (zoom) {
 		case 200:
@@ -96,7 +96,7 @@ public class DpiUtil {
 	 * @param filename String name of the file
 	 * @return true if file exits
 	 */
-	static boolean fileExists (String filename) {
+	public static boolean fileExists (String filename) {
 		if (filename == null) {
 			return false;
 		}
