@@ -121,9 +121,9 @@ public final class Image extends Resource implements Drawable {
 	 * the image data used to create this image if it is a
 	 * icon. Used only in WinCE
 	 */
-	ImageData data[] = new ImageData [DpiUtil.SIZE];
+	ImageData data[] = new ImageData [DPIUtil.SIZE];
 
-	String dpiFilename[] = new String [DpiUtil.SIZE];
+	String dpiFilename[] = new String [DPIUtil.SIZE];
 
 	/**
 	 * width of the image
@@ -610,7 +610,7 @@ public Image (Device device, InputStream stream) {
  * @see #dispose()
  */
 public Image (Device device, String filename) {
-	this (device, DpiUtil.getImageNames (filename));
+	this (device, DPIUtil.getImageNames (filename));
 }
 
 /**
@@ -650,7 +650,7 @@ public Image(Device device, String[] filenames) {
 	dpiFilename = filenames;
 
 	int imageSelectorIndex = device.getImageSelector ();
-	if (imageSelectorIndex > 0 && !DpiUtil.fileExists (filenames [imageSelectorIndex])) {
+	if (imageSelectorIndex > 0 && !DPIUtil.fileExists (filenames [imageSelectorIndex])) {
 		imageSelectorIndex = 0;
 	}
 	initNative (filenames [imageSelectorIndex]);
@@ -831,35 +831,27 @@ void initNative(String filename) {
 }
 
 /**
- * @since 3.104
- */
-public void addRepresentation (Image srcImage) {
-	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	this.addRepresentation (srcImage.getImageData (), 100);
-}
-
-/**
- * @since 3.104
- */
-public void addRepresentation (Image srcImage, int zoom) {
-	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	this.addRepresentation (srcImage.getImageData (), zoom);
-}
-
-/**
- * @since 3.104
- */
-public void addRepresentation (ImageData srcImageData) {
+ * Adds a new image representation to the Image object using the 
+ * ImageData supplied. This will replaces the any existing Image data
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param srcImageData Image data for the representation
+ */public void addRepresentation (ImageData srcImageData) {
 	if (srcImageData == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.addRepresentation (srcImageData, 100);
 }
 
 /**
- * @since 3.104
+ * Adds a new image representation to the Image object using the 
+ * ImageData supplied. This will replaces the any existing Image data
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param srcImageData image data for the representation
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
  */
 public void addRepresentation (ImageData srcImageData, int zoom) {
 	if (srcImageData == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	int imageSelectorIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	if (imageSelectorIndex == device.getImageSelector ()) {
 		init(srcImageData);
 		init();
@@ -870,15 +862,11 @@ public void addRepresentation (ImageData srcImageData, int zoom) {
 }
 
 /**
- * @since 3.104
- */
-public void addRepresentation (InputStream stream) {
-	if (stream == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	this.addRepresentation (stream, 100);
-}
-
-/**
- * @since 3.104
+ * Adds a new image representation to the Image object using the 
+ * file supplied. This will replaces the any existing representation
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param fileName fully qualified filename representing a image
  */
 public void addRepresentation (String fileName) {
 	if (fileName == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -886,11 +874,16 @@ public void addRepresentation (String fileName) {
 }
 
 /**
- * @since 3.104
+ * Adds a new image representation to the Image object using the 
+ * file supplied. This will replaces the any existing representation
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param fileName fully qualified filename representing a image
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
  */
 public void addRepresentation (String fileName, int zoom) {
 	if (fileName == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	int imageSelectorIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	if (imageSelectorIndex == device.getImageSelector ()) {
 		initNative (fileName);
 	}
@@ -899,24 +892,23 @@ public void addRepresentation (String fileName, int zoom) {
 }
 
 /**
- * @since 3.104
- */
-public void addRepresentation (InputStream stream, int zoom) {
-	if (stream == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
-	if (imageSelectorIndex == device.getImageSelector ()) {
-		addRepresentation (new ImageData(stream), zoom);
-	}
-	else {
-		data [imageSelectorIndex] = new ImageData(stream);
-	}
-}
-
-/**
- * @since 3.104
+ * Returns an <code>ImageData</code> based on the receiver
+ * Modifications made to this <code>ImageData</code> will not
+ * affect the Image.
+ *
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ *
+ * @return an <code>ImageData</code> containing the image's data and attributes
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
  */
 public ImageData getImageData (int zoom) {
-	int imageSelectorIndex = DpiUtil.mapZoomToImageSelectorIndex(zoom);
+	int imageSelectorIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	if (data[imageSelectorIndex] == null && dpiFilename[imageSelectorIndex] != null) {
 		addRepresentation(dpiFilename[imageSelectorIndex], zoom);
 	}

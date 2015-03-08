@@ -982,9 +982,9 @@ public void setWarnings (boolean warnings) {
  * Returns the image selector index as per the DPI value.
  * @since 3.104
  */
-public int getImageSelector () {
+int getImageSelector () {
 	if (imageSelectorIndex == -1) {
-		imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex (getDPI ().x);
+		imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex (getDPI ().x);
 	}
 	return imageSelectorIndex;
 }

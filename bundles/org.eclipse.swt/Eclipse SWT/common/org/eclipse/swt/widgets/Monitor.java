@@ -99,10 +99,7 @@ public int getDpi () {
 	return dpi;
 }
 
-/**
- * @since 3.104
- */
-public int getImageselector () {
+int getImageselector () {
 	return imageSelectorIndex;
 }
 

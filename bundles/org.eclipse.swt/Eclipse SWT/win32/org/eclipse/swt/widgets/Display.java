@@ -2183,7 +2183,7 @@ public Monitor getPrimaryMonitor () {
 		monitor.clientHeight = rect.bottom - rect.top;
 		long /*int*/ hDC = internal_new_GC (null);
 		monitor.dpi = (OS.GetDeviceCaps (hDC, OS.LOGPIXELSX));
-		monitor.imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex (monitor.dpi);
+		monitor.imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex (monitor.dpi);
 		internal_dispose_GC (hDC, null);
 		return monitor;
 	}
@@ -3445,7 +3445,7 @@ long /*int*/ monitorEnumProc (long /*int*/ hmonitor, long /*int*/ hdc, long /*in
 	monitor.clientHeight = lpmi.rcWork_bottom - lpmi.rcWork_top;
 	long /*int*/ hDC = internal_new_GC (null);
 	monitor.dpi = (OS.GetDeviceCaps (hDC, OS.LOGPIXELSX));
-	monitor.imageSelectorIndex = DpiUtil.mapDpiToImageSelectorIndex (monitor.dpi);
+	monitor.imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex (monitor.dpi);
 	internal_dispose_GC (hDC, null);
 	monitors [monitorCount++] = monitor;
 	return 1;
