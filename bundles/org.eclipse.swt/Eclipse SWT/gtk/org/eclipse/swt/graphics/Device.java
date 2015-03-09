@@ -966,7 +966,7 @@ int getActualDPI () {
 }
 
 int getImageSelector() {
-	return = DPIUtil.mapDPIToImageSelectorIndex(getActualDPI());
+	return DPIUtil.mapDPIToImageSelectorIndex(getActualDPI());
 }
 
 }

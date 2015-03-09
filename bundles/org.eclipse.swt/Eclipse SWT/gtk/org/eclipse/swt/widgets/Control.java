@@ -2818,9 +2818,6 @@ public Monitor getMonitor () {
 		monitor.y = dest.y;
 		monitor.width = dest.width;
 		monitor.height = dest.height;
-		int widthMM = OS.gdk_screen_get_monitor_width_mm (screen, monitorNumber);
-		monitor.dpi = Compatibility.round (254 * monitor.width, widthMM * 10);
-		monitor.imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex(monitor.dpi);
 		Rectangle workArea = null;
 		if (monitorNumber == 0) workArea = display.getWorkArea ();
 		if (workArea != null) {

@@ -32,7 +32,7 @@ public class DPIUtil {
 	 * 
 	 * @return String[] image filenames
 	 */
-	public static String[] getImageNames (String fileName) {
+	static String[] getImageNames (String fileName) {
 		if (fileName == null || fileName.trim().length() == 0)
 			return new String[0];
 
@@ -54,7 +54,7 @@ public class DPIUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	public static int mapDPIToImageSelectorIndex (int dpi) {
+	static int mapDPIToImageSelectorIndex (int dpi) {
 		int imageSelectorIndex;
 		if (dpi >= DPI_ZOOM_200) {
 			imageSelectorIndex = 2;
@@ -71,7 +71,7 @@ public class DPIUtil {
 	 * 
 	 * @return imageSelector index
 	 */
-	public static int mapZoomToImageSelectorIndex (int zoom) {
+	static int mapZoomToImageSelectorIndex (int zoom) {
 		int imageSelectorIndex = 0;
 		if (zoom >= 200) {
 			imageSelectorIndex = 2;
@@ -91,7 +91,7 @@ public class DPIUtil {
 	 * @param filename String name of the file
 	 * @return true if file exits
 	 */
-	public static boolean fileExists (String filename) {
+	static boolean fileExists (String filename) {
 		if (filename == null) {
 			return false;
 		}

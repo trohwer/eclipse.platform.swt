@@ -25,9 +25,6 @@ public final class Monitor {
 	long /*int*/ handle;
 	int x, y, width, height;
 	int clientX, clientY, clientWidth, clientHeight;
-	// High dpi attributes
-	int dpi;
-	int imageSelectorIndex;
 	
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -87,20 +84,6 @@ public Rectangle getClientArea () {
 @Override
 public int hashCode () {
 	return (int)/*64*/handle;
-}
-
-/**
- * Returns an integer dot per inch value for the monitor.
- * 
- * @return dpi value of the monitor
- * @since 3.104
- */
-public int getDpi () {
-	return dpi;
-}
-
-int getImageselector () {
-	return imageSelectorIndex;
 }
 
 }
