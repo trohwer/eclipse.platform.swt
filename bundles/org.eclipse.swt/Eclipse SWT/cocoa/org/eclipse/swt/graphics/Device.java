@@ -784,16 +784,4 @@ public void setWarnings (boolean warnings) {
 	this.warnings = warnings;
 }
 
-int getActualDPI () {
-	NSScreen screen = getPrimaryScreen();
-	NSDictionary dictionary = screen.deviceDescription();
-	NSValue value = new NSValue(dictionary.objectForKey(new id(OS.NSDeviceResolution())).id);
-	NSSize size = value.sizeValue();
-	return (int)size.width;
-}
-
-int getImageSelector() {
-		return DpiUtil.mapDpiToImageSelectorIndex(getActualDPI());
-}
-
 }

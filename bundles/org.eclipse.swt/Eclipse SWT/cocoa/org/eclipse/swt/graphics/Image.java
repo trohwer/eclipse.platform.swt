@@ -12,6 +12,7 @@ package org.eclipse.swt.graphics;
 
  
 import org.eclipse.swt.internal.cocoa.*;
+
 import org.eclipse.swt.*;
 import java.io.*;
  
@@ -513,8 +514,10 @@ public Image(Device device, InputStream stream) {
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a single image only. If the specified file contains
- * multiple images, only the first one will be used.
+ * a image from image file only.This constructor will search for
+ * other representations at the same location with the pattern
+ * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
+ * and 2 represents double size
  *
  * @param device the device on which to create the image
  * @param filename the name of the file to load the image from
@@ -542,9 +545,54 @@ public Image(Device device, String filename) {
 		initNative(filename);
 		if (this.handle == null) init(new ImageData(filename));
 		init();
-		String [] files = DpiUtil.getImageNames(filename);
-		for (int i = 1; i< DpiUtil.SIZE; i++) {
+		String [] files = DPIUtil.getImageNames(filename);
+		for (int i = 1; i< DPIUtil.SIZE; i++) {
 			id id = NSImageRep.imageRepWithContentsOfFile(NSString.stringWith(files[i]));
+			NSImageRep rep = new NSImageRep(id);
+			handle.addRepresentation(rep);
+		}
+	} finally {
+		if (pool != null) pool.release();
+	}
+}
+
+/**
+ * Constructs an instance of this class by loading its representation
+ * from the file with the specified name. Throws an error if an error
+ * occurs while loading the image, or if the result is an image
+ * of an unsupported type.
+ * <p>
+ * This constructor is provided for convenience when loading
+ * a image from image file only.
+ *
+ * @param device the device on which to create the image
+ * @param filenames the name of the file to load the image from
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @exception SWTError <ul>
+ *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
+ * </ul>
+ */
+public Image(Device device, String[] filenames) {
+	super(device);
+	NSAutoreleasePool pool = null;
+	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
+	try {
+		if (filenames[0] == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		initNative(filenames[0]);
+		if (this.handle == null) init(new ImageData(filenames[0]));
+		init();
+		for (int i = 1; i< DPIUtil.SIZE; i++) {
+			id id = NSImageRep.imageRepWithContentsOfFile(NSString.stringWith(filenames[i]));
 			NSImageRep rep = new NSImageRep(id);
 			handle.addRepresentation(rep);
 		}
@@ -765,6 +813,98 @@ public ImageData getImageData() {
 	}
 }
 
+/**
+ * Returns an <code>ImageData</code> based on the receiver
+ * Modifications made to this <code>ImageData</code> will not
+ * affect the Image.
+ *
+ * @param zoom - Get the image representation at this zoom level
+ * @return an <code>ImageData</code> containing the image's data and attributes
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
+ */
+public ImageData getImageData(int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	NSAutoreleasePool pool = null;
+	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
+	try {
+		NSArray reps = handle.representations();
+		id objectAtIndex = reps.objectAtIndex(DPIUtil.mapZoomToImageSelectorIndex(zoom));
+		if (objectAtIndex == null) {
+			return null;
+		}
+		NSBitmapImageRep imageRep = new NSBitmapImageRep(objectAtIndex);
+		
+		long /*int*/ width = imageRep.pixelsWide();
+		long /*int*/ height = imageRep.pixelsHigh();
+		long /*int*/ bpr = imageRep.bytesPerRow();
+		long /*int*/ bpp = imageRep.bitsPerPixel();
+		long /*int*/ bitmapData = imageRep.bitmapData();
+		long /*int*/ bitmapFormat = imageRep.bitmapFormat();
+		long /*int*/ dataSize = height * bpr;
+		byte[] srcData = new byte[(int)/*64*/dataSize];
+		OS.memmove(srcData, bitmapData, dataSize);
+		
+		PaletteData palette;
+		if (bpp == 32 && (bitmapFormat & OS.NSAlphaFirstBitmapFormat) == 0) {
+			palette = new PaletteData(0xFF000000, 0xFF0000, 0xFF00);
+		} else {
+			palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
+		}
+		ImageData data = new ImageData((int)/*64*/width, (int)/*64*/height, (int)/*64*/bpp, palette, 1, srcData);
+		data.bytesPerLine = (int)/*64*/bpr;
+		if (imageRep.hasAlpha() && transparentPixel == -1 && alpha == -1 && alphaData == null) {
+			byte[] alphaData = new byte[(int)/*64*/(width * height)];
+			int offset = (bitmapFormat & OS.NSAlphaFirstBitmapFormat) != 0 ? 0 : 3, a = 0;
+			for (int i = offset; i < srcData.length; i+= 4) {
+				alphaData[a++] = srcData[i];
+			}
+			data.alphaData = alphaData;
+		} else {
+			data.transparentPixel = transparentPixel;
+			if (transparentPixel == -1 && type == SWT.ICON) {
+				/* Get the icon mask data */
+				int maskPad = 2;
+				long /*int*/ maskBpl = (((width + 7) / 8) + (maskPad - 1)) / maskPad * maskPad;
+				byte[] maskData = new byte[(int)/*64*/(height * maskBpl)];
+				int offset = 0, maskOffset = 0;
+				for (int y = 0; y<height; y++) {
+					for (int x = 0; x<width; x++) {
+						if (srcData[offset] != 0) {
+							maskData[maskOffset + (x >> 3)] |= (1 << (7 - (x & 0x7)));
+						} else {
+							maskData[maskOffset + (x >> 3)] &= ~(1 << (7 - (x & 0x7)));
+						}
+						offset += 4;
+					}
+					maskOffset += maskBpl;
+				}
+				data.maskData = maskData;
+				data.maskPad = maskPad;
+			}
+			data.alpha = alpha;
+			if (alpha == -1 && alphaData != null) {
+				data.alphaData = new byte[alphaData.length];
+				System.arraycopy(alphaData, 0, data.alphaData, 0, alphaData.length);
+			}
+		}
+		if (bpp == 32) {
+			int offset = (bitmapFormat & OS.NSAlphaFirstBitmapFormat) != 0 ? 0 : 3;
+			for (int i = offset; i < srcData.length; i+= 4) {
+				srcData[i] = 0;
+			}
+		}
+		return data;
+	} finally {
+		if (pool != null) pool.release();
+	}
+}
+
 /**	 
  * Invokes platform specific functionality to allocate a new image.
  * <p>
@@ -855,6 +995,23 @@ void init(int width, int height) {
 
 void init(ImageData image) {
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+
+	if (handle != null) handle.release();	
+	handle = (NSImage)new NSImage().alloc();
+	NSSize size = new NSSize();
+	size.width = width;
+	size.height = height;
+	handle = handle.initWithSize(size);
+	NSBitmapImageRep rep = copyImageData(image);	
+
+	handle.addRepresentation(rep);
+	rep.release();
+	handle.setCacheMode(OS.NSImageCacheNever);
+}
+
+private NSBitmapImageRep copyImageData(ImageData image) {
+	NSBitmapImageRep rep = (NSBitmapImageRep)new NSBitmapImageRep().alloc();
+	
 	this.width = image.width;
 	this.height = image.height;
 	PaletteData palette = image.palette;
@@ -951,20 +1108,9 @@ void init(ImageData image) {
 			}
 		}
 	}
-	
-	if (handle != null) handle.release();
-	
-	handle = (NSImage)new NSImage().alloc();
-	NSSize size = new NSSize();
-	size.width = width;
-	size.height = height;
-	handle = handle.initWithSize(size);
-	NSBitmapImageRep rep = (NSBitmapImageRep)new NSBitmapImageRep().alloc();
 	rep = rep.initWithBitmapDataPlanes(0, width, height, 8, hasAlpha ? 4 : 3, hasAlpha, false, OS.NSDeviceRGBColorSpace, OS.NSAlphaFirstBitmapFormat | OS.NSAlphaNonpremultipliedBitmapFormat, bpr, 32);
-	OS.memmove(rep.bitmapData(), buffer, dataSize);	
-	handle.addRepresentation(rep);
-	rep.release();
-	handle.setCacheMode(OS.NSImageCacheNever);
+	OS.memmove(rep.bitmapData(), buffer, dataSize);
+	return rep;
 }
 
 void initNative(String filename) {
@@ -1296,6 +1442,58 @@ public void setBackground(Color color) {
 public String toString () {
 	if (isDisposed()) return "Image {*DISPOSED*}";
 	return "Image {" + handle + "}";
+}
+
+/**
+ * Adds a new image representation to the Image object using the 
+ * file supplied. This will replaces the any existing representation
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param filename fully qualified filename representing a image
+ */
+public void addRepresentation (String filename) {
+	addRepresentation(filename, 100);
+}
+
+/**
+ * Adds a new image representation to the Image object using the 
+ * file supplied. This will replaces the any existing representation
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param filename fully qualified filename representing a image
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ */
+
+public void addRepresentation (String filename, int zoom) {
+	id id = NSImageRep.imageRepWithContentsOfFile(NSString.stringWith(filename));
+	NSImageRep rep = new NSImageRep(id);
+	handle.addRepresentation(rep);
+}
+
+/**
+ * Adds a new image representation to the Image object using the 
+ * ImageData supplied. This will replaces the any existing Image data
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param srcImageData Image data for the representation
+ */
+public void addRepresentation (ImageData srcImageData) {
+	addRepresentation(srcImageData, 100);
+}
+
+/**
+ * Adds a new image representation to the Image object using the 
+ * ImageData supplied. This will replaces the any existing Image data
+ * This adds Image data for a zoom level of 100%
+ * 
+ * @param srcImageData image data for the representation
+ * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ */
+public void addRepresentation (ImageData srcImageData, int zoom) {
+	NSBitmapImageRep rep = copyImageData(srcImageData);	
+
+	handle.addRepresentation(rep);
+	rep.release();
 }
 
 }
