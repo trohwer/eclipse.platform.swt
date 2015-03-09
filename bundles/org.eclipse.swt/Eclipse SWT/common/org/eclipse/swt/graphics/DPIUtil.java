@@ -42,12 +42,10 @@ public class DPIUtil {
 		
 		/* Creating high DPI fileNames as per pattern */
 		int separatorLoc = fileName.lastIndexOf (FILE_EXTENSION_SEPARATOR);
-		if (separatorLoc != -1) {
-			String name = fileName.substring (0, separatorLoc);
-			String ext = fileName.substring (separatorLoc + 1);
-			fileNames[1] = name + FILE_ONE_HALF_IDENTIFIER + FILE_EXTENSION_SEPARATOR + ext;
-			fileNames[2] = name + FILE_DOUBLE_IDENTIFIER + FILE_EXTENSION_SEPARATOR + ext;
-		}
+		String name = (separatorLoc != -1) ? fileName.substring (0, separatorLoc) : fileName;
+		String ext = (separatorLoc != -1) ? FILE_EXTENSION_SEPARATOR + fileName.substring (separatorLoc + 1) : "";
+		fileNames[1] = name + FILE_ONE_HALF_IDENTIFIER + ext;
+		fileNames[2] = name + FILE_DOUBLE_IDENTIFIER + ext;
 		return fileNames;
 	}
 
@@ -75,17 +73,14 @@ public class DPIUtil {
 	 */
 	public static int mapZoomToImageSelectorIndex (int zoom) {
 		int imageSelectorIndex = 0;
-		switch (zoom) {
-		case 200:
+		if (zoom >= 200) {
 			imageSelectorIndex = 2;
-			break;
-		case 150:
+		}
+		else if (zoom >= 150) {
 			imageSelectorIndex = 1;
-			break;
-		case 100:
-		default:
+		}
+		else {
 			imageSelectorIndex = 0;
-			break;
 		}
 		return imageSelectorIndex;
 	}

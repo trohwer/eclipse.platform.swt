@@ -65,7 +65,6 @@ public abstract class Device implements Drawable {
 	long /*int*/ [] gdipToken;
 	long /*int*/ fontCollection;
 	String[] loadedFonts;
-	private int imageSelectorIndex = -1;
 
 	boolean disposed;
 
@@ -978,15 +977,8 @@ public void setWarnings (boolean warnings) {
 	checkDevice ();
 }
 
-/**
- * Returns the image selector index as per the DPI value.
- * @since 3.104
- */
 int getImageSelector () {
-	if (imageSelectorIndex == -1) {
-		imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex (getDPI ().x);
-	}
-	return imageSelectorIndex;
+	return DPIUtil.mapDPIToImageSelectorIndex (getDPI ().x);
 }
 
 }

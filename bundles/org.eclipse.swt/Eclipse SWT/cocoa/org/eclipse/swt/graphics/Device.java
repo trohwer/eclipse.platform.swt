@@ -792,9 +792,8 @@ int getActualDPI () {
 	return (int)size.width;
 }
 
-public int getImageSelector() {
+int getImageSelector() {
 		return DpiUtil.mapDpiToImageSelectorIndex(getActualDPI());
-
 }
 
 }

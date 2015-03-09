@@ -81,7 +81,6 @@ public abstract class Device implements Drawable {
 
 	/* Device dpi */
 	Point dpi;
-	private int imageSelectorIndex = -1;
 
 	long /*int*/ emptyTab;
 
@@ -966,15 +965,8 @@ int getActualDPI () {
 	return Compatibility.round (254 * dest.width, widthMM * 10);
 }
 
-/**
- * Returns the image selector index as per the DPI value.
- * @since 3.104
- */
-public int getImageSelector() {
-	if (imageSelectorIndex == -1) {
-		imageSelectorIndex = DPIUtil.mapDPIToImageSelectorIndex(getActualDPI());
-	}
-	return imageSelectorIndex;
+int getImageSelector() {
+	return = DPIUtil.mapDPIToImageSelectorIndex(getActualDPI());
 }
 
 }
