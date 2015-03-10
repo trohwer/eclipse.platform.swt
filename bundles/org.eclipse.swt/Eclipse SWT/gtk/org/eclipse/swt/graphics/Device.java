@@ -957,16 +957,13 @@ static long /*int*/ XIOErrorProc (long /*int*/ xDisplay) {
 
 int getActualDPI () {
 	long /*int*/ screen = OS.gdk_screen_get_default();
-	int monitor = OS.gdk_screen_get_primary_monitor(screen);
-	
+	Rectangle rect = getBounds();
+	int monitor = OS.gdk_screen_get_monitor_at_point(screen, rect.x, rect.y);
+
 	GdkRectangle dest = new GdkRectangle ();
 	OS.gdk_screen_get_monitor_geometry(screen, monitor, dest);
 	int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
 	return Compatibility.round (254 * dest.width, widthMM * 10);
-}
-
-int getImageSelector() {
-	return DPIUtil.mapDPIToImageSelectorIndex(getActualDPI());
 }
 
 }

@@ -160,7 +160,7 @@ public final class Image extends Resource implements Drawable {
 	 * Specifies the default scanline padding.
 	 */
 	static final int DEFAULT_SCANLINE_PAD = 4;
-	
+
 	int dpiWidth[] = new int[DPIUtil.SIZE];
 	int dpiHeight[] = new int[DPIUtil.SIZE];
 	long /*int*/ dpiSurface[] = new long /*int*/ [DPIUtil.SIZE];
@@ -722,7 +722,7 @@ public Image(Device device, String[] filenames) {
 		if (filenames [i] == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		dpiFilename[i] = filenames [i];
 	}
-	copyImageDataFromDpiImageStorage(device.getImageSelector ());
+	copyImageDataFromDpiImageStorage(getImageSelector ());
 	init();
 }
 
@@ -1775,7 +1775,7 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 		 * load the image from the file name
 		 */
 		String filename = dpiFilename[imageSelectorIndex];
-		
+
 		if (!DPIUtil.fileExists(filename)) {
 			filename = dpiFilename[0];
 		}
@@ -1788,7 +1788,7 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 			height = dpiHeight[0];
 			mask = dpiMask[0];
 			pixmap = dpiPixmap[0];
-			surface = dpiSurface[0];			
+			surface = dpiSurface[0];
 		}
 	}
 	createAlphaMask(width, height);
@@ -1807,35 +1807,13 @@ void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
  * ImageData supplied. This will replaces the any existing Image data
  * This adds Image data for a zoom level of 100%
  * 
- * @param srcImageData Image data for the representation
- */
-public void addRepresentation (ImageData srcImageData) {
-	addRepresentation(srcImageData, 100);
-}
-
-/**
- * Adds a new image representation to the Image object using the 
- * ImageData supplied. This will replaces the any existing Image data
- * This adds Image data for a zoom level of 100%
- * 
  * @param srcImageData image data for the representation
  * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
  */
 public void addRepresentation (ImageData srcImageData, int zoom) {
 	init(srcImageData);
 	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
-	copyImageDataFromDpiImageStorage(device.getImageSelector());
-}
-
-/**
- * Adds a new image representation to the Image object using the 
- * file supplied. This will replaces the any existing representation
- * This adds Image data for a zoom level of 100%
- * 
- * @param filename fully qualified filename representing a image
- */
-public void addRepresentation (String filename) {
-	addRepresentation(filename, 100);
+	copyImageDataFromDpiImageStorage(getImageSelector());
 }
 
 /**
@@ -1850,7 +1828,7 @@ public void addRepresentation (String filename) {
 public void addRepresentation (String filename, int zoom) {
 	int imageSelctionIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	dpiFilename[imageSelctionIndex] = filename;
-	copyImageDataFromDpiImageStorage(device.getImageSelector());
+	copyImageDataFromDpiImageStorage(getImageSelector());
 }
 
 /**
@@ -1873,7 +1851,12 @@ public void addRepresentation (String filename, int zoom) {
 public ImageData getImageData (int zoom) {
 	copyImageDataFromDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
 	ImageData returnVal = getImageData ();
-	copyImageDataFromDpiImageStorage(device.getImageSelector());
+	copyImageDataFromDpiImageStorage(getImageSelector());
 	return returnVal;
 }
+
+int getImageSelector() {
+	return DPIUtil.mapDPIToImageSelectorIndex(device.getActualDPI());
+}
+
 }

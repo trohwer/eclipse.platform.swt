@@ -85,13 +85,13 @@ public static void main (String [] args) {
 			index = index % 3;
 			switch (index) {
 			case 2:
-				image.addRepresentation("./collapseall@2x.png");
+				image.addRepresentation("./collapseall@2x.png",200);
 				break;
 			case 1:
-				image.addRepresentation("./collapseall@1.5x.png");
+				image.addRepresentation("./collapseall@1.5x.png",150);
 				break;
 			case 0:
-				image.addRepresentation("./collapseall.png");
+				image.addRepresentation("./collapseall.png",100);
 				break;
 			}
 		}
