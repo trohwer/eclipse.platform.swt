@@ -977,8 +977,4 @@ public void setWarnings (boolean warnings) {
 	checkDevice ();
 }
 
-int getImageSelector () {
-	return DPIUtil.mapDPIToImageSelectorIndex (getDPI ().x);
-}
-
 }

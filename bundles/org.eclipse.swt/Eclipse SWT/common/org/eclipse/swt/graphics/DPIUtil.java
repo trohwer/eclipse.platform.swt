@@ -18,15 +18,15 @@ import java.io.*;
  * 
  * @since 3.104
  */
-public class DPIUtil {
-	public static final char FILE_EXTENSION_SEPARATOR = '.';
-	public static final String FILE_ONE_HALF_IDENTIFIER = "@1.5x";
-	public static final String FILE_DOUBLE_IDENTIFIER = "@2x";
-	public static final int SIZE = 3;
+class DPIUtil {
+	static final char FILE_EXTENSION_SEPARATOR = '.';
+	static final String FILE_ONE_HALF_IDENTIFIER = "@1.5x";
+	static final String FILE_DOUBLE_IDENTIFIER = "@2x";
+	static final int SIZE = 3;
 
 	/* DPI Constants */
-	public static final int DPI_ZOOM_200 = 192;
-	public static final int DPI_ZOOM_150 = 144;
+	static final int DPI_ZOOM_200 = 192;
+	static final int DPI_ZOOM_150 = 144;
 	/**
 	 * Prepare an array of Image filenames for various DPI levels.
 	 * 

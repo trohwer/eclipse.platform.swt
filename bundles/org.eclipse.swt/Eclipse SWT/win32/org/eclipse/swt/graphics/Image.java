@@ -118,12 +118,14 @@ public final class Image extends Resource implements Drawable {
 	int alpha = -1;
 	
 	/**
-	 * the image data used to create this image if it is a
-	 * icon. Used only in WinCE
+	 * Array to hold ImageData at various DPI levels.
 	 */
 	ImageData data[] = new ImageData [DPIUtil.SIZE];
 
-	String dpiFilename[] = new String [DPIUtil.SIZE];
+	/**
+	 * Array to hold image file names at various DPI levels.
+	 */
+	String imageRepFileNames[] = new String [DPIUtil.SIZE];
 
 	/**
 	 * width of the image
@@ -265,7 +267,7 @@ public Image(Device device, Image srcImage, int flag) {
 					break;
 				case SWT.ICON:
 					if (OS.IsWinCE) {
-						init(srcImage.data[device.getImageSelector ()]);
+						init(srcImage.data[getImageSelector ()]);
 					} else {
 						handle = OS.CopyImage(srcImage.handle, OS.IMAGE_ICON, rect.width, rect.height, 0);
 						if (handle == 0) SWT.error(SWT.ERROR_NO_HANDLES);
@@ -576,7 +578,6 @@ public Image (Device device, InputStream stream) {
 	init(new ImageData(stream));
 	init();	
 }
-
 /**
  * Constructs an instance of this class by loading its representation
  * from the file with the specified name. Throws an error if an error
@@ -584,11 +585,10 @@ public Image (Device device, InputStream stream) {
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a image only. If the specified file contains multiple images, 
- * only the first one will be used. This constructor will search for 
- * other representations at the same location with the pattern 
+ * a image from image file only. This constructor will use filename for
+ * other representations at the same location with the pattern
  * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
- * 2 represents double size 
+ * and 2 represents double size
  *
  * @param device the device on which to create the image
  * @param filename the name of the file to load the image from
@@ -612,22 +612,17 @@ public Image (Device device, InputStream stream) {
 public Image (Device device, String filename) {
 	this (device, DPIUtil.getImageNames (filename));
 }
-
 /**
- * Constructs an instance of this class by loading its representation
- * from the file with the specified name. Throws an error if an error
+ * Constructs an instance of this class by loading its representations
+ * from the files with the specified name. Throws an error if an error
  * occurs while loading the image, or if the result is an image
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a image only. If the specified file contains multiple images, 
- * only the first one will be used. This constructor will search for 
- * other representations at the same location with the pattern 
- * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
- * 2 represents double size 
+ * a image from image files only.
  *
  * @param device the device on which to create the image
- * @param filenames the array of the filenames to load the image from
+ * @param filenames the name of the file to load the image from
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
@@ -647,14 +642,16 @@ public Image (Device device, String filename) {
 public Image(Device device, String[] filenames) {
 	super(device);
 	if (filenames == null || filenames.length == 0) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	dpiFilename = filenames;
+	imageRepFileNames = filenames;
 
-	int imageSelectorIndex = device.getImageSelector ();
-	if (imageSelectorIndex > 0 && !DPIUtil.fileExists (filenames [imageSelectorIndex])) {
+	int imageSelectorIndex = getImageSelector ();
+		/* When higher DPI file doesn't exists, default to 100% zoom image. */
+		if (imageSelectorIndex > 0 && !DPIUtil.fileExists (filenames [imageSelectorIndex])) {
 		imageSelectorIndex = 0;
 	}
 	initNative (filenames [imageSelectorIndex]);
-	if (this.handle == 0) init(new ImageData (filenames [imageSelectorIndex]));
+	data [imageSelectorIndex] = new ImageData (filenames [imageSelectorIndex]);
+	if (this.handle == 0) init(data [imageSelectorIndex]);
 	init();
 }
 
@@ -831,64 +828,78 @@ void initNative(String filename) {
 }
 
 /**
- * Adds a new image representation to the Image object using the 
- * ImageData supplied. This will replaces the any existing Image data
- * This adds Image data for a zoom level of 100%
+ * Adds a new image representation to the <code>Image</code> instance using the
+ * <code>ImageData</code> supplied. This will replaces the any existing
+ * <code>ImageData</code>.
  * 
- * @param srcImageData Image data for the representation
- */public void addRepresentation (ImageData srcImageData) {
-	if (srcImageData == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	this.addRepresentation (srcImageData, 100);
-}
-
-/**
- * Adds a new image representation to the Image object using the 
- * ImageData supplied. This will replaces the any existing Image data
- * This adds Image data for a zoom level of 100%
+ * Note: If the zoom value is same as current zoom level, then original
+ * <code>ImageData</code> will be replaced and image will look new.
  * 
- * @param srcImageData image data for the representation
- * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ * @param srcImageData
+ *            image data for the representation
+ * @param zoom
+ *            zoom level 100,150 or 200. they corresponds to 100%, 150% and
+ *            200%
+ * 
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @since 3.104
  */
 public void addRepresentation (ImageData srcImageData, int zoom) {
 	if (srcImageData == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	int imageSelectorIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
-	if (imageSelectorIndex == device.getImageSelector ()) {
+	if (imageSelectorIndex == getImageSelector ()) {
 		init(srcImageData);
 		init();
 	}
-	else {
-		data [imageSelectorIndex] = srcImageData;
-	}
+	data [imageSelectorIndex] = srcImageData;
 }
 
 /**
- * Adds a new image representation to the Image object using the 
- * file supplied. This will replaces the any existing representation
- * This adds Image data for a zoom level of 100%
+ * Adds a new image representation to the <code>Image</code> instance using the
+ * file supplied. This will replaces the any existing <code>ImageData</code>.
  * 
- * @param fileName fully qualified filename representing a image
- */
-public void addRepresentation (String fileName) {
-	if (fileName == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	this.addRepresentation (fileName, 100);
-}
-
-/**
- * Adds a new image representation to the Image object using the 
- * file supplied. This will replaces the any existing representation
- * This adds Image data for a zoom level of 100%
+ * Note: If the zoom value is same as current zoom level, then original
+ * <code>ImageData</code> will be replaced and image will look new.
  * 
- * @param fileName fully qualified filename representing a image
- * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
+ * @param fileName
+ *            fully qualified filename representing a image
+ * @param zoom
+ *            zoom level 100,150 or 200. they corresponds to 100%, 150% and
+ *            200%
+ * 
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @exception SWTError <ul>
+ *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
+ * </ul>
+ * @since 3.104
  */
 public void addRepresentation (String fileName, int zoom) {
 	if (fileName == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	int imageSelectorIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
-	if (imageSelectorIndex == device.getImageSelector ()) {
+	if (imageSelectorIndex == getImageSelector ()) {
+		/* Update the native image handle */
 		initNative (fileName);
+		imageRepFileNames [imageSelectorIndex] = fileName;
+		addRepresentation (new ImageData(fileName), zoom);
 	}
-	dpiFilename [imageSelectorIndex] = fileName;
-	addRepresentation (new ImageData(fileName), zoom);
 }
 
 /**
@@ -906,13 +917,18 @@ public void addRepresentation (String fileName, int zoom) {
  * </ul>
  *
  * @see ImageData
+ * @since 3.104
  */
 public ImageData getImageData (int zoom) {
 	int imageSelectorIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
-	if (data[imageSelectorIndex] == null && dpiFilename[imageSelectorIndex] != null) {
-		addRepresentation(dpiFilename[imageSelectorIndex], zoom);
+	if (data[imageSelectorIndex] == null && imageRepFileNames[imageSelectorIndex] != null) {
+		addRepresentation(imageRepFileNames[imageSelectorIndex], zoom);
 	}
 	return data[imageSelectorIndex];
+}
+
+int getImageSelector () {
+	return DPIUtil.mapDPIToImageSelectorIndex (device.getDPI ().x);
 }
 
 /** 
@@ -1335,7 +1351,7 @@ public Rectangle getBounds() {
 			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
 		case SWT.ICON:
 			if (OS.IsWinCE) {
-				int imageSelectorIndex = device.getImageSelector ();
+				int imageSelectorIndex = getImageSelector ();
 				return new Rectangle(0, 0, width = data[imageSelectorIndex].width, height = data[imageSelectorIndex].height);
 			} else {
 				ICONINFO info = new ICONINFO();
@@ -1375,7 +1391,7 @@ public ImageData getImageData() {
 	int depth, width, height;
 	switch (type) {
 		case SWT.ICON: {
-			if (OS.IsWinCE) return data[device.getImageSelector ()];
+			if (OS.IsWinCE) return data[getImageSelector ()];
 			ICONINFO info = new ICONINFO();	
 			if (OS.IsWinCE) SWT.error(SWT.ERROR_NOT_IMPLEMENTED);
 			OS.GetIconInfo(handle, info);
@@ -1796,7 +1812,7 @@ static long /*int*/ createDIB(int width, int height, int depth) {
  * if the regular GetIconInfo had been used.
  */
 static void GetIconInfo(Image image, ICONINFO info) {
-	long /*int*/ [] result = init(image.device, null, image.data[image.device.getImageSelector ()]);
+	long /*int*/ [] result = init(image.device, null, image.data[image.getImageSelector ()]);
 	info.hbmColor = result[0];
 	info.hbmMask = result[1];
 }
@@ -2008,7 +2024,7 @@ static long /*int*/ [] init(Device device, Image image, ImageData i) {
 			OS.DeleteObject(hMask);
 			image.handle = hIcon;
 			image.type = SWT.ICON;
-			if (OS.IsWinCE) image.data [device.getImageSelector ()] = i;
+			if (OS.IsWinCE) image.data [image.getImageSelector ()] = i;
 		}
 	} else {
 		if (image == null) {
