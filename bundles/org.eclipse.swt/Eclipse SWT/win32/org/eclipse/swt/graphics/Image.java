@@ -476,6 +476,7 @@ public Image(Device device, ImageData data) {
 	super(device);
 	init(data);
 	init();	
+	this.data[getImageSelector ()] = data;
 }
 
 /**
@@ -518,6 +519,7 @@ public Image(Device device, ImageData source, ImageData mask) {
 	mask = ImageData.convertMask(mask);
 	init(this.device, this, source, mask);
 	init();
+	data[getImageSelector()] = getImageData();
 }
 
 /**
@@ -575,8 +577,10 @@ public Image(Device device, ImageData source, ImageData mask) {
  */
 public Image (Device device, InputStream stream) {
 	super(device);
-	init(new ImageData(stream));
-	init();	
+	ImageData imageData = new ImageData(stream);
+	init(imageData);
+	init();
+	this.data[getImageSelector ()] = imageData;
 }
 /**
  * Constructs an instance of this class by loading its representation
@@ -897,9 +901,9 @@ public void addRepresentation (String fileName, int zoom) {
 	if (imageSelectorIndex == getImageSelector ()) {
 		/* Update the native image handle */
 		initNative (fileName);
-		imageRepFileNames [imageSelectorIndex] = fileName;
-		addRepresentation (new ImageData(fileName), zoom);
 	}
+	imageRepFileNames [imageSelectorIndex] = fileName;
+	addRepresentation (new ImageData(fileName), zoom);
 }
 
 /**
