@@ -101,4 +101,18 @@ class DPIUtil {
 		}
 		return false;
 	}
+
+	static double mapImageSelectorIndextoScalingfactor(int imageSelectorIndex) {
+		double returnVal = 1;
+		switch (imageSelectorIndex) {
+			case 0: returnVal = 1;
+					break;
+			case 1: returnVal = 1.5;
+					break;
+			case 2: returnVal = 2;
+					break;
+			default: returnVal = 1;
+		}
+		return returnVal;
+	}
 }

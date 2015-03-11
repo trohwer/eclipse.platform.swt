@@ -876,6 +876,8 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
 	int imgWidth, imgHeight;
+	int imageSelector = srcImage.getImageSelector();
+	boolean imageRepFound = srcImage.copyImageDataFromDpiImageStorage(imageSelector);
 	if (OS.USE_CAIRO){
 	 	imgWidth = srcImage.width;
 	 	imgHeight = srcImage.height;
@@ -1007,6 +1009,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	}
 }
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
+	boolean imageRepFound = srcImage.copyImageDataFromDpiImageStorage(srcImage.getImageSelector());
 	if (srcWidth == destWidth && srcHeight == destHeight) {
 		OS.gdk_draw_drawable(data.drawable, handle, srcImage.pixmap, srcX, srcY, destX, destY, destWidth, destHeight);
 	} else {

@@ -718,9 +718,17 @@ public Image(Device device, String filename) {
 
 public Image(Device device, String[] filenames) {
 	super(device);
-	for (int i = 0; i < filenames.length; i++) {
-		if (filenames [i] == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-		dpiFilename[i] = filenames [i];
+	if ( !DPIUtil.fileExists(filenames [0]) ) {
+		SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	} else {
+		dpiFilename [0] = filenames [0];
+	}
+	for (int i = 1; i < filenames.length; i++) {
+		if ( DPIUtil.fileExists (filenames [i]) ) {
+			dpiFilename [i] = filenames [i];
+		} else {
+			dpiFilename [i] = null;
+		}
 	}
 	copyImageDataFromDpiImageStorage(getImageSelector ());
 	init();
@@ -1762,7 +1770,13 @@ public String toString () {
 	}
 }
 
-void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
+boolean copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
+	boolean returnVal = true;
+	if ((pixmap != 0)||(surface != 0)) { //if the image is initialized earlier
+		if (imageSelectorIndex == getImageSelector()) {
+			return returnVal;
+		}
+	}
 	if ((dpiPixmap[imageSelectorIndex] != 0) 
 			|| (dpiSurface[imageSelectorIndex] != 0)) {
 		width = dpiWidth[imageSelectorIndex];
@@ -1770,6 +1784,7 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 		mask = dpiMask[imageSelectorIndex];
 		pixmap = dpiPixmap[imageSelectorIndex];
 		surface = dpiSurface[imageSelectorIndex];
+		returnVal = true;
 	} else {
 		/*
 		 * load the image from the file name
@@ -1778,8 +1793,10 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 
 		if (!DPIUtil.fileExists(filename)) {
 			filename = dpiFilename[0];
+			imageSelectorIndex = 0;
+			returnVal = false;
 		}
-		if (filename != null) {
+		if (filename != null) { // filename can still be null if the original image is created using imagedata
 			initNative(filename);
 			if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
 			copyImageDataToDpiImageStorage (imageSelectorIndex);
@@ -1789,9 +1806,11 @@ void copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 			mask = dpiMask[0];
 			pixmap = dpiPixmap[0];
 			surface = dpiSurface[0];
+			returnVal = false;
 		}
 	}
 	createAlphaMask(width, height);
+	return returnVal;
 }
 
 void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
