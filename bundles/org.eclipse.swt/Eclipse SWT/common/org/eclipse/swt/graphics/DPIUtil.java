@@ -103,6 +103,25 @@ class DPIUtil {
 	}
 	
 	/**
+	 * Compute the imageSelector index based on the zoom value.
+	 * 
+	 * @return imageSelector index
+	 */
+	static int mapImageSelectorIndexToZoom (int imageSelectorIndex) {
+		int zoom = 100;
+		if (imageSelectorIndex == 2) {
+			zoom = 200;
+		}
+		else if (imageSelectorIndex == 1) {
+			zoom = 150;
+		}
+		else {
+			zoom = 100;
+		}
+		return zoom;
+	}
+	
+	/**
 	 * Checks if filename is a valid file.
 	 * 
 	 * @param filename String name of the file

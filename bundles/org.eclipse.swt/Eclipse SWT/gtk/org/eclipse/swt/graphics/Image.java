@@ -167,6 +167,8 @@ public final class Image extends Resource implements Drawable {
 	long /*int*/ dpiPixmap[] = new long /*int*/ [DPIUtil.SIZE];
 	String dpiFilename[] = new String [DPIUtil.SIZE];
 	long /*int*/ dpiMask[] = new long /*int*/ [DPIUtil.SIZE];
+	int imageSelector = -1;
+	FilenameImageProvider imageProvider = null;
 
 Image(Device device) {
 	super(device);
@@ -730,7 +732,16 @@ public Image(Device device, String[] filenames) {
 			dpiFilename [i] = null;
 		}
 	}
-	copyImageDataFromDpiImageStorage(getImageSelector ());
+	imageSelector = getImageSelector ();
+	copyImageDataFromDpiImageStorage(imageSelector);
+	init();
+}
+
+public Image (Device device, FilenameImageProvider imageProviderObject) {
+	super (device);
+	imageProvider = imageProviderObject;
+	imageSelector = getImageSelector();
+	copyImageDataFromDpiImageStorage(imageSelector);
 	init();
 }
 
@@ -1773,7 +1784,7 @@ public String toString () {
 boolean copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 	boolean returnVal = true;
 	if ((pixmap != 0)||(surface != 0)) { //if the image is initialized earlier
-		if (imageSelectorIndex == getImageSelector()) {
+		if (imageSelector == imageSelectorIndex) {
 			return returnVal;
 		}
 	}
@@ -1789,14 +1800,12 @@ boolean copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 		/*
 		 * load the image from the file name
 		 */
-		String filename = dpiFilename[imageSelectorIndex];
-
-		if (!DPIUtil.fileExists(filename)) {
-			filename = dpiFilename[0];
-			imageSelectorIndex = 0;
-			returnVal = false;
+		String filename = null;
+		if (imageProvider != null) {
+			filename = imageProvider.getAbsoluteImagePath(DPIUtil.mapImageSelectorIndexToZoom(imageSelectorIndex));
 		}
-		if (filename != null) { // filename can still be null if the original image is created using imagedata
+
+		if (DPIUtil.fileExists(filename)) { // filename can still be null if the original image is created using imagedata
 			initNative(filename);
 			if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
 			copyImageDataToDpiImageStorage (imageSelectorIndex);
@@ -1832,7 +1841,8 @@ void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
 public void addRepresentation (ImageData srcImageData, int zoom) {
 	init(srcImageData);
 	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
-	copyImageDataFromDpiImageStorage(getImageSelector());
+	imageSelector = getImageSelector ();
+	copyImageDataFromDpiImageStorage(imageSelector);
 }
 
 /**
@@ -1847,7 +1857,8 @@ public void addRepresentation (ImageData srcImageData, int zoom) {
 public void addRepresentation (String filename, int zoom) {
 	int imageSelctionIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
 	dpiFilename[imageSelctionIndex] = filename;
-	copyImageDataFromDpiImageStorage(getImageSelector());
+	imageSelector = getImageSelector();
+	copyImageDataFromDpiImageStorage(imageSelector);
 }
 
 /**
