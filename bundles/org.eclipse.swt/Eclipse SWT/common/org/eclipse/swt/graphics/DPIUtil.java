@@ -67,6 +67,23 @@ class DPIUtil {
 	}
 
 	/**
+	 * Compute the zoom value based on the DPI value.
+	 * 
+	 * @return zoom
+	 */
+	static int mapDPIToZoom (int dpi) {
+		int zoom;
+		if (dpi >= DPI_ZOOM_200) {
+			zoom = 200;
+		} else if (dpi >= DPI_ZOOM_150) {
+			zoom = 150;
+		} else {
+			zoom = 100;
+		}
+		return zoom;
+	}
+	
+	/**
 	 * Compute the imageSelector index based on the zoom value.
 	 * 
 	 * @return imageSelector index
