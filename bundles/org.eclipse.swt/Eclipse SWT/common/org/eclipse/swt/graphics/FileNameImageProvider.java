@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.swt.graphics;
 
-import java.io.*;
-
 /**
  * This interface needs to be implemented when you need Images as per client's
  * DPI level. This interface provides a callback mechanism to the client code to
@@ -21,7 +19,7 @@ import java.io.*;
  * 
  * @since 3.104
  */
-public interface FilenameImageProvider {
+public interface FileNameImageProvider {
 
 	/**
 	 * This method give a change to SWT client to have their own file naming
@@ -33,17 +31,6 @@ public interface FilenameImageProvider {
 	 * @return the OS-specific absolute path of the file to load the image from
 	 * @since 3.104
 	 */
-	public String getAbsoluteImagePath (int zoom);
-	/**
-	 * This method give a change to SWT client to have their own file naming
-	 * convention for various zoom level as well as loading the image files on
-	 * demand.
-	 * 
-	 * @param zoom
-	 *            value will be 100, 150 and 200.
-	 * @return the OS-specific InputStream of the file to load the image from and this 
-	 * @since 3.104
-	 */
-	public InputStream getImageFileStram (int zoom);
+	public String getImagePath (int zoom);
 
 }

@@ -168,7 +168,7 @@ public final class Image extends Resource implements Drawable {
 	String dpiFilename[] = new String [DPIUtil.SIZE];
 	long /*int*/ dpiMask[] = new long /*int*/ [DPIUtil.SIZE];
 	int imageSelector = -1;
-	FilenameImageProvider imageProvider = null;
+	FileNameImageProvider imageProvider = null;
 
 Image(Device device) {
 	super(device);
@@ -737,7 +737,7 @@ public Image(Device device, String[] filenames) {
 	init();
 }
 
-public Image (Device device, FilenameImageProvider imageProviderObject) {
+public Image (Device device, FileNameImageProvider imageProviderObject) {
 	super (device);
 	imageProvider = imageProviderObject;
 	imageSelector = getImageSelector();
@@ -1802,7 +1802,7 @@ boolean copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
 		 */
 		String filename = null;
 		if (imageProvider != null) {
-			filename = imageProvider.getAbsoluteImagePath(DPIUtil.mapImageSelectorIndexToZoom(imageSelectorIndex));
+			filename = imageProvider.getImagePath(DPIUtil.mapImageSelectorIndexToZoom(imageSelectorIndex));
 		}
 
 		if (DPIUtil.fileExists(filename)) { // filename can still be null if the original image is created using imagedata
