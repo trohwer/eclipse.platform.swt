@@ -58,4 +58,8 @@ public void setAlpha(boolean flag) {
 	OS.objc_msgSend(this.id, OS.sel_setAlpha_, flag);
 }
 
+public void setSize(NSSize aSize) {
+	OS.objc_msgSend(this.id, OS.sel_setSize_, aSize);
+}
+
 }

@@ -690,9 +690,8 @@ public Image(Device device, String filename) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience when loading
- * a single image only. If the specified file contains
- * multiple images, only the first one will be used.
+ * This constructor is provided for convenience for loading image as 
+ * per DPI level
  *
  * @param device the device on which to create the image
  * @param fileNameProviderObj the FileNameImageProvider object that is
@@ -711,6 +710,7 @@ public Image(Device device, String filename) {
  * @exception SWTError <ul>
  *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
  * </ul>
+ * @since 3.104
  */
 public Image(Device device, FileNameImageProvider fileNameProviderObj) {
 	super(device);	
@@ -729,9 +729,8 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience when loading
- * a single image only. If the specified file contains
- * multiple images, only the first one will be used.
+ * This constructor is provided for convenience for loading image as 
+ * per DPI level
  *
  * @param device the device on which to create the image
  * @param imageDataProviderObj the ImageDataProvider object that is
@@ -750,6 +749,7 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
  * @exception SWTError <ul>
  *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
  * </ul>
+ * @since 3.104
  */
 public Image(Device device, ImageDataProvider imageDataProviderObj) {
 	super(device);	

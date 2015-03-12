@@ -1610,6 +1610,10 @@
 			<arg swt_gen="true"></arg>
 			<retval swt_gen="true"></retval>
 		</method>
+		<method selector="setSize:" swt_gen="true">
+			<arg swt_gen="true"></arg>
+			<retval swt_gen="true"></retval>
+		</method>
 	</class>
 	<class name="NSImageView" swt_gen="mixed" swt_superclass="NSControl">
 		<method selector="image" swt_gen="true">
