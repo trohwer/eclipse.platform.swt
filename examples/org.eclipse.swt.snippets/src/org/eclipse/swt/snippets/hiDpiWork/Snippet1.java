@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.swt.snippets.hiDpiWork;
 
-import java.io.*;
-
 /*
  * Create a CTabFolder with min and max buttons, as well as close button and 
  * image only on selected tab.
@@ -23,6 +21,7 @@ import java.io.*;
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -30,8 +29,8 @@ import org.eclipse.swt.widgets.*;
 public class Snippet1 {
 
 public static void main (String [] args) {
-	Display display = new Display ();
-	FileNameImageProvider defaultImageProvider = new FileNameImageProvider() {
+	final Display display = new Display ();
+	final FileNameImageProvider defaultImageProvider = new FileNameImageProvider() {
 		
 		@Override
 		public String getImagePath(int zoom) {
@@ -46,8 +45,21 @@ public static void main (String [] args) {
 			return null;
 		}
 	};
-	
-	File f = new File("collapseall.png");
+	final ImageDataProvider imageDataProvider = new ImageDataProvider() {
+		
+		@Override
+		public ImageData getImageData(int zoom) {
+			switch (zoom) {
+			case 100: 
+				return new ImageData("collapseall.png");
+			case 150: 
+				return new ImageData("collapseall@1.5x.png");
+			case 200: 
+				return new ImageData("collapseall@2x.png");
+			}
+			return null;
+		}
+	};
 	final Image image = new Image(display, defaultImageProvider);
 	final Shell shell = new Shell (display);
 	shell.setLayout(new GridLayout());
@@ -87,7 +99,36 @@ public static void main (String [] args) {
 			shell.layout(true);
 		}
 	});
-	
+	folder.addSelectionListener(new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			super.widgetSelected(e);
+			int index = 0;
+			CTabItem selectedItem = null;
+			for (CTabItem item : folder.getItems()) {
+				if (item == e.item) {
+					selectedItem = item;
+					break;
+				}
+				index++;
+			}
+			index = index % 3;
+			switch (index) {
+			case 2:
+				selectedItem.setImage(new Image(display, defaultImageProvider.getImagePath(200)));
+				((Text)selectedItem.getControl()).setText("Zoom: 200");
+				break;
+			case 1:
+				selectedItem.setImage(new Image(display, imageDataProvider.getImageData(150)));
+				((Text)selectedItem.getControl()).setText("Zoom: 150");
+				break;
+			case 0:
+				selectedItem.setImage(new Image(display, "collapseall.png"));
+				((Text)selectedItem.getControl()).setText("Zoom: 100");
+				break;
+			}
+		}
+	});
 	shell.setSize(300, 300);
 	shell.open ();
 	while (!shell.isDisposed ()) {
