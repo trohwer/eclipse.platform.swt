@@ -172,15 +172,6 @@ public final class Image extends Resource implements Drawable {
 	ImageDataProvider imageDataProviderObject = null;
 
 	/**
-	 * Identification for using image providers
-	 * 
-	 * value 0 - Image providers are not used no high dpi support
-	 * value 1 - FileName Image provider is used
-	 * Value 2 - InputStream ImageProvider is used
-	 */
-	int useHiDPIProviders = 0;
-	
-	/**
 	 * attribute to cache current level
 	 */
 	int currentZoomLevel = 100;
@@ -726,7 +717,6 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
 	fileNameImageProviderObject = fileNameProviderObj;
 	currentZoomLevel = DPIUtil.mapDPIToZoom(device.getActualDPI());
 	String filename = fileNameImageProviderObject.getImagePath(currentZoomLevel);
-	useHiDPIProviders = 1; //use FileNameImageProvider	
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	initNative (filename);
 	if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
@@ -766,7 +756,6 @@ public Image(Device device, ImageDataProvider imageDataProviderObj) {
 	imageDataProviderObject = imageDataProviderObj;
 	currentZoomLevel = DPIUtil.mapDPIToZoom (device.getActualDPI ());
 	ImageData data = imageDataProviderObject.getImageData (currentZoomLevel);
-	useHiDPIProviders = 2; //use FileNameImageProvider	
 	init (data);
 	init ();
 }
@@ -1798,6 +1787,20 @@ public String toString () {
 	} else {
 		return "Image {" + pixmap + "}";
 	}
+}
+
+boolean copyImageForZoomLevel (int zoom) {
+	if (fileNameImageProviderObject != null) {
+		String filename = fileNameImageProviderObject.getImagePath (zoom);
+		initNative (filename);
+	} else if (imageDataProviderObject != null) {
+		ImageData data = imageDataProviderObject.getImageData (zoom);
+		init (data);
+	} else {
+		return false;
+	}
+	currentZoomLevel = zoom;
+	return true;
 }
 
 }

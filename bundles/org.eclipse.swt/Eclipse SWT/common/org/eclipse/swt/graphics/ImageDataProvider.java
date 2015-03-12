@@ -28,7 +28,7 @@ public interface ImageDataProvider {
 	 * 
 	 * @param zoom
 	 *            value will be 100, 150 and 200.
-	 * @return the OS-specific InputStream of the file to load the image from and this 
+	 * @return the ImageData of the image 
 	 * @since 3.104
 	 */
 	public ImageData getImageData (int zoom);
