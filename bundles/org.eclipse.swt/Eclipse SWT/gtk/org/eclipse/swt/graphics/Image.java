@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,12 @@
 package org.eclipse.swt.graphics;
 
 
-import java.io.*;
-
-import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
+import org.eclipse.swt.*;
+
+import java.io.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -160,19 +160,33 @@ public final class Image extends Resource implements Drawable {
 	 * Specifies the default scanline padding.
 	 */
 	static final int DEFAULT_SCANLINE_PAD = 4;
+	
+	/**
+	 * place to hold filename Image provider
+	 */
+	FileNameImageProvider fileNameImageProviderObject = null;
 
-	int dpiWidth[] = new int[DPIUtil.SIZE];
-	int dpiHeight[] = new int[DPIUtil.SIZE];
-	long /*int*/ dpiSurface[] = new long /*int*/ [DPIUtil.SIZE];
-	long /*int*/ dpiPixmap[] = new long /*int*/ [DPIUtil.SIZE];
-	String dpiFilename[] = new String [DPIUtil.SIZE];
-	long /*int*/ dpiMask[] = new long /*int*/ [DPIUtil.SIZE];
-	int imageSelector = -1;
-	FileNameImageProvider imageProvider = null;
+	/**
+	 * place to hold Input Stream Image provider
+	 */
+	ImageDataProvider imageDataProviderObject = null;
+
+	/**
+	 * Identification for using image providers
+	 * 
+	 * value 0 - Image providers are not used no high dpi support
+	 * value 1 - FileName Image provider is used
+	 * Value 2 - InputStream ImageProvider is used
+	 */
+	int useHiDPIProviders = 0;
+	
+	/**
+	 * attribute to cache current level
+	 */
+	int currentZoomLevel = 100;
 
 Image(Device device) {
 	super(device);
-	copyImageDataToDpiImageStorage(0);
 }
 
 /**
@@ -208,7 +222,6 @@ Image(Device device) {
 public Image(Device device, int width, int height) {
 	super(device);
 	init(width, height);
-	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -247,14 +260,6 @@ public Image(Device device, Image srcImage, int flag) {
 	super(device);
 	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (srcImage.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	for (int i = 0; i < DPIUtil.SIZE; i++){
-		srcImage.copyImageDataFromDpiImageStorage(i);
-		copyImage(device, srcImage, flag);
-		copyImageDataToDpiImageStorage(i);
-	}
-}
-
-private void copyImage(Device device, Image srcImage, int flag) {
 	switch (flag) {
 		case SWT.IMAGE_COPY:
 		case SWT.IMAGE_DISABLE:
@@ -495,7 +500,6 @@ private void copyImage(Device device, Image srcImage, int flag) {
 		OS.g_object_unref(pixbuf);
 		OS.g_object_unref(gdkGC);
 	}
-	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -533,7 +537,6 @@ public Image(Device device, Rectangle bounds) {
 	super(device);
 	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	init(bounds.width, bounds.height);
-	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -558,7 +561,6 @@ public Image(Device device, Rectangle bounds) {
 public Image(Device device, ImageData data) {
 	super(device);
 	init(data);
-	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -599,7 +601,6 @@ public Image(Device device, ImageData source, ImageData mask) {
 	image.maskPad = mask.scanlinePad;
 	image.maskData = mask.data;
 	init(image);
-	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -654,7 +655,6 @@ public Image(Device device, ImageData source, ImageData mask) {
 public Image(Device device, InputStream stream) {
 	super(device);
 	init(new ImageData(stream));
-	copyImageDataToDpiImageStorage (0);
 	init();
 }
 
@@ -665,10 +665,8 @@ public Image(Device device, InputStream stream) {
  * of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a image from image file only.This constructor will search for
- * other representations at the same location with the pattern
- * <filename>@*x.<extension>. * represents 1.5 for 1.5 times of the image
- * and 2 represents double size
+ * a single image only. If the specified file contains
+ * multiple images, only the first one will be used.
  *
  * @param device the device on which to create the image
  * @param filename the name of the file to load the image from
@@ -688,20 +686,26 @@ public Image(Device device, InputStream stream) {
  * </ul>
  */
 public Image(Device device, String filename) {
-	this (device, DPIUtil.getImageNames(filename));
+	super(device);
+	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	initNative(filename);
+	if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
+	init();
 }
 
 /**
- * Constructs an instance of this class by loading its representations
- * from the files with the specified name. Throws an error if an error
- * occurs while loading the image, or if the result is an image
- * of an unsupported type.
+ * Constructs an instance of this class by loading its representation
+ * from the file retrieved from the FileNameImageProvider. Throws an
+ * error if an error occurs while loading the image, or if the result
+ * is an image of an unsupported type.
  * <p>
  * This constructor is provided for convenience when loading
- * a image from image files only.
+ * a single image only. If the specified file contains
+ * multiple images, only the first one will be used.
  *
  * @param device the device on which to create the image
- * @param filenames the name of the file to load the image from
+ * @param fileNameProviderObj the FileNameImageProvider object that is
+ * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
@@ -717,32 +721,54 @@ public Image(Device device, String filename) {
  *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
  * </ul>
  */
-
-public Image(Device device, String[] filenames) {
-	super(device);
-	if ( !DPIUtil.fileExists(filenames [0]) ) {
-		SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	} else {
-		dpiFilename [0] = filenames [0];
-	}
-	for (int i = 1; i < filenames.length; i++) {
-		if ( DPIUtil.fileExists (filenames [i]) ) {
-			dpiFilename [i] = filenames [i];
-		} else {
-			dpiFilename [i] = null;
-		}
-	}
-	imageSelector = getImageSelector ();
-	copyImageDataFromDpiImageStorage(imageSelector);
-	init();
+public Image(Device device, FileNameImageProvider fileNameProviderObj) {
+	super(device);	
+	fileNameImageProviderObject = fileNameProviderObj;
+	currentZoomLevel = DPIUtil.mapDPIToZoom(device.getActualDPI());
+	String filename = fileNameImageProviderObject.getImagePath(currentZoomLevel);
+	useHiDPIProviders = 1; //use FileNameImageProvider	
+	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	initNative (filename);
+	if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
+	init ();
 }
 
-public Image (Device device, FileNameImageProvider imageProviderObject) {
-	super (device);
-	imageProvider = imageProviderObject;
-	imageSelector = getImageSelector();
-	copyImageDataFromDpiImageStorage(imageSelector);
-	init();
+/**
+ * Constructs an instance of this class by loading its representation
+ * from the file retrieved from the InputStreamImageProvider. Throws an
+ * error if an error occurs while loading the image, or if the result
+ * is an image of an unsupported type.
+ * <p>
+ * This constructor is provided for convenience when loading
+ * a single image only. If the specified file contains
+ * multiple images, only the first one will be used.
+ *
+ * @param device the device on which to create the image
+ * @param imageDataProviderObj the ImageDataProvider object that is
+ * to be used to get the file name
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image file contains invalid data </li>
+ *    <li>ERROR_UNSUPPORTED_DEPTH - if the image file describes an image with an unsupported depth</li>
+ *    <li>ERROR_UNSUPPORTED_FORMAT - if the image file contains an unrecognized format</li>
+ * </ul>
+ * @exception SWTError <ul>
+ *    <li>ERROR_NO_HANDLES if a handle could not be obtained for image creation</li>
+ * </ul>
+ */
+public Image(Device device, ImageDataProvider imageDataProviderObj) {
+	super(device);	
+	imageDataProviderObject = imageDataProviderObj;
+	currentZoomLevel = DPIUtil.mapDPIToZoom (device.getActualDPI ());
+	ImageData data = imageDataProviderObject.getImageData (currentZoomLevel);
+	useHiDPIProviders = 2; //use FileNameImageProvider	
+	init (data);
+	init ();
 }
 
 void initNative(String filename) {
@@ -1087,18 +1113,11 @@ void destroyMask() {
 @Override
 void destroy() {
 	if (memGC != null) memGC.dispose();
-	for (int i = 0; i < DPIUtil.SIZE; i++) {
-		destroy (i);
-	}
+	if (pixmap != 0) OS.g_object_unref(pixmap);
+	if (mask != 0) OS.g_object_unref(mask);
+	if (surface != 0) Cairo.cairo_surface_destroy(surface);
 	surface = pixmap = mask = 0;
 	memGC = null;
-}
-
-private void destroy (int imageSelectorIndex) {
-	if (dpiPixmap[imageSelectorIndex] != 0) OS.g_object_unref(dpiPixmap[imageSelectorIndex]);
-	if (dpiMask[imageSelectorIndex] != 0) OS.g_object_unref(dpiMask[imageSelectorIndex]);
-	if (dpiSurface[imageSelectorIndex] != 0) Cairo.cairo_surface_destroy(dpiSurface[imageSelectorIndex]);
-	dpiSurface[imageSelectorIndex] = dpiPixmap[imageSelectorIndex] = dpiMask[imageSelectorIndex] = 0;
 }
 
 /**
@@ -1779,114 +1798,6 @@ public String toString () {
 	} else {
 		return "Image {" + pixmap + "}";
 	}
-}
-
-boolean copyImageDataFromDpiImageStorage (int imageSelectorIndex) {
-	boolean returnVal = true;
-	if ((pixmap != 0)||(surface != 0)) { //if the image is initialized earlier
-		if (imageSelector == imageSelectorIndex) {
-			return returnVal;
-		}
-	}
-	if ((dpiPixmap[imageSelectorIndex] != 0) 
-			|| (dpiSurface[imageSelectorIndex] != 0)) {
-		width = dpiWidth[imageSelectorIndex];
-		height = dpiHeight[imageSelectorIndex];
-		mask = dpiMask[imageSelectorIndex];
-		pixmap = dpiPixmap[imageSelectorIndex];
-		surface = dpiSurface[imageSelectorIndex];
-		returnVal = true;
-	} else {
-		/*
-		 * load the image from the file name
-		 */
-		String filename = null;
-		if (imageProvider != null) {
-			filename = imageProvider.getImagePath(DPIUtil.mapImageSelectorIndexToZoom(imageSelectorIndex));
-		}
-
-		if (DPIUtil.fileExists(filename)) { // filename can still be null if the original image is created using imagedata
-			initNative(filename);
-			if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
-			copyImageDataToDpiImageStorage (imageSelectorIndex);
-		} else { // in case if we donot have filename and no other representations available
-			width = dpiWidth[0];
-			height = dpiHeight[0];
-			mask = dpiMask[0];
-			pixmap = dpiPixmap[0];
-			surface = dpiSurface[0];
-			returnVal = false;
-		}
-	}
-	createAlphaMask(width, height);
-	return returnVal;
-}
-
-void copyImageDataToDpiImageStorage (int imageSelectorIndex) {
-	dpiWidth[imageSelectorIndex] = width;
-	dpiHeight[imageSelectorIndex] = height;
-	dpiMask[imageSelectorIndex] = mask;
-	dpiPixmap[imageSelectorIndex] = pixmap;
-	dpiSurface[imageSelectorIndex] = surface;
-}
-
-/**
- * Adds a new image representation to the Image object using the 
- * ImageData supplied. This will replaces the any existing Image data
- * This adds Image data for a zoom level of 100%
- * 
- * @param srcImageData image data for the representation
- * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
- */
-public void addRepresentation (ImageData srcImageData, int zoom) {
-	init(srcImageData);
-	copyImageDataToDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
-	imageSelector = getImageSelector ();
-	copyImageDataFromDpiImageStorage(imageSelector);
-}
-
-/**
- * Adds a new image representation to the Image object using the 
- * file supplied. This will replaces the any existing representation
- * This adds Image data for a zoom level of 100%
- * 
- * @param filename fully qualified filename representing a image
- * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
- */
-
-public void addRepresentation (String filename, int zoom) {
-	int imageSelctionIndex = DPIUtil.mapZoomToImageSelectorIndex(zoom);
-	dpiFilename[imageSelctionIndex] = filename;
-	imageSelector = getImageSelector();
-	copyImageDataFromDpiImageStorage(imageSelector);
-}
-
-/**
- * Returns an <code>ImageData</code> based on the receiver
- * Modifications made to this <code>ImageData</code> will not
- * affect the Image.
- *
- * @param zoom zoom level 100,150 or 200. they corresponds to 100%, 150% and 200%
- *
- * @return an <code>ImageData</code> containing the image's data and attributes
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
- * </ul>
- *
- * @see ImageData
- */
-
-public ImageData getImageData (int zoom) {
-	copyImageDataFromDpiImageStorage(DPIUtil.mapZoomToImageSelectorIndex(zoom));
-	ImageData returnVal = getImageData ();
-	copyImageDataFromDpiImageStorage(getImageSelector());
-	return returnVal;
-}
-
-int getImageSelector() {
-	return DPIUtil.mapDPIToImageSelectorIndex(device.getActualDPI());
 }
 
 }
