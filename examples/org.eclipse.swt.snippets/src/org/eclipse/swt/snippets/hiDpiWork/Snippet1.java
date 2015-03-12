@@ -1,5 +1,5 @@
 /*******************************************************************************
- * * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import java.io.*;
  */
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -32,8 +31,24 @@ public class Snippet1 {
 
 public static void main (String [] args) {
 	Display display = new Display ();
+	FileNameImageProvider defaultImageProvider = new FileNameImageProvider() {
+		
+		@Override
+		public String getImagePath(int zoom) {
+			switch (zoom) {
+			case 100: 
+				return "collapseall.png";
+			case 150: 
+				return "collapseall@1.5x.png";
+			case 200: 
+				return "collapseall@2x.png";
+			}
+			return null;
+		}
+	};
+	
 	File f = new File("collapseall.png");
-	final Image image = new Image(display, f.getAbsolutePath());
+	final Image image = new Image(display, defaultImageProvider);
 	final Shell shell = new Shell (display);
 	shell.setLayout(new GridLayout());
 	final CTabFolder folder = new CTabFolder(shell, SWT.BORDER);
@@ -73,29 +88,6 @@ public static void main (String [] args) {
 		}
 	});
 	
-	folder.addSelectionListener(new SelectionAdapter() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			super.widgetSelected(e);
-			int index = 0;
-			for (CTabItem item : folder.getItems()) {
-				if (item == e.item) break;
-				index++;
-			}
-			index = index % 3;
-			switch (index) {
-			case 2:
-				image.addRepresentation("./collapseall@2x.png",200);
-				break;
-			case 1:
-				image.addRepresentation("./collapseall@1.5x.png",150);
-				break;
-			case 0:
-				image.addRepresentation("./collapseall.png",100);
-				break;
-			}
-		}
-	});
 	shell.setSize(300, 300);
 	shell.open ();
 	while (!shell.isDisposed ()) {
