@@ -1,5 +1,5 @@
 /*******************************************************************************
- * * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.swt.snippets.hiDpiWork;
-
-import java.io.*;
 
 /*
  * Create a CTabFolder with min and max buttons, as well as close button and 
@@ -31,9 +29,38 @@ import org.eclipse.swt.widgets.*;
 public class Snippet1 {
 
 public static void main (String [] args) {
-	Display display = new Display ();
-	File f = new File("collapseall.png");
-	final Image image = new Image(display, f.getAbsolutePath());
+	final Display display = new Display ();
+	final FileNameImageProvider defaultImageProvider = new FileNameImageProvider() {
+		
+		@Override
+		public String getImagePath(int zoom) {
+			switch (zoom) {
+			case 100: 
+				return "collapseall.png";
+			case 150: 
+				return "collapseall@1.5x.png";
+			case 200: 
+				return "collapseall@2x.png";
+			}
+			return null;
+		}
+	};
+	final ImageDataProvider imageDataProvider = new ImageDataProvider() {
+		
+		@Override
+		public ImageData getImageData(int zoom) {
+			switch (zoom) {
+			case 100: 
+				return new ImageData("collapseall.png");
+			case 150: 
+				return new ImageData("collapseall@1.5x.png");
+			case 200: 
+				return new ImageData("collapseall@2x.png");
+			}
+			return null;
+		}
+	};
+	final Image image = new Image(display, defaultImageProvider);
 	final Shell shell = new Shell (display);
 	shell.setLayout(new GridLayout());
 	final CTabFolder folder = new CTabFolder(shell, SWT.BORDER);
@@ -72,26 +99,32 @@ public static void main (String [] args) {
 			shell.layout(true);
 		}
 	});
-	
 	folder.addSelectionListener(new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			super.widgetSelected(e);
 			int index = 0;
+			CTabItem selectedItem = null;
 			for (CTabItem item : folder.getItems()) {
-				if (item == e.item) break;
+				if (item == e.item) {
+					selectedItem = item;
+					break;
+				}
 				index++;
 			}
 			index = index % 3;
 			switch (index) {
 			case 2:
-				image.addRepresentation("./collapseall@2x.png",200);
+				selectedItem.setImage(new Image(display, defaultImageProvider.getImagePath(200)));
+				((Text)selectedItem.getControl()).setText("Zoom: 200");
 				break;
 			case 1:
-				image.addRepresentation("./collapseall@1.5x.png",150);
+				selectedItem.setImage(new Image(display, imageDataProvider.getImageData(150)));
+				((Text)selectedItem.getControl()).setText("Zoom: 150");
 				break;
 			case 0:
-				image.addRepresentation("./collapseall.png",100);
+				selectedItem.setImage(new Image(display, "collapseall.png"));
+				((Text)selectedItem.getControl()).setText("Zoom: 100");
 				break;
 			}
 		}
