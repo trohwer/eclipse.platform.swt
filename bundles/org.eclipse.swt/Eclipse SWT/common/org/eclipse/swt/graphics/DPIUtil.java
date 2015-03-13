@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.swt.graphics;
 
-import java.io.*;
-
 /**
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
  * functionality.
