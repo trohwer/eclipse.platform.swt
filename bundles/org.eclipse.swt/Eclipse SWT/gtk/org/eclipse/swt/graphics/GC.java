@@ -879,7 +879,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	boolean imageRepFound = true;
 	int zoom = DPIUtil.mapDPIToZoom (device.getActualDPI ());
 	if (zoom != srcImage.currentZoomLevel) {
-		imageRepFound = srcImage.copyImageForZoomLevel(zoom);
+		imageRepFound = srcImage.initImageForZoomLevel(zoom);
 	}
 	if (OS.USE_CAIRO){
 	 	imgWidth = srcImage.width;
@@ -1015,7 +1015,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	boolean imageRepFound = true;
 	int zoom = DPIUtil.mapDPIToZoom (device.getActualDPI ());
 	if (zoom != srcImage.currentZoomLevel) {
-		imageRepFound = srcImage.copyImageForZoomLevel(zoom);
+		imageRepFound = srcImage.initImageForZoomLevel(zoom);
 	}
 	if (srcWidth == destWidth && srcHeight == destHeight) {
 		OS.gdk_draw_drawable(data.drawable, handle, srcImage.pixmap, srcX, srcY, destX, destY, destWidth, destHeight);
