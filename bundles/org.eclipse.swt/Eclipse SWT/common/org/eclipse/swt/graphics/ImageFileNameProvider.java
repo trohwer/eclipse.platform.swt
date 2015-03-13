@@ -22,7 +22,7 @@ package org.eclipse.swt.graphics;
  * 
  * @since 3.104
  */
-public interface FileNameImageProvider {
+public interface ImageFileNameProvider {
 
 	/**
 	 * Method to retrieve absolute path to filename for a particular zoom level.
