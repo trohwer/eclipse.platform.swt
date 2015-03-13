@@ -721,7 +721,7 @@ int getDeviceZoom () {
  * @return true if image is refreshed
  */
 boolean refreshImageForZoom () {
-	int deviceZoomLevel = 200;
+	int deviceZoomLevel = getDeviceZoom();
 	if (deviceZoomLevel != imageZoomLevel) {
 		if (imageFileNameProvider != null) {
 			String filename = imageFileNameProvider.getImagePath(deviceZoomLevel);
