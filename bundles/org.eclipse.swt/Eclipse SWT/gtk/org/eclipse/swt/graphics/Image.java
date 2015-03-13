@@ -689,7 +689,7 @@ public Image(Device device, String filename) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level.
  *
  * @param device the device on which to create the image
@@ -730,7 +730,7 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level.
  *
  * @param device the device on which to create the image
@@ -770,7 +770,7 @@ int getDeviceZoom () {
 
 /**
  * Refresh the Image based on the zoom level, if required.
- * 
+ *
  * @return true if image is refreshed
  */
 boolean refreshImageForZoom () {

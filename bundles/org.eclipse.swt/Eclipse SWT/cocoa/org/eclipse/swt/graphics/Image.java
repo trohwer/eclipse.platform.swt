@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.swt.graphics;
 
  
 import org.eclipse.swt.internal.cocoa.*;
-
 import org.eclipse.swt.*;
 import java.io.*;
  
@@ -554,7 +553,7 @@ public Image(Device device, String filename) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level.
  *
  * @param device the device on which to create the image
@@ -578,7 +577,7 @@ public Image(Device device, String filename) {
  * @since 3.104
  */
 public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
-	super(device);	
+	super(device);
 	if (imageFileNameProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	String filename = imageFileNameProvider.getImagePath(100);
 	NSAutoreleasePool pool = null;
@@ -604,7 +603,7 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level.
  *
  * @param device the device on which to create the image
@@ -628,7 +627,7 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
  * @since 3.104
  */
 public Image(Device device, ImageDataProvider imageDataProvider) {
-	super(device);	
+	super(device);
 	if (imageDataProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	ImageData data = imageDataProvider.getImageData (100);
 	if (data == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -952,9 +951,9 @@ void init(int width, int height) {
 
 void init(ImageData image) {
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	
+
 	if (handle != null) handle.release();
-	
+
 	handle = (NSImage)new NSImage().alloc();
 	NSSize size = new NSSize();
 	size.width = width;
@@ -962,8 +961,8 @@ void init(ImageData image) {
 	handle = handle.initWithSize(size);
 	this.width = image.width;
 	this.height = image.height;
-	
-	NSBitmapImageRep rep = createRepresentaion(image);	
+
+	NSBitmapImageRep rep = createRepresentaion(image);
 	handle.addRepresentation(rep);
 	rep.release();
 	handle.setCacheMode(OS.NSImageCacheNever);
@@ -976,10 +975,10 @@ private NSBitmapImageRep createRepresentaion(ImageData imageData) {
 	if (!(((imageData.depth == 1 || imageData.depth == 2 || imageData.depth == 4 || imageData.depth == 8) && !palette.isDirect) ||
 			((imageData.depth == 8) || (imageData.depth == 16 || imageData.depth == 24 || imageData.depth == 32) && palette.isDirect)))
 				SWT.error(SWT.ERROR_UNSUPPORTED_DEPTH);
-	
+
 	/* Create the image */
 	int dataSize = imageData.width * imageData.height * 4;
-	
+
 	/* Initialize data */
 	int bpr = imageData.width * 4;
 	byte[] buffer = new byte[dataSize];
@@ -1066,7 +1065,7 @@ private NSBitmapImageRep createRepresentaion(ImageData imageData) {
 			}
 		}
 	}
-	
+
 	rep = rep.initWithBitmapDataPlanes(0, imageData.width, imageData.height, 8, hasAlpha ? 4 : 3, hasAlpha, false, OS.NSDeviceRGBColorSpace, OS.NSAlphaFirstBitmapFormat | OS.NSAlphaNonpremultipliedBitmapFormat, bpr, 32);
 	OS.memmove(rep.bitmapData(), buffer, dataSize);
 	return rep;

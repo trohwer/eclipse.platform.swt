@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2015 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.swt.snippets;
 
 /*
@@ -9,18 +19,18 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class Snippet367 {
+public class Snippet366 {
 	public static void main (String [] args) {
 		final Display display = new Display ();
 		final ImageFileNameProvider filenameProvider = new ImageFileNameProvider () {
 			@Override
 			public String getImagePath (int zoom) {
 				switch (zoom) {
-				case 100: 
+				case 100:
 					return "collapseall.png";
-				case 150: 
+				case 150:
 					return "collapseall@1.5x.png";
-				case 200: 
+				case 200:
 					return "collapseall@2x.png";
 				}
 				return null;
@@ -30,11 +40,11 @@ public class Snippet367 {
 			@Override
 			public ImageData getImageData (int zoom) {
 				switch (zoom) {
-				case 100: 
+				case 100:
 					return new ImageData ("collapseall.png");
-				case 150: 
+				case 150:
 					return new ImageData ("collapseall@1.5x.png");
-				case 200: 
+				case 200:
 					return new ImageData ("collapseall@2x.png");
 				}
 				return null;

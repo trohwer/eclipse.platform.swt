@@ -13,7 +13,7 @@ package org.eclipse.swt.graphics;
 /**
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
  * functionality.
- * 
+ *
  * @since 3.104
  */
 class DPIUtil {
@@ -24,7 +24,7 @@ class DPIUtil {
 
 	/**
 	 * Compute the zoom value based on the DPI value.
-	 * 
+	 *
 	 * @return zoom
 	 */
 	static int mapDPIToZoom (int dpi) {
