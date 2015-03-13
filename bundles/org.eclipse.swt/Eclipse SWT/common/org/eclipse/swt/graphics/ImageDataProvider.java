@@ -31,8 +31,10 @@ public interface ImageDataProvider {
 	 * This method should return an object of ImageData. If not available please
 	 * fallback to image of 100% level and send its ImageData
 	 * 
+	 * Note: SWT will throw exception if this method returns null.
+	 * 
 	 * @param zoom
-	 *            value will be 100, 150 and 200.
+	 *            value will be 100(16x16 image), 150(24x24 image) & 200(32x32 image)
 	 * @return the ImageData of the image 
 	 * @since 3.104
 	 */

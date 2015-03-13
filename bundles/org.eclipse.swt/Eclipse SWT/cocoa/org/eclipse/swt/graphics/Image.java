@@ -550,20 +550,21 @@ public Image(Device device, String filename) {
 
 /**
  * Constructs an instance of this class by loading its representation
- * from the file retrieved from the FileNameImageProvider. Throws an
+ * from the file retrieved from the ImageFileNameProvider. Throws an
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as
- * per DPI level
+ * This constructor is provided for convenience for loading image as 
+ * per DPI level.
  *
  * @param device the device on which to create the image
- * @param fileNameProvider the FileNameImageProvider object that is
+ * @param imageFileNameProvider the ImageFileNameProvider object that is
  * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
- *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the ImageFileNameProvider is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the fileName provided by ImageFileNameProvider is null</li>
  * </ul>
  * @exception SWTException <ul>
  *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
@@ -576,17 +577,19 @@ public Image(Device device, String filename) {
  * </ul>
  * @since 3.104
  */
-public Image(Device device, ImageFileNameProvider fileNameProvider) {
+public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 	super(device);	
-	String filename = fileNameProvider.getImagePath(100);
+	if (imageFileNameProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	String filename = imageFileNameProvider.getImagePath(100);
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
-		if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+		if (filename == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		initNative(filename);
 		if (this.handle == null) init(new ImageData(filename));
 		init();
-		String filename2x = fileNameProvider.getImagePath(200);
+		String filename2x = imageFileNameProvider.getImagePath(200);
+		if (filename2x == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		id id = NSImageRep.imageRepWithContentsOfFile(NSString.stringWith(filename2x));
 		NSImageRep rep = new NSImageRep(id);
 		handle.addRepresentation(rep);
@@ -597,20 +600,21 @@ public Image(Device device, ImageFileNameProvider fileNameProvider) {
 
 /**
  * Constructs an instance of this class by loading its representation
- * from the file retrieved from the InputStreamImageProvider. Throws an
+ * from the ImageData retrieved from the ImageDataProvider. Throws an
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as
- * per DPI level
+ * This constructor is provided for convenience for loading image as 
+ * per DPI level.
  *
  * @param device the device on which to create the image
  * @param imageDataProvider the ImageDataProvider object that is
- * to be used to get the file name
+ * to be used to get the ImageData
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
- *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the ImageDataProvider is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the ImageData provided by ImageDataProvider is null</li>
  * </ul>
  * @exception SWTException <ul>
  *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
@@ -625,13 +629,16 @@ public Image(Device device, ImageFileNameProvider fileNameProvider) {
  */
 public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);	
+	if (imageDataProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	ImageData data = imageDataProvider.getImageData (100);
+	if (data == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
 		init (data);
 		init ();
 		ImageData data2x = imageDataProvider.getImageData (200);
+		if (data2x == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		NSBitmapImageRep rep = createRepresentaion (data2x);
 		handle.addRepresentation(rep);
 		rep.release();

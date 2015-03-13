@@ -15,6 +15,8 @@ import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+
 import java.io.*;
 
 /**
@@ -161,14 +163,14 @@ public final class Image extends Resource implements Drawable {
 	static final int DEFAULT_SCANLINE_PAD = 4;
 
 	/**
-	 * place to hold filename Image provider
+	 * ImageFileNameProvider to provide file names at various Zoom levels
 	 */
-	FileNameImageProvider fileNameImageProviderObject = null;
+	ImageFileNameProvider imageFileNameProvider;
 
 	/**
-	 * place to hold Input Stream Image provider
+	 * ImageDataProvider to provide ImageData at various Zoom levels
 	 */
-	ImageDataProvider imageDataProviderObject = null;
+	ImageDataProvider imageDataProvider;
 
 	/**
 	 * Attribute to cache image zoom level
@@ -685,20 +687,21 @@ public Image(Device device, String filename) {
 
 /**
  * Constructs an instance of this class by loading its representation
- * from the file retrieved from the FileNameImageProvider. Throws an
+ * from the file retrieved from the ImageFileNameProvider. Throws an
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as
- * per DPI level
+ * This constructor is provided for convenience for loading image as 
+ * per DPI level.
  *
  * @param device the device on which to create the image
- * @param fileNameProvider the FileNameImageProvider object that is
+ * @param imageFileNameProvider the ImageFileNameProvider object that is
  * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
- *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the ImageFileNameProvider is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the fileName provided by ImageFileNameProvider is null</li>
  * </ul>
  * @exception SWTException <ul>
  *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
@@ -711,12 +714,13 @@ public Image(Device device, String filename) {
  * </ul>
  * @since 3.104
  */
-public Image(Device device, FileNameImageProvider fileNameProvider) {
+public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 	super(device);
-	fileNameImageProviderObject = fileNameProvider;
+	if (imageFileNameProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.imageFileNameProvider = imageFileNameProvider;
 	imageZoomLevel = getDeviceZoom ();
-	String filename = fileNameImageProviderObject.getImagePath(imageZoomLevel);
-	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	String filename = imageFileNameProvider.getImagePath(imageZoomLevel);
+	if (filename == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	initNative (filename);
 	if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
 	init ();
@@ -724,20 +728,21 @@ public Image(Device device, FileNameImageProvider fileNameProvider) {
 
 /**
  * Constructs an instance of this class by loading its representation
- * from the file retrieved from the InputStreamImageProvider. Throws an
+ * from the ImageData retrieved from the ImageDataProvider. Throws an
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as
- * per DPI level
+ * This constructor is provided for convenience for loading image as 
+ * per DPI level.
  *
  * @param device the device on which to create the image
  * @param imageDataProvider the ImageDataProvider object that is
- * to be used to get the file name
+ * to be used to get the ImageData
  *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if device is null and there is no current device</li>
- *    <li>ERROR_NULL_ARGUMENT - if the file name is null</li>
+ *    <li>ERROR_NULL_ARGUMENT - if the ImageDataProvider is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the ImageData provided by ImageDataProvider is null</li>
  * </ul>
  * @exception SWTException <ul>
  *    <li>ERROR_IO - if an IO error occurs while reading from the file</li>
@@ -752,9 +757,11 @@ public Image(Device device, FileNameImageProvider fileNameProvider) {
  */
 public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
-	imageDataProviderObject = imageDataProvider;
+	if (imageDataProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	this.imageDataProvider = imageDataProvider;
 	imageZoomLevel = getDeviceZoom ();
-	ImageData data = imageDataProviderObject.getImageData (imageZoomLevel);
+	ImageData data = imageDataProvider.getImageData (imageZoomLevel);
+	if (data == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	init (data);
 	init ();
 }
@@ -764,19 +771,18 @@ int getDeviceZoom () {
 }
 
 /**
- * Refreshes the zoom level of the image if required.
+ * Refresh the Image based on the zoom level, if required.
  * 
- * @param image to be refreshed
- * @return true if zoom level is refreshed
+ * @return true if image is refreshed
  */
-boolean refreshImageZoomLevel () {
+boolean refreshImageForZoom () {
 	int deviceZoomLevel = getDeviceZoom();
 	if (deviceZoomLevel != imageZoomLevel) {
-		if (fileNameImageProviderObject != null) {
-			String filename = fileNameImageProviderObject.getImagePath(deviceZoomLevel);
+		if (imageFileNameProvider != null) {
+			String filename = imageFileNameProvider.getImagePath(deviceZoomLevel);
 			initNative(filename);
-		} else if (imageDataProviderObject != null) {
-			ImageData data = imageDataProviderObject.getImageData(deviceZoomLevel);
+		} else if (imageDataProvider != null) {
+			ImageData data = imageDataProvider.getImageData(deviceZoomLevel);
 			init(data);
 		} else {
 			return false;

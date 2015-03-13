@@ -946,8 +946,8 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 }
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
-	/* Refresh Image zoom level if required. */
-	srcImage.refreshImageZoomLevel ();
+	/* Refresh Image as per zoom level, if required. */
+	srcImage.refreshImageForZoom ();
 
 	if (data.gdipGraphics != 0) {
 		//TODO - cache bitmap

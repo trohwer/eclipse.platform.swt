@@ -30,7 +30,7 @@ public class Snippet1 {
 
 public static void main (String [] args) {
 	final Display display = new Display ();
-	final FileNameImageProvider defaultImageProvider = new FileNameImageProvider() {
+	final ImageFileNameProvider defaultImageProvider = new ImageFileNameProvider() {
 		
 		@Override
 		public String getImagePath(int zoom) {
@@ -123,7 +123,7 @@ public static void main (String [] args) {
 				((Text)selectedItem.getControl()).setText("Zoom: 150");
 				break;
 			case 0:
-				selectedItem.setImage(new Image(display, "collapseall.png"));
+				selectedItem.setImage(new Image(display, defaultImageProvider.getImagePath(100)));
 				((Text)selectedItem.getControl()).setText("Zoom: 100");
 				break;
 			}

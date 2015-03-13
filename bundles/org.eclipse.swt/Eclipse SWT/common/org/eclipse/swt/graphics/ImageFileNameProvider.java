@@ -30,11 +30,13 @@ public interface ImageFileNameProvider {
 	 * 	
 	 * This method should return a filename available on the filesystem. If not
 	 * available please fallback to image of 100% level and send its absolute
-	 * path as return value 
+	 * path as return value.
+	 * 
+	 * Note: SWT will throw exception if this method returns null.
 	 * 
 	 * @param zoom
-	 *            value will be 100, 150 and 200.
-	 * @return the filename of the image 
+	 *            value will be 100(16x16 image), 150(24x24 image) & 200(32x32 image)
+	 * @return the absolute file path of the image
 	 * @since 3.104
 	 */
 	public String getImagePath (int zoom);
