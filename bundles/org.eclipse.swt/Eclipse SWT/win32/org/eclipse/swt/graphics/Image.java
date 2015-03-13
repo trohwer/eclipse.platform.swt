@@ -134,9 +134,9 @@ public final class Image extends Resource implements Drawable {
 	ImageDataProvider imageDataProvider;
 
 	/**
-	 * Attribute to cache current level
+	 * Attribute to cache image zoom level
 	 */
-	int currentZoomLevel = 100;
+	int imageZoomLevel = 100;
 
 	/**
 	 * width of the image
@@ -662,8 +662,8 @@ public Image(Device device, FileNameImageProvider fileNameProvider) {
 	super(device);
 	if (fileNameProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.fileNameImageProvider = fileNameProvider;
-	currentZoomLevel = getZoom ();
-	String fileName = fileNameImageProvider.getImagePath (currentZoomLevel);
+	imageZoomLevel = getDeviceZoom ();
+	String fileName = fileNameImageProvider.getImagePath (imageZoomLevel);
 	if (fileName == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	initNative (fileName);
 	if (this.handle == 0) init(new ImageData (fileName));
@@ -702,13 +702,40 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
 	if (imageDataProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.imageDataProvider = imageDataProvider;
-	currentZoomLevel = getZoom ();
-	init(imageDataProvider.getImageData(currentZoomLevel));
+	imageZoomLevel = getDeviceZoom ();
+	init(imageDataProvider.getImageData(imageZoomLevel));
 	init();
 }
 
-int getZoom () {
+int getDeviceZoom () {
 	return DPIUtil.mapDPIToZoom (device.getDPI ().x);
+}
+
+/**
+ * Refreshes the zoom level of the image if required.
+ * 
+ * @param image to be refreshed
+ * @return true if zoom level is refreshed
+ */
+boolean refreshImageZoomLevel () {
+	int deviceZoomLevel = getDeviceZoom();
+	if (deviceZoomLevel != imageZoomLevel) {
+		if (fileNameImageProvider != null) {
+			String filename = fileNameImageProvider.getImagePath(deviceZoomLevel);
+			initNative(filename);
+			if (this.handle == 0) init(new ImageData (filename));
+			init();
+		} else if (imageDataProvider != null) {
+			ImageData data = imageDataProvider.getImageData(deviceZoomLevel);
+			init(data);
+			init();
+		} else {
+			return false;
+		}
+		imageZoomLevel = deviceZoomLevel;
+		return true;
+	}
+	return false;
 }
 
 void initNative(String filename) {

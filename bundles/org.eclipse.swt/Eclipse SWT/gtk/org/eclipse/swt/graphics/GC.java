@@ -877,7 +877,7 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
 	/* Refresh Image zoom level if required. */
-	DPIUtil.refreshImageZoomLevel (srcImage);
+	srcImage.refreshImageZoomLevel ();
 
 	int imgWidth, imgHeight;
 	if (OS.USE_CAIRO){
@@ -1012,7 +1012,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 }
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
 	/* Refresh Image zoom level if required. */
-	DPIUtil.refreshImageZoomLevel (srcImage);
+	srcImage.refreshImageZoomLevel ();
 
 	if (srcWidth == destWidth && srcHeight == destHeight) {
 		OS.gdk_draw_drawable(data.drawable, handle, srcImage.pixmap, srcX, srcY, destX, destY, destWidth, destHeight);
