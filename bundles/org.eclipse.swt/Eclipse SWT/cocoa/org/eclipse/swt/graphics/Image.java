@@ -554,11 +554,11 @@ public Image(Device device, String filename) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level
  *
  * @param device the device on which to create the image
- * @param fileNameProviderObj the FileNameImageProvider object that is
+ * @param fileNameProvider the FileNameImageProvider object that is
  * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
@@ -576,16 +576,16 @@ public Image(Device device, String filename) {
  * </ul>
  * @since 3.104
  */
-public Image(Device device, FileNameImageProvider fileNameProviderObj) {
+public Image(Device device, FileNameImageProvider fileNameProvider) {
 	super(device);	
-	String filename = fileNameProviderObj.getImagePath(100);
+	String filename = fileNameProvider.getImagePath(100);
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
 		if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		initNative(filename);
 		if (this.handle == null) init(new ImageData(filename));
-		String hiDpiFilename = fileNameProviderObj.getImagePath(200);
+		String hiDpiFilename = fileNameProvider.getImagePath(200);
 		id id = NSImageRep.imageRepWithContentsOfFile(NSString.stringWith(hiDpiFilename));
 		NSImageRep rep = new NSImageRep(id);
 		handle.addRepresentation(rep);
@@ -601,11 +601,11 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level
  *
  * @param device the device on which to create the image
- * @param imageDataProviderObj the ImageDataProvider object that is
+ * @param imageDataProvider the ImageDataProvider object that is
  * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
@@ -623,14 +623,14 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
  * </ul>
  * @since 3.104
  */
-public Image(Device device, ImageDataProvider imageDataProviderObj) {
+public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);	
-	ImageData data = imageDataProviderObj.getImageData (100);
+	ImageData data = imageDataProvider.getImageData (100);
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
 		init (data);
-		ImageData hiDpiData= imageDataProviderObj.getImageData (200);
+		ImageData hiDpiData= imageDataProvider.getImageData (200);
 		NSBitmapImageRep rep = createRepresentaion (hiDpiData);
 		NSSize aSize = new NSSize();
 		aSize.width = rep.pixelsWide();

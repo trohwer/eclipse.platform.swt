@@ -160,7 +160,7 @@ public final class Image extends Resource implements Drawable {
 	 * Specifies the default scanline padding.
 	 */
 	static final int DEFAULT_SCANLINE_PAD = 4;
-	
+
 	/**
 	 * place to hold filename Image provider
 	 */
@@ -690,11 +690,11 @@ public Image(Device device, String filename) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level
  *
  * @param device the device on which to create the image
- * @param fileNameProviderObj the FileNameImageProvider object that is
+ * @param fileNameProvider the FileNameImageProvider object that is
  * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
@@ -712,9 +712,9 @@ public Image(Device device, String filename) {
  * </ul>
  * @since 3.104
  */
-public Image(Device device, FileNameImageProvider fileNameProviderObj) {
-	super(device);	
-	fileNameImageProviderObject = fileNameProviderObj;
+public Image(Device device, FileNameImageProvider fileNameProvider) {
+	super(device);
+	fileNameImageProviderObject = fileNameProvider;
 	currentZoomLevel = DPIUtil.mapDPIToZoom(device.getActualDPI());
 	String filename = fileNameImageProviderObject.getImagePath(currentZoomLevel);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -729,11 +729,11 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
  * error if an error occurs while loading the image, or if the result
  * is an image of an unsupported type.
  * <p>
- * This constructor is provided for convenience for loading image as 
+ * This constructor is provided for convenience for loading image as
  * per DPI level
  *
  * @param device the device on which to create the image
- * @param imageDataProviderObj the ImageDataProvider object that is
+ * @param imageDataProvider the ImageDataProvider object that is
  * to be used to get the file name
  *
  * @exception IllegalArgumentException <ul>
@@ -751,9 +751,9 @@ public Image(Device device, FileNameImageProvider fileNameProviderObj) {
  * </ul>
  * @since 3.104
  */
-public Image(Device device, ImageDataProvider imageDataProviderObj) {
-	super(device);	
-	imageDataProviderObject = imageDataProviderObj;
+public Image(Device device, ImageDataProvider imageDataProvider) {
+	super(device);
+	imageDataProviderObject = imageDataProvider;
 	currentZoomLevel = DPIUtil.mapDPIToZoom (device.getActualDPI ());
 	ImageData data = imageDataProviderObject.getImageData (currentZoomLevel);
 	init (data);
@@ -1789,7 +1789,7 @@ public String toString () {
 	}
 }
 
-boolean copyImageForZoomLevel (int zoom) {
+boolean initImageForZoomLevel (int zoom) {
 	if (fileNameImageProviderObject != null) {
 		String filename = fileNameImageProviderObject.getImagePath (zoom);
 		initNative (filename);
