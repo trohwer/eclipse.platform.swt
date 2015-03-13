@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class Snippet366 {
+public class Snippet367 {
 	public static void main (String [] args) {
 		final Display display = new Display ();
 		final ImageFileNameProvider filenameProvider = new ImageFileNameProvider () {
