@@ -134,6 +134,11 @@ public final class Image extends Resource implements Drawable {
 	ImageDataProvider imageDataProvider;
 
 	/**
+	 * Attribute to cache current level
+	 */
+	int currentZoomLevel = 100;
+
+	/**
 	 * width of the image
 	 */
 	int width = -1;
@@ -657,8 +662,8 @@ public Image(Device device, FileNameImageProvider fileNameProvider) {
 	super(device);
 	if (fileNameProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.fileNameImageProvider = fileNameProvider;
-
-	String fileName = fileNameImageProvider.getImagePath (getZoom ());
+	currentZoomLevel = getZoom ();
+	String fileName = fileNameImageProvider.getImagePath (currentZoomLevel);
 	if (fileName == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	initNative (fileName);
 	if (this.handle == 0) init(new ImageData (fileName));
@@ -697,7 +702,8 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
 	if (imageDataProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.imageDataProvider = imageDataProvider;
-	init(imageDataProvider.getImageData(getZoom()));
+	currentZoomLevel = getZoom ();
+	init(imageDataProvider.getImageData(currentZoomLevel));
 	init();
 }
 

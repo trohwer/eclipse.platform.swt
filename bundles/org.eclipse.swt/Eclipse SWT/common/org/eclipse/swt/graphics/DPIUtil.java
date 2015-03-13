@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.swt.graphics;
 
-import java.io.*;
-
 /**
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
  * functionality.
@@ -39,5 +37,30 @@ class DPIUtil {
 			zoom = 100;
 		}
 		return zoom;
+	}
+	
+	/**
+	 * Refreshes the zoom level of the image if required.
+	 * 
+	 * @param image to be refreshed
+	 * @return true if zoom level is refreshed
+	 */
+	static boolean refreshImageZoomLevel (Image image) {
+		if (image == null) return false;
+		int zoom = image.getZoom();
+		if (zoom != image.currentZoomLevel) {
+			if (image.fileNameImageProvider != null) {
+				String filename = image.fileNameImageProvider.getImagePath(zoom);
+				image.initNative(filename);
+			} else if (image.imageDataProvider != null) {
+				ImageData data = image.imageDataProvider.getImageData(zoom);
+				image.init(data);
+			} else {
+				return false;
+			}
+			image.currentZoomLevel = zoom;
+			return true;
+		}
+		return false;
 	}
 }

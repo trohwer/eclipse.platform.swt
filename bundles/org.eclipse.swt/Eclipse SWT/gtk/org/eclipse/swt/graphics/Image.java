@@ -15,6 +15,7 @@ import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 
 import java.io.*;
 
@@ -715,7 +716,7 @@ public Image(Device device, String filename) {
 public Image(Device device, FileNameImageProvider fileNameProvider) {
 	super(device);
 	fileNameImageProviderObject = fileNameProvider;
-	currentZoomLevel = DPIUtil.mapDPIToZoom(device.getActualDPI());
+	currentZoomLevel = getZoom ();
 	String filename = fileNameImageProviderObject.getImagePath(currentZoomLevel);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	initNative (filename);
@@ -754,10 +755,14 @@ public Image(Device device, FileNameImageProvider fileNameProvider) {
 public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
 	imageDataProviderObject = imageDataProvider;
-	currentZoomLevel = DPIUtil.mapDPIToZoom (device.getActualDPI ());
+	currentZoomLevel = getZoom ();
 	ImageData data = imageDataProviderObject.getImageData (currentZoomLevel);
 	init (data);
 	init ();
+}
+
+int getZoom () {
+	return DPIUtil.mapDPIToZoom (device.getActualDPI ());
 }
 
 void initNative(String filename) {
@@ -1787,20 +1792,6 @@ public String toString () {
 	} else {
 		return "Image {" + pixmap + "}";
 	}
-}
-
-boolean initImageForZoomLevel (int zoom) {
-	if (fileNameImageProviderObject != null) {
-		String filename = fileNameImageProviderObject.getImagePath (zoom);
-		initNative (filename);
-	} else if (imageDataProviderObject != null) {
-		ImageData data = imageDataProviderObject.getImageData (zoom);
-		init (data);
-	} else {
-		return false;
-	}
-	currentZoomLevel = zoom;
-	return true;
 }
 
 }
