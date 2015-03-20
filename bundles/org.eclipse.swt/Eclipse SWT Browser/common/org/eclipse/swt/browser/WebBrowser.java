@@ -393,6 +393,10 @@ public void destroyFunction (BrowserFunction function) {
 
 public abstract boolean execute (String script);
 
+public Object evaluate (String script, boolean trusted) throws SWTException {
+	return evaluate(script);
+}
+
 public Object evaluate (String script) throws SWTException {
 	BrowserFunction function = new EvaluateFunction (browser, ""); // $NON-NLS-1$
 	int index = getNextFunctionIndex ();
