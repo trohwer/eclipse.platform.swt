@@ -12,10 +12,6 @@
 #include "swt.h"
 #include "xpcom_structs.h"
 #include "xpcom_stats.h"
-#include "nsCOMPtr.h"
-#include "nsIServiceManager.h"
-#include "xptinfo.h"
-#include "xptcall.h"
 
 #ifndef XPCOM_NATIVE
 #define XPCOM_NATIVE(func) Java_org_eclipse_swt_internal_mozilla_XPCOM_##func
@@ -6817,142 +6813,6 @@ fail:
 }
 #endif
 
-#if (!defined(NO__1VtblCall__II_3Ljava_lang_Object_2) && !defined(JNI64)) || (!defined(NO__1VtblCall__IJ_3Ljava_lang_Object_2) && defined(JNI64))
-#ifndef JNI64
-extern "C" JNIEXPORT jint JNICALL XPCOM_NATIVE(_1VtblCall__II_3Ljava_lang_Object_2)(JNIEnv *env, jclass that, jint fnNumber, jintLong supports, jobjectArray args);
-JNIEXPORT jint JNICALL XPCOM_NATIVE(_1VtblCall__II_3Ljava_lang_Object_2)(JNIEnv *env, jclass that, jint fnNumber, jintLong supports, jobjectArray args)
-#else
-extern "C" JNIEXPORT jint JNICALL XPCOM_NATIVE(_1VtblCall__IJ_3Ljava_lang_Object_2)(JNIEnv *env, jclass that, jint fnNumber, jintLong supports, jobjectArray args);
-JNIEXPORT jint JNICALL XPCOM_NATIVE(_1VtblCall__IJ_3Ljava_lang_Object_2)(JNIEnv *env, jclass that, jint fnNumber, jintLong supports, jobjectArray args)
-#endif
-{
-#ifndef JNI64
-	XPCOM_NATIVE_ENTER(env, that, _1VtblCall__II_3Ljava_lang_Object_2_FUNC);
-#else
-	XPCOM_NATIVE_ENTER(env, that, _1VtblCall__IJ_3Ljava_lang_Object_2_FUNC);
-#endif
-
-	jsize count = env->GetArrayLength(args);
-	nsXPTCVariant *variants = new nsXPTCVariant[count];
-	memset(variants, 0, count * sizeof(nsXPTCVariant));
-
-	for (jsize index = 0; index < count; index++) {
-		jobject arg = env->GetObjectArrayElement(args, index);
-		jclass clazz = env->GetObjectClass(arg);
-		jmethodID methodID = env->GetMethodID(env->GetObjectClass(clazz), "getName", "()Ljava/lang/String;");
-		jstring nameStr = (jstring)env->CallObjectMethod(clazz, methodID);
-		char name[20];
-		env->GetStringUTFRegion(nameStr, 0, env->GetStringLength(nameStr), name);
-
-		if (name[0] == '[') {
-			variants[index].SetPtrIsData();
-			switch (name[1]) {
-				case 'B':
-					variants[index].ptr = env->GetByteArrayElements((jbyteArray)arg, NULL);
-					variants[index].type = TD_INT8;
-					break;
-				case 'C':
-					variants[index].ptr = env->GetCharArrayElements((jcharArray)arg, NULL);
-					variants[index].type = TD_WCHAR;
-					break;
-				case 'D':
-					variants[index].ptr = env->GetDoubleArrayElements((jdoubleArray)arg, NULL);
-					variants[index].type = TD_DOUBLE;
-					break;
-				case 'F':
-					variants[index].ptr = env->GetFloatArrayElements((jfloatArray)arg, NULL);
-					variants[index].type = TD_FLOAT;
-					break;
-				case 'I':
-					variants[index].ptr = env->GetIntArrayElements((jintArray)arg, NULL);
-					variants[index].type = TD_INT32;
-					break;
-				case 'L':
-					variants[index].ptr = env->GetLongArrayElements((jlongArray)arg, NULL);
-					variants[index].type = TD_INT64;
-					break;
-				case 'S':
-					variants[index].ptr = env->GetShortArrayElements((jshortArray)arg, NULL);
-					variants[index].type = TD_INT16;
-					break;
-			}
-		} else if (strncmp(name, "java.lang.", 10) == 0) {
-			switch (name[10]) {
-				case 'B':
-					variants[index].val.i8 = env->CallByteMethod(arg, env->GetMethodID(clazz, "byteValue", "()B"));
-					variants[index].type = TD_INT8;
-					break;
-				case 'C':
-					variants[index].val.wc = env->CallCharMethod(arg, env->GetMethodID(clazz, "charValue", "()C"));
-					variants[index].type = TD_WCHAR;
-					break;
-				case 'D':
-					variants[index].val.d = env->CallDoubleMethod(arg, env->GetMethodID(clazz, "doubleValue", "()D"));
-					variants[index].type = TD_DOUBLE;
-					break;
-				case 'F':
-					variants[index].val.f = env->CallFloatMethod(arg, env->GetMethodID(clazz, "floatValue", "()F"));
-					variants[index].type = TD_FLOAT;
-					break;
-				case 'I':
-					variants[index].val.i32 = env->CallIntMethod(arg, env->GetMethodID(clazz, "intValue", "()I"));
-					variants[index].type = TD_INT32;
-					break;
-				case 'L':
-					variants[index].val.i64 = env->CallLongMethod(arg, env->GetMethodID(clazz, "longValue", "()L"));
-					variants[index].type = TD_INT64;
-					break;
-				case 'S':
-					variants[index].val.i16 = env->CallShortMethod(arg, env->GetMethodID(clazz, "shortValue", "()S"));
-					variants[index].type = TD_INT16;
-					break;
-			}
-		}
-	}
-
-	jint rc = NS_InvokeByIndex((nsISupports*)supports, fnNumber, count, variants);
-
-	for (jsize index = 0; index < count; index++) {
-		if (variants[index].IsPtrData()) {
-			jobject arg = env->GetObjectArrayElement(args, index);
-			void *ptr = variants[index].ptr;
-
-			switch (variants[index].type) {
-				case TD_INT8:
-					env->ReleaseByteArrayElements((jbyteArray)arg, (jbyte*)ptr, 0);
-					break;
-				case TD_WCHAR:
-					env->ReleaseCharArrayElements((jcharArray)arg, (jchar*)ptr, 0);
-					break;
-				case TD_DOUBLE:
-					env->ReleaseDoubleArrayElements((jdoubleArray)arg, (jdouble*)ptr, 0);
-					break;
-				case TD_FLOAT:
-					env->ReleaseFloatArrayElements((jfloatArray)arg, (jfloat*)ptr, 0);
-					break;
-				case TD_INT32:
-					env->ReleaseIntArrayElements((jintArray)arg, (jint*)ptr, 0);
-					break;
-				case TD_INT64:
-					env->ReleaseLongArrayElements((jlongArray)arg, (jlong*)ptr, 0);
-					break;
-				case TD_INT16:
-					env->ReleaseShortArrayElements((jshortArray)arg, (jshort*)ptr, 0);
-					break;
-			}
-		}
-	}
-	delete[] variants;
-
-#ifndef JNI64
-	XPCOM_NATIVE_EXIT(env, that, _1VtblCall__II_3Ljava_lang_Object_2_FUNC);
-#else
-	XPCOM_NATIVE_EXIT(env, that, _1VtblCall__IJ_3Ljava_lang_Object_2_FUNC);
-#endif
-	return rc;
-}
-#endif
-
 #ifndef NO__1XPCOMGlueLoadXULFunctions
 extern "C" JNIEXPORT jint JNICALL XPCOM_NATIVE(_1XPCOMGlueLoadXULFunctions)(JNIEnv *env, jclass that, jintLong arg0);
 JNIEXPORT jint JNICALL XPCOM_NATIVE(_1XPCOMGlueLoadXULFunctions)
@@ -7349,3 +7209,4 @@ JNIEXPORT jint JNICALL XPCOM_NATIVE(nsDynamicFunctionLoad_1sizeof)
 	return rc;
 }
 #endif
+

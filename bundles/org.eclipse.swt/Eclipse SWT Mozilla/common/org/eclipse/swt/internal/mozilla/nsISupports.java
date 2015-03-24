@@ -70,12 +70,6 @@ public class nsISupports {
 		return bytes;
 	}
 
-	protected int callFunction (String methodString, boolean setter, Object[] args) {
-		int index = getMethodIndex (methodString);
-		if (setter) index++;
-		return XPCOM.VtblCall(index, getAddress(), args);
-	}
-	
 	protected int getGetterIndex (String attribute) {
 		return getMethodIndex (attribute);
 	}

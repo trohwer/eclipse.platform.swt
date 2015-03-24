@@ -2565,15 +2565,4 @@ static final int VtblCall(int fnNumber, long /*int*/ ppVtbl, long arg0, int arg1
 		lock.unlock();
 	}
 }
-
-static final native int _VtblCall(int fnNumber, long /*int*/ ppVtbl, Object[] args);
-static final int VtblCall(int fnNumber, long /*int*/ ppVtbl, Object[] args) {
-	lock.lock();
-	try {
-		return _VtblCall(fnNumber, ppVtbl, args);
-	} finally {
-		lock.unlock();
-	}
-}
-
 }
