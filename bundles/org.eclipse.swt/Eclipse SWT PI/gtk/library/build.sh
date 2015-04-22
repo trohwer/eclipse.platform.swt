@@ -136,8 +136,8 @@ case $SWT_OS.$SWT_ARCH in
 		if [ "${XULRUNNER_LIBS}" = "" ]; then
 			export XULRUNNER_LIBS="-L${XULRUNNER_SDK}/lib -lxpcomglue"
 		fi
-		if [ "${XULRUNNER24_SDK}" = "" ]; then
-			export XULRUNNER24_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86"
+		if [ "${XULRUNNER31_SDK}" = "" ]; then
+			export XULRUNNER31_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86"
 		fi
 		if [ "${XULRUNNER31_SDK}" = "" ]; then
 			export XULRUNNER31_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86"
@@ -171,8 +171,8 @@ case $SWT_OS.$SWT_ARCH in
 		if [ "${XULRUNNER_LIBS}" = "" ]; then
 			export XULRUNNER_LIBS="-L${XULRUNNER_SDK}/lib -lxpcomglue"
 		fi
-		if [ "${XULRUNNER24_SDK}" = "" ]; then
-			export XULRUNNER24_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86_64"
+		if [ "${XULRUNNER31_SDK}" = "" ]; then
+			export XULRUNNER31_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86_64"
 		fi
 		if [ "${XULRUNNER31_SDK}" = "" ]; then
 			export XULRUNNER31_SDK="/media/SSD/Xulrunner/xulrunner-sdk"

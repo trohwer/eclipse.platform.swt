@@ -132,7 +132,7 @@ ifndef NO_STRIP
 	LFLAGS := $(LFLAGS) -s
 endif
 
-all:
+all: make_swt make_atk make_glx make_webkit
 
 #
 # SWT libs
@@ -266,11 +266,7 @@ xpcomxul_custom.o: xpcom_custom.cpp
 xpcomxul_stats.o: xpcom_stats.cpp
 	$(CXX) -o xpcomxul_stats.o $(MOZILLACFLAGS) $(XULRUNNEREXCLUDES) ${XULRUNNER_INCLUDES} -c xpcom_stats.cpp
 
-
-make_xulrunner24:
-	echo -e "#include<stdlib.h>\nsize_t je_malloc_usable_size_in_advance(size_t n) {\nreturn n;\n}" | $(CXX) $(LFLAGS) $(CFLAGS) -L${XULRUNNER24_SDK}/lib -Wl,--whole-archive -lmozglue -Wl,--no-whole-archive -xc - -o libswt-xulrunner-fix24.so
-
-make_xulrunner31: 
+make_xulrunner_fix31: 
 	echo -e "#include<stdlib.h>\nsize_t je_malloc_usable_size_in_advance(size_t n) {\nreturn n;\n}" | $(CXX) $(LFLAGS) $(CFLAGS) -L${XULRUNNER31_SDK}/lib -Wl,--whole-archive -lmozglue -Wl,--no-whole-archive -xc - -o libswt-xulrunner-fix31.so
 
 #
