@@ -45,7 +45,6 @@ ATK_LIB = lib$(ATK_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
 GNOME_LIB = lib$(GNOME_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
 MOZILLA_LIB = lib$(MOZILLA_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
 XULRUNNER_LIB = lib$(XULRUNNER_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
-XULRUNNER24_LIB = lib$(XULRUNNER24_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
 XPCOMINIT_LIB = lib$(XPCOMINIT_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
 WEBKIT_LIB = lib$(WEBKIT_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
 GLX_LIB = lib$(GLX_PREFIX)-$(WS_PREFIX)-$(SWT_VERSION).so
@@ -113,7 +112,6 @@ ATK_OBJECTS = swt.o atk.o atk_structs.o atk_custom.o atk_stats.o
 GNOME_OBJECTS = swt.o gnome.o gnome_structs.o gnome_stats.o
 MOZILLA_OBJECTS = swt.o xpcom.o xpcom_custom.o xpcom_structs.o xpcom_stats.o
 XULRUNNER_OBJECTS = swt.o xpcomxul.o xpcomxul_custom.o xpcomxul_structs.o xpcomxul_stats.o
-XULRUNNER24_OBJECTS = swt.o xpcom24_custom.o
 XPCOMINIT_OBJECTS = swt.o xpcominit.o xpcominit_structs.o xpcominit_stats.o
 WEBKIT_OBJECTS = swt.o webkit.o webkit_structs.o webkit_stats.o
 GLX_OBJECTS = swt.o glx.o glx_structs.o glx_stats.o
@@ -134,7 +132,7 @@ ifndef NO_STRIP
 	LFLAGS := $(LFLAGS) -s
 endif
 
-all: make_swt make_atk make_glx make_webkit
+all:
 
 #
 # SWT libs
@@ -269,14 +267,11 @@ xpcomxul_stats.o: xpcom_stats.cpp
 	$(CXX) -o xpcomxul_stats.o $(MOZILLACFLAGS) $(XULRUNNEREXCLUDES) ${XULRUNNER_INCLUDES} -c xpcom_stats.cpp
 
 
-make_xulrunner24:$(XULRUNNER24_LIB)
-
-$(XULRUNNER24_LIB): $(XULRUNNER24_OBJECTS)
+make_xulrunner24:
 	echo -e "#include<stdlib.h>\nsize_t je_malloc_usable_size_in_advance(size_t n) {\nreturn n;\n}" | $(CXX) $(LFLAGS) $(CFLAGS) -L${XULRUNNER24_SDK}/lib -Wl,--whole-archive -lmozglue -Wl,--no-whole-archive -xc - -o libswt-xulrunner-fix24.so
-	$(CXX) -o $(XULRUNNER24_LIB) $(XULRUNNER24_OBJECTS) $(MOZILLALFLAGS) -L${XULRUNNER24_SDK}/lib -lxpcomglue
 
-xpcom24_custom.o: xpcom24_custom.cpp
-	$(CXX) $(MOZILLACFLAGS) -c xpcom24_custom.cpp
+make_xulrunner31: 
+	echo -e "#include<stdlib.h>\nsize_t je_malloc_usable_size_in_advance(size_t n) {\nreturn n;\n}" | $(CXX) $(LFLAGS) $(CFLAGS) -L${XULRUNNER31_SDK}/lib -Wl,--whole-archive -lmozglue -Wl,--no-whole-archive -xc - -o libswt-xulrunner-fix31.so
 
 #
 # XPCOMInit lib

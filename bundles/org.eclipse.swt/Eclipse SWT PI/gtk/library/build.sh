@@ -139,6 +139,9 @@ case $SWT_OS.$SWT_ARCH in
 		if [ "${XULRUNNER24_SDK}" = "" ]; then
 			export XULRUNNER24_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86"
 		fi
+		if [ "${XULRUNNER31_SDK}" = "" ]; then
+			export XULRUNNER31_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86"
+		fi
 		;;
 	"linux.x86_64")
 		if [ "${CC}" = "" ]; then
@@ -170,6 +173,9 @@ case $SWT_OS.$SWT_ARCH in
 		fi
 		if [ "${XULRUNNER24_SDK}" = "" ]; then
 			export XULRUNNER24_SDK="/bluebird/teamswt/swt-builddir/geckoSDK/24/x86_64"
+		fi
+		if [ "${XULRUNNER31_SDK}" = "" ]; then
+			export XULRUNNER31_SDK="/media/SSD/Xulrunner/xulrunner-sdk"
 		fi
 		;;
 	"linux.ppc")

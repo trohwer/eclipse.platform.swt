@@ -32,6 +32,8 @@ class MozillaDelegate {
 	static final int STOP_PROPOGATE = 1;
 	static final String LIB_FIX_XULRUNNER10 = "libswt-xulrunner-fix10.so"; //$NON-NLS-1$
 	static final String LIB_FIX_XULRUNNER24 = "libswt-xulrunner-fix24.so"; //$NON-NLS-1$
+	static final String LIB_FIX_XULRUNNER31 = "libswt-xulrunner-fix31.so"; //$NON-NLS-1$
+
 	static final String LIB_XPCOM = "libxpcom.so"; //$NON-NLS-1$
 	static final String LIB_XUL = "libxul.so"; //$NON-NLS-1$
 
@@ -151,7 +153,7 @@ static void loadAdditionalLibraries (String mozillaPath, boolean isGlued) {
 			* Works around https://bugzilla.mozilla.org/show_bug.cgi?id=720682
 			* and https://bugzilla.mozilla.org/show_bug.cgi?id=763327.
 			*/
-			libName = LIB_FIX_XULRUNNER24;
+			libName = LIB_FIX_XULRUNNER31;
 		}
 	} else {
 		/*
