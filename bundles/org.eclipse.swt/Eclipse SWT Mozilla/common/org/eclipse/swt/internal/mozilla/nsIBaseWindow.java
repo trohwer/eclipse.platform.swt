@@ -71,6 +71,6 @@ public class nsIBaseWindow extends nsISupports {
 	}
 
 	public int SetFocus() {
-		return XPCOM.VtblCall(this.getSetterIndex("focus"), getAddress());
+		return XPCOM.VtblCall(this.getMethodIndex("setFocus"), getAddress());
 	}
 }

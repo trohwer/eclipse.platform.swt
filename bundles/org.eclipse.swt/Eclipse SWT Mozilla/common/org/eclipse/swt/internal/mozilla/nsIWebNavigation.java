@@ -89,6 +89,6 @@ public class nsIWebNavigation extends nsISupports {
 	}
 
 	public int GetCurrentURI(long /*int*/[] aCurrentURI) {
-		return XPCOM.VtblCall(this.getSetterIndex("currentURI"), getAddress(), aCurrentURI);
+		return XPCOM.VtblCall(this.getGetterIndex("currentURI"), getAddress(), aCurrentURI);
 	}
 }
