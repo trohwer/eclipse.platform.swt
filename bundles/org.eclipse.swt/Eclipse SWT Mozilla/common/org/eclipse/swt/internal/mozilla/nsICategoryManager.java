@@ -43,7 +43,7 @@ public class nsICategoryManager extends nsISupports {
 	}
 
 	public int GetCategoryEntry(byte[] aCategory, byte[] aEntry, long /*int*/[] _retval) {
-		return XPCOM.VtblCall(this.getGetterIndex("categoryEntry"), getAddress(), aCategory, aEntry, _retval);
+		return XPCOM.VtblCall(this.getMethodIndex("getCategoryEntry"), getAddress(), aCategory, aEntry, _retval);
 	}
 
 	public int AddCategoryEntry(byte[] aCategory, byte[] aEntry, byte[] aValue, int aPersist, int aReplace, long /*int*/[] _retval) {

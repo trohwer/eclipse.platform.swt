@@ -47,6 +47,6 @@ public class nsIPrefLocalizedString extends nsISupports {
 	}
 
 	public int SetDataWithLength(int length, char[] data) {
-		return XPCOM.VtblCall(this.getSetterIndex("dataWithLength"), getAddress(), length, data);
+		return XPCOM.VtblCall(this.getMethodIndex("setDataWithLength"), getAddress(), length, data);
 	}
 }

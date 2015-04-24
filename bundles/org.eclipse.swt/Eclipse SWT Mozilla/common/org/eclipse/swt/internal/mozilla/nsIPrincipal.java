@@ -55,6 +55,6 @@ public class nsIPrincipal extends nsISerializable {
 
 	public int GetJSPrincipals(long /*int*/ cx, long /*int*/[] _retval) {
 		if (IsXULRVersionOrLater(24)) return XPCOM.NS_COMFALSE;
-		return XPCOM.VtblCall(this.getGetterIndex("JSPrincipals"), getAddress(), cx, _retval);
+		return XPCOM.VtblCall(this.getMethodIndex("getJSPrincipals"), getAddress(), cx, _retval);
 	}
 }

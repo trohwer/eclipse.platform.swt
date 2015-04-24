@@ -51,7 +51,7 @@ public class nsIDOMEvent extends nsISupports {
 	public static final int BUBBLING_PHASE = 3;
 
 	public int GetType(long /*int*/ aType) {
-		return XPCOM.VtblCall(this.getMethodIndex("type"), getAddress(), aType);
+		return XPCOM.VtblCall(this.getGetterIndex("type"), getAddress(), aType);
 	}
 
 	public int GetCurrentTarget(long /*int*/[] aCurrentTarget) {

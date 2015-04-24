@@ -112,7 +112,7 @@ public class nsISupports {
 
 	public nsISupports(long /*int*/ address) {
 		this.address = address;
-	}	
+	}
 
 	public long /*int*/ getAddress() {
 		return this.address;
