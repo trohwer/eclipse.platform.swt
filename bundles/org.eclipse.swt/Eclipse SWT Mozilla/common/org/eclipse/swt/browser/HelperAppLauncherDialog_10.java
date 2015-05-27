@@ -11,7 +11,7 @@
 package org.eclipse.swt.browser;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.C;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.mozilla.*;
 import org.eclipse.swt.widgets.*;
 
@@ -68,7 +68,9 @@ int PromptForSaveToFile (long /*int*/ aLauncher, long /*int*/ aWindowContext, lo
 	path.dispose ();
 	if (rc != XPCOM.NS_OK) Mozilla.error (rc);
 	if (result[0] == 0) Mozilla.error (XPCOM.NS_ERROR_NULL_POINTER);
-	/* Our own nsIDownload has been registered during the Browser initialization. It will be invoked by Mozilla. */
+	if (MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR31, true)) {
+		Mozilla.shouldOpenDownloadProgressWindow = true;
+	}
 	XPCOM.memmove (_retval, result, C.PTR_SIZEOF);	
 	return XPCOM.NS_OK;
 }

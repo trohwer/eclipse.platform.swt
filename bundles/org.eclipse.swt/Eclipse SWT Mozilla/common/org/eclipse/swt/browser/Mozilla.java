@@ -69,6 +69,7 @@ class Mozilla extends WebBrowser {
 	static Listener DisplayListener;
 	static boolean Initialized, IsXULRunner, PerformedVersionCheck, XPCOMWasGlued, XPCOMInitWasGlued;
 	static boolean IsGettingSiteWindow;
+	static boolean shouldOpenDownloadProgressWindow = false;
 	static String MozillaPath;
 	static String oldProxyHostFTP, oldProxyHostHTTP, oldProxyHostSSL;
 	static int oldProxyPortFTP = -1, oldProxyPortHTTP = -1, oldProxyPortSSL = -1, oldProxyType = -1;

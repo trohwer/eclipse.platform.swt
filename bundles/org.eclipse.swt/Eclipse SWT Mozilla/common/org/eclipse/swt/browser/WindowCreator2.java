@@ -177,6 +177,15 @@ int CreateChromeWindow2 (long /*int*/ parent, int chromeFlags, int contextFlags,
 			new Shell (src.getShell(), style);
 		shell.setLayout (new FillLayout ());
 		browser = new Browser (shell, src == null ? SWT.MOZILLA : src.getStyle () & SWT.MOZILLA);
+		if (Mozilla.shouldOpenDownloadProgressWindow) {
+			/* 
+			 * In XULRunner 31, download doesn't start automatically and progress window doesn't open. 
+			 * We open it the download progress window, so that user can start the download.
+			 */
+			
+			Mozilla.shouldOpenDownloadProgressWindow = false;
+			shell.open();
+		}
 		browser.addVisibilityWindowListener (new VisibilityWindowListener () {
 			public void hide (WindowEvent event) {
 			}
