@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.swt.browser;
 
-import org.eclipse.swt.internal.C;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.mozilla.*;
 
 class HelperAppLauncherDialogFactory {
@@ -18,8 +18,8 @@ class HelperAppLauncherDialogFactory {
 	XPCOMObject factory;
 	int refCount = 0;
 
-HelperAppLauncherDialogFactory () {
-	createCOMInterfaces ();
+HelperAppLauncherDialogFactory (final Mozilla webBrowser) {
+	createCOMInterfaces (webBrowser);
 }
 
 int AddRef () {
@@ -27,7 +27,7 @@ int AddRef () {
 	return refCount;
 }
 
-void createCOMInterfaces () {
+void createCOMInterfaces (final Mozilla webBrowser) {
 	/* Create each of the interfaces that this object implements */
 	supports = new XPCOMObject (new int[] {2, 0, 0}) {
 		@Override
@@ -46,7 +46,7 @@ void createCOMInterfaces () {
 		@Override
 		public long /*int*/ method2 (long /*int*/[] args) {return Release ();}
 		@Override
-		public long /*int*/ method3 (long /*int*/[] args) {return CreateInstance (args[0], args[1], args[2]);}
+		public long /*int*/ method3 (long /*int*/[] args) {return CreateInstance (args[0], args[1], args[2], webBrowser);}
 		@Override
 		public long /*int*/ method4 (long /*int*/[] args) {return LockFactory ((int)/*64*/args[0]);}
 	};
@@ -95,17 +95,17 @@ int Release () {
 	
 /* nsIFactory */
 
-int CreateInstance (long /*int*/ aOuter, long /*int*/ iid, long /*int*/ result) {
+int CreateInstance (long /*int*/ aOuter, long /*int*/ iid, long /*int*/ result, final Mozilla webBrowser) {
 	if (!MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR1_9)) {
 		HelperAppLauncherDialog helperAppLauncherDialog = new HelperAppLauncherDialog ();
 		helperAppLauncherDialog.AddRef ();
 		XPCOM.memmove (result, new long /*int*/[] {helperAppLauncherDialog.getAddress ()}, C.PTR_SIZEOF);
 	} else if (!MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR10)){
-		HelperAppLauncherDialog_1_9 helperAppLauncherDialog = new HelperAppLauncherDialog_1_9 ();
+		HelperAppLauncherDialog_1_9 helperAppLauncherDialog = new HelperAppLauncherDialog_1_9 (webBrowser);
 		helperAppLauncherDialog.AddRef ();
 		XPCOM.memmove (result, new long /*int*/[] {helperAppLauncherDialog.getAddress ()}, C.PTR_SIZEOF);
 	} else {
-		HelperAppLauncherDialog_10 helperAppLauncherDialog = new HelperAppLauncherDialog_10 ();
+		HelperAppLauncherDialog_10 helperAppLauncherDialog = new HelperAppLauncherDialog_10 (webBrowser);
 		helperAppLauncherDialog.AddRef ();
 		XPCOM.memmove (result, new long /*int*/[] {helperAppLauncherDialog.getAddress ()}, C.PTR_SIZEOF);
 	}

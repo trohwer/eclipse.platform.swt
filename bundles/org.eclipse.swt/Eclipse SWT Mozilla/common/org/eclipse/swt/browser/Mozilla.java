@@ -54,7 +54,7 @@ class Mozilla extends WebBrowser {
 	long /*int*/ request, badCertRequest;
 	Point location, size;
 	boolean visible, isActive, isChild, ignoreDispose, isRetrievingBadCert, isViewingErrorPage, ignoreAllMessages, untrustedText;
-	boolean updateLastNavigateUrl;
+	boolean updateLastNavigateUrl, openDownloadProgressWindow;
 	Shell tip = null;
 	Listener listener;
 	Vector<LONG> unhookedDOMWindows = new Vector<LONG> ();
@@ -69,7 +69,6 @@ class Mozilla extends WebBrowser {
 	static Listener DisplayListener;
 	static boolean Initialized, IsXULRunner, PerformedVersionCheck, XPCOMWasGlued, XPCOMInitWasGlued;
 	static boolean IsGettingSiteWindow;
-	static boolean shouldOpenDownloadProgressWindow = false;
 	static String MozillaPath;
 	static String oldProxyHostFTP, oldProxyHostHTTP, oldProxyHostSSL;
 	static int oldProxyPortFTP = -1, oldProxyPortHTTP = -1, oldProxyPortSSL = -1, oldProxyType = -1;
@@ -898,7 +897,7 @@ public void create (Composite parent, int style) {
 		componentRegistrar.Release ();
 		
 		if (!factoriesRegistered) {
-			HelperAppLauncherDialogFactory dialogFactory = new HelperAppLauncherDialogFactory ();
+			HelperAppLauncherDialogFactory dialogFactory = new HelperAppLauncherDialogFactory (this);
 			dialogFactory.AddRef ();
 			byte[] aContractID = MozillaDelegate.wcsToMbcs (null, XPCOM.NS_HELPERAPPLAUNCHERDIALOG_CONTRACTID, true);
 			byte[] aClassName = MozillaDelegate.wcsToMbcs (null, "swtHelperAppLauncherDialog", true); //$NON-NLS-1$
@@ -2879,7 +2878,7 @@ void initWebBrowserWindows () {
 }
 
 void initWindowCreator (nsIServiceManager serviceManager) {
-	WindowCreator = new WindowCreator2 ();
+	WindowCreator = new WindowCreator2 (this);
 	WindowCreator.AddRef ();
 	
 	long /*int*/[] result = new long /*int*/[1];

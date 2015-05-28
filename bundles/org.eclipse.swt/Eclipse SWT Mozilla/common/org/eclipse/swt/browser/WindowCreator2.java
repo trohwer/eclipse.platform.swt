@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ class WindowCreator2 {
 	XPCOMObject windowCreator2;
 	int refCount = 0;
 
-WindowCreator2 () {
-	createCOMInterfaces ();
+WindowCreator2 (final Mozilla webBrowser) {
+	createCOMInterfaces (webBrowser);
 }
 
 int AddRef () {
@@ -32,7 +32,7 @@ int AddRef () {
 	return refCount;
 }
 
-void createCOMInterfaces () {
+void createCOMInterfaces (final Mozilla webBrowser) {
 	/* Create each of the interfaces that this object implements */
 	supports = new XPCOMObject (new int[] {2, 0, 0}) {
 		@Override
@@ -51,7 +51,7 @@ void createCOMInterfaces () {
 		@Override
 		public long /*int*/ method2 (long /*int*/[] args) {return Release ();}
 		@Override
-		public long /*int*/ method3 (long /*int*/[] args) {return CreateChromeWindow (args[0], (int)/*64*/args[1], args[2]);}
+		public long /*int*/ method3 (long /*int*/[] args) {return CreateChromeWindow (args[0], (int)/*64*/args[1], args[2], webBrowser);}
 	};
 
 	windowCreator2 = new XPCOMObject (new int[] {2, 0, 0, 3, 6}) {
@@ -62,9 +62,9 @@ void createCOMInterfaces () {
 		@Override
 		public long /*int*/ method2 (long /*int*/[] args) {return Release ();}
 		@Override
-		public long /*int*/ method3 (long /*int*/[] args) {return CreateChromeWindow (args[0], (int)/*64*/args[1], args[2]);}
+		public long /*int*/ method3 (long /*int*/[] args) {return CreateChromeWindow (args[0], (int)/*64*/args[1], args[2], webBrowser);}
 		@Override
-		public long /*int*/ method4 (long /*int*/[] args) {return CreateChromeWindow2 (args[0], (int)/*64*/args[1], (int)/*64*/args[2], args[3], args[4], args[5]);}
+		public long /*int*/ method4 (long /*int*/[] args) {return CreateChromeWindow2 (args[0], (int)/*64*/args[1], (int)/*64*/args[2], args[3], args[4], args[5], webBrowser);}
 	};
 }
 
@@ -121,13 +121,13 @@ int Release () {
 	
 /* nsIWindowCreator */
 
-int CreateChromeWindow (long /*int*/ parent, int chromeFlags, long /*int*/ _retval) {
-	return CreateChromeWindow2 (parent, chromeFlags, 0, 0, 0, _retval);
+int CreateChromeWindow (long /*int*/ parent, int chromeFlags, long /*int*/ _retval, final Mozilla webBrowser) {
+	return CreateChromeWindow2 (parent, chromeFlags, 0, 0, 0, _retval, webBrowser);
 }
 
 /* nsIWindowCreator2 */
 
-int CreateChromeWindow2 (long /*int*/ parent, int chromeFlags, int contextFlags, long /*int*/ uri, long /*int*/ cancel, long /*int*/ _retval) {
+int CreateChromeWindow2 (long /*int*/ parent, int chromeFlags, int contextFlags, long /*int*/ uri, long /*int*/ cancel, long /*int*/ _retval, final Mozilla webBrowser) {
 	if (parent == 0 && (chromeFlags & nsIWebBrowserChrome.CHROME_OPENAS_CHROME) == 0) {
 		return XPCOM.NS_ERROR_NOT_IMPLEMENTED;
 	}
@@ -139,14 +139,14 @@ int CreateChromeWindow2 (long /*int*/ parent, int chromeFlags, int contextFlags,
 		if (rc != XPCOM.NS_OK) Mozilla.error (rc);
 		if (aWebBrowser[0] == 0) Mozilla.error (XPCOM.NS_ERROR_NO_INTERFACE);
 
-		nsIWebBrowser webBrowser = new nsIWebBrowser (aWebBrowser[0]);
+		nsIWebBrowser nsiwebBrowser = new nsIWebBrowser (aWebBrowser[0]);
 		long /*int*/[] result = new long /*int*/[1];
-		rc = webBrowser.QueryInterface (IIDStore.GetIID (nsIBaseWindow.class), result);
+		rc = nsiwebBrowser.QueryInterface (IIDStore.GetIID (nsIBaseWindow.class), result);
 		if (rc != XPCOM.NS_OK) {
 			SWT.error (rc);
 		}
 		if (result[0] == 0) Mozilla.error (XPCOM.NS_ERROR_NO_INTERFACE);
-		webBrowser.Release ();
+		nsiwebBrowser.Release ();
 
 		nsIBaseWindow baseWindow = new nsIBaseWindow (result[0]);
 		result[0] = 0;
@@ -177,13 +177,12 @@ int CreateChromeWindow2 (long /*int*/ parent, int chromeFlags, int contextFlags,
 			new Shell (src.getShell(), style);
 		shell.setLayout (new FillLayout ());
 		browser = new Browser (shell, src == null ? SWT.MOZILLA : src.getStyle () & SWT.MOZILLA);
-		if (Mozilla.shouldOpenDownloadProgressWindow) {
+		if (webBrowser.openDownloadProgressWindow) {
 			/* 
 			 * In XULRunner 31, download doesn't start automatically and progress window doesn't open. 
-			 * We open it the download progress window, so that user can start the download.
+			 * We open it the download progress window, so that user can start the download, bug 467203.
 			 */
-			
-			Mozilla.shouldOpenDownloadProgressWindow = false;
+			webBrowser.openDownloadProgressWindow = false;
 			shell.open();
 		}
 		browser.addVisibilityWindowListener (new VisibilityWindowListener () {

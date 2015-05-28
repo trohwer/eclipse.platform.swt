@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.swt.browser;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.C;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.mozilla.*;
 import org.eclipse.swt.widgets.*;
 
@@ -26,8 +26,8 @@ class HelperAppLauncherDialog_1_9 {
 	XPCOMObject helperAppLauncherDialog;
 	int refCount = 0;
 
-HelperAppLauncherDialog_1_9 () {
-	createCOMInterfaces ();
+HelperAppLauncherDialog_1_9 (final Mozilla webBrowser) {
+	createCOMInterfaces (webBrowser);
 }
 
 int AddRef () {
@@ -35,7 +35,7 @@ int AddRef () {
 	return refCount;
 }
 
-void createCOMInterfaces () {
+void createCOMInterfaces (final Mozilla webBrowser) {
 	/* Create each of the interfaces that this object implements */
 	supports = new XPCOMObject (new int[] {2, 0, 0}) {
 		@Override
@@ -56,7 +56,7 @@ void createCOMInterfaces () {
 		@Override
 		public long /*int*/ method3 (long /*int*/[] args) {return Show (args[0], args[1], (int)/*64*/args[2]);}
 		@Override
-		public long /*int*/ method4 (long /*int*/[] args) {return PromptForSaveToFile (args[0], args[1], args[2], args[3], (int)/*64*/args[4], args[5]);}
+		public long /*int*/ method4 (long /*int*/[] args) {return PromptForSaveToFile (args[0], args[1], args[2], args[3], (int)/*64*/args[4], args[5], webBrowser);}
 	};		
 }
 
@@ -115,7 +115,7 @@ int Show (long /*int*/ aLauncher, long /*int*/ aContext, int aReason) {
 	return helperAppLauncher.SaveToDisk (0, 0);
 }
 
-int PromptForSaveToFile (long /*int*/ aLauncher, long /*int*/ aWindowContext, long /*int*/ aDefaultFileName, long /*int*/ aSuggestedFileExtension, int aForcePrompt, long /*int*/ _retval) {
+int PromptForSaveToFile (long /*int*/ aLauncher, long /*int*/ aWindowContext, long /*int*/ aDefaultFileName, long /*int*/ aSuggestedFileExtension, int aForcePrompt, long /*int*/ _retval, final Mozilla webBrowser) {
 	int length = XPCOM.strlen_PRUnichar (aDefaultFileName);
 	char[] dest = new char[length];
 	XPCOM.memmove (dest, aDefaultFileName, length * 2);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,9 @@ class HelperAppLauncherDialog_10 extends HelperAppLauncherDialog_1_9 {
 	XPCOMObject helperAppLauncherDialog;
 	int refCount = 0;
 
-HelperAppLauncherDialog_10 () {
-	createCOMInterfaces ();
+HelperAppLauncherDialog_10 (final Mozilla webBrowser) {
+	super (webBrowser);
+	createCOMInterfaces (webBrowser);
 }
 
 /* nsIHelperAppLauncherDialog */
@@ -39,7 +40,7 @@ int Show (long /*int*/ aLauncher, long /*int*/ aContext, int aReason) {
 }
 
 @Override
-int PromptForSaveToFile (long /*int*/ aLauncher, long /*int*/ aWindowContext, long /*int*/ aDefaultFileName, long /*int*/ aSuggestedFileExtension, int aForcePrompt, long /*int*/ _retval) {
+int PromptForSaveToFile (long /*int*/ aLauncher, long /*int*/ aWindowContext, long /*int*/ aDefaultFileName, long /*int*/ aSuggestedFileExtension, int aForcePrompt, long /*int*/ _retval, final Mozilla webBrowser) {
 	int length = XPCOM.strlen_PRUnichar (aDefaultFileName);
 	char[] dest = new char[length];
 	XPCOM.memmove (dest, aDefaultFileName, length * 2);
@@ -68,8 +69,12 @@ int PromptForSaveToFile (long /*int*/ aLauncher, long /*int*/ aWindowContext, lo
 	path.dispose ();
 	if (rc != XPCOM.NS_OK) Mozilla.error (rc);
 	if (result[0] == 0) Mozilla.error (XPCOM.NS_ERROR_NULL_POINTER);
+	/* 
+	 * In XULRunner 31, download doesn't start automatically and progress window doesn't open. 
+	 * We open it the download progress window, so that user can start the download, bug 467203.
+	 */	
 	if (MozillaVersion.CheckVersion (MozillaVersion.VERSION_XR31, true)) {
-		Mozilla.shouldOpenDownloadProgressWindow = true;
+		webBrowser.openDownloadProgressWindow = true;
 	}
 	XPCOM.memmove (_retval, result, C.PTR_SIZEOF);	
 	return XPCOM.NS_OK;
