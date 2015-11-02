@@ -41,6 +41,7 @@ public abstract class Resource {
 	 * the device where this resource was created
 	 */
 	Device device;
+	boolean autoScaled = false;
 
 public Resource() {
 }
@@ -82,6 +83,24 @@ public Device getDevice() {
 	return device;
 }
 
+/**
+ * Returns autoScaling settings for hiDpi screens
+ * 
+ * @return boolean value for autoScaling
+ * @since 3.105
+ * 
+ */
+boolean getEnableAutoScaling () {
+	return device.getEnableAutoScaling();
+}
+/**
+ * Sets autoScaling settings for hiDpi screens
+ * @since 3.105
+ * 
+ */
+void setEnableAutoScaling (boolean value) {
+	device.setEnableAutoScaling(value);
+}
 void init() {
 	if (device.tracking) device.new_Object(this);
 }
@@ -98,4 +117,18 @@ void init() {
  */
 public abstract boolean isDisposed();
 
+/**
+ * @since 3.105
+ */
+public int getDeviceZoom () {
+	return DPIUtil.mapDPIToZoom ( device._getDPIx ());
+}
+
+boolean getAutoscaled () {
+	return autoScaled;
+}
+
+void setAutoscaled (boolean value) {
+	autoScaled = value;
+}
 }

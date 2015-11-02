@@ -81,6 +81,9 @@ public abstract class Device implements Drawable {
 
 	/* Device dpi */
 	Point dpi;
+	
+	/* Auto-Scaling of images */
+	boolean enableAutoScaling = true;
 
 	long /*int*/ emptyTab;
 
@@ -971,4 +974,22 @@ int _getDPIx () {
 	return Compatibility.round (254 * dest.width, widthMM * 10);
 }
 
+/**
+ * Returns autoScaling settings for hiDpi screens
+ * 
+ * @return boolean value for autoScaling
+ * @since 3.105
+ * 
+ */
+public boolean getEnableAutoScaling () {
+	return enableAutoScaling;
+}
+/**
+ * Sets autoScaling settings for hiDpi screens
+ * @since 3.105
+ * 
+ */
+public void setEnableAutoScaling (boolean autoScale) {
+	enableAutoScaling = autoScale;
+}
 }

@@ -217,6 +217,11 @@ Image(Device device) {
  */
 public Image(Device device, int width, int height) {
 	super(device);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		width = (int)(width * scaleFactor);
+		height = (int)(height * scaleFactor);
+	}
 	init(width, height);
 	init();
 }
@@ -761,7 +766,7 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 			init(data);
 		}
 	} else {
-		float scaleFactor = currentDeviceZoom / 100;
+		float scaleFactor = ((float)currentDeviceZoom) / 100;
 		ImageData data = new ImageData(filename);
 		ImageData resizedData = data.scaledTo((int)(data.width * scaleFactor), (int)(data.height * scaleFactor));
 		init(resizedData);
@@ -807,15 +812,11 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 	if (found[0]) {
 		init (data);
 	} else {		
-		float scaleFactor = currentDeviceZoom / 100;
+		float scaleFactor = ((float)currentDeviceZoom) / 100;
 		ImageData resizedData = data.scaledTo((int)(data.width * scaleFactor), (int)(data.height * scaleFactor));
 		init (resizedData);
 	}
 	init ();
-}
-
-int getDeviceZoom () {
-	return DPIUtil.mapDPIToZoom (device._getDPIx ());
 }
 
 /**
@@ -843,7 +844,7 @@ boolean refreshImageForZoom () {
 				refreshed = true;
 			}
 			if (!found[0]) {
-				float scaleFactor = deviceZoomLevel/100;
+				float scaleFactor = ((float)deviceZoomLevel)/100;
 				/* Release current native resources */
 				destroy ();
 				ImageData data = new ImageData(filename);
@@ -868,7 +869,7 @@ boolean refreshImageForZoom () {
 				refreshed = true;
 			}
 			if (!found[0]) {
-				float scaleFactor = deviceZoomLevel/100;
+				float scaleFactor = ((float)deviceZoomLevel)/100;
 				/* Release current native resources */
 				destroy ();
 				ImageData resizedData = data.scaledTo((int)(data.width * scaleFactor), (int)(data.height * scaleFactor));
