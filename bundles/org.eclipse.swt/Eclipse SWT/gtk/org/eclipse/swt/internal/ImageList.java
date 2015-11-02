@@ -11,10 +11,10 @@
 package org.eclipse.swt.internal;
 
 
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
-import org.eclipse.swt.graphics.*;
 
 public class ImageList {
 	long /*int*/ [] pixbufs;
@@ -252,6 +252,12 @@ void set (int index, Image image) {
 	if (width == -1 || height == -1) {
 		width = w;
 		height = h;
+		if (image.getDevice().getEnableAutoScaling ()) {
+			float scaleFactor = ((float)image.getDeviceZoom()) / 100;
+			width = (int)(width * scaleFactor);
+			height = (int)(height * scaleFactor);
+		}
+
 	}
 	if (w != width || h != height) {
 		long /*int*/ scaledPixbuf = OS.gdk_pixbuf_scale_simple(pixbuf, width, height, OS.GDK_INTERP_BILINEAR);
