@@ -644,6 +644,7 @@ static void destroyGdipBrush(long /*int*/ brush) {
  *    <li>ERROR_THREAD_INVALID_ACCESS if not called from the thread that created the drawable</li>
  * </ul>
  */
+@Override
 void destroy() {
 	boolean gdip = data.gdipGraphics != 0;
 	disposeGdip();
@@ -1992,6 +1993,11 @@ public void drawRectangle (Rectangle rect) {
  */
 public void drawRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = this.getDeviceZoom() / 100;
+		width = (int)(width * scaleFactor);
+		height = (int)(height * scaleFactor);
+	}
 	checkGC(DRAW);
 	if (data.gdipGraphics != 0) {
 		drawRoundRectangleGdip(data.gdipGraphics, data.gdipPen, x, y, width, height, arcWidth, arcHeight);
@@ -2649,6 +2655,7 @@ void drawTextGDIP(long /*int*/ gdipGraphics, String string, int x, int y, int fl
  *
  * @see #hashCode
  */
+@Override
 public boolean equals (Object object) {
 	return (object == this) || ((object instanceof GC) && (handle == ((GC)object).handle));
 }
@@ -3015,6 +3022,11 @@ public void fillPolygon(int[] pointArray) {
  */
 public void fillRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = this.getDeviceZoom() / 100;
+		width = (int)(width * scaleFactor);
+		height = (int)(height * scaleFactor);
+	}
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		if (width < 0) {
@@ -3078,6 +3090,11 @@ public void fillRectangle (Rectangle rect) {
  */
 public void fillRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = this.getDeviceZoom() / 100;
+		width = (int)(width * scaleFactor);
+		height = (int)(height * scaleFactor);
+	}
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		fillRoundRectangleGdip(data.gdipGraphics, data.gdipBrush, x, y, width, height, arcWidth, arcHeight);
@@ -3981,6 +3998,7 @@ void init(Drawable drawable, GCData data, long /*int*/ hDC) {
  *
  * @see #equals
  */
+@Override
 public int hashCode () {
 	return (int)/*64*/handle;
 }
@@ -4025,6 +4043,7 @@ public boolean isClipped() {
  *
  * @return <code>true</code> when the GC is disposed and <code>false</code> otherwise
  */
+@Override
 public boolean isDisposed() {
 	return handle == 0;
 }
@@ -4812,6 +4831,7 @@ public void setLineWidth(int lineWidth) {
  * 
  * @deprecated this functionality is not supported on some platforms
  */
+@Deprecated
 public void setXORMode(boolean xor) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	OS.SetROP2(handle, xor ? OS.R2_XORPEN : OS.R2_COPYPEN);
@@ -5042,6 +5062,7 @@ public Point textExtent(String string, int flags) {
  *
  * @return a string representation of the receiver
  */
+@Override
 public String toString () {
 	if (isDisposed()) return "GC {*DISPOSED*}";
 	return "GC {" + handle + "}";

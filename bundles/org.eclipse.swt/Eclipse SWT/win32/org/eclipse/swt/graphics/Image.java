@@ -197,6 +197,11 @@ Image (Device device) {
  */
 public Image(Device device, int width, int height) {
 	super(device);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = this.getDeviceZoom() / 100;
+		width = (int)(width * scaleFactor);
+		height = (int)(height * scaleFactor);
+	}
 	init(width, height);
 	init();
 }
@@ -720,10 +725,6 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 		init (resizedData);
 	}
 	init();
-}
-
-int getDeviceZoom () {
-	return DPIUtil.mapDPIToZoom (device._getDPIx ());
 }
 
 /**
