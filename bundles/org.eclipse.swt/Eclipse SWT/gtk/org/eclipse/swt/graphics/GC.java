@@ -898,8 +898,8 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	if (!isRefreshed) {
 		destWidth = (int)(destWidth * scaleFactor);
 		destHeight = (int)(destHeight * scaleFactor);
-		destX = (int)(destX * scaleFactor);
-		destY = (int)(destY * scaleFactor);
+//		destX = (int)(destX * scaleFactor);
+//		destY = (int)(destY * scaleFactor);
 	}
 	int imgWidth, imgHeight;
 	if (OS.USE_CAIRO){
@@ -1043,8 +1043,8 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	if (!isRefreshed) {
 		destWidth = (int)(destWidth * scaleFactor);
 		destHeight = (int)(destHeight * scaleFactor);
-		destX = (int)(destX * scaleFactor);
-		destY = (int)(destY * scaleFactor);
+//		destX = (int)(destX * scaleFactor);
+//		destY = (int)(destY * scaleFactor);
 	}
 
 	if (srcWidth == destWidth && srcHeight == destHeight) {
@@ -1800,7 +1800,7 @@ public void drawText(String string, int x, int y, boolean isTransparent) {
  */
 public void drawText (String string, int x, int y, int flags) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (this.getEnableAutoScaling ()) {
+/*	if (this.getEnableAutoScaling ()) {
 		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
 		x = (int)(x * scaleFactor);
 		y = (int)(y * scaleFactor);
@@ -1808,7 +1808,7 @@ public void drawText (String string, int x, int y, int flags) {
 		fontData.setHeight ((int)(fontData.getHeight ()*scaleFactor));
 		Font font = new Font (getDevice (), fontData);
 		setFont(font);
-	}
+	}*/
 
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (string.length() == 0) return;
@@ -3079,14 +3079,8 @@ void initCairo() {
 void computeStringSize() {
 	int[] width = new int[1], height = new int[1];
 	OS.pango_layout_get_pixel_size(data.layout, width, height);
-	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-		data.stringHeight = (int)(height[0] * scaleFactor);
-		data.stringWidth = (int)(width[0] * scaleFactor);
-	} else {
-		data.stringHeight = height[0];
-		data.stringWidth = width[0];
-	}
+	data.stringHeight = height[0];
+	data.stringWidth = width[0];
 }
 
 /**
