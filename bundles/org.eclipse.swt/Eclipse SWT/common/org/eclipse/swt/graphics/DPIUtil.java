@@ -70,4 +70,27 @@ class DPIUtil {
 		if (data == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 		return data;
 	}
+	/**
+	 * Gets scaling factor for the current Image
+	 */
+	static float getscalingFactor (Image image) {
+		float scalingFactor = ((float)image.getDeviceZoom())/((float) 100);
+		return scalingFactor;
+	}
+	/**
+	 * Auto-scale image with ImageData
+	 */
+	static ImageData autoScaleImageData (ImageData imageData, int deviceZoom) {
+		float scaleFactor = ((float) deviceZoom)/((float) 100);
+		return imageData.scaledTo((int)((float)imageData.width * scaleFactor), (int)((float)imageData.height * scaleFactor));
+
+	}
+	/**
+	 * Auto-scale image with ImageFileName
+	 */
+	static ImageData autoScaleImageFileName (String filename, int deviceZoom) {
+		ImageData data = new ImageData(filename);
+		return DPIUtil.autoScaleImageData(data, deviceZoom);
+	}
+
 }
