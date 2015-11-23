@@ -477,6 +477,11 @@ public void copyArea(Image image, int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.type != SWT.BITMAP || image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		x = (int)(x * scaleFactor);
+		y = (int)(y * scaleFactor);		
+	}
 	if (OS.USE_CAIRO) {
 		long /*int*/ cairo = Cairo.cairo_create(image.surface);
 		if (cairo == 0) SWT.error(SWT.ERROR_NO_HANDLES);
@@ -898,8 +903,8 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	if (!isRefreshed) {
 		destWidth = (int)(destWidth * scaleFactor);
 		destHeight = (int)(destHeight * scaleFactor);
-//		destX = (int)(destX * scaleFactor);
-//		destY = (int)(destY * scaleFactor);
+		destX = (int)(destX * scaleFactor);
+		destY = (int)(destY * scaleFactor);
 	}
 	int imgWidth, imgHeight;
 	if (OS.USE_CAIRO){
@@ -1043,8 +1048,8 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	if (!isRefreshed) {
 		destWidth = (int)(destWidth * scaleFactor);
 		destHeight = (int)(destHeight * scaleFactor);
-//		destX = (int)(destX * scaleFactor);
-//		destY = (int)(destY * scaleFactor);
+		destX = (int)(destX * scaleFactor);
+		destY = (int)(destY * scaleFactor);
 	}
 
 	if (srcWidth == destWidth && srcHeight == destHeight) {
@@ -1387,6 +1392,7 @@ public void drawOval(int x, int y, int width, int height) {
  * @since 3.1
  */
 public void drawPath(Path path) {
+	//TODO: check this function on hidpi
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (path == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (path.handle == 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -1424,6 +1430,11 @@ public void drawPath(Path path) {
 public void drawPoint (int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		x = (int)(x * scaleFactor);
+		y = (int)(y * scaleFactor);				
+	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		Cairo.cairo_rectangle(cairo, x, y, 1, 1);
@@ -1454,6 +1465,9 @@ public void drawPolygon(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
+	if (this.getEnableAutoScaling ()) {
+		scalePointArray(pointArray);
+	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, true);
@@ -1484,6 +1498,9 @@ public void drawPolyline(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
+	if (this.getEnableAutoScaling ()) {
+		scalePointArray(pointArray);
+	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, false);
@@ -1491,6 +1508,14 @@ public void drawPolyline(int[] pointArray) {
 		return;
 	}
 	OS.gdk_draw_lines(data.drawable, handle, pointArray, pointArray.length / 2);
+}
+
+private void scalePointArray(int[] pointArray) {
+	float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+	int length = pointArray.length;
+	for (int i = 0; i < length; i++){
+		pointArray [i] = (int) (scaleFactor * pointArray[i]);
+	}
 }
 
 void drawPolyline(long /*int*/ cairo, int[] pointArray, boolean close) {
@@ -1800,15 +1825,6 @@ public void drawText(String string, int x, int y, boolean isTransparent) {
  */
 public void drawText (String string, int x, int y, int flags) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-/*	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-		x = (int)(x * scaleFactor);
-		y = (int)(y * scaleFactor);
-		FontData fontData = getFont ().getFontData ()[0];
-		fontData.setHeight ((int)(fontData.getHeight ()*scaleFactor));
-		Font font = new Font (getDevice (), fontData);
-		setFont(font);
-	}*/
 //	data.image.autoScaled = true;
 
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -2119,6 +2135,7 @@ public void fillOval(int x, int y, int width, int height) {
  * @since 3.1
  */
 public void fillPath (Path path) {
+	//TODO: check this function on hidpi
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (path == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (path.handle == 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -2155,6 +2172,9 @@ public void fillPolygon(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FILL);
+	if (this.getEnableAutoScaling ()) {
+		scalePointArray(pointArray);
+	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, true);
@@ -2550,7 +2570,14 @@ public Rectangle getClipping() {
 		width = rect.width;
 		height = rect.height;
 	}
-	return new Rectangle(x, y, width, height);
+	Rectangle rect = new Rectangle(x, y, width, height);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		return rect.scale(1/scaleFactor);
+	} else {
+		return rect;
+
+	}
 }
 
 /**
@@ -3439,6 +3466,13 @@ void setClipping(long /*int*/ clipRgn) {
  */
 public void setClipping(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		width = (int)(width * scaleFactor);
+		height = (int)(height * scaleFactor);
+		x = (int)(x * scaleFactor);
+		y = (int)(y * scaleFactor);
+	}
 	if (width < 0) {
 		x = x + width;
 		width = -width;
@@ -3487,6 +3521,7 @@ public void setClipping(int x, int y, int width, int height) {
 public void setClipping(Path path) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (path != null && path.isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	//TODO: check this function on hidpi
 	setClipping(0);
 	if (path != null) {
 		initCairo();
@@ -3733,6 +3768,7 @@ public void setLineAttributes(LineAttributes attributes) {
 	if (lineWidth != data.lineWidth) {
 		mask |= LINE_WIDTH | DRAW_OFFSET;
 	}
+	//TODO: check this function on hidpi
 	int lineStyle = attributes.style;
 	if (lineStyle != data.lineStyle) {
 		mask |= LINE_STYLE;
@@ -3976,6 +4012,10 @@ public void setLineStyle(int lineStyle) {
  */
 public void setLineWidth(int lineWidth) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		lineWidth = (int)(lineWidth * scaleFactor);
+	}
 	if (data.lineWidth == lineWidth) return;
 	data.lineWidth = lineWidth;
 	data.state &= ~(LINE_WIDTH | DRAW_OFFSET);
