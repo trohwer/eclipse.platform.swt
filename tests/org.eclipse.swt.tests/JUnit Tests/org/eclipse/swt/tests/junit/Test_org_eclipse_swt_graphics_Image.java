@@ -731,6 +731,45 @@ public void test_getBounds() {
 }
 
 @Test
+public void test_getBounds_Zoom() {
+	Rectangle bounds = new Rectangle(0, 0, 10, 20);
+	Rectangle bounds2 = new Rectangle(0, 0, 20, 40);
+	Image image = new Image(display, bounds.width, bounds.height);
+	int zoom = image.getDeviceZoom();
+	image.dispose();
+	try {
+		image.getBounds(zoom);
+		fail("No exception thrown for disposed image");
+	} catch (SWTException e) {
+		assertSWTProblem("Incorrect exception thrown for disposed image", SWT.ERROR_GRAPHIC_DISPOSED, e);
+	}
+		
+	// creates bitmap image
+	image = new Image(display, bounds.width, bounds.height);
+	Rectangle bounds100 = image.getBounds(100);
+	Rectangle bounds200 = image.getBounds(200);
+	image.dispose();
+	assertEquals(":a:", bounds, bounds100);
+	assertEquals(":b:", bounds2, bounds200);
+
+	image = new Image(display, bounds);
+	bounds100 = image.getBounds(100);
+	bounds200 = image.getBounds(200);
+	image.dispose();
+	assertEquals(":c:", bounds, bounds100);
+	assertEquals(":d:", bounds2, bounds200);
+
+	// create icon image
+	ImageData imageData = new ImageData(bounds.width, bounds.height, 1, new PaletteData(new RGB[] {new RGB(0, 0, 0)}));
+	image = new Image(display, imageData);
+	bounds100 = image.getBounds(100);
+	bounds200 = image.getBounds(200);
+	image.dispose();
+	assertEquals(":e:", bounds, bounds100);
+	assertEquals(":f:", bounds2, bounds200);
+}
+
+@Test
 public void test_getImageData() {	
 	getImageData1();
 	getImageData2(24, new PaletteData(0xff0000, 0xff00, 0xff));		

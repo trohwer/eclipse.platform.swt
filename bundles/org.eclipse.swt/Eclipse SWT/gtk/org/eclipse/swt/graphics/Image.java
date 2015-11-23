@@ -218,9 +218,11 @@ Image(Device device) {
 public Image(Device device, int width, int height) {
 	super(device);
 	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		currentDeviceZoom = getDeviceZoom();
+		float scaleFactor = ((float)currentDeviceZoom) / 100;
 		width = (int)(width * scaleFactor);
 		height = (int)(height * scaleFactor);
+		
 	}
 	init(width, height);
 	init();
@@ -576,6 +578,11 @@ public Image(Device device, Rectangle bounds) {
  */
 public Image(Device device, ImageData data) {
 	super(device);
+	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	if (this.getEnableAutoScaling()) {
+		currentDeviceZoom = getDeviceZoom();
+		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+	}
 	init(data);
 	init();
 }
@@ -616,6 +623,11 @@ public Image(Device device, ImageData source, ImageData mask) {
 	if (mask == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (source.width != mask.width || source.height != mask.height) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	}
+	if (getEnableAutoScaling()){
+		currentDeviceZoom = getDeviceZoom();
+		source = DPIUtil.autoScaleImageData(source, currentDeviceZoom);
+		mask = DPIUtil.autoScaleImageData(mask, currentDeviceZoom);
 	}
 	mask = ImageData.convertMask (mask);
 	ImageData image = new ImageData(source.width, source.height, source.depth, source.palette, source.scanlinePad, source.data);
@@ -1283,7 +1295,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the image's bounds
+ * @return a rectangle specifying the image's bounds at 100% zoom.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -1292,8 +1304,9 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	float scaleFactor = (100f / currentDeviceZoom);
 	if (width != -1 && height != -1) {
-		return new Rectangle(0, 0, width, height);
+		return new Rectangle(0, 0, width, height).scale(scaleFactor);
 	}
 	int[] w = new int[1]; int[] h = new int[1];
 	if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
@@ -1301,7 +1314,33 @@ public Rectangle getBounds() {
 	} else {
 		OS.gdk_drawable_get_size(pixmap, w, h);
 	}
-	return new Rectangle(0, 0, width = w[0], height = h[0]);
+	return new Rectangle(0, 0, width = w[0], height = h[0]).scale(scaleFactor);
+}
+
+/**
+ * Returns the bounds of the receiver at specified zoom level.
+ * The rectangle will always have x and y values of 0,
+ * and the width and height of the image at zoom level.
+ *
+ * @param zoom
+ *            The zoom level in % of the standard resolution (which is 1
+ *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
+ *            150, or 200.
+ * @return a rectangle specifying the image's bounds at zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ * @since 3.105
+ */
+public Rectangle getBounds(int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	Rectangle bounds = getBounds();
+	if (bounds != null && zoom > 100) {
+		bounds.scale(zoom / 100f);
+	}
+	return bounds;
 }
 
 /**

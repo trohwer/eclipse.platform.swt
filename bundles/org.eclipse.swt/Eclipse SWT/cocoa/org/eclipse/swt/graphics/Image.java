@@ -809,7 +809,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the image's bounds
+ * @return a rectangle specifying the image's bounds at 100% zoom.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -829,6 +829,31 @@ public Rectangle getBounds() {
 	} finally {
 		if (pool != null) pool.release();
 	}
+}
+
+/**
+ * Returns the bounds of the receiver at specified zoom level.
+ * The rectangle will always have x and y values of 0,
+ * and the width and height of the image at zoom level.
+ *
+ * @param zoom
+ *            The zoom level in % of the standard resolution (which is 1
+ *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
+ *            150, or 200.
+ * @return a rectangle specifying the image's bounds at zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ */
+public Rectangle getBounds(int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	Rectangle bounds = getBounds();
+	if (bounds != null && zoom > 100) {
+		bounds.scale(zoom / 100f);
+	}
+	return bounds;
 }
 
 /**

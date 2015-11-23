@@ -90,7 +90,7 @@ class DPIUtil {
 	 */
 	static ImageData autoScaleImageFileName (String filename, int deviceZoom) {
 		ImageData data = new ImageData(filename);
-		return DPIUtil.autoScaleImageData(data, deviceZoom);
+		return autoScaleImageData(data, deviceZoom);
 	}
 
 }

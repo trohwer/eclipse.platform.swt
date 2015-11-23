@@ -1364,7 +1364,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the image's bounds
+ * @return a rectangle specifying the image's bounds at 100% zoom.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -1373,17 +1373,18 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	float scaleFactor = (100f / currentDeviceZoom);
 	if (width != -1 && height != -1) {
-		return new Rectangle(0, 0, width, height);
+		return new Rectangle(0, 0, width, height).scale(scaleFactor);
 	}
 	switch (type) {
 		case SWT.BITMAP:
 			BITMAP bm = new BITMAP();
 			OS.GetObject(handle, BITMAP.sizeof, bm);
-			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
+			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight).scale(scaleFactor);
 		case SWT.ICON:
 			if (OS.IsWinCE) {
-				return new Rectangle(0, 0, width = data.width, height = data.height);
+				return new Rectangle(0, 0, width = data.width, height = data.height).scale(scaleFactor);
 			} else {
 				ICONINFO info = new ICONINFO();
 				OS.GetIconInfo(handle, info);
@@ -1394,12 +1395,37 @@ public Rectangle getBounds() {
 				if (hBitmap == info.hbmMask) bm.bmHeight /= 2;
 				if (info.hbmColor != 0) OS.DeleteObject(info.hbmColor);
 				if (info.hbmMask != 0) OS.DeleteObject(info.hbmMask);
-				return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
+				return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight).scale(scaleFactor);
 			}
 		default:
 			SWT.error(SWT.ERROR_INVALID_IMAGE);
 			return null;
 	}
+}
+
+/**
+ * Returns the bounds of the receiver at specified zoom level.
+ * The rectangle will always have x and y values of 0,
+ * and the width and height of the image at zoom level.
+ *
+ * @param zoom
+ *            The zoom level in % of the standard resolution (which is 1
+ *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
+ *            150, or 200.
+ * @return a rectangle specifying the image's bounds at zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ */
+public Rectangle getBounds(int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	Rectangle bounds = getBounds();
+	if (bounds != null && zoom > 100) {
+		bounds.scale(zoom / 100f);
+	}
+	return bounds;
 }
 
 /**
