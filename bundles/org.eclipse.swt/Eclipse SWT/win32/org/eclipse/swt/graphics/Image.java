@@ -198,7 +198,8 @@ Image (Device device) {
 public Image(Device device, int width, int height) {
 	super(device);
 	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = this.getDeviceZoom() / 100;
+		currentDeviceZoom = getDeviceZoom();
+		float scaleFactor = ((float)currentDeviceZoom / 100f);
 		width = (int)(width * scaleFactor);
 		height = (int)(height * scaleFactor);
 	}
@@ -461,7 +462,14 @@ public Image(Device device, Image srcImage, int flag) {
 public Image(Device device, Rectangle bounds) {
 	super(device);
 	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	init(bounds.width, bounds.height);
+	if (getEnableAutoScaling ()) {
+		currentDeviceZoom = getDeviceZoom();
+		float scaleFactor = ((float)currentDeviceZoom) / 100f;
+		Rectangle bounds1 = bounds.scale(scaleFactor);
+		init(bounds1.width, bounds1.height);
+	} else {
+		init(bounds.width, bounds.height);
+	}
 	init();	
 }
 
@@ -490,6 +498,11 @@ public Image(Device device, Rectangle bounds) {
  */
 public Image(Device device, ImageData data) {
 	super(device);
+	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	if (getEnableAutoScaling()) {
+		currentDeviceZoom = getDeviceZoom();
+		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+	}
 	init(data);
 	init();	
 }
@@ -530,6 +543,11 @@ public Image(Device device, ImageData source, ImageData mask) {
 	if (mask == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (source.width != mask.width || source.height != mask.height) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	}
+	if (getEnableAutoScaling()){
+		currentDeviceZoom = getDeviceZoom();
+		source = DPIUtil.autoScaleImageData(source, currentDeviceZoom);
+		mask = DPIUtil.autoScaleImageData(mask, currentDeviceZoom);
 	}
 	mask = ImageData.convertMask(mask);
 	init(this.device, this, source, mask);
@@ -1364,7 +1382,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the image's bounds
+ * @return a rectangle specifying the image's bounds at 100% zoom.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -1373,17 +1391,18 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	float scaleFactor = (100f / currentDeviceZoom);
 	if (width != -1 && height != -1) {
-		return new Rectangle(0, 0, width, height);
+		return new Rectangle(0, 0, width, height).scale(scaleFactor);
 	}
 	switch (type) {
 		case SWT.BITMAP:
 			BITMAP bm = new BITMAP();
 			OS.GetObject(handle, BITMAP.sizeof, bm);
-			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
+			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight).scale(scaleFactor);
 		case SWT.ICON:
 			if (OS.IsWinCE) {
-				return new Rectangle(0, 0, width = data.width, height = data.height);
+				return new Rectangle(0, 0, width = data.width, height = data.height).scale(scaleFactor);
 			} else {
 				ICONINFO info = new ICONINFO();
 				OS.GetIconInfo(handle, info);
@@ -1394,12 +1413,38 @@ public Rectangle getBounds() {
 				if (hBitmap == info.hbmMask) bm.bmHeight /= 2;
 				if (info.hbmColor != 0) OS.DeleteObject(info.hbmColor);
 				if (info.hbmMask != 0) OS.DeleteObject(info.hbmMask);
-				return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
+				return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight).scale(scaleFactor);
 			}
 		default:
 			SWT.error(SWT.ERROR_INVALID_IMAGE);
 			return null;
 	}
+}
+
+/**
+ * Returns the bounds of the receiver at specified zoom level.
+ * The rectangle will always have x and y values of 0,
+ * and the width and height of the image at zoom level.
+ *
+ * @param zoom
+ *            The zoom level in % of the standard resolution (which is 1
+ *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
+ *            150, or 200.
+ * @return a rectangle specifying the image's bounds at zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ * @since 3.105
+ */
+public Rectangle getBounds(int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	Rectangle bounds = getBounds();
+	if (bounds != null && zoom > 100) {
+		bounds = bounds.scale(zoom / 100f);
+	}
+	return bounds;
 }
 
 /**

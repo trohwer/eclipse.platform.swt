@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.swt.graphics;
 
 
-import org.eclipse.swt.internal.SerializableCompatibility;
 import org.eclipse.swt.*;
+import org.eclipse.swt.internal.*;
 
 /**
  * Instances of this class represent rectangular areas in an
@@ -302,6 +302,22 @@ public boolean intersects (Rectangle rect) {
  */
 public boolean isEmpty () {
 	return (width <= 0) || (height <= 0);
+}
+
+/**
+ * Returns updated rectangle as per the scaleFactor.
+ * 
+ * @param scaleFactor as a float value.
+ * @return Rectangle instance updated as per scaleFactor.
+ * @since 3.105
+ */
+public Rectangle scale(float scaleFactor) {
+	Rectangle returnRect = new Rectangle (0,0,0,0);
+	returnRect.x = (int) (x * scaleFactor);
+	returnRect.y = (int) (y * scaleFactor);
+	returnRect.width = (int) (width * scaleFactor);
+	returnRect.height = (int) (height * scaleFactor);
+	return returnRect;
 }
 
 /**
