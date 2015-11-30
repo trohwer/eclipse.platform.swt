@@ -82,6 +82,9 @@ public abstract class Device implements Drawable {
 	/* Device dpi */
 	Point dpi;
 	
+	/*Device Scale Factor in percentage*/
+	int scaleFactor;
+	
 	/* Auto-Scaling of images */
 	boolean enableAutoScaling = true;
 
@@ -582,6 +585,7 @@ public boolean getWarnings () {
  */
 protected void init () {
 	this.dpi = getDPI();
+	this.scaleFactor = getScalingFactor();
 
 	if (xDisplay != 0 && !OS.USE_CAIRO) {
 		int[] event_basep = new int[1], error_basep = new int [1];
@@ -965,13 +969,58 @@ static long /*int*/ XIOErrorProc (long /*int*/ xDisplay) {
  * @return the horizontal DPI
  */
 int _getDPIx () {
-	long /*int*/ screen = OS.gdk_screen_get_default();
-	int monitor = OS.gdk_screen_get_monitor_at_point(screen, 0, 0);
+	return scaleFactor * 96/100;
+}
+/**
+ * Gets the scaling factor from the device 
+ * @return scaling factor in percentage. scaling factor 1 corresponds to 100%
+ */
+private int getScalingFactor() {
+	final String schemaId = "com.ubuntu.user-interface";
+	final String key = "scale-factor";
+	final String monitorId = "eDP1";
+	int fontHeight = 0;
 
-	GdkRectangle dest = new GdkRectangle ();
-	OS.gdk_screen_get_monitor_geometry(screen, monitor, dest);
-	int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
-	return Compatibility.round (254 * dest.width, widthMM * 10);
+	byte[] schema_id = Converter.wcsToMbcs (null, schemaId, true);
+	long /*int*/ schemaSource = OS.g_settings_schema_source_get_default ();
+	if (OS.g_settings_schema_source_lookup(schemaSource, schema_id, false) != 0) {
+		long /*int*/ displaySettings = OS.g_settings_new (schema_id);
+		byte[] keyString = Converter.wcsToMbcs (null, key, true);
+		long /*int*/ settingsDict = OS.g_settings_get_value (displaySettings, keyString);
+		long /*int*/ keyArray = 0;
+		
+		long /*int*/ iter = OS.g_variant_iter_new (settingsDict);
+		int size = OS.g_variant_iter_init(iter, settingsDict);
+		for (int i =0; i<size; i++) {
+			long /*int*/ iterValue = OS.g_variant_iter_next_value(iter);
+			keyArray = OS.g_variant_print(iterValue);
+			int len = OS.strlen(keyArray);
+			byte[] buffer = new byte [len];
+			OS.memmove (buffer, keyArray, len);
+			String type = new String(Converter.mbcsToWcs(null, buffer));
+			if (type.contains(monitorId)) {
+				int index = type.indexOf(monitorId);
+				String height = type.substring((index + monitorId.length() + 2), (type.length() - 1));
+				fontHeight = Integer.valueOf(height.trim());
+				OS.g_free(keyArray);
+				OS.g_variant_unref(iterValue);
+				break;
+			}
+			OS.g_free(keyArray);
+			OS.g_variant_unref(iterValue);
+		}
+		
+		OS.g_variant_iter_free(iter);
+		return (int) (fontHeight * 100 / 8);
+	} else {
+		long /*int*/ screen = OS.gdk_screen_get_default();
+		int monitor = OS.gdk_screen_get_monitor_at_point(screen, 0, 0);
+
+		GdkRectangle dest = new GdkRectangle ();
+		OS.gdk_screen_get_monitor_geometry(screen, monitor, dest);
+		int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
+		return (Compatibility.round (254 * dest.width, widthMM * 10)*100/96);		
+	}
 }
 
 /**

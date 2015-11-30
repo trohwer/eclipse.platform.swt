@@ -893,7 +893,7 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
 	/* Refresh Image as per zoom level, if required. */
-	boolean isRefreshed = srcImage.refreshImageForZoom ();
+	boolean isRefreshed = srcImage.refreshImageForZoom () || srcImage.autoScaled;
 	float scaleFactor = ((float)this.getDeviceZoom()) / 100;
 	if (!isRefreshed) {
 		destWidth = (int)(destWidth * scaleFactor);
@@ -1809,6 +1809,7 @@ public void drawText (String string, int x, int y, int flags) {
 		Font font = new Font (getDevice (), fontData);
 		setFont(font);
 	}*/
+//	data.image.autoScaled = true;
 
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (string.length() == 0) return;
