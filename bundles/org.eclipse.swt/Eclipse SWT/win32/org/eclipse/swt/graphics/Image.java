@@ -1436,6 +1436,7 @@ public Rectangle getBounds() {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
  * </ul>
+<<<<<<< HEAD
  * @since 3.105
  */
 public Rectangle getBounds(int zoom) {

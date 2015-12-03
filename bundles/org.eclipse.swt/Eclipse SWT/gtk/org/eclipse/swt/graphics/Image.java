@@ -552,7 +552,10 @@ public Image(Device device, Rectangle bounds) {
 	if (getEnableAutoScaling ()) {
 		currentDeviceZoom = getDeviceZoom();
 		float scaleFactor = ((float)currentDeviceZoom) / 100;
-		bounds.scale(scaleFactor);
+		Rectangle bounds1 = bounds.scale(scaleFactor);
+		init(bounds1.width, bounds1.height);
+	} else {
+		init(bounds.width, bounds.height);
 	}
 	init(bounds.width, bounds.height);
 	init();

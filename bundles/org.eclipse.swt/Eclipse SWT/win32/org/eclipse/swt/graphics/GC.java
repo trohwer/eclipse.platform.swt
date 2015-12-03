@@ -731,6 +731,13 @@ void disposeGdip() {
 public void drawArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = ((float)getDeviceZoom()) / 100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height * scaleFactor);
+	}
 	if (width < 0) {
 		x = x + width;
 		width = -width;
@@ -828,6 +835,13 @@ public void drawArc (int x, int y, int width, int height, int startAngle, int ar
  */
 public void drawFocus (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
 	if ((data.uiState & OS.UISF_HIDEFOCUS) != 0) return;
 	data.focusDrawn = true;
 	long /*int*/ hdc = handle;
@@ -1679,6 +1693,14 @@ void drawBitmap(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight,
  */
 public void drawLine (int x1, int y1, int x2, int y2) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x1 = (int) (x1 * scaleFactor);
+		x2 = (int) (x2 * scaleFactor);
+		y1 = (int) (y1 * scaleFactor);
+		y2 = (int) (y2 *scaleFactor);
+	}
+
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -1728,6 +1750,13 @@ public void drawLine (int x1, int y1, int x2, int y2) {
  */
 public void drawOval (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -1796,6 +1825,11 @@ public void drawPath (Path path) {
  */
 public void drawPoint (int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+	}
 	if (data.gdipGraphics != 0) {
 		checkGC(DRAW);
 		Gdip.Graphics_FillRectangle(data.gdipGraphics, getFgBrush(), x, y, 1, 1);
@@ -1917,6 +1951,13 @@ public void drawPolyline(int[] pointArray) {
  */
 public void drawRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -1993,10 +2034,12 @@ public void drawRectangle (Rectangle rect) {
  */
 public void drawRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = this.getDeviceZoom() / 100;
-		width = (int)(width * scaleFactor);
-		height = (int)(height * scaleFactor);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
 	}
 	checkGC(DRAW);
 	if (data.gdipGraphics != 0) {
@@ -2050,6 +2093,14 @@ public void drawRoundRectangle (int x, int y, int width, int height, int arcWidt
 }
 
 void drawRoundRectangleGdip (long /*int*/ gdipGraphics, long /*int*/ pen, int x, int y, int width, int height, int arcWidth, int arcHeight) {
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
+
 	int nx = x;
 	int ny = y;
 	int nw = width;
@@ -2694,6 +2745,13 @@ public boolean equals (Object object) {
  */
 public void fillArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
 	checkGC(FILL);
 	if (width < 0) {
 		x = x + width;
@@ -2795,6 +2853,13 @@ public void fillArc (int x, int y, int width, int height, int startAngle, int ar
  */
 public void fillGradientRectangle(int x, int y, int width, int height, boolean vertical) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
 	if (width == 0 || height == 0) return;
 
 	RGB backgroundRGB, foregroundRGB;
@@ -2921,6 +2986,13 @@ public void fillGradientRectangle(int x, int y, int width, int height, boolean v
  */
 public void fillOval (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
+	}
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		Gdip.Graphics_FillEllipse(data.gdipGraphics, data.gdipBrush, x, y, width, height);
@@ -3022,10 +3094,12 @@ public void fillPolygon(int[] pointArray) {
  */
 public void fillRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = this.getDeviceZoom() / 100;
-		width = (int)(width * scaleFactor);
-		height = (int)(height * scaleFactor);
+	if (getEnableAutoScaling()) {
+		float scaleFactor = (float) getDeviceZoom()/100f;
+		x = (int) (x * scaleFactor);
+		y = (int) (y * scaleFactor);
+		width = (int) (width * scaleFactor);
+		height = (int) (height *scaleFactor);
 	}
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
