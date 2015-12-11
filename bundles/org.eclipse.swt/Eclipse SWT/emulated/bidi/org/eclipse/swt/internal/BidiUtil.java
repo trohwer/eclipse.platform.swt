@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.swt.internal;
 
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Control;
 
 /*
- * This class is supplied so that the StyledText code that supports bidi text (supported
- * for win platforms) is not platform dependent.  Bidi text is not implemented on 
- * emulated platforms.
+ * Wraps Win32 API used to bidi enable widgets. Up to 3.104 was used by
+ * StyledText widget exclusively. 3.105 release introduced the method
+ * #resolveTextDirection, which is used by other widgets as well. 
  */
 public class BidiUtil {
 	// Keyboard language types
@@ -96,6 +97,12 @@ public static int getKeyboardLanguage() {
 public static void removeLanguageListener(long /*int*/ hwnd) {
 }	
 public static void removeLanguageListener (Control control) {
+}
+/*
+ * Not implemented. Returns SWT.NONE.
+ */
+public static int resolveTextDirection (String text) {
+	return SWT.NONE;
 }
 /*
  * Not implemented.

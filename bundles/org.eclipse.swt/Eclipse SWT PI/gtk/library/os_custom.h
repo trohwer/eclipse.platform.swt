@@ -307,6 +307,7 @@
 #define gdk_pointer_ungrab_LIB LIB_GDK
 #define gdk_region_polygon_LIB LIB_GDK
 #define gdk_region_get_rectangles_LIB LIB_GDK
+#define gdk_rgba_to_string_LIB LIB_GDK
 #define gdk_screen_get_default_LIB LIB_GDK
 #define gdk_screen_get_monitor_at_point_LIB LIB_GDK
 #define gdk_screen_get_monitor_at_window_LIB LIB_GDK
@@ -579,7 +580,6 @@ struct _GtkAccelLabelPrivate
 #else
 #define GTK_RANGE_SLIDER_END(arg0) (arg0)->slider_end
 #endif
-#define GTK_SCROLLED_WINDOW_SCROLLBAR_SPACING(arg0) (GTK_SCROLLED_WINDOW_GET_CLASS (arg0)->scrollbar_spacing >= 0 ? GTK_SCROLLED_WINDOW_GET_CLASS (arg0)->scrollbar_spacing : 3)
 #ifndef GTK_WIDGET_SET_FLAGS
 #define GTK_WIDGET_SET_FLAGS(arg0, arg1)
 #endif

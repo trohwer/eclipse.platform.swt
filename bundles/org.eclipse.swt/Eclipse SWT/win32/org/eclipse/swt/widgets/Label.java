@@ -11,9 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a non-selectable
@@ -101,6 +102,7 @@ public Label (Composite parent, int style) {
 	super (parent, checkStyle (style));
 }
 
+@Override
 long /*int*/ callWindowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, long /*int*/ lParam) {
 	if (handle == 0) return 0;
 	/*
@@ -126,6 +128,7 @@ static int checkStyle (int style) {
 	return checkBits (style, SWT.LEFT, SWT.CENTER, SWT.RIGHT, 0, 0, 0);
 }
 
+@Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0, border = getBorderWidth ();
@@ -195,6 +198,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	return new Point (width, height);
 }
 
+@Override
 void createHandle () {
 	super.createHandle ();
 	state |= THEME_BACKGROUND;
@@ -239,6 +243,7 @@ public Image getImage () {
 	return image;
 }
 
+@Override
 String getNameText () {
 	return getText ();
 }
@@ -261,6 +266,7 @@ public String getText () {
 	return text;
 }
 
+@Override
 boolean mnemonicHit (char key) {
 	Control control = this;
 	while (control.parent != null) {
@@ -279,20 +285,23 @@ boolean mnemonicHit (char key) {
 	return false;
 }
 
+@Override
 boolean mnemonicMatch (char key) {
 	char mnemonic = findMnemonic (getText ());
 	if (mnemonic == '\0') return false;
 	return Character.toUpperCase (key) == Character.toUpperCase (mnemonic);
 }
 
+@Override
 void releaseWidget () {
 	super.releaseWidget ();
 	text = null;
 	image = null;
 }
 
+@Override
 int resolveTextDirection() {
-	return (style & SWT.SEPARATOR) != 0 ? SWT.NONE : resolveTextDirection(text);
+	return (style & SWT.SEPARATOR) != 0 ? SWT.NONE : BidiUtil.resolveTextDirection (text);
 }
 
 /**
@@ -435,12 +444,14 @@ public void setText (String string) {
 	}
 }
 
+@Override
 int widgetExtStyle () {
 	int bits = super.widgetExtStyle () & ~OS.WS_EX_CLIENTEDGE;
 	if ((style & SWT.BORDER) != 0) return bits | OS.WS_EX_STATICEDGE;
 	return bits;
 }
 
+@Override
 int widgetStyle () {
 	int bits = super.widgetStyle () | OS.SS_NOTIFY;
 	if ((style & SWT.SEPARATOR) != 0) return bits | OS.SS_OWNERDRAW;
@@ -453,14 +464,17 @@ int widgetStyle () {
 	return bits | OS.SS_LEFTNOWORDWRAP;
 }
 
+@Override
 TCHAR windowClass () {
 	return LabelClass;
 }
 
+@Override
 long /*int*/ windowProc () {
 	return LabelProc;
 }
 
+@Override
 LRESULT WM_ERASEBKGND (long /*int*/ wParam, long /*int*/ lParam) {
 	LRESULT result = super.WM_ERASEBKGND (wParam, lParam);
 	if (result != null) return result;
@@ -485,6 +499,7 @@ LRESULT WM_ERASEBKGND (long /*int*/ wParam, long /*int*/ lParam) {
 	return result;
 }
 
+@Override
 LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 	LRESULT result = super.WM_SIZE (wParam, lParam);
 	if (isDisposed ()) return result;
@@ -511,6 +526,7 @@ LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 	return result;
 }
 
+@Override
 LRESULT WM_UPDATEUISTATE (long /*int*/ wParam, long /*int*/ lParam) {
 	LRESULT result = super.WM_UPDATEUISTATE (wParam, lParam);
 	if (result != null) return result;
@@ -538,6 +554,7 @@ LRESULT WM_UPDATEUISTATE (long /*int*/ wParam, long /*int*/ lParam) {
 	return result;
 }
 
+@Override
 LRESULT wmColorChild (long /*int*/ wParam, long /*int*/ lParam) {
 	/*
 	* Bug in Windows.  For some reason, the HBRUSH that
@@ -560,6 +577,7 @@ LRESULT wmColorChild (long /*int*/ wParam, long /*int*/ lParam) {
 	return result;
 }
 
+@Override
 LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 	if ((state & DISPOSE_SENT) != 0) return LRESULT.ZERO;
 
@@ -626,6 +644,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 	return super.WM_PAINT(wParam, lParam);
 }
 
+@Override
 LRESULT wmDrawChild (long /*int*/ wParam, long /*int*/ lParam) {
 	DRAWITEMSTRUCT struct = new DRAWITEMSTRUCT ();
 	OS.MoveMemory (struct, lParam, DRAWITEMSTRUCT.sizeof);

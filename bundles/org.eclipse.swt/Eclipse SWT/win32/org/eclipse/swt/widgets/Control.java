@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos (Google) - bug 468854 - Add a requestLayout method to Control
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
@@ -203,6 +204,10 @@ public void addFocusListener (FocusListener listener) {
  * invoked on the receiver then <code>setTouchEnabled(false)</code>
  * must be invoked on it to specify that gesture events should be
  * sent instead of touch events.
+ * </p>
+ * <p>
+ * <b>Warning</b>: This API is currently only implemented on Windows and Cocoa.
+ * SWT doesn't send Gesture or Touch events on GTK.
  * </p>
  * 
  * @param listener the listener which should be notified
@@ -465,6 +470,10 @@ public void addPaintListener (PaintListener listener) {
  * NOTE: You must also call <code>setTouchEnabled(true)</code> to 
  * specify that touch events should be sent, which will cause gesture
  * events to not be sent.
+ * </p>
+ * <p>
+ * <b>Warning</b>: This API is currently only implemented on Windows and Cocoa.
+ * SWT doesn't send Gesture or Touch events on GTK.
  * </p>
  * 
  * @param listener the listener which should be notified
@@ -2334,6 +2343,25 @@ void printWidget (long /*int*/ hwnd, long /*int*/ hdc, GC gc) {
 }
 
 /**
+ * Requests that this control and all of its ancestors be repositioned
+ * their layouts at the earliest opportunity. This should be invoked after
+ * modifying the control in order to inform any dependent layouts of
+ * the change.
+ * <p>
+ * The control will not be repositioned synchronously. This method is
+ * fast-running and only marks the control for future participation in
+ * a deferred layout.
+ * <p>
+ * Invoking this method multiple times before the layout occurs is an
+ * inexpensive no-op.
+ *
+ * @since 3.105
+ */
+public void requestLayout () {
+	getShell ().layout (new Control[] {this}, SWT.DEFER);
+}
+
+/**
  * Causes the entire bounds of the receiver to be marked
  * as needing to be redrawn. The next time a paint request
  * is processed, the control will be completely painted,
@@ -3708,10 +3736,7 @@ boolean setTabItemFocus () {
 /**
  * Sets the base text direction (a.k.a. "paragraph direction") of the receiver,
  * which must be one of the constants <code>SWT.LEFT_TO_RIGHT</code>,
- * <code>SWT.RIGHT_TO_LEFT</code>, or a bitwise disjunction 
- * <code>SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT</code>. The latter stands for an
- * "auto" direction, which implies that a control containing text derives the
- * direction from the directionality of the first strong bidi character.
+ * <code>SWT.RIGHT_TO_LEFT</code>, or <code>SWT.AUTO_TEXT_DIRECTION</code>.
  * <p>
  * <code>setOrientation</code> would override this value with the text direction
  * that is consistent with the new orientation.
@@ -3730,6 +3755,7 @@ boolean setTabItemFocus () {
  * 
  * @see SWT#LEFT_TO_RIGHT
  * @see SWT#RIGHT_TO_LEFT
+ * @see SWT#AUTO_TEXT_DIRECTION
  * @see SWT#FLIP_TEXT_DIRECTION
  * 
  * @since 3.102

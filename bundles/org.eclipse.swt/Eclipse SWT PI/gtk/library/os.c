@@ -185,18 +185,6 @@ JNIEXPORT jint JNICALL OS_NATIVE(GTK_1RANGE_1SLIDER_1START)
 }
 #endif
 
-#ifndef NO_GTK_1SCROLLED_1WINDOW_1SCROLLBAR_1SPACING
-JNIEXPORT jint JNICALL OS_NATIVE(GTK_1SCROLLED_1WINDOW_1SCROLLBAR_1SPACING)
-	(JNIEnv *env, jclass that, jintLong arg0)
-{
-	jint rc = 0;
-	OS_NATIVE_ENTER(env, that, GTK_1SCROLLED_1WINDOW_1SCROLLBAR_1SPACING_FUNC);
-	rc = (jint)GTK_SCROLLED_WINDOW_SCROLLBAR_SPACING((GtkScrolledWindow *)arg0);
-	OS_NATIVE_EXIT(env, that, GTK_1SCROLLED_1WINDOW_1SCROLLBAR_1SPACING_FUNC);
-	return rc;
-}
-#endif
-
 #ifndef NO_GTK_1TEXTVIEW_1IM_1CONTEXT
 JNIEXPORT jintLong JNICALL OS_NATIVE(GTK_1TEXTVIEW_1IM_1CONTEXT)
 	(JNIEnv *env, jclass that, jintLong arg0)
@@ -7178,6 +7166,30 @@ JNIEXPORT void JNICALL OS_NATIVE(_1gdk_1region_1union_1with_1rect)
 	gdk_region_union_with_rect((GdkRegion *)arg0, (GdkRectangle *)lparg1);
 fail:
 	OS_NATIVE_EXIT(env, that, _1gdk_1region_1union_1with_1rect_FUNC);
+}
+#endif
+
+#ifndef NO__1gdk_1rgba_1to_1string
+JNIEXPORT jintLong JNICALL OS_NATIVE(_1gdk_1rgba_1to_1string)
+	(JNIEnv *env, jclass that, jobject arg0)
+{
+	GdkRGBA _arg0, *lparg0=NULL;
+	jintLong rc = 0;
+	OS_NATIVE_ENTER(env, that, _1gdk_1rgba_1to_1string_FUNC);
+	if (arg0) if ((lparg0 = getGdkRGBAFields(env, arg0, &_arg0)) == NULL) goto fail;
+/*
+	rc = (jintLong)gdk_rgba_to_string((GdkRGBA *)lparg0);
+*/
+	{
+		OS_LOAD_FUNCTION(fp, gdk_rgba_to_string)
+		if (fp) {
+			rc = (jintLong)((jintLong (CALLING_CONVENTION*)(GdkRGBA *))fp)((GdkRGBA *)lparg0);
+		}
+	}
+fail:
+	if (arg0 && lparg0) setGdkRGBAFields(env, arg0, lparg0);
+	OS_NATIVE_EXIT(env, that, _1gdk_1rgba_1to_1string_FUNC);
+	return rc;
 }
 #endif
 
@@ -16167,16 +16179,6 @@ JNIEXPORT jintLong JNICALL OS_NATIVE(_1gtk_1text_1view_1new)
 }
 #endif
 
-#ifndef NO__1gtk_1text_1view_1scroll_1mark_1onscreen
-JNIEXPORT void JNICALL OS_NATIVE(_1gtk_1text_1view_1scroll_1mark_1onscreen)
-	(JNIEnv *env, jclass that, jintLong arg0, jintLong arg1)
-{
-	OS_NATIVE_ENTER(env, that, _1gtk_1text_1view_1scroll_1mark_1onscreen_FUNC);
-	gtk_text_view_scroll_mark_onscreen((GtkTextView *)arg0, (GtkTextMark *)arg1);
-	OS_NATIVE_EXIT(env, that, _1gtk_1text_1view_1scroll_1mark_1onscreen_FUNC);
-}
-#endif
-
 #ifndef NO__1gtk_1text_1view_1scroll_1to_1iter
 JNIEXPORT jboolean JNICALL OS_NATIVE(_1gtk_1text_1view_1scroll_1to_1iter)
 	(JNIEnv *env, jclass that, jintLong arg0, jbyteArray arg1, jdouble arg2, jboolean arg3, jdouble arg4, jdouble arg5)
@@ -16190,6 +16192,16 @@ fail:
 	if (arg1 && lparg1) (*env)->ReleaseByteArrayElements(env, arg1, lparg1, 0);
 	OS_NATIVE_EXIT(env, that, _1gtk_1text_1view_1scroll_1to_1iter_FUNC);
 	return rc;
+}
+#endif
+
+#ifndef NO__1gtk_1text_1view_1scroll_1to_1mark
+JNIEXPORT void JNICALL OS_NATIVE(_1gtk_1text_1view_1scroll_1to_1mark)
+	(JNIEnv *env, jclass that, jintLong arg0, jintLong arg1, jdouble arg2, jboolean arg3, jdouble arg4, jdouble arg5)
+{
+	OS_NATIVE_ENTER(env, that, _1gtk_1text_1view_1scroll_1to_1mark_FUNC);
+	gtk_text_view_scroll_to_mark((GtkTextView *)arg0, (GtkTextMark *)arg1, (gdouble)arg2, (gboolean)arg3, (gdouble)arg4, (gdouble)arg5);
+	OS_NATIVE_EXIT(env, that, _1gtk_1text_1view_1scroll_1to_1mark_FUNC);
 }
 #endif
 
@@ -18341,18 +18353,18 @@ fail:
 #endif
 
 #ifndef NO__1gtk_1widget_1get_1state_1flags
-JNIEXPORT jintLong JNICALL OS_NATIVE(_1gtk_1widget_1get_1state_1flags)
+JNIEXPORT jint JNICALL OS_NATIVE(_1gtk_1widget_1get_1state_1flags)
 	(JNIEnv *env, jclass that, jintLong arg0)
 {
-	jintLong rc = 0;
+	jint rc = 0;
 	OS_NATIVE_ENTER(env, that, _1gtk_1widget_1get_1state_1flags_FUNC);
 /*
-	rc = (jintLong)gtk_widget_get_state_flags((GtkWidget *)arg0);
+	rc = (jint)gtk_widget_get_state_flags((GtkWidget *)arg0);
 */
 	{
 		OS_LOAD_FUNCTION(fp, gtk_widget_get_state_flags)
 		if (fp) {
-			rc = (jintLong)((jintLong (CALLING_CONVENTION*)(GtkWidget *))fp)((GtkWidget *)arg0);
+			rc = (jint)((jint (CALLING_CONVENTION*)(GtkWidget *))fp)((GtkWidget *)arg0);
 		}
 	}
 	OS_NATIVE_EXIT(env, that, _1gtk_1widget_1get_1state_1flags_FUNC);

@@ -94,13 +94,13 @@ public class IconExe {
 	 * @param program the Windows executable e.g c:/eclipse/eclipse.exe
 	 */	
 	static ImageData[] loadIcons(String program) throws FileNotFoundException, IOException {
-		RandomAccessFile raf = new RandomAccessFile(program, "r");
-		IconExe iconExe = new IconExe();
-		IconResInfo[] iconInfo = iconExe.getIcons(raf);
-		ImageData[] data = new ImageData[iconInfo.length];
-		for (int i = 0; i < data.length; i++) data[i] = iconInfo[i].data;
-		raf.close();
-		return data;
+		try (RandomAccessFile raf = new RandomAccessFile(program, "r")) {
+			IconExe iconExe = new IconExe();
+			IconResInfo[] iconInfo = iconExe.getIcons(raf);
+			ImageData[] data = new ImageData[iconInfo.length];
+			for (int i = 0; i < data.length; i++) data[i] = iconInfo[i].data;
+			return data;
+		}
 	}
 	
 	/** 
@@ -134,22 +134,22 @@ public class IconExe {
 	 * @return the number of icons from the original program that were not successfully replaced (0 if success)
 	 */	
 	static int unloadIcons(String program, ImageData[] icons) throws FileNotFoundException, IOException {
-		RandomAccessFile raf = new RandomAccessFile(program, "rw");
-		IconExe iconExe = new IconExe();
-		IconResInfo[] iconInfo = iconExe.getIcons(raf);
-		int cnt = 0;
-		for (int i = 0; i < iconInfo.length; i++) {
-			for (int j = 0; j < icons.length; j++)
-			if (iconInfo[i].data.width == icons[j].width && 
-				iconInfo[i].data.height == icons[j].height && 
-				iconInfo[i].data.depth == icons[j].depth) {
-				raf.seek(iconInfo[i].offset);
-				unloadIcon(raf, icons[j]);
-				cnt++;
+		try (RandomAccessFile raf = new RandomAccessFile(program, "rw")) {
+			IconExe iconExe = new IconExe();
+			IconResInfo[] iconInfo = iconExe.getIcons(raf);
+			int cnt = 0;
+			for (int i = 0; i < iconInfo.length; i++) {
+				for (int j = 0; j < icons.length; j++)
+					if (iconInfo[i].data.width == icons[j].width && 
+					iconInfo[i].data.height == icons[j].height && 
+					iconInfo[i].data.depth == icons[j].depth) {
+						raf.seek(iconInfo[i].offset);
+						unloadIcon(raf, icons[j]);
+						cnt++;
+					}
 			}
+			return iconInfo.length - cnt;
 		}
-		raf.close();
-		return iconInfo.length - cnt;
 	}
 	
 	public static final String VERSION = "20050124";
@@ -459,12 +459,11 @@ static boolean readIconGroup(RandomAccessFile raf, int offset, int size) throws 
 static void copyFile(String src, String dst) throws FileNotFoundException, IOException {
 	File srcFile = new File(src);
 	File dstFile = new File(dst);
-	FileInputStream in = new FileInputStream(srcFile);
-	FileOutputStream out = new FileOutputStream(dstFile);
-	int c;
-	while ((c = in.read()) != -1) out.write(c); 
-	in.close();
-	out.close();
+	try (FileInputStream in = new FileInputStream(srcFile); FileOutputStream out = new FileOutputStream(dstFile)) {
+		int c;
+		while ((c = in.read()) != -1)
+			out.write(c);
+	}
 }
 
 /* IO utilities to parse Windows executable */
@@ -1176,18 +1175,10 @@ public ImageData[] load(InputStream stream) {
  */
 public ImageData[] load(String filename) {
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	InputStream stream = null;
-	try {
-		stream = new FileInputStream(filename);
+	try (InputStream stream = new FileInputStream(filename)) {
 		return load(stream);
 	} catch (IOException e) {
 		SWT.error(SWT.ERROR_IO, e);
-	} finally {
-		try {
-			if (stream != null) stream.close();
-		} catch (IOException e) {
-			// Ignore error
-		}
 	}
 	return null;
 }

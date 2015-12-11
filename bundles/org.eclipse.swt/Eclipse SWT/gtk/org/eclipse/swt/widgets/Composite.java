@@ -64,6 +64,7 @@ public class Composite extends Scrollable {
 	Layout layout;
 	Control[] tabList;
 	int layoutCount, backgroundMode;
+	GdkRGBA background;
 
 	static final String NO_INPUT_METHOD = "org.eclipse.swt.internal.gtk.noInputMethod"; //$NON-NLS-1$
 
@@ -115,15 +116,8 @@ static int checkStyle (int style) {
 	return style;
 }
 
-//Containers such as Tabfolder have two sets of children,
-//e.g TabItems and actual widget children.
-//thus we need to pass in different parenting handles depending on which children we want.
 Control [] _getChildren () {
 	long /*int*/ parentHandle = parentingHandle ();
-	return _getChildren (parentHandle);
-}
-
-Control [] _getChildren (long /*int*/ parentHandle) {
 	long /*int*/ list = OS.gtk_container_get_children (parentHandle);
 	if (list == 0) return new Control [0];
 	int count = OS.g_list_length (list);
@@ -356,6 +350,16 @@ void createHandle (int index, boolean fixed, boolean scrolled) {
 	if ((style & SWT.DOUBLE_BUFFERED) == 0 && (style & SWT.NO_BACKGROUND) != 0) {
 		OS.gtk_widget_set_double_buffered (handle, false);
 	}
+}
+
+@Override
+long /*int*/ gtk_draw (long /*int*/ widget, long /*int*/ cairo) {
+	if (OS.GTK_VERSION >= OS.VERSION(3, 16, 0)) {
+		Rectangle area = getClientArea();
+		long /*int*/ context = OS.gtk_widget_get_style_context(widget);
+		OS.gtk_render_background(context, cairo, area.x, area.y, area.width, area.height);
+	}
+	return super.gtk_draw(widget, cairo);
 }
 
 @Override
@@ -657,6 +661,23 @@ public Rectangle getClientArea () {
 	return super.getClientArea();
 }
 
+@Override
+GdkColor getContextBackground () {
+	if (OS.GTK_VERSION >= OS.VERSION(3, 16, 0)) {
+		if (background != null) {
+			GdkColor color = new GdkColor ();
+			color.red = (short)(background.red * 0xFFFF);
+			color.green = (short)(background.green * 0xFFFF);
+			color.blue = (short)(background.blue * 0xFFFF);
+			return color;
+		} else {
+			return display.COLOR_WIDGET_BACKGROUND;
+		}
+	} else {
+		return super.getContextBackground();
+	}
+}
+
 /**
  * Returns layout which is associated with the receiver, or
  * null if one has not been set.
@@ -920,6 +941,14 @@ boolean isTabGroup() {
  * (that is, set the size and location of) the receiver's children.
  * If the receiver does not have a layout, do nothing.
  * <p>
+ * Use of this method is discouraged since it is the least-efficient
+ * way to trigger a layout. The use of <code>layout(true)</code>
+ * discards all cached layout information, even from controls which
+ * have not changed. It is much more efficient to invoke
+ * {@link Control#requestLayout()} on every control which has changed
+ * in the layout than it is to invoke this method on the layout itself.
+ * </p>
+ * <p>
  * This is equivalent to calling <code>layout(true)</code>.
  * </p>
  * <p>
@@ -948,6 +977,13 @@ public void layout () {
  * work it is doing by assuming that none of the receiver's
  * children has changed state since the last layout.
  * If the receiver does not have a layout, do nothing.
+ * <p>
+ * It is normally more efficient to invoke {@link Control#requestLayout()}
+ * on every control which has changed in the layout than it is to invoke
+ * this method on the layout itself. Clients are encouraged to use
+ * {@link Control#requestLayout()} where possible instead of calling
+ * this method.
+ * </p>
  * <p>
  * If a child is resized as a result of a call to layout, the
  * resize event will invoke the layout of the child.  The layout
@@ -995,6 +1031,13 @@ public void layout (boolean changed) {
  * (same as <code>layout(false)</code>).
  * </p>
  * <p>
+ * It is normally more efficient to invoke {@link Control#requestLayout()}
+ * on every control which has changed in the layout than it is to invoke
+ * this method on the layout itself. Clients are encouraged to use
+ * {@link Control#requestLayout()} where possible instead of calling
+ * this method.
+ * </p>
+ * <p>
  * Note: Layout is different from painting. If a child is
  * moved or resized such that an area in the parent is
  * exposed, then the parent will paint. If no child is
@@ -1026,6 +1069,13 @@ public void layout (boolean changed, boolean all) {
  * (potentially) optimize the work it is doing by assuming that none of the
  * peers of the changed control have changed state since the last layout.
  * If an ancestor does not have a layout, skip it.
+ * <p>
+ * It is normally more efficient to invoke {@link Control#requestLayout()}
+ * on every control which has changed in the layout than it is to invoke
+ * this method on the layout itself. Clients are encouraged to use
+ * {@link Control#requestLayout()} where possible instead of calling
+ * this method.
+ * </p>
  * <p>
  * Note: Layout is different from painting. If a child is
  * moved or resized such that an area in the parent is
@@ -1441,6 +1491,18 @@ public void setBackgroundMode (int mode) {
 	Control[] children = _getChildren ();
 	for (int i = 0; i < children.length; i++) {
 		children [i].updateBackgroundMode ();
+	}
+}
+
+@Override
+void setBackgroundColor (long /*int*/ context, long /*int*/ handle, GdkRGBA rgba) {
+	if (OS.GTK_VERSION >= OS.VERSION(3, 16, 0)) {
+		background = rgba;
+		String color = gtk_rgba_to_css_string(background);
+		String css = "SwtFixed {background-color: " + color + "}";
+		gtk_css_provider_load_from_css(context, css);
+	} else {
+		super.setBackgroundColor(context, handle, rgba);
 	}
 }
 

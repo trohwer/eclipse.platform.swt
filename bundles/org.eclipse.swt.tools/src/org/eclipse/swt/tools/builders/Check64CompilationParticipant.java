@@ -44,9 +44,8 @@ public class Check64CompilationParticipant extends CompilationParticipant {
 
 static String loadFile (String file) {
 	if (file == null) return null;
-	try {
-		FileReader fr = new FileReader(file);
-		BufferedReader br = new BufferedReader(fr);
+	try (FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr)) {
 		StringBuffer str = new StringBuffer();
 		char[] buffer = new char[1024];
 		int read;
@@ -61,7 +60,6 @@ static String loadFile (String file) {
 }
 
 void build(IJavaProject project, String root) throws CoreException {
-	PrintWriter writer = null;
 	try {
 		StringBuffer sourcePath = new StringBuffer(), cp = new StringBuffer();
 		IClasspathEntry[] entries = project.getResolvedClasspath(true);
@@ -93,15 +91,12 @@ void build(IJavaProject project, String root) throws CoreException {
 			"-sourcepath", sourcePath.toString(),
 		}));
 		args.addAll(sources);
-		writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(root + "/out.txt")));
-		BatchCompiler.compile(args.toArray(new String[args.size()]), writer, writer, null);
-		writer.close();
-		writer = null;
+		try (PrintWriter writer = new PrintWriter(new BufferedOutputStream(new FileOutputStream(root + "/out.txt")))) {
+			BatchCompiler.compile(args.toArray(new String[args.size()]), writer, writer, null);
+		}
 		project.getProject().findMember(new Path(buildDir)).refreshLocal(IResource.DEPTH_INFINITE, null);
 	} catch (Exception e) {
 		throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Problem building 64-bit code", e));
-	} finally {
-		if (writer != null) writer.close();
 	}
 }
 
@@ -144,8 +139,7 @@ void createProblem(IResource resource, String message, int start, int end) throw
 }
 
 void createProblems(IJavaProject project, String root) throws CoreException {
-	try {
-		InputStream is = new BufferedInputStream(new FileInputStream(root + "/log.xml"));
+	try (InputStream is = new BufferedInputStream(new FileInputStream(root + "/log.xml"))) {
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(is));
 		is.close();
 		IProject proj = project.getProject();	

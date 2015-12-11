@@ -672,6 +672,7 @@ public class OS extends C {
 	public static final byte[] margin_bottom = ascii("margin-bottom");
 	public static final byte[] margin_top = ascii("margin-top");
 	public static final byte[] GTK_PRINT_SETTINGS_OUTPUT_URI = ascii("output-uri");
+	public static final byte[] scrollbar_spacing = ascii("scrollbar-spacing");
 
 	/*
 	 * Needed to tell GTK 3 to prefer a dark or light theme in the UI.
@@ -833,8 +834,6 @@ public static final native void G_OBJECT_CLASS_SET_CONSTRUCTOR(long /*int*/ obje
 public static final native int GTK_RANGE_SLIDER_START(long /*int*/ widget);
 /** @param widget cast=(GtkRange *) */
 public static final native int GTK_RANGE_SLIDER_END(long /*int*/ widget);
-/** @param widget cast=(GtkScrolledWindow *) */
-public static final native int GTK_SCROLLED_WINDOW_SCROLLBAR_SPACING(long /*int*/ widget);
 /**
  * @param acce_label cast=(GtkAccelLabel *)
  * @param string cast=(gchar *)
@@ -5488,6 +5487,19 @@ public static final void gdk_region_union_with_rect(long /*int*/ region, GdkRect
 	lock.lock();
 	try {
 		_gdk_region_union_with_rect(region, rect);
+	} finally {
+		lock.unlock();
+	}
+}
+/** 
+ * @method flags=dynamic
+ * @param rgba cast=(GdkRGBA *) 
+ */
+public static final native long /*int*/ _gdk_rgba_to_string(GdkRGBA rgba);
+public static final long /*int*/ gdk_rgba_to_string(GdkRGBA rgba) {
+	lock.lock();
+	try {
+		return _gdk_rgba_to_string(rgba);
 	} finally {
 		lock.unlock();
 	}
@@ -11855,8 +11867,8 @@ public static final void gtk_style_context_restore(long /*int*/ context) {
 /** @method flags=dynamic
  *  @param self cast=(GtkWidget *)
  *  */
-public static final native long /*int*/ _gtk_widget_get_state_flags(long /*int*/ self);
-public static final long /*int*/ gtk_widget_get_state_flags(long /*int*/ self) {
+public static final native int _gtk_widget_get_state_flags(long /*int*/ self);
+public static final int gtk_widget_get_state_flags(long /*int*/ self) {
 	lock.lock();
 	try {
 		return _gtk_widget_get_state_flags(self);
@@ -12528,12 +12540,16 @@ public static final long /*int*/ gtk_text_view_new() {
 /**
  * @param text_view cast=(GtkTextView *)
  * @param mark cast=(GtkTextMark *)
+ * @param within_margin cast=(gdouble)
+ * @param use_align cast=(gboolean)
+ * @param xalign cast=(gdouble)
+ * @param yalign cast=(gdouble)
  */
-public static final native void _gtk_text_view_scroll_mark_onscreen(long /*int*/ text_view, long /*int*/ mark);
-public static final void gtk_text_view_scroll_mark_onscreen(long /*int*/ text_view, long /*int*/ mark) {
+public static final native void _gtk_text_view_scroll_to_mark(long /*int*/ text_view, long /*int*/ mark, double within_margin, boolean use_align, double xalign, double yalign);
+public static final void gtk_text_view_scroll_to_mark(long /*int*/ text_view, long /*int*/ mark, double within_margin, boolean use_align, double xalign, double yalign) {
 	lock.lock();
 	try {
-		_gtk_text_view_scroll_mark_onscreen(text_view, mark);
+		_gtk_text_view_scroll_to_mark(text_view, mark, within_margin, use_align, xalign, yalign);
 	} finally {
 		lock.unlock();
 	}

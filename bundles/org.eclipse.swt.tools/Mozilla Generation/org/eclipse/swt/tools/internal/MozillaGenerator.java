@@ -32,7 +32,7 @@ public class MozillaGenerator {
 	String[][] argTypes;
 	String[][] argNames;
 	String bodyOrder;
-	Hashtable<Integer, List<String>> vtbls;
+	Map<Integer, List<String>> vtbls;
 
 	static boolean DEBUG = false;
 
@@ -139,7 +139,7 @@ public class MozillaGenerator {
 	}
 
 	public MozillaGenerator() {
-		vtbls = new Hashtable<>();
+		vtbls = new HashMap<>();
 	}
 
 	/** Write callbacks */
@@ -282,17 +282,17 @@ public class MozillaGenerator {
 	}
 
 	public void outputVtblCall() {
-		Enumeration<Integer> e = vtbls.keys();
+		Iterator<Integer> e = vtbls.keySet().iterator();
 		int n = 0;
-		while (e.hasMoreElements()) {
-			e.nextElement();
+		while (e.hasNext()) {
+			e.next();
 			n++;
 		}
 		Integer[] keys = new Integer[n];
-		e = vtbls.keys();
+		e = vtbls.keySet().iterator();
 		n = 0;
-		while (e.hasMoreElements()) {
-			keys[n] = e.nextElement();
+		while (e.hasNext()) {
+			keys[n] = e.next();
 			n++;
 		}
 		Arrays.sort(keys);
@@ -319,11 +319,11 @@ public class MozillaGenerator {
 		cntLines = 0;
 		try {
 			r = new FileReader(src);
-			BufferedReader br = new BufferedReader(r);
-			while ((b[cntLines] = br.readLine()) != null) {
-				cntLines++;
+			try (BufferedReader br = new BufferedReader(r)) {
+				while ((b[cntLines] = br.readLine()) != null) {
+					cntLines++;
+				}
 			}
-			br.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;

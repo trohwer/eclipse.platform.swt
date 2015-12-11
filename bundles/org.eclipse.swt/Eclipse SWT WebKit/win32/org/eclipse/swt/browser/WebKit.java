@@ -23,7 +23,6 @@ import org.eclipse.swt.internal.webkit.*;
 import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.widgets.*;
 
-@SuppressWarnings("rawtypes")
 class WebKit extends WebBrowser {
 	IWebView webView;
 	long /*int*/ webViewWindowHandle, webViewData;
@@ -389,6 +388,7 @@ static String stringFromJSString (long /*int*/ jsString) {
 	return new String (bytes);
 }
 
+@Override
 public boolean back () {
 	int[] result = new int[1];
 	webView.goBack (result);
@@ -440,6 +440,7 @@ long /*int*/ callJava (long /*int*/ ctx, long /*int*/ func, long /*int*/ thisObj
 	return convertToJS (ctx, returnValue);
 }
 
+@Override
 public boolean close () {
 	return shouldClose ();
 }
@@ -537,6 +538,7 @@ long /*int*/ convertToJS (long /*int*/ ctx, Object value) {
 	return 0;
 }
 
+@Override
 public void create (Composite parent, int style) {
 	if (!LibraryLoaded) {
 		browser.dispose ();
@@ -675,12 +677,14 @@ public void create (Composite parent, int style) {
 	browser.addListener (SWT.Traverse, listener);
 
 	eventFunction = new BrowserFunction (browser, "HandleWebKitEvent") { //$NON-NLS-1$
+		@Override
 		public Object function (Object[] arguments) {
 			return handleEvent (arguments) ? Boolean.TRUE : Boolean.FALSE;
 		};	
 	};
 }
 
+@Override
 public boolean execute (String script) {
 	long /*int*/[] result = new long /*int*/[1];
 	int hr = webView.mainFrame (result);
@@ -717,16 +721,19 @@ public boolean execute (String script) {
 	return evalResult != 0;
 }
 
+@Override
 public boolean forward () {
 	int[] result = new int[1];
 	webView.goForward (result);
 	return result[0] != 0;
 }
 
+@Override
 public String getBrowserType () {
 	return "webkit"; //$NON-NLS-1$
 }
 
+@Override
 public String getText () {
 	long /*int*/[] result = new long /*int*/[1];
 	int hr = webView.mainFrame (result);
@@ -759,6 +766,7 @@ public String getText () {
 	return source;	
 }
 
+@Override
 public String getUrl () {
 	return webFrameLoadDelegate.getUrl ();
 }
@@ -1009,6 +1017,7 @@ boolean handleEvent (Object[] arguments) {
 	return true;
 }
 
+@Override
 public boolean isBackEnabled () {
 	long /*int*/[] address = new long /*int*/[1];
 	int hr = webView.QueryInterface (WebKit_win32.IID_IWebIBActions, address);
@@ -1022,11 +1031,13 @@ public boolean isBackEnabled () {
 	return result[0] != 0;
 }
 
+@Override
 public boolean isFocusControl () {
 	long /*int*/ hwndFocus = OS.GetFocus ();
 	return hwndFocus != 0 && hwndFocus == webViewWindowHandle;
 }
 
+@Override
 public boolean isForwardEnabled () {
 	long /*int*/[] address = new long /*int*/[1];
 	int hr = webView.QueryInterface (WebKit_win32.IID_IWebIBActions, address);
@@ -1051,9 +1062,9 @@ void onDispose () {
 		}
 	}
 
-	Enumeration elements = functions.elements ();
-	while (elements.hasMoreElements ()) {
-		((BrowserFunction)elements.nextElement ()).dispose (false);
+	Iterator<BrowserFunction> elements = functions.values().iterator ();
+	while (elements.hasNext ()) {
+		elements.next ().dispose (false);
 	}
 	functions = null;
 
@@ -1078,6 +1089,7 @@ void onDispose () {
 	lastNavigateURL = null;
 }
 
+@Override
 public void refresh () {
 	webFrameLoadDelegate.html = null;
 	long /*int*/[] result = new long /*int*/[1];
@@ -1090,6 +1102,7 @@ public void refresh () {
 	webIBActions.Release ();
 }
 
+@Override
 boolean sendKeyEvent (Event event) {
 	/*
 	 * browser.traverse() is called through dislay.translateTraversal() for all
@@ -1129,6 +1142,7 @@ boolean sendKeyEvent (Event event) {
 	return doit;
 }
 
+@Override
 public boolean setText (String html, boolean trusted) {
 	/*
 	* If this.html is not null then the about:blank page is already being loaded,
@@ -1166,6 +1180,7 @@ public boolean setText (String html, boolean trusted) {
 	return hr == COM.S_OK;
 }
 
+@Override
 public boolean setUrl (String url, String postData, String[] headers) {
 	if (url.length () == 0) return false;
 	/*
@@ -1286,6 +1301,7 @@ boolean shouldClose () {
 	return result[0] != 0;
 }
 
+@Override
 public void stop () {
 	webFrameLoadDelegate.html = null;
 	long /*int*/[] result = new long /*int*/[1];

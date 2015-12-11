@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos (Google) - bug 468854 - Add a requestLayout method to Control
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
@@ -1609,6 +1610,10 @@ public void addFocusListener(FocusListener listener) {
  * must be invoked on it to specify that gesture events should be
  * sent instead of touch events.
  * </p>
+ * <p>
+ * <b>Warning</b>: This API is currently only implemented on Windows and Cocoa.
+ * SWT doesn't send Gesture or Touch events on GTK.
+ * </p>
  *
  * @param listener the listener which should be notified
  *
@@ -1873,6 +1878,10 @@ void addRelation (Control control) {
  * NOTE: You must also call <code>setTouchEnabled(true)</code> to
  * specify that touch events should be sent, which will cause gesture
  * events to not be sent.
+ * </p>
+ * <p>
+ * <b>Warning</b>: This API is currently only implemented on Windows and Cocoa.
+ * SWT doesn't send Gesture or Touch events on GTK.
  * </p>
  *
  * @param listener the listener which should be notified
@@ -2602,8 +2611,9 @@ public Image getBackgroundImage () {
 GdkColor getContextBackground () {
 	long /*int*/ fontHandle = fontHandle ();
 	long /*int*/ context = OS.gtk_widget_get_style_context (fontHandle);
+	int styleState = OS.gtk_widget_get_state_flags(handle);
 	GdkRGBA rgba = new GdkRGBA ();
-	OS.gtk_style_context_get_background_color (context, OS.GTK_STATE_FLAG_NORMAL, rgba);
+	OS.gtk_style_context_get_background_color (context, styleState, rgba);
 	if (rgba.alpha == 0) {
 		return display.COLOR_WIDGET_BACKGROUND;
 	}
@@ -2617,8 +2627,9 @@ GdkColor getContextBackground () {
 GdkColor getContextColor () {
 	long /*int*/ fontHandle = fontHandle ();
 	long /*int*/ context = OS.gtk_widget_get_style_context (fontHandle);
+	int styleState = OS.gtk_widget_get_state_flags(handle);
 	GdkRGBA rgba = new GdkRGBA ();
-	OS.gtk_style_context_get_color (context, OS.GTK_STATE_FLAG_NORMAL, rgba);
+	rgba = display.styleContextGetColor (context, styleState, rgba);
 	GdkColor color = new GdkColor ();
 	color.red = (short)(rgba.red * 0xFFFF);
 	color.green = (short)(rgba.green * 0xFFFF);
@@ -2753,7 +2764,8 @@ long /*int*/ getFontDescription () {
 	long /*int*/ fontHandle = fontHandle ();
 	if (OS.GTK3) {
 		long /*int*/ context = OS.gtk_widget_get_style_context (fontHandle);
-		return OS.gtk_style_context_get_font(context, OS.GTK_STATE_FLAG_NORMAL);
+		int styleState = OS.gtk_widget_get_state_flags(fontHandle);
+		return OS.gtk_style_context_get_font(context, styleState);
 	}
 	OS.gtk_widget_realize (fontHandle);
 	return OS.gtk_style_get_font_desc (OS.gtk_widget_get_style (fontHandle));
@@ -3013,12 +3025,13 @@ Point getThickness (long /*int*/ widget) {
 		int xthickness = 0, ythickness = 0;
 		GtkBorder tmp = new GtkBorder();
 		long /*int*/ context = OS.gtk_widget_get_style_context (widget);
+		int styleState = OS.gtk_widget_get_state_flags(widget);
 		OS.gtk_style_context_save (context);
 		OS.gtk_style_context_add_class (context, OS.GTK_STYLE_CLASS_FRAME);
-		OS.gtk_style_context_get_padding (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+		OS.gtk_style_context_get_padding (context, styleState, tmp);
 		xthickness += tmp.left;
 		ythickness += tmp.top;
-		OS.gtk_style_context_get_border (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+		OS.gtk_style_context_get_border (context, styleState, tmp);
 		xthickness += tmp.left;
 		ythickness += tmp.top;
 		OS.gtk_style_context_restore (context);
@@ -3721,6 +3734,25 @@ void register () {
 }
 
 /**
+ * Requests that this control and all of its ancestors be repositioned by
+ * their layouts at the earliest opportunity. This should be invoked after
+ * modifying the control in order to inform any dependent layouts of
+ * the change.
+ * <p>
+ * The control will not be repositioned synchronously. This method is
+ * fast-running and only marks the control for future participation in
+ * a deferred layout.
+ * <p>
+ * Invoking this method multiple times before the layout occurs is an
+ * inexpensive no-op.
+ *
+ * @since 3.105
+ */
+public void requestLayout () {
+	getShell ().layout (new Control[] {this}, SWT.DEFER);
+}
+
+/**
  * Causes the entire bounds of the receiver to be marked
  * as needing to be redrawn. The next time a paint request
  * is processed, the control will be completely painted,
@@ -4084,13 +4116,30 @@ void gtk_css_provider_load_from_css (long /*int*/ context, String css) {
 
 String gtk_rgba_to_css_string (GdkRGBA rgba) {
 	/*
-	 * In GdkRGBA, values are a double between 0-1.<br>
-     * In CSS, values are typically integers between 0-255.<br>
-     * I.e, note, there is a slight loss of precision.
-     * Thus setting/getting color *might* return slight differences.
+	 * In GdkRGBA, values are a double between 0-1.
+	 * In CSS, values are integers between 0-255 for r, g, and b.
+	 * Alpha is still a double between 0-1.
+	 * The final CSS format is: rgba(int, int, int, double)
+	 * Due to this, there is a slight loss of precision.
+	 * Setting/getting with CSS *might* yield slight differences.
 	 */
-	String color = "rgba(" + (int)(rgba.red * 255) + "," + (int)(rgba.green * 255) + "," + (int)(rgba.blue * 255) + "," + (int)(rgba.alpha * 255) + ")";
-	return color;
+	GdkRGBA toConvert;
+	if (rgba != null) {
+		toConvert = rgba;
+	} else {
+		// If we have a null RGBA, set it to the default COLOR_WIDGET_BACKGROUND.
+		GdkColor defaultGdkColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).handle; 
+		toConvert = new GdkRGBA ();
+		toConvert.alpha = 1.0;
+		toConvert.red = (defaultGdkColor.red & 0xFFFF) / (float)0xFFFF;
+		toConvert.green = (defaultGdkColor.green & 0xFFFF) / (float)0xFFFF;
+		toConvert.blue = (defaultGdkColor.blue & 0xFFFF) / (float)0xFFFF;
+	}
+	long /*int*/ str = OS.gdk_rgba_to_string (toConvert);
+	int length = OS.strlen (str);
+	byte [] buffer = new byte [length];
+	OS.memmove (buffer, str, length);
+	return new String (Converter.mbcsToWcs (null, buffer));
 }
 
 void setBackgroundColor (long /*int*/ handle, GdkColor color) {
@@ -4796,10 +4845,7 @@ boolean setTabItemFocus (boolean next) {
 /**
  * Sets the base text direction (a.k.a. "paragraph direction") of the receiver,
  * which must be one of the constants <code>SWT.LEFT_TO_RIGHT</code>,
- * <code>SWT.RIGHT_TO_LEFT</code>, or a bitwise disjunction
- * <code>SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT</code>. The latter stands for an
- * "auto" direction, which implies that a control containing text derives the
- * direction from the directionality of the first strong bidi character.
+ * <code>SWT.RIGHT_TO_LEFT</code>, or <code>SWT.AUTO_TEXT_DIRECTION</code>.
  * <p>
  * <code>setOrientation</code> would override this value with the text direction
  * that is consistent with the new orientation.
@@ -4810,16 +4856,17 @@ boolean setTabItemFocus (boolean next) {
  * </p>
  *
  * @param textDirection the base text direction style
- *
+ * 
  * @exception SWTException <ul>
  *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
- *
+ * 
  * @see SWT#LEFT_TO_RIGHT
  * @see SWT#RIGHT_TO_LEFT
+ * @see SWT#AUTO_TEXT_DIRECTION
  * @see SWT#FLIP_TEXT_DIRECTION
- *
+ * 
  * @since 3.102
  */
 public void setTextDirection(int textDirection) {
@@ -5587,7 +5634,8 @@ long /*int*/ windowProc (long /*int*/ handle, long /*int*/ arg0, long /*int*/ us
 				if (OS.GTK3 && !draw && (state & CANVAS) != 0) {
 					GdkRGBA rgba = new GdkRGBA();
 					long /*int*/ context = OS.gtk_widget_get_style_context (handle);
-					OS.gtk_style_context_get_background_color (context, OS.GTK_STATE_FLAG_NORMAL, rgba);
+					int styleState = OS.gtk_widget_get_state_flags(handle);
+					OS.gtk_style_context_get_background_color (context, styleState, rgba);
 					draw = rgba.alpha == 0;
 				}
 				if (draw) {

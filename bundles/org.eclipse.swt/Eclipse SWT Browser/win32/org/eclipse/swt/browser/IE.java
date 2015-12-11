@@ -15,13 +15,12 @@ import java.util.*;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.C;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.ole.win32.*;
 import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
 
-@SuppressWarnings("rawtypes")
 class IE extends WebBrowser {
 
 	OleFrame frame;
@@ -267,6 +266,7 @@ class IE extends WebBrowser {
 		NativePendingCookies = null;
 	}
 
+@Override
 public void create(Composite parent, int style) {
 	this.style = style;
 	frame = new OleFrame(browser, SWT.NONE);
@@ -404,9 +404,9 @@ public void create(Composite parent, int style) {
 					}
 					documents = null;
 
-					Enumeration elements = functions.elements ();
-					while (elements.hasMoreElements ()) {
-						((BrowserFunction)elements.nextElement ()).dispose (false);
+					Iterator<BrowserFunction> elements = functions.values().iterator ();
+					while (elements.hasNext ()) {
+						elements.next ().dispose (false);
 					}
 					functions = null;
 
@@ -658,9 +658,9 @@ public void create(Composite parent, int style) {
 								IE ie = (IE)browser.webBrowser;
 								if (ie.installFunctionsOnDocumentComplete) {
 									ie.installFunctionsOnDocumentComplete = false;
-									Enumeration elements = functions.elements ();
-									while (elements.hasMoreElements ()) {
-										BrowserFunction function = (BrowserFunction)elements.nextElement ();
+									Iterator<BrowserFunction> elements = functions.values().iterator ();
+									while (elements.hasNext ()) {
+										BrowserFunction function = elements.next ();
 										execute (function.functionString);
 									}
 								}
@@ -683,9 +683,9 @@ public void create(Composite parent, int style) {
 						* do this work.   
 						*/
 
-						Enumeration elements = functions.elements ();
-						while (elements.hasMoreElements ()) {
-							BrowserFunction function = (BrowserFunction)elements.nextElement ();
+						Iterator<BrowserFunction> elements = functions.values().iterator ();
+						while (elements.hasNext ()) {
+							BrowserFunction function = elements.next ();
 							execute (function.functionString);
 						}
 
@@ -784,9 +784,9 @@ public void create(Composite parent, int style) {
 							documents = new OleAutomation[0];
 
 							/* re-install registered functions */
-							Enumeration elements = functions.elements ();
-							while (elements.hasMoreElements ()) {
-								BrowserFunction function = (BrowserFunction)elements.nextElement ();
+							Iterator<BrowserFunction> elements = functions.values().iterator ();
+							while (elements.hasNext ()) {
+								BrowserFunction function = elements.next ();
 								execute (function.functionString);
 							}
 						}
@@ -1081,6 +1081,7 @@ public void create(Composite parent, int style) {
 	variant.dispose();
 }
 
+@Override
 public boolean back() {
 	if (!back) return false;
 	int[] rgdispid = auto.getIDsOfNames(new String[] { "GoBack" }); //$NON-NLS-1$
@@ -1088,6 +1089,7 @@ public boolean back() {
 	return pVarResult != null && pVarResult.getType() == OLE.VT_EMPTY;
 }
 
+@Override
 public boolean close() {
 	boolean result = true;
 	int[] rgdispid = auto.getIDsOfNames(new String[] {PROPERTY_DOCUMENT});
@@ -1168,6 +1170,7 @@ static Variant createSafeArray(String string) {
 	return new Variant(pVariant, (short)(OLE.VT_BYREF | OLE.VT_VARIANT));
 }
 
+@Override
 public boolean execute(String script) {
 	/*
 	 * Issue with IE: If the browser has not shown any content yet then
@@ -1225,6 +1228,7 @@ public boolean execute(String script) {
 	return true;
 }
 
+@Override
 public boolean forward() {
 	if (!forward) return false;
 	int[] rgdispid = auto.getIDsOfNames(new String[] { "GoForward" }); //$NON-NLS-1$
@@ -1232,14 +1236,17 @@ public boolean forward() {
 	return pVarResult != null && pVarResult.getType() == OLE.VT_EMPTY;
 }
 
+@Override
 public String getBrowserType () {
 	return "ie"; //$NON-NLS-1$
 }
 
+@Override
 String getDeleteFunctionString (String functionName) {
 	return "window." + functionName + "=undefined"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 
+@Override
 public String getText() {
 	/* get the document object */
 	int[] rgdispid = auto.getIDsOfNames(new String[] {PROPERTY_DOCUMENT});
@@ -1281,6 +1288,7 @@ public String getText() {
 	return result;
 }
 
+@Override
 public String getUrl() {
 	/*
 	 * If the url is "" then return ABOUT_BLANK in order to be consistent
@@ -1300,14 +1308,17 @@ String _getUrl() {
 	return result;
 }
 
+@Override
 public boolean isBackEnabled() {
 	return back;
 }
 
+@Override
 public boolean isForwardEnabled() {
 	return forward;
 }
 
+@Override
 public boolean isFocusControl () {
 	return site.isFocusControl() || frame.isFocusControl();
 }
@@ -1366,6 +1377,7 @@ boolean navigate(String url, String postData, String headers[], boolean silent) 
 	return result;
 }
 
+@Override
 public void refresh() {
 	uncRedirect = null;
 
@@ -1440,6 +1452,7 @@ void setHTML (String string) {
 	}
 }
 
+@Override
 public boolean setText(final String html, boolean trusted) {
 	/*
 	* If the browser is navigating to about:blank in response to its first
@@ -1520,6 +1533,7 @@ public boolean setText(final String html, boolean trusted) {
 	return result;
 }
 
+@Override
 public boolean setUrl(String url, String postData, String headers[]) {
 	html = uncRedirect = null;
 
@@ -1550,6 +1564,7 @@ public boolean setUrl(String url, String postData, String headers[]) {
 	return navigate(url, postData, headers, false);
 }
 
+@Override
 public void stop() {
 	/*
 	* If the browser has not completed its initial navigate to about:blank
@@ -1580,6 +1595,7 @@ public void stop() {
 	auto.invoke(rgdispid[0]);
 }
 
+@Override
 boolean translateMnemonics () {
 	return false;
 }

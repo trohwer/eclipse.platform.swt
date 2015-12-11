@@ -746,6 +746,7 @@ void createAlpha () {
 	}
 }
 
+@Override
 void destroy() {
 	if (memGC != null) memGC.dispose();
 	handle.release();
@@ -763,6 +764,7 @@ void destroy() {
  *
  * @see #hashCode
  */
+@Override
 public boolean equals (Object object) {
 	if (object == this) return true;
 	if (!(object instanceof Image)) return false;
@@ -1004,6 +1006,7 @@ NSBitmapImageRep getRepresentation () {
  *
  * @see #equals
  */
+@Override
 public int hashCode () {
 	if (imageDataProvider != null) {
 		return imageDataProvider.hashCode();
@@ -1392,6 +1395,7 @@ public void internal_dispose_GC (long /*int*/ hDC, GCData data) {
  *
  * @return <code>true</code> when the image is disposed and <code>false</code> otherwise
  */
+@Override
 public boolean isDisposed() {
 	return handle == null;
 }
@@ -1483,6 +1487,7 @@ public void setBackground(Color color) {
  *
  * @return a string representation of the receiver
  */
+@Override
 public String toString () {
 	if (isDisposed()) return "Image {*DISPOSED*}";
 	return "Image {" + handle + "}";

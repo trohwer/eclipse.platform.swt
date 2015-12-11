@@ -414,7 +414,7 @@ public void append (String string) {
 		OS.gtk_text_buffer_insert (bufferHandle, position, buffer, buffer.length);
 		OS.gtk_text_buffer_place_cursor (bufferHandle, position);
 		long /*int*/ mark = OS.gtk_text_buffer_get_insert (bufferHandle);
-		OS.gtk_text_view_scroll_mark_onscreen (handle, mark);
+		OS.gtk_text_view_scroll_to_mark (handle, mark, 0, true, 0, 0);
 	}
 	applySegments ();
 }
@@ -591,7 +591,8 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 		if (OS.GTK3) {
 			GtkBorder tmp = new GtkBorder();
 			long /*int*/ context = OS.gtk_widget_get_style_context (handle);
-			OS.gtk_style_context_get_padding (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+			int styleState = OS.gtk_widget_get_state_flags(handle);
+			OS.gtk_style_context_get_padding (context, styleState, tmp);
 			trim.x -= tmp.left;
 			trim.y -= tmp.top;
 			trim.width += tmp.left + tmp.right;
@@ -1664,7 +1665,7 @@ void drawMessage (long /*int*/ cr) {
 			if (OS.GTK3) {
 				long /*int*/ styleContext = OS.gtk_widget_get_style_context (handle);
 				GdkRGBA rgba = new GdkRGBA ();
-				OS.gtk_style_context_get_color (styleContext, OS.GTK_STATE_FLAG_INSENSITIVE, rgba);
+				rgba = display.styleContextGetColor (styleContext, OS.GTK_STATE_FLAG_INSENSITIVE, rgba);
 				textColor.red = (short)(rgba.red * 0xFFFF);
 				textColor.green = (short)(rgba.green * 0xFFFF);
 				textColor.blue = (short)(rgba.blue * 0xFFFF);
@@ -1947,7 +1948,7 @@ public void insert (String string) {
 		OS.gtk_text_buffer_insert (bufferHandle, start, buffer, buffer.length);
 		OS.gtk_text_buffer_place_cursor (bufferHandle, start);
 		long /*int*/ mark = OS.gtk_text_buffer_get_insert (bufferHandle);
-		OS.gtk_text_view_scroll_mark_onscreen (handle, mark);
+		OS.gtk_text_view_scroll_to_mark (handle, mark, 0, true, 0, 0);
 	}
 	applySegments ();
 }
@@ -2340,7 +2341,7 @@ public void setSelection (int start) {
 		OS.gtk_text_buffer_get_iter_at_offset (bufferHandle, startIter, start);
 		OS.gtk_text_buffer_place_cursor (bufferHandle, startIter);
 		long /*int*/ mark = OS.gtk_text_buffer_get_insert (bufferHandle);
-		OS.gtk_text_view_scroll_mark_onscreen (handle, mark);
+		OS.gtk_text_view_scroll_to_mark (handle, mark, 0, true, 0, 0);
 	}
 }
 
@@ -2563,7 +2564,7 @@ void setText (char [] text) {
 		OS.gtk_text_buffer_get_iter_at_offset (bufferHandle, position, 0);
 		OS.gtk_text_buffer_place_cursor (bufferHandle, position);
 		long /*int*/ mark = OS.gtk_text_buffer_get_insert (bufferHandle);
-		OS.gtk_text_view_scroll_mark_onscreen (handle, mark);
+		OS.gtk_text_view_scroll_to_mark (handle, mark, 0, true, 0, 0);
 		Arrays.fill (buffer, (byte) 0);
 	}
 	sendEvent (SWT.Modify);
@@ -2644,9 +2645,9 @@ public void showSelection () {
 	checkWidget ();
 	if ((style & SWT.SINGLE) != 0) return;
 	long /*int*/ mark = OS.gtk_text_buffer_get_selection_bound (bufferHandle);
-	OS.gtk_text_view_scroll_mark_onscreen (handle, mark);
+	OS.gtk_text_view_scroll_to_mark (handle, mark, 0, true, 0, 0);
 	mark = OS.gtk_text_buffer_get_insert (bufferHandle);
-	OS.gtk_text_view_scroll_mark_onscreen (handle, mark);
+	OS.gtk_text_view_scroll_to_mark (handle, mark, 0, true, 0, 0);
 }
 
 int translateOffset (int offset) {

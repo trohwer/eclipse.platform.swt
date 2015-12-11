@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.swt.browser;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
+import java.io.*;
+import java.util.*;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
@@ -120,6 +120,7 @@ class WebKit extends WebBrowser {
 		NativePendingCookies = null;
 	}
 
+@Override
 public void create (Composite parent, int style) {
 	if (delegateClass == 0) {
 		Class webKitClass = this.getClass();
@@ -253,9 +254,9 @@ public void create (Composite parent, int style) {
 					html = null;
 					lastHoveredLinkURL = lastNavigateURL = null;
 
-					Enumeration elements = functions.elements ();
-					while (elements.hasMoreElements ()) {
-						((BrowserFunction)elements.nextElement ()).dispose (false);
+					Iterator<BrowserFunction> elements = functions.values().iterator ();
+					while (elements.hasNext ()) {
+						elements.next ().dispose (false);
 					}
 					functions = null;
 
@@ -284,6 +285,7 @@ public void create (Composite parent, int style) {
 	}
 }
 
+@Override
 public boolean back() {
 	html = null;	
 	return webView.goBack();
@@ -442,6 +444,7 @@ static long /*int*/ webScriptNameForSelector (long /*int*/ aSelector) {
 	return 0;
 }
 
+@Override
 public boolean close () {
 	return close (true);
 }
@@ -471,6 +474,7 @@ boolean close (boolean showPrompters) {
 	return result.booleanValue ();
 }
 
+@Override
 public boolean execute (String script) {
 	WebFrame frame = webView.mainFrame();
 	long /*int*/ context = frame.globalContext();
@@ -496,15 +500,18 @@ public boolean execute (String script) {
 	return result != 0;
 }
 
+@Override
 public boolean forward () {
 	html = null;
 	return webView.goForward();
 }
 
+@Override
 public String getBrowserType () {
 	return "webkit"; //$NON-NLS-1$
 }
 
+@Override
 public String getText() {
 	WebFrame mainFrame = webView.mainFrame();
 	WebDataSource dataSource = mainFrame.dataSource();
@@ -516,6 +523,7 @@ public String getText() {
 	return source.getString();
 }
 
+@Override
 public String getUrl() {
 	/* WebKit auto-navigates to about:blank at startup */
 	if (url.length() == 0) return ABOUT_BLANK;
@@ -523,19 +531,23 @@ public String getUrl() {
 	return url;
 }
 
+@Override
 public boolean isBackEnabled() {
 	return webView.canGoBack();
 }
 
+@Override
 public boolean isForwardEnabled() {
 	return webView.canGoForward();
 }
 
+@Override
 public void refresh() {
 	html = null;
 	webView.reload(null);
 }
 
+@Override
 public boolean setText(String html, boolean trusted) {
 	/*
 	* If this.html is not null then the about:blank page is already being loaded,
@@ -553,6 +565,7 @@ public boolean setText(String html, boolean trusted) {
 	return true;
 }
 
+@Override
 public boolean setUrl(String url, String postData, String[] headers) {
 	html = null;
 	lastNavigateURL = url;
@@ -606,11 +619,13 @@ public boolean setUrl(String url, String postData, String[] headers) {
 	return true;
 }
 
+@Override
 public void stop() {
 	html = null;
 	webView.stopLoading(null);
 }
 
+@Override
 boolean translateMnemonics() {
 	return false;
 }
@@ -925,9 +940,9 @@ void webView_didCommitLoadForFrame(long /*int*/ sender, long /*int*/ frameID) {
 		if (url2.startsWith(ABOUT_BLANK) && html != null) return;
 
 		/* re-install registered functions */
-		Enumeration elements = functions.elements ();
-		while (elements.hasMoreElements ()) {
-			BrowserFunction function = (BrowserFunction)elements.nextElement ();
+		Iterator<BrowserFunction> elements = functions.values().iterator ();
+		while (elements.hasNext ()) {
+			BrowserFunction function = elements.next ();
 			execute (function.functionString);
 		}
 

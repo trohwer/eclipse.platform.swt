@@ -152,6 +152,7 @@ public final class TextLayout extends Resource {
 		width = ascent = descent = x = 0;
 		lineBreak = softBreak = false;		
 	}
+	@Override
 	public String toString () {
 		return "StyleItem {" + start + ", " + style + "}";
 	}
@@ -332,8 +333,13 @@ void computeRuns (GC gc) {
 			if (wrapEntireRun) {
 				run = allRuns[--i];
 				start = run.length;
-			} else 	if (start <= 0 && i == lineStart) {
-				if (lineWidth == wrapWidth && firstIndice > 0) {
+			} else if (start <= 0 && i == lineStart) {
+				/*
+				 * No soft-break or line-feed found. Avoid breaking a run at
+				 * the first character (firstStart == 0) unless it's the
+				 * only run available (firstIndice == lineStart). See bug 408833.
+				 */
+				if (firstStart == 0 && firstIndice > lineStart) {
 					i = firstIndice - 1;
 					run = allRuns[i];
 					start = run.length;
@@ -464,6 +470,7 @@ void computeRuns (GC gc) {
 	if (gc == null) device.internal_dispose_GC(hDC, null);	
 }
 
+@Override
 void destroy () {
 	freeRuns();
 	font = null;	
@@ -1813,7 +1820,7 @@ public int getLevel (int offset) {
 			return allRuns[i - 1].analysis.s.uBidiLevel;
 		}
 	}
-	return (textDirection & SWT.RIGHT_TO_LEFT) != 0 ? 1 : 0;
+	return (resolveTextDirection() & SWT.RIGHT_TO_LEFT) != 0 ? 1 : 0;
 }
 
 /**
@@ -2432,7 +2439,7 @@ String getSegmentsText() {
 	text.getChars(0, length, oldChars, 0);
 	char[] newChars = new char[length + nSegments];
 	int charCount = 0, segmentCount = 0;
-	char defaultSeparator = (textDirection & SWT.RIGHT_TO_LEFT) != 0 ? RTL_MARK : LTR_MARK;
+	char defaultSeparator = (resolveTextDirection() & SWT.RIGHT_TO_LEFT) != 0 ? RTL_MARK : LTR_MARK;
 	while (charCount < length) {
 		if (segmentCount < nSegments && charCount == segments[segmentCount]) {
 			char separator = segmentsChars != null && segmentsChars.length > segmentCount ? segmentsChars[segmentCount] : defaultSeparator;
@@ -2559,7 +2566,7 @@ public String getText () {
  */
 public int getTextDirection () {
 	checkLayout();
-	return textDirection;
+	return resolveTextDirection();
 }
 
 /**
@@ -2603,6 +2610,7 @@ public int getWrapIndent () {
  *
  * @return <code>true</code> when the text layout is disposed and <code>false</code> otherwise
  */
+@Override
 public boolean isDisposed () {
 	return device == null;
 }
@@ -2617,7 +2625,7 @@ StyleItem[] itemize () {
 	SCRIPT_STATE scriptState = new SCRIPT_STATE();
 	final int MAX_ITEM = length + 1;
 	
-	if ((textDirection & SWT.RIGHT_TO_LEFT) != 0) {
+	if ((resolveTextDirection() & SWT.RIGHT_TO_LEFT) != 0) {
 		scriptState.uBidiLevel = 1;
 		scriptState.fArabicNumContext = true;
 	}
@@ -2751,6 +2759,15 @@ StyleItem[] merge (long /*int*/ items, int itemCount) {
 		return result;
 	}
 	return runs;
+}
+
+/* 
+ *  Resolves text direction. If the nominal direction is LTR or RTL, no
+ *  resolution is needed; if the nominal direction is "auto", have BidiUtil
+ *  resolve it according to the first strong bidi character.  
+ */
+int resolveTextDirection () {
+	return textDirection == SWT.AUTO_TEXT_DIRECTION ? BidiUtil.resolveTextDirection (text) : textDirection;
 }
 
 /* 
@@ -3206,7 +3223,8 @@ public void setText (String text) {
 
 /**
  * Sets the text direction of the receiver, which must be one
- * of <code>SWT.LEFT_TO_RIGHT</code> or <code>SWT.RIGHT_TO_LEFT</code>.
+ * of <code>SWT.LEFT_TO_RIGHT</code>, <code>SWT.RIGHT_TO_LEFT</code>
+ * or <code>SWT.AUTO_TEXT_DIRECTION</code>.
  *
  * <p>
  * <b>Warning</b>: This API is currently only implemented on Windows.
@@ -3225,8 +3243,10 @@ public void setTextDirection (int textDirection) {
 	int mask = SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT;
 	textDirection &= mask;
 	if (textDirection == 0) return;
-	if ((textDirection & SWT.LEFT_TO_RIGHT) != 0) textDirection = SWT.LEFT_TO_RIGHT;
-	if (this.textDirection == textDirection) return;
+	if (textDirection != SWT.AUTO_TEXT_DIRECTION) {
+		if ((textDirection & SWT.LEFT_TO_RIGHT) != 0) textDirection = SWT.LEFT_TO_RIGHT;
+		if (this.textDirection == textDirection) return;
+	}
 	this.textDirection = textDirection;
 	freeRuns();
 }
@@ -3564,6 +3584,7 @@ int validadeOffset(int offset, int step) {
  *
  * @return a string representation of the receiver
  */
+@Override
 public String toString () {
 	if (isDisposed()) return "TextLayout {*DISPOSED*}";
 	return "TextLayout {}";
