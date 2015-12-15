@@ -898,14 +898,7 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
 	/* Refresh Image as per zoom level, if required. */
-	boolean isRefreshed = srcImage.refreshImageForZoom () || srcImage.autoScaled;
-	float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-	if (!isRefreshed) {
-		destWidth = (int)(destWidth * scaleFactor);
-		destHeight = (int)(destHeight * scaleFactor);
-		destX = (int)(destX * scaleFactor);
-		destY = (int)(destY * scaleFactor);
-	}
+	srcImage.refreshImageForZoom ();
 	int imgWidth, imgHeight;
 	if (OS.USE_CAIRO){
 	 	imgWidth = srcImage.width;
@@ -924,10 +917,6 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	if (simple) {
 		srcWidth = destWidth = imgWidth;
 		srcHeight = destHeight = imgHeight;
-		if (!isRefreshed) {
-			destWidth = (int)(destWidth * scaleFactor);
-			destHeight = (int)(destHeight * scaleFactor);
-		}
 	} else {
 		simple = srcX == 0 && srcY == 0 &&
  			srcWidth == destWidth && destWidth == imgWidth &&
@@ -1043,14 +1032,7 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 }
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
 	/* Refresh Image as per zoom level, if required. */
-	boolean isRefreshed = srcImage.refreshImageForZoom ();
-	float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-	if (!isRefreshed) {
-		destWidth = (int)(destWidth * scaleFactor);
-		destHeight = (int)(destHeight * scaleFactor);
-		destX = (int)(destX * scaleFactor);
-		destY = (int)(destY * scaleFactor);
-	}
+	srcImage.refreshImageForZoom ();
 
 	if (srcWidth == destWidth && srcHeight == destHeight) {
 		OS.gdk_draw_drawable(data.drawable, handle, srcImage.pixmap, srcX, srcY, destX, destY, destWidth, destHeight);
@@ -2884,7 +2866,12 @@ public int getLineStyle() {
  */
 public int getLineWidth() {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return (int)data.lineWidth;
+	float returnVal =  data.lineWidth;
+	if (this.getEnableAutoScaling ()) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+		returnVal = (int)(returnVal / scaleFactor);
+	}
+	return (int) returnVal;
 }
 
 /**
