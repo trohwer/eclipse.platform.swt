@@ -175,9 +175,15 @@ public final class Image extends Resource implements Drawable {
 	 * Attribute to cache current device zoom level
 	 */
 	int currentDeviceZoom = 100;
+	
+	/**
+	 * Attribute to hold Imagedata used to create this image
+	 */
+	ImageData initialData;
 
 Image(Device device) {
 	super(device);
+	initialData = this.getImageData();
 }
 
 /**
@@ -226,6 +232,7 @@ public Image(Device device, int width, int height) {
 	}
 	init(width, height);
 	init();
+	initialData = this.getImageData();
 }
 
 /**
@@ -268,6 +275,7 @@ public Image(Device device, Image srcImage, int flag) {
 	super(device);
 	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (srcImage.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	initialData = srcImage.getImageData();
 	switch (flag) {
 		case SWT.IMAGE_COPY:
 		case SWT.IMAGE_DISABLE:
@@ -557,8 +565,8 @@ public Image(Device device, Rectangle bounds) {
 	} else {
 		init(bounds.width, bounds.height);
 	}
-	init(bounds.width, bounds.height);
 	init();
+	initialData = this.getImageData();
 }
 
 /**
@@ -587,6 +595,7 @@ public Image(Device device, Rectangle bounds) {
 public Image(Device device, ImageData data) {
 	super(device);
 	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	initialData = data;
 	if (this.getEnableAutoScaling()) {
 		currentDeviceZoom = getDeviceZoom();
 		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
@@ -629,6 +638,7 @@ public Image(Device device, ImageData source, ImageData mask) {
 	super(device);
 	if (source == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (mask == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	initialData = source;
 	if (source.width != mask.width || source.height != mask.height) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
@@ -700,7 +710,8 @@ public Image(Device device, ImageData source, ImageData mask) {
  */
 public Image(Device device, InputStream stream) {
 	super(device);
-	init(new ImageData(stream));
+	initialData = new ImageData(stream);
+	init(initialData);
 	init();
 }
 
@@ -740,7 +751,12 @@ public Image(Device device, String filename) {
 	super(device);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	initNative(filename);
-	if (this.pixmap == 0 && this.surface == 0) init(new ImageData(filename));
+	if (this.pixmap == 0 && this.surface == 0) {
+		initialData = new ImageData(filename);
+		init(initialData);
+	} else {
+		initialData = this.getImageData();
+	}
 	init();
 }
 
@@ -784,10 +800,12 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 		if (this.pixmap == 0 && this.surface == 0) {
 			ImageData data = new ImageData(filename);
 			init(data);
+			initialData = data;
 		}
 	} else {
 		ImageData resizedData = DPIUtil.autoScaleImageFileName(filename, currentDeviceZoom);
 		init(resizedData);
+		initialData = resizedData;
 	}
 	init ();
 }
@@ -829,9 +847,11 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 	ImageData data =  DPIUtil.validateAndGetImageDataAtZoom(imageDataProvider, currentDeviceZoom, found);
 	if (found[0]) {
 		init (data);
+		initialData = data;
 	} else {		
 		ImageData resizedData = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
 		init (resizedData);
+		initialData = resizedData;
 	}
 	init ();
 }
@@ -1366,6 +1386,8 @@ public Rectangle getBounds(int zoom) {
  */
 public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	
+	if (initialData != null) return initialData;            
 
 	if (OS.USE_CAIRO) {
 		long /*int*/ surface = ImageList.convertSurface(this);
