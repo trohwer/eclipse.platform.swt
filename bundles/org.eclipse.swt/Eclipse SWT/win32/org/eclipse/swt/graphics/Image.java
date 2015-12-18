@@ -1436,23 +1436,12 @@ public Rectangle getBounds() {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
  * </ul>
-<<<<<<< HEAD
- */
-public Rectangle getBounds(int zoom) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	Rectangle bounds = getBounds();
-	if (bounds != null && zoom > 100) {
-		bounds.scale(zoom / 100f);
-=======
-<<<<<<< HEAD
- * @since 3.105
  */
 public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBounds();
 	if (bounds != null && zoom > 100) {
 		bounds = bounds.scale(zoom / 100f);
->>>>>>> branch 'slakkimsetti/NeonhiDpiWork' of ssh://slakkimsetti@git.eclipse.org/gitroot/platform/eclipse.platform.swt.git
 	}
 	return bounds;
 }
