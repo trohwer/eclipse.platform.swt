@@ -31,6 +31,7 @@
 	<property name="gitroot" value="silenio@dev.eclipse.org:/gitroot/platform/"/>
 	<property name="TAG" value="master"/>
 	<property name="tmphome" value="../../../tmp"/>
+	<property name="tmp_sha1_file" value="${tmphome}/build.sha1"/>
 
 	<property name="repo.src" value="../../../eclipse.platform.swt"/>
 	<property name="repo.bin" value="../../../eclipse.platform.swt.binaries"/>
@@ -40,7 +41,6 @@
 	<property name="src_gtk" value="${src_common} 'bundles/org.eclipse.swt/Eclipse SWT PI/gtk/library' 'bundles/org.eclipse.swt/Eclipse SWT AWT/gtk/library' 'bundles/org.eclipse.swt/Eclipse SWT OpenGL/glx/library' 'bundles/org.eclipse.swt/Eclipse SWT PI/cairo/library' 'bundles/org.eclipse.swt/Eclipse SWT Program/gnome/library' 'bundles/org.eclipse.swt/Eclipse SWT Program/cde/library' 'bundles/org.eclipse.swt/Eclipse SWT WebKit/gtk/library' "/>
 	<property name="src_cocoa" value="${src_common} 'bundles/org.eclipse.swt/Eclipse SWT PI/cocoa/library' 'bundles/org.eclipse.swt/Eclipse SWT AWT/cocoa/library'"/>
 	<property name="file_library_j2se" value="bundles/org.eclipse.swt/Eclipse SWT PI/common_j2se/org/eclipse/swt/internal/Library.java"/>
-	<property name="file_library_j2me" value="bundles/org.eclipse.swt/Eclipse SWT PI/common_j2me/org/eclipse/swt/internal/Library.java"/>
 	<property name="file_make_common" value="bundles/org.eclipse.swt/Eclipse SWT/common/library/make_common.mak"/>
 	<property name="file_version" value="bundles/org.eclipse.swt/Eclipse SWT/common/version.txt"/>
 	<property name="file_src_pom" value="bundles/org.eclipse.swt/pom.xml"/>
@@ -392,16 +392,15 @@
 	</target>
 
 	<target name="check_source_sha1_file" unless="source_changed">
-		<property name="sha1_file" value="${tmphome}/build.sha1"/>
 		<condition property="source_changed">
 			<not>
-				<available file="${sha1_file}" type="file"/>
+				<available file="${tmp_sha1_file}" type="file"/>
 			</not>
 		</condition>
 	</target>
 
 	<target name="check_source_changed" depends="check_source_sha1_file" unless="source_changed">
-		<loadproperties srcfile="${sha1_file}"/>
+		<loadproperties srcfile="${tmp_sha1_file}"/>
 
 		<!-- Check for changes -->
 		<exec dir="${repo.src}" executable="git" failonerror="true" outputproperty="diffs">
@@ -474,7 +473,7 @@
 		<exec dir="${repo.src}" executable="git" failonerror="true" outputproperty="HEAD_TAG">
 			<arg line="rev-list ${TAG} -1"/>
 		</exec>
-		<propertyfile file="${sha1_file}">
+		<propertyfile file="${tmp_sha1_file}">
 			<entry key="SHA1" value="${HEAD_TAG}"/>
 		</propertyfile>
 
@@ -538,7 +537,7 @@
 
 	<target name="commit_sources" depends="get_version" if="natives_changed">
 		<exec dir="${repo.src}" executable="git" failonerror="true">
-			<arg line="add '${file_library_j2se}' '${file_library_j2me}' '${file_version}' '${file_make_common}' "/>
+			<arg line="add '${file_library_j2se}' '${file_version}' '${file_make_common}' "/>
 		</exec>
 		<exec dir="${repo.src}" executable="git" failonerror="true">
 			<arg line="status"/>
@@ -559,9 +558,7 @@
 	<target name="increment_version_impl">
 		<echo>Incrementing version from ${swt_version} to ${new_version}...</echo>
 		<replace file="${repo.src}/${file_library_j2se}" token="MAJOR_VERSION = ${maj_ver}" value="MAJOR_VERSION = ${new_maj_ver}"/>
-		<replace file="${repo.src}/${file_library_j2me}" token="MAJOR_VERSION = ${maj_ver}" value="MAJOR_VERSION = ${new_maj_ver}"/>
 		<replace file="${repo.src}/${file_library_j2se}" token="MINOR_VERSION = ${min_ver}" value="MINOR_VERSION = ${new_min_ver}"/>
-		<replace file="${repo.src}/${file_library_j2me}" token="MINOR_VERSION = ${min_ver}" value="MINOR_VERSION = ${new_min_ver}"/>
 		<replace file="${repo.src}/${file_version}" token="version ${maj_ver}.${min_ver}" value="version ${new_maj_ver}.${new_min_ver}"/>
 		<replace file="${repo.src}/${file_make_common}" token="min_ver=${min_ver}" value="min_ver=${new_min_ver}"/>
 		<replace file="${repo.src}/${file_make_common}" token="maj_ver=${maj_ver}" value="maj_ver=${new_maj_ver}"/>
@@ -742,7 +739,7 @@
 	Note that the build.sha1 file is updated even if the libraries are not built to ensure there is a change
 	in the GIT repo (see bug#407624).
 	-->
-	<target name="build_fragment" depends="init_fragment,check_sha1_changed">
+	<target name="build_fragment" depends="init_fragment,check_source_changed" if="source_changed">
 		<!-- Build natives -->
 		<antcall target="build_fragment_libraries"/>
 
@@ -752,13 +749,14 @@
 		</exec>
 		<echo file="${fragment_dir}/build.sha1" append="false">SHA1=${HEAD_TAG}</echo>
 	</target>
-	<target name="build_fragment_libraries" if="natives_changed">
+	<target name="build_fragment_libraries" depends="check_sha1_changed" if="natives_changed">
 		<antcall target="build_libraries"/>
 	</target>
 
 	<target name="commit_poms_and_binaries">
 		<antcall target="commit_poms"/>
 		<antcall target="commit_binaries"/>
+		<antcall target="update_sha1_file"/>
 	</target>
 	
 	<target name="commit_poms">
@@ -768,6 +766,14 @@
 		<exec dir="${repo.bin}" executable="git" failonerror="true">
 			<arg line="add '${file_bin_parent_pom}'"/>
 		</exec>
+	</target>
+	
+	<target name="update_sha1_file">
+		<!-- Update build.sha1 file -->
+		<exec dir="${repo.src}" executable="git" failonerror="true" outputproperty="HEAD_TAG">
+			<arg line="rev-list ${TAG} -1"/>
+		</exec>
+		<echo file="${tmp_sha1_file}" append="false">SHA1=${HEAD_TAG}</echo>
 	</target>
 	
 	<!-- Params: fragment, swt_version -->
@@ -830,16 +836,16 @@
 	</target>
 
 	<target name="git_commit" if="commit_changes">
-		<exec dir="${repo.bin}" executable="git" failonerror="true">
+		<exec dir="${repo.src}" executable="git" failonerror="true">
 			<arg line="status"/>
 		</exec>
-		<exec dir="${repo.bin}" executable="git" failonerror="true">
+		<exec dir="${repo.src}" executable="git" failonerror="true">
 			<arg line="commit -m 'v${swt_version}'"/>
 		</exec>
-		<exec dir="${repo.src}" executable="git" failonerror="true">
+		<exec dir="${repo.bin}" executable="git" failonerror="true">
 			<arg line="status"/>
 		</exec>
-		<exec dir="${repo.src}" executable="git" failonerror="true">
+		<exec dir="${repo.bin}" executable="git" failonerror="true">
 			<arg line="commit -m 'v${swt_version}'"/>
 		</exec>
 	</target>

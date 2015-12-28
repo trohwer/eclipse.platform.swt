@@ -452,7 +452,7 @@ public FontData[] getFontList (String faceName, boolean scalable) {
 			byte[] buffer = new byte[length];
 			OS.memmove(buffer, familyName, length);
 			String name = new String(Converter.mbcsToWcs(null, buffer));
-			match = Compatibility.equalsIgnoreCase(faceName, name);
+			match = faceName.equalsIgnoreCase(name);
 		}
 		if (match) {
 		    OS.pango_font_family_list_faces(family[0], faces, n_faces);
@@ -683,6 +683,21 @@ protected void init () {
 		OS.pango_font_description_set_size(defaultFont, size * dpi.y / screenDPI.y);
 	}
 	systemFont = Font.gtk_new (this, defaultFont);
+
+	/* Load CSS to remove dotted lines from GtkScrolledWindows. See Bug 464705. */
+	if (OS.GTK3) {
+		long /*int*/ screen = OS.gdk_screen_get_default();
+		long /*int*/ provider = OS.gtk_css_provider_new();
+		if (screen != 0 && provider != 0) {
+			String css =
+				"GtkToolbar {padding-top: 4px; padding-bottom: 4px;}\n"
+				+ "GtkToolbar GtkButton {padding: 2px 4px 3px 4px;}\n"
+				+ ".undershoot.top, .undershoot.right, .undershoot.bottom, .undershoot.left {background-image: none;}\n"
+				+ "GtkToolbar GtkMenuButton {padding: 1px 0px 1px 0px;}\n";
+			OS.gtk_style_context_add_provider_for_screen (screen, provider, OS.GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+			OS.gtk_css_provider_load_from_data (provider, Converter.wcsToMbcs (null, css, true), -1, null);
+		}
+	}
 }
 
 /**
