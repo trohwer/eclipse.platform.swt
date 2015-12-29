@@ -1447,9 +1447,10 @@ public void drawPolygon(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
-	if (this.getEnableAutoScaling ()) {
-		scalePointArray(pointArray);
-	}
+//	int[] pointArray1 = pointArray;
+//	if (this.getEnableAutoScaling ()) {
+//		pointArray1 = scalePointArray(pointArray);
+//	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, true);
@@ -1480,9 +1481,10 @@ public void drawPolyline(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
-	if (this.getEnableAutoScaling ()) {
-		scalePointArray(pointArray);
-	}
+//	int[] pointArray1 = pointArray;
+//	if (this.getEnableAutoScaling ()) {
+//		pointArray1 = scalePointArray(pointArray);
+//	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, false);
@@ -1492,12 +1494,14 @@ public void drawPolyline(int[] pointArray) {
 	OS.gdk_draw_lines(data.drawable, handle, pointArray, pointArray.length / 2);
 }
 
-private void scalePointArray(int[] pointArray) {
+private int[] scalePointArray(int[] pointArray) {
 	float scaleFactor = ((float)this.getDeviceZoom()) / 100;
 	int length = pointArray.length;
+	int[] returnArray = new int[length];
 	for (int i = 0; i < length; i++){
-		pointArray [i] = (int) (scaleFactor * pointArray[i]);
+		returnArray [i] = (int) (scaleFactor * pointArray[i]);
 	}
+	return returnArray;
 }
 
 void drawPolyline(long /*int*/ cairo, int[] pointArray, boolean close) {
@@ -2154,9 +2158,10 @@ public void fillPolygon(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FILL);
-	if (this.getEnableAutoScaling ()) {
-		scalePointArray(pointArray);
-	}
+//	int[] pointArray1 = pointArray;
+//	if (this.getEnableAutoScaling ()) {
+//		pointArray1 = scalePointArray(pointArray);
+//	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, true);

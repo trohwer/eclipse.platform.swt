@@ -183,7 +183,6 @@ public final class Image extends Resource implements Drawable {
 
 Image(Device device) {
 	super(device);
-	initialData = this.getImageData();
 }
 
 /**
@@ -232,7 +231,6 @@ public Image(Device device, int width, int height) {
 	}
 	init(width, height);
 	init();
-	initialData = this.getImageData();
 }
 
 /**
@@ -566,7 +564,6 @@ public Image(Device device, Rectangle bounds) {
 		init(bounds.width, bounds.height);
 	}
 	init();
-	initialData = this.getImageData();
 }
 
 /**
@@ -1332,8 +1329,9 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	float scaleFactor = (100f / currentDeviceZoom);
 	if (width != -1 && height != -1) {
-		return new Rectangle(0, 0, width, height);
+		return new Rectangle(0, 0, width, height).scale(scaleFactor);
 	}
 	int[] w = new int[1]; int[] h = new int[1];
 	if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
@@ -1341,7 +1339,7 @@ public Rectangle getBounds() {
 	} else {
 		OS.gdk_drawable_get_size(pixmap, w, h);
 	}
-	return new Rectangle(0, 0, width = w[0], height = h[0]);
+	return new Rectangle(0, 0, width = w[0], height = h[0]).scale(scaleFactor);
 }
 
 /**
@@ -1364,8 +1362,8 @@ public Rectangle getBounds() {
 public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBounds();
-	if (bounds != null) {
-		bounds = bounds.scale(((float)zoom) / currentDeviceZoom);
+	if (bounds != null && zoom > 100) {
+		bounds = bounds.scale(zoom / 100f);
 	}
 	return bounds;
 }
@@ -1387,8 +1385,9 @@ public Rectangle getBounds(int zoom) {
 public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	
-	if (initialData != null) return initialData;            
-
+	if (initialData != null) return initialData;
+	float scaleFactor = ((float) currentDeviceZoom)/100;
+	
 	if (OS.USE_CAIRO) {
 		long /*int*/ surface = ImageList.convertSurface(this);
 		int format = Cairo.cairo_image_surface_get_format(surface);
@@ -1438,7 +1437,7 @@ public ImageData getImageData() {
 			}
 		}
 		Cairo.cairo_surface_destroy(surface);
-		return data;
+		return data.scaledTo((int)(data.width/scaleFactor), (int)(data.height/scaleFactor));
 	}
 	int[] w = new int[1], h = new int[1];
 	if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
@@ -1495,7 +1494,7 @@ public ImageData getImageData() {
 		data.alphaData = new byte[alphaData.length];
 		System.arraycopy(alphaData, 0, data.alphaData, 0, alphaData.length);
 	}
-	return data;
+	return data.scaledTo((int)(data.width/scaleFactor), (int)(data.height/scaleFactor));
 }
 
 /**

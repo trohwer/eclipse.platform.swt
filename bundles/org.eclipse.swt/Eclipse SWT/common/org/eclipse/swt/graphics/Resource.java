@@ -90,7 +90,7 @@ public Device getDevice() {
  * @since 3.105
  * 
  */
-boolean getEnableAutoScaling () {
+public boolean getEnableAutoScaling () {
 	return device.getEnableAutoScaling();
 }
 /**
