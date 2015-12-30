@@ -1488,8 +1488,8 @@ public void setImage (int index, Image image) {
 		OS.gtk_cell_renderer_get_fixed_size (pixbufRenderer, currentWidth, currentHeight);
 		if (!parent.pixbufSizeSet) {
 			if (image != null) {
-				int iWidth = image.getBounds ().width;
-				int iHeight = image.getBounds ().height;
+				int iWidth = image.getBounds (image.getDeviceZoom()).width;
+				int iHeight = image.getBounds (image.getDeviceZoom()).height;
 				if (iWidth > currentWidth [0] || iHeight > currentHeight [0]) {
 					OS.gtk_cell_renderer_set_fixed_size (pixbufRenderer, iWidth, iHeight);
 					parent.pixbufSizeSet = true;

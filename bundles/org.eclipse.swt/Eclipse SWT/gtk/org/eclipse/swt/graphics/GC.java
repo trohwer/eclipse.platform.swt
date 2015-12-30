@@ -1811,10 +1811,15 @@ public void drawText(String string, int x, int y, boolean isTransparent) {
  */
 public void drawText (String string, int x, int y, int flags) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-//	data.image.autoScaled = true;
 
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (string.length() == 0) return;
+//	if (getEnableAutoScaling()) {
+//		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
+//		x = (int)(x * scaleFactor);
+//		y = (int)(y * scaleFactor);
+//	}
+
 	long /*int*/ cairo = data.cairo;
 	setString(string, flags);
 	if (cairo != 0) {
@@ -2158,10 +2163,6 @@ public void fillPolygon(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FILL);
-//	int[] pointArray1 = pointArray;
-//	if (this.getEnableAutoScaling ()) {
-//		pointArray1 = scalePointArray(pointArray);
-//	}
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, pointArray, true);

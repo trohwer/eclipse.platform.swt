@@ -707,8 +707,13 @@ public Image(Device device, ImageData source, ImageData mask) {
  */
 public Image(Device device, InputStream stream) {
 	super(device);
-	initialData = new ImageData(stream);
-	init(initialData);
+	ImageData data = new ImageData(stream);
+	initialData = data;
+	if (this.getEnableAutoScaling()) {
+		currentDeviceZoom = getDeviceZoom();
+		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+	}	;
+	init(data);
 	init();
 }
 
@@ -747,13 +752,22 @@ public Image(Device device, InputStream stream) {
 public Image(Device device, String filename) {
 	super(device);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	initNative(filename);
-	if (this.pixmap == 0 && this.surface == 0) {
-		initialData = new ImageData(filename);
-		init(initialData);
-	} else {
-		initialData = this.getImageData();
+	
+	ImageData data = new ImageData(filename);
+	initialData = data;
+	if (this.getEnableAutoScaling()) {
+		currentDeviceZoom = getDeviceZoom();
+		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
 	}
+	init(data);
+
+//	initNative(filename);
+//	if (this.pixmap == 0 && this.surface == 0) {
+//		initialData = new ImageData(filename);
+//		init(initialData);
+//	} else {
+//		initialData = this.getImageData();
+//	}
 	init();
 }
 
