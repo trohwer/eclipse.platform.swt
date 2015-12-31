@@ -3459,13 +3459,7 @@ void setClipping(long /*int*/ clipRgn) {
  */
 public void setClipping(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-		width = (int)(width * scaleFactor);
-		height = (int)(height * scaleFactor);
-		x = (int)(x * scaleFactor);
-		y = (int)(y * scaleFactor);
-	}
+
 	if (width < 0) {
 		x = x + width;
 		width = -width;
