@@ -1343,9 +1343,8 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	float scaleFactor = (100f / currentDeviceZoom);
 	if (width != -1 && height != -1) {
-		return new Rectangle(0, 0, width, height).scale(scaleFactor);
+		return new Rectangle(0, 0, width, height);
 	}
 	int[] w = new int[1]; int[] h = new int[1];
 	if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
@@ -1353,7 +1352,7 @@ public Rectangle getBounds() {
 	} else {
 		OS.gdk_drawable_get_size(pixmap, w, h);
 	}
-	return new Rectangle(0, 0, width = w[0], height = h[0]).scale(scaleFactor);
+	return new Rectangle(0, 0, width = w[0], height = h[0]);
 }
 
 /**
@@ -1376,8 +1375,8 @@ public Rectangle getBounds() {
 public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBounds();
-	if (bounds != null && zoom > 100) {
-		bounds = bounds.scale(zoom / 100f);
+	if (bounds != null) {
+		bounds = bounds.scale(zoom / currentDeviceZoom);
 	}
 	return bounds;
 }
