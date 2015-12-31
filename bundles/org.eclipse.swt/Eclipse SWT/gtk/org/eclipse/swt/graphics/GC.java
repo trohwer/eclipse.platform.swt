@@ -1494,16 +1494,6 @@ public void drawPolyline(int[] pointArray) {
 	OS.gdk_draw_lines(data.drawable, handle, pointArray, pointArray.length / 2);
 }
 
-private int[] scalePointArray(int[] pointArray) {
-	float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-	int length = pointArray.length;
-	int[] returnArray = new int[length];
-	for (int i = 0; i < length; i++){
-		returnArray [i] = (int) (scaleFactor * pointArray[i]);
-	}
-	return returnArray;
-}
-
 void drawPolyline(long /*int*/ cairo, int[] pointArray, boolean close) {
 	int count = pointArray.length / 2;
 	if (count == 0) return;
@@ -2189,6 +2179,8 @@ public void fillPolygon(int[] pointArray) {
  */
 public void fillRectangle(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	checkGC(FILL);
+	
 	if (this.getEnableAutoScaling ()) {
 		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
 		width = (int)(width * scaleFactor);
@@ -2196,6 +2188,27 @@ public void fillRectangle(int x, int y, int width, int height) {
 		x = (int)(x * scaleFactor);
 		y = (int)(y * scaleFactor);
 	}
+	fillRectangleActual (x, y, width, height);
+}
+
+/**
+ * Fills the interior of the rectangle specified by the arguments,
+ * using the receiver's background color.
+ *
+ * @param x the x coordinate of the rectangle to be filled
+ * @param y the y coordinate of the rectangle to be filled
+ * @param width the width of the rectangle to be filled
+ * @param height the height of the rectangle to be filled
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawRectangle(int, int, int, int)
+ * @since 3.105
+ */
+public void fillRectangleActual(int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 	if (width < 0) {
 		x = x + width;

@@ -465,7 +465,7 @@ public void drawBackground (GC gc, int x, int y, int width, int height, int offs
 			}
 		}
 	} else {
-		gc.fillRectangle (x, y, width, height);
+		gc.fillRectangleActual (x, y, width, height);
 	}
 }
 
