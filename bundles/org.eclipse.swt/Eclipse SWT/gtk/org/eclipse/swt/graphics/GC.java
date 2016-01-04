@@ -1374,7 +1374,6 @@ public void drawOval(int x, int y, int width, int height) {
  * @since 3.1
  */
 public void drawPath(Path path) {
-	//TODO: check this function on hidpi
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (path == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (path.handle == 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -2116,7 +2115,6 @@ public void fillOval(int x, int y, int width, int height) {
  * @since 3.1
  */
 public void fillPath (Path path) {
-	//TODO: check this function on hidpi
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (path == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (path.handle == 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -2571,14 +2569,7 @@ public Rectangle getClipping() {
 		width = rect.width;
 		height = rect.height;
 	}
-	Rectangle rect = new Rectangle(x, y, width, height);
-	if (getEnableAutoScaling()) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-		return rect.scale(1/scaleFactor);
-	} else {
-		return rect;
-
-	}
+	return new Rectangle(x, y, width, height);
 }
 
 /**
@@ -3521,7 +3512,6 @@ public void setClipping(int x, int y, int width, int height) {
 public void setClipping(Path path) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (path != null && path.isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	//TODO: check this function on hidpi
 	setClipping(0);
 	if (path != null) {
 		initCairo();
@@ -3768,7 +3758,6 @@ public void setLineAttributes(LineAttributes attributes) {
 	if (lineWidth != data.lineWidth) {
 		mask |= LINE_WIDTH | DRAW_OFFSET;
 	}
-	//TODO: check this function on hidpi
 	int lineStyle = attributes.style;
 	if (lineStyle != data.lineStyle) {
 		mask |= LINE_STYLE;
