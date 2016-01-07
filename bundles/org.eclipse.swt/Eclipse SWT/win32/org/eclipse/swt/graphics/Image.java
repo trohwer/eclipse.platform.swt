@@ -465,7 +465,7 @@ public Image(Device device, Rectangle bounds) {
 	if (getEnableAutoScaling ()) {
 		currentDeviceZoom = getDeviceZoom();
 		float scaleFactor = ((float)currentDeviceZoom) / 100f;
-		Rectangle bounds1 = bounds.scale(scaleFactor);
+		Rectangle bounds1 = DPIUtil.scale(bounds, scaleFactor);
 		init(bounds1.width, bounds1.height);
 	} else {
 		init(bounds.width, bounds.height);
@@ -1382,7 +1382,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the image's bounds at 100% zoom.
+ * @return a rectangle specifying the currently used image's bounds.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -1391,18 +1391,17 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	float scaleFactor = (100f / currentDeviceZoom);
 	if (width != -1 && height != -1) {
-		return new Rectangle(0, 0, width, height).scale(scaleFactor);
+		return new Rectangle(0, 0, width, height);
 	}
 	switch (type) {
 		case SWT.BITMAP:
 			BITMAP bm = new BITMAP();
 			OS.GetObject(handle, BITMAP.sizeof, bm);
-			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight).scale(scaleFactor);
+			return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
 		case SWT.ICON:
 			if (OS.IsWinCE) {
-				return new Rectangle(0, 0, width = data.width, height = data.height).scale(scaleFactor);
+				return new Rectangle(0, 0, width = data.width, height = data.height);
 			} else {
 				ICONINFO info = new ICONINFO();
 				OS.GetIconInfo(handle, info);
@@ -1413,7 +1412,7 @@ public Rectangle getBounds() {
 				if (hBitmap == info.hbmMask) bm.bmHeight /= 2;
 				if (info.hbmColor != 0) OS.DeleteObject(info.hbmColor);
 				if (info.hbmMask != 0) OS.DeleteObject(info.hbmMask);
-				return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight).scale(scaleFactor);
+				return new Rectangle(0, 0, width = bm.bmWidth, height = bm.bmHeight);
 			}
 		default:
 			SWT.error(SWT.ERROR_INVALID_IMAGE);
@@ -1440,8 +1439,9 @@ public Rectangle getBounds() {
 public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBounds();
-	if (bounds != null && zoom > 100) {
-		bounds = bounds.scale(zoom / 100f);
+	if (bounds != null && zoom != currentDeviceZoom) {
+		float scaleFactor = (float)zoom / (float)currentDeviceZoom;
+		bounds = DPIUtil.scale(bounds, scaleFactor);
 	}
 	return bounds;
 }
@@ -1451,7 +1451,8 @@ public Rectangle getBounds(int zoom) {
  * Modifications made to this <code>ImageData</code> will not
  * affect the Image.
  *
- * @return an <code>ImageData</code> containing the image's data and attributes
+ * @return an <code>ImageData</code> containing the image's data and
+ *         attributes at current zoom level.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -1791,6 +1792,32 @@ public ImageData getImageData() {
 			SWT.error(SWT.ERROR_INVALID_IMAGE);
 			return null;
 	}
+}
+
+/**
+ * Returns an <code>ImageData</code> for specified zoom, based on the receiver
+ * Modifications made to this <code>ImageData</code> will not affect the
+ * Image.
+ *
+ * @param zoom
+ *            The zoom level in % of the standard resolution (which is 1
+ *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
+ *            150, or 200.
+ * @return an <code>ImageData</code> containing the image's data and
+ *         attributes at specified zoom if present else null is returned.
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
+ * 
+ * @since 3.105
+ */
+public ImageData getImageData (int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	return DPIUtil.getImageData (this, zoom);
 }
 
 /**

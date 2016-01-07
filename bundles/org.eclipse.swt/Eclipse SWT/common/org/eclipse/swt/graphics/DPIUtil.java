@@ -92,5 +92,48 @@ class DPIUtil {
 		ImageData data = new ImageData(filename);
 		return autoScaleImageData(data, deviceZoom);
 	}
-
+	
+	/**
+	 * Returns a new rectangle as per the scaleFactor.
+	 */
+	static Rectangle scale(Rectangle rect, float scaleFactor) {
+		Rectangle returnRect = new Rectangle (0,0,0,0);
+		returnRect.x = (int) (rect.x * scaleFactor);
+		returnRect.y = (int) (rect.y * scaleFactor);
+		returnRect.width = (int) (rect.width * scaleFactor);
+		returnRect.height = (int) (rect.height * scaleFactor);
+		return returnRect;
+	}
+	
+	/**
+	 * Returns an <code>ImageData</code> for specified zoom.
+	 */
+	static ImageData getImageData (Image image, int zoom) {
+		if (image.currentDeviceZoom == zoom) return image.getImageData();
+		ImageData imageData = null;
+		if (image.imageDataProvider != null) {
+			boolean[] found = new boolean[1];
+			imageData = DPIUtil.validateAndGetImageDataAtZoom (image.imageDataProvider, zoom, found);
+			if (!found[0]) {
+				imageData = DPIUtil.autoScaleImageData(imageData, zoom);
+			}
+		}
+		else if (image.imageFileNameProvider != null) {
+			boolean[] found = new boolean[1];
+			String filename = DPIUtil.validateAndGetImagePathAtZoom (image.imageFileNameProvider, zoom, found);
+			if (!found[0]) {
+				imageData = DPIUtil.autoScaleImageFileName(filename, zoom);
+			}
+			else {
+				imageData = new ImageData (filename);
+			}
+		}
+		else {
+			/* Get ImageData at currentZoom and scale it to specified zoom. */
+			imageData = image.getImageData();
+			float scaleFactor = (float)zoom / (float)image.currentDeviceZoom;
+			imageData.scaledTo((int)(imageData.width * scaleFactor), (int)(imageData.height * scaleFactor));
+		}
+		return imageData;
+	}
 }

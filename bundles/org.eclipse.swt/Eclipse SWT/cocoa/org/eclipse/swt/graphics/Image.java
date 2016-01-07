@@ -811,7 +811,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the image's bounds at 100% zoom.
+ * @return a rectangle specifying the currently used image's bounds.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -853,7 +853,8 @@ public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBounds();
 	if (bounds != null && zoom > 100) {
-		bounds.scale(zoom / 100f);
+		float scaleFactor = (float)zoom / 100f;
+		bounds = DPIUtil.scale(bounds, scaleFactor);
 	}
 	return bounds;
 }
@@ -941,6 +942,32 @@ public ImageData getImageData() {
 	} finally {
 		if (pool != null) pool.release();
 	}
+}
+
+/**
+ * Returns an <code>ImageData</code> for specified zoom, based on the receiver
+ * Modifications made to this <code>ImageData</code> will not affect the
+ * Image.
+ *
+ * @param zoom
+ *            The zoom level in % of the standard resolution (which is 1
+ *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
+ *            150, or 200.
+ * @return an <code>ImageData</code> containing the image's data and
+ *         attributes at specified zoom if present else null is returned.
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
+ * 
+ * @since 3.105
+ */
+public ImageData getImageData (int zoom) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	return DPIUtil.getImageData (this, zoom);
 }
 
 /**	 

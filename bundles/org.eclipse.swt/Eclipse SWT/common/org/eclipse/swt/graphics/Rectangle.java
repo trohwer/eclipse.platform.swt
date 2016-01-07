@@ -305,22 +305,6 @@ public boolean isEmpty () {
 }
 
 /**
- * Returns updated rectangle as per the scaleFactor.
- * 
- * @param scaleFactor as a float value.
- * @return Rectangle instance updated as per scaleFactor.
- * @since 3.105
- */
-public Rectangle scale(float scaleFactor) {
-	Rectangle returnRect = new Rectangle (0,0,0,0);
-	returnRect.x = (int) (x * scaleFactor);
-	returnRect.y = (int) (y * scaleFactor);
-	returnRect.width = (int) (width * scaleFactor);
-	returnRect.height = (int) (height * scaleFactor);
-	return returnRect;
-}
-
-/**
  * Returns a string containing a concise, human-readable
  * description of the receiver.
  *
