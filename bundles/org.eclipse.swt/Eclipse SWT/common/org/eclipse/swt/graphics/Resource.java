@@ -41,7 +41,6 @@ public abstract class Resource {
 	 * the device where this resource was created
 	 */
 	Device device;
-	boolean autoScaled = false;
 
 public Resource() {
 }
@@ -124,11 +123,4 @@ public int getDeviceZoom () {
 	return DPIUtil.mapDPIToZoom ( device._getDPIx ());
 }
 
-boolean getAutoscaled () {
-	return autoScaled;
-}
-
-void setAutoscaled (boolean value) {
-	autoScaled = value;
-}
 }

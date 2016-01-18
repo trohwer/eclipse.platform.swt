@@ -12,8 +12,9 @@ package org.eclipse.swt.graphics;
 
 
 import java.io.*;
+
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.CloneableCompatibility;
+import org.eclipse.swt.internal.*;
 
 /**
  * Instances of this class are device-independent descriptions
@@ -206,6 +207,12 @@ public final class ImageData implements CloneableCompatibility {
 	 * Delay Time value).
 	 */
 	public int delayTime;
+
+	/**
+	 * Variable to let the client know whether the image is already scaled
+	 * @since 3.105
+	 */
+	public boolean scaled = false;
 
 	/**
 	 * Arbitrary channel width data to 8-bit conversion table.

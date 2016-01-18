@@ -175,6 +175,8 @@ public final class Image extends Resource implements Drawable {
 	 * Attribute to cache current device zoom level
 	 */
 	int currentDeviceZoom = 100;
+
+	boolean autoScaled = false;
 	
 Image(Device device) {
 	super(device);
@@ -222,7 +224,7 @@ public Image(Device device, int width, int height) {
 		float scaleFactor = ((float)currentDeviceZoom) / 100;
 		width = (int)(width * scaleFactor);
 		height = (int)(height * scaleFactor);
-		
+		autoScaled = true;		
 	}
 	init(width, height);
 	init();
@@ -554,6 +556,7 @@ public Image(Device device, Rectangle bounds) {
 		float scaleFactor = ((float)currentDeviceZoom) / 100f;
 		Rectangle bounds1 = DPIUtil.scale(bounds, scaleFactor);
 		init(bounds1.width, bounds1.height);
+		autoScaled = true;
 	} else {
 		init(bounds.width, bounds.height);
 	}
@@ -588,7 +591,10 @@ public Image(Device device, ImageData data) {
 	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (this.getEnableAutoScaling()) {
 		currentDeviceZoom = getDeviceZoom();
-		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+		if (!data.scaled) {
+			data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+		}
+		autoScaled = true;
 	}
 	init(data);
 	init();
@@ -633,8 +639,13 @@ public Image(Device device, ImageData source, ImageData mask) {
 	}
 	if (getEnableAutoScaling()){
 		currentDeviceZoom = getDeviceZoom();
-		source = DPIUtil.autoScaleImageData(source, currentDeviceZoom);
-		mask = DPIUtil.autoScaleImageData(mask, currentDeviceZoom);
+		if (!source.scaled) {
+			source = DPIUtil.autoScaleImageData(source, currentDeviceZoom);			
+		}
+		if (!mask.scaled) {
+			mask = DPIUtil.autoScaleImageData(mask, currentDeviceZoom);
+		}
+		autoScaled = true;
 	}
 	mask = ImageData.convertMask (mask);
 	ImageData image = new ImageData(source.width, source.height, source.depth, source.palette, source.scanlinePad, source.data);
@@ -703,6 +714,7 @@ public Image(Device device, InputStream stream) {
 	if (this.getEnableAutoScaling()) {
 		currentDeviceZoom = getDeviceZoom();
 		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+		autoScaled = true;
 	}
 	init(data);
 	init();
@@ -748,6 +760,7 @@ public Image(Device device, String filename) {
 	if (this.getEnableAutoScaling()) {
 		currentDeviceZoom = getDeviceZoom();
 		data = DPIUtil.autoScaleImageData(data, currentDeviceZoom);
+		autoScaled = true;
 	}
 	init(data);
 
@@ -1434,6 +1447,9 @@ public ImageData getImageData() {
 			}
 		}
 		Cairo.cairo_surface_destroy(surface);
+		if (autoScaled) {
+			data.scaled = true;
+		}
 		return data;
 	}
 	int[] w = new int[1], h = new int[1];
@@ -1490,6 +1506,9 @@ public ImageData getImageData() {
 	if (alpha == -1 && alphaData != null) {
 		data.alphaData = new byte[alphaData.length];
 		System.arraycopy(alphaData, 0, data.alphaData, 0, alphaData.length);
+	}
+	if (autoScaled) {
+		data.scaled = true;
 	}
 	return data;
 }
