@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
+import org.eclipse.swt.layout.*;
 
 /**
  * Control is the abstract superclass of all windowed user interface classes.
@@ -1158,6 +1159,11 @@ public Point getSize () {
 	OS.gtk_widget_get_allocation (topHandle, allocation);
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 : allocation.height;
+	if (this.getLayoutData() instanceof GridData) {
+		float scalingFactor = display.getScalingFactor ()/100f;
+		width = (int) (width / scalingFactor);
+		height = (int) (height / scalingFactor);
+	}
 	return new Point (width, height);
 }
 
@@ -1400,6 +1406,11 @@ public void pack (boolean changed) {
  */
 public void setLayoutData (Object layoutData) {
 	checkWidget();
+	if ((layoutData instanceof GridData)) {
+		float scalingFactor = display.getScalingFactor ()/100f;
+		((GridData) layoutData).heightHint *= scalingFactor;
+		((GridData) layoutData).widthHint *= scalingFactor;
+	}
 	this.layoutData = layoutData;
 }
 

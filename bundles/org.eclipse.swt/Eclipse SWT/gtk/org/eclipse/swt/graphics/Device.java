@@ -989,8 +989,9 @@ int _getDPIx () {
 /**
  * Gets the scaling factor from the device 
  * @return scaling factor in percentage. scaling factor 1 corresponds to 100%
+ * @since 3.105
  */
-private int getScalingFactor() {
+public int getScalingFactor() {
 	final String schemaId = "com.ubuntu.user-interface";
 	final String key = "scale-factor";
 	final String monitorId = "eDP1";
