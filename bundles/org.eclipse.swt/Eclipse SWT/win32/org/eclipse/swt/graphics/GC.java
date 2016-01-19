@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public final class GC extends Resource {
 
 	Drawable drawable;
 	GCData data;
+	boolean defaultAutoScale;
 
 	static final int FOREGROUND = 1 << 0;
 	static final int BACKGROUND = 1 << 1;
@@ -169,6 +170,7 @@ public GC(Drawable drawable, int style) {
 	if (device == null) device = Device.getDevice();
 	if (device == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.device = data.device = device;
+	this.defaultAutoScale = getEnableAutoScaling ();
 	init (drawable, data, hDC);
 	init();
 }
@@ -445,10 +447,37 @@ void checkGC(int mask) {
  * </ul>
  */
 public void copyArea(Image image, int x, int y) {
+	copyArea (image, x, y, defaultAutoScale);
+}
+
+/**
+ * Copies a rectangular area of the receiver at the specified
+ * position into the image, which must be of type <code>SWT.BITMAP</code>.
+ *
+ * @param image the image to copy into
+ * @param x the x coordinate in the receiver of the area to be copied
+ * @param y the y coordinate in the receiver of the area to be copied
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if the image is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the image is not a bitmap or has been disposed</li> 
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * 
+ * @since 3.105
+ */
+public void copyArea(Image image, int x, int y, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.type != SWT.BITMAP || image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-
+	if (autoScale) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100f;
+		x = (int)(x * scaleFactor);
+		y = (int)(y * scaleFactor);		
+	}
  	/* Copy the bitmap area */
 	Rectangle rect = image.getBounds(); 	
 	long /*int*/ memHdc = OS.CreateCompatibleDC(handle);
@@ -728,9 +757,45 @@ void disposeGdip() {
  * </ul>
  */
 public void drawArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
+	drawArc(x, y, width, height, startAngle, arcAngle, defaultAutoScale);
+}
+
+/**
+ * Draws the outline of a circular or elliptical arc 
+ * within the specified rectangular area.
+ * <p>
+ * The resulting arc begins at <code>startAngle</code> and extends  
+ * for <code>arcAngle</code> degrees, using the current color.
+ * Angles are interpreted such that 0 degrees is at the 3 o'clock
+ * position. A positive value indicates a counter-clockwise rotation
+ * while a negative value indicates a clockwise rotation.
+ * </p><p>
+ * The center of the arc is the center of the rectangle whose origin 
+ * is (<code>x</code>, <code>y</code>) and whose size is specified by the 
+ * <code>width</code> and <code>height</code> arguments. 
+ * </p><p>
+ * The resulting arc covers an area <code>width + 1</code> pixels wide
+ * by <code>height + 1</code> pixels tall.
+ * </p>
+ *
+ * @param x the x coordinate of the upper-left corner of the arc to be drawn
+ * @param y the y coordinate of the upper-left corner of the arc to be drawn
+ * @param width the width of the arc to be drawn
+ * @param height the height of the arc to be drawn
+ * @param startAngle the beginning angle
+ * @param arcAngle the angular extent of the arc, relative to the start angle
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * 
+ * @since 3.105
+ */
+public void drawArc (int x, int y, int width, int height, int startAngle, int arcAngle, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = ((float)getDeviceZoom()) / 100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -833,8 +898,32 @@ public void drawArc (int x, int y, int width, int height, int startAngle, int ar
  * @see #drawRectangle(int, int, int, int)
  */
 public void drawFocus (int x, int y, int width, int height) {
+	drawFocus(x, y, width, height, defaultAutoScale);
+}
+
+/** 
+ * Draws a rectangle, based on the specified arguments, which has
+ * the appearance of the platform's <em>focus rectangle</em> if the
+ * platform supports such a notion, and otherwise draws a simple
+ * rectangle in the receiver's foreground color.
+ *
+ * @param x the x coordinate of the rectangle
+ * @param y the y coordinate of the rectangle
+ * @param width the width of the rectangle
+ * @param height the height of the rectangle
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawRectangle(int, int, int, int)
+ * 
+ * @since 3.105
+ */
+public void drawFocus (int x, int y, int width, int height, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -1691,8 +1780,28 @@ void drawBitmap(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight,
  * </ul>
  */
 public void drawLine (int x1, int y1, int x2, int y2) {
+	drawLine(x1, y1, x2, y2, defaultAutoScale);
+}
+
+/** 
+ * Draws a line, using the foreground color, between the points 
+ * (<code>x1</code>, <code>y1</code>) and (<code>x2</code>, <code>y2</code>).
+ *
+ * @param x1 the first point's x coordinate
+ * @param y1 the first point's y coordinate
+ * @param x2 the second point's x coordinate
+ * @param y2 the second point's y coordinate
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * 
+ * @since 3.105
+ */
+public void drawLine (int x1, int y1, int x2, int y2, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x1 = (int) (x1 * scaleFactor);
 		x2 = (int) (x2 * scaleFactor);
@@ -1748,8 +1857,36 @@ public void drawLine (int x1, int y1, int x2, int y2) {
  * </ul>
  */
 public void drawOval (int x, int y, int width, int height) {
+	drawOval(x, y, width, height, defaultAutoScale);
+}
+
+/** 
+ * Draws the outline of an oval, using the foreground color,
+ * within the specified rectangular area.
+ * <p>
+ * The result is a circle or ellipse that fits within the 
+ * rectangle specified by the <code>x</code>, <code>y</code>, 
+ * <code>width</code>, and <code>height</code> arguments. 
+ * </p><p> 
+ * The oval covers an area that is <code>width + 1</code> 
+ * pixels wide and <code>height + 1</code> pixels tall.
+ * </p>
+ *
+ * @param x the x coordinate of the upper left corner of the oval to be drawn
+ * @param y the y coordinate of the upper left corner of the oval to be drawn
+ * @param width the width of the oval to be drawn
+ * @param height the height of the oval to be drawn
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * 
+ * @since 3.105
+ */
+public void drawOval (int x, int y, int width, int height, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -1823,8 +1960,30 @@ public void drawPath (Path path) {
  * @since 3.0
  */
 public void drawPoint (int x, int y) {
+	drawPoint(x, y, defaultAutoScale);
+}
+
+/** 
+ * Draws a pixel, using the foreground color, at the specified
+ * point (<code>x</code>, <code>y</code>).
+ * <p>
+ * Note that the receiver's line attributes do not affect this
+ * operation.
+ * </p>
+ *
+ * @param x the point's x coordinate
+ * @param y the point's y coordinate
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *  
+ * @since 3.105
+ */
+public void drawPoint (int x, int y, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -1949,8 +2108,30 @@ public void drawPolyline(int[] pointArray) {
  * </ul>
  */
 public void drawRectangle (int x, int y, int width, int height) {
+	drawRectangle(x, y, width, height, defaultAutoScale);
+}
+
+/** 
+ * Draws the outline of the rectangle specified by the arguments,
+ * using the receiver's foreground color. The left and right edges
+ * of the rectangle are at <code>x</code> and <code>x + width</code>. 
+ * The top and bottom edges are at <code>y</code> and <code>y + height</code>. 
+ *
+ * @param x the x coordinate of the rectangle to be drawn
+ * @param y the y coordinate of the rectangle to be drawn
+ * @param width the width of the rectangle to be drawn
+ * @param height the height of the rectangle to be drawn
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * 
+ * @since 3.105
+ */
+public void drawRectangle (int x, int y, int width, int height, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -2032,13 +2213,43 @@ public void drawRectangle (Rectangle rect) {
  * </ul>
  */
 public void drawRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
+	drawRoundRectangle(x, y, width, height, arcWidth, arcHeight, defaultAutoScale);
+}
+
+/** 
+ * Draws the outline of the round-cornered rectangle specified by 
+ * the arguments, using the receiver's foreground color. The left and
+ * right edges of the rectangle are at <code>x</code> and <code>x + width</code>. 
+ * The top and bottom edges are at <code>y</code> and <code>y + height</code>.
+ * The <em>roundness</em> of the corners is specified by the 
+ * <code>arcWidth</code> and <code>arcHeight</code> arguments, which
+ * are respectively the width and height of the ellipse used to draw
+ * the corners.
+ *
+ * @param x the x coordinate of the rectangle to be drawn
+ * @param y the y coordinate of the rectangle to be drawn
+ * @param width the width of the rectangle to be drawn
+ * @param height the height of the rectangle to be drawn
+ * @param arcWidth the width of the arc
+ * @param arcHeight the height of the arc
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ * 
+ * @since 3.105
+ */
+public void drawRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
 		width = (int) (width * scaleFactor);
 		height = (int) (height *scaleFactor);
+		arcWidth = (int)(arcWidth *scaleFactor);
+		arcHeight = (int)(arcHeight * scaleFactor);
 	}
 	checkGC(DRAW);
 	if (data.gdipGraphics != 0) {
@@ -2092,14 +2303,6 @@ public void drawRoundRectangle (int x, int y, int width, int height, int arcWidt
 }
 
 void drawRoundRectangleGdip (long /*int*/ gdipGraphics, long /*int*/ pen, int x, int y, int width, int height, int arcWidth, int arcHeight) {
-	if (getEnableAutoScaling()) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-	}
-
 	int nx = x;
 	int ny = y;
 	int nw = width;
@@ -2170,7 +2373,7 @@ void drawRoundRectangleGdip (long /*int*/ gdipGraphics, long /*int*/ pen, int x,
  * </ul>
  */
 public void drawString (String string, int x, int y) {
-	drawString(string, x, y, false);
+	drawString(string, x, y, defaultAutoScale);
 }
 
 /** 
@@ -2743,8 +2946,47 @@ public boolean equals (Object object) {
  * @see #drawArc
  */
 public void fillArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
+	fillArc(x, y, width, height, startAngle, arcAngle, defaultAutoScale);
+}
+
+/**
+ * Fills the interior of a circular or elliptical arc within
+ * the specified rectangular area, with the receiver's background
+ * color.
+ * <p>
+ * The resulting arc begins at <code>startAngle</code> and extends  
+ * for <code>arcAngle</code> degrees, using the current color.
+ * Angles are interpreted such that 0 degrees is at the 3 o'clock
+ * position. A positive value indicates a counter-clockwise rotation
+ * while a negative value indicates a clockwise rotation.
+ * </p><p>
+ * The center of the arc is the center of the rectangle whose origin 
+ * is (<code>x</code>, <code>y</code>) and whose size is specified by the 
+ * <code>width</code> and <code>height</code> arguments. 
+ * </p><p>
+ * The resulting arc covers an area <code>width + 1</code> pixels wide
+ * by <code>height + 1</code> pixels tall.
+ * </p>
+ *
+ * @param x the x coordinate of the upper-left corner of the arc to be filled
+ * @param y the y coordinate of the upper-left corner of the arc to be filled
+ * @param width the width of the arc to be filled
+ * @param height the height of the arc to be filled
+ * @param startAngle the beginning angle
+ * @param arcAngle the angular extent of the arc, relative to the start angle
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawArc
+ * 
+ * @since 3.105
+ */
+public void fillArc (int x, int y, int width, int height, int startAngle, int arcAngle, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -2851,8 +3093,35 @@ public void fillArc (int x, int y, int width, int height, int startAngle, int ar
  * @see #drawRectangle(int, int, int, int)
  */
 public void fillGradientRectangle(int x, int y, int width, int height, boolean vertical) {
+	fillGradientRectangle(x, y, width, height, vertical, defaultAutoScale);
+}
+
+/**
+ * Fills the interior of the specified rectangle with a gradient
+ * sweeping from left to right or top to bottom progressing
+ * from the receiver's foreground color to its background color.
+ *
+ * @param x the x coordinate of the rectangle to be filled
+ * @param y the y coordinate of the rectangle to be filled
+ * @param width the width of the rectangle to be filled, may be negative
+ *        (inverts direction of gradient if horizontal)
+ * @param height the height of the rectangle to be filled, may be negative
+ *        (inverts direction of gradient if vertical)
+ * @param vertical if true sweeps from top to bottom, else 
+ *        sweeps from left to right
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawRectangle(int, int, int, int)
+ * 
+ * @since 3.105
+ */
+public void fillGradientRectangle(int x, int y, int width, int height, boolean vertical, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -2984,8 +3253,30 @@ public void fillGradientRectangle(int x, int y, int width, int height, boolean v
  * @see #drawOval
  */
 public void fillOval (int x, int y, int width, int height) {
+	fillOval(x, y, width, height, defaultAutoScale);
+}
+
+/** 
+ * Fills the interior of an oval, within the specified
+ * rectangular area, with the receiver's background
+ * color.
+ *
+ * @param x the x coordinate of the upper left corner of the oval to be filled
+ * @param y the y coordinate of the upper left corner of the oval to be filled
+ * @param width the width of the oval to be filled
+ * @param height the height of the oval to be filled
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawOval
+ * 
+ * @since 3.105
+ */
+public void fillOval (int x, int y, int width, int height, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -3092,8 +3383,30 @@ public void fillPolygon(int[] pointArray) {
  * @see #drawRectangle(int, int, int, int)
  */
 public void fillRectangle (int x, int y, int width, int height) {
+	fillRectangle(x, y, width, height, defaultAutoScale);
+}
+
+/** 
+ * Fills the interior of the rectangle specified by the arguments,
+ * using the receiver's background color. 
+ *
+ * @param x the x coordinate of the rectangle to be filled
+ * @param y the y coordinate of the rectangle to be filled
+ * @param width the width of the rectangle to be filled
+ * @param height the height of the rectangle to be filled
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawRectangle(int, int, int, int)
+ * 
+ * @since 3.105
+ */
+public void fillRectangle (int x, int y, int width, int height, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (getEnableAutoScaling()) {
+	if (autoScale) {
 		float scaleFactor = (float) getDeviceZoom()/100f;
 		x = (int) (x * scaleFactor);
 		y = (int) (y * scaleFactor);
@@ -3143,6 +3456,28 @@ public void fillRectangle (Rectangle rect) {
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	fillRectangle (rect.x, rect.y, rect.width, rect.height);
 }
+/** 
+ * Fills the interior of the specified rectangle, using the receiver's
+ * background color. 
+ *
+ * @param rect the rectangle to be filled
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if the rectangle is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawRectangle(int, int, int, int)
+ * 
+ * @since 3.105
+ */
+public void fillRectangle (Rectangle rect, boolean autoScale) {
+	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	fillRectangle (rect.x, rect.y, rect.width, rect.height, autoScale);
+}
 
 /** 
  * Fills the interior of the round-cornered rectangle specified by 
@@ -3162,11 +3497,39 @@ public void fillRectangle (Rectangle rect) {
  * @see #drawRoundRectangle
  */
 public void fillRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
+	fillRoundRectangle(x, y, width, height, arcWidth, arcHeight, defaultAutoScale);
+}
+
+/** 
+ * Fills the interior of the round-cornered rectangle specified by 
+ * the arguments, using the receiver's background color. 
+ *
+ * @param x the x coordinate of the rectangle to be filled
+ * @param y the y coordinate of the rectangle to be filled
+ * @param width the width of the rectangle to be filled
+ * @param height the height of the rectangle to be filled
+ * @param arcWidth the width of the arc
+ * @param arcHeight the height of the arc
+ * @param autoScale true if coordinates need to be adjusted for zoom
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ * </ul>
+ *
+ * @see #drawRoundRectangle
+ * 
+ * @since 3.105
+ */
+public void fillRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight, boolean autoScale) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = this.getDeviceZoom() / 100;
+	if (autoScale) {
+		float scaleFactor = this.getDeviceZoom() / 100f;
+		x = (int)(x * scaleFactor);
+		y = (int)(y * scaleFactor);
 		width = (int)(width * scaleFactor);
 		height = (int)(height * scaleFactor);
+		arcWidth = (int)(arcWidth *scaleFactor);
+		arcHeight = (int)(arcHeight * scaleFactor);
 	}
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
@@ -3806,7 +4169,12 @@ public int getLineStyle() {
  */
 public int getLineWidth() {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return (int)data.lineWidth;
+	int returnVal = (int)data.lineWidth;
+	if (defaultAutoScale) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100f;
+		returnVal = (int)(returnVal / scaleFactor);
+	}
+	return returnVal;
 }
 
 /**
@@ -4878,6 +5246,10 @@ public void setLineStyle(int lineStyle) {
  */
 public void setLineWidth(int lineWidth) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (defaultAutoScale) {
+		float scaleFactor = ((float)this.getDeviceZoom()) / 100f;
+		lineWidth = (int)(lineWidth * scaleFactor);
+	}
 	if (data.lineWidth == lineWidth) return;
 	data.lineWidth = lineWidth;
 	data.state &= ~(LINE_WIDTH | DRAW_OFFSET);
