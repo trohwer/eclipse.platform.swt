@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.swt;
 
-import org.eclipse.swt.internal.*;
-
 /**
  * This runtime exception is thrown whenever a recoverable error
- * occurs internally in SWT. The message text and error code 
+ * occurs internally in SWT. The message text and error code
  * provide a further description of the problem. The exception
  * has a <code>throwable</code> field which holds the underlying
  * exception that caused the problem (if this information is
@@ -41,11 +39,11 @@ public class SWTException extends RuntimeException {
 	 * or null if this information is not available.
 	 */
 	public Throwable throwable;
-	
+
 	static final long serialVersionUID = 3257282552304842547L;
-	
+
 /**
- * Constructs a new instance of this class with its 
+ * Constructs a new instance of this class with its
  * stack trace filled in. The error code is set to an
  * unspecified value.
  */
@@ -54,7 +52,7 @@ public SWTException () {
 }
 
 /**
- * Constructs a new instance of this class with its 
+ * Constructs a new instance of this class with its
  * stack trace and message filled in. The error code is
  * set to an unspecified value.  Specifying <code>null</code>
  * as the message is equivalent to specifying an empty string.
@@ -66,7 +64,7 @@ public SWTException (String message) {
 }
 
 /**
- * Constructs a new instance of this class with its 
+ * Constructs a new instance of this class with its
  * stack trace and error code filled in.
  *
  * @param code the SWT error code
@@ -76,7 +74,7 @@ public SWTException (int code) {
 }
 
 /**
- * Constructs a new instance of this class with its 
+ * Constructs a new instance of this class with its
  * stack trace, error code and message filled in.
  * Specifying <code>null</code> as the message is
  * equivalent to specifying an empty string.
@@ -98,7 +96,7 @@ public SWTException (int code, String message) {
  * in order for inherited printStackTrace() methods to work.
  * </p>
  * @return the underlying throwable
- * 
+ *
  * @since 3.1
  */
 @Override
@@ -131,10 +129,6 @@ public String getMessage () {
 @Override
 public void printStackTrace () {
 	super.printStackTrace ();
-	if (Library.JAVA_VERSION < Library.JAVA_VERSION(1, 4, 0) && throwable != null) {
-		System.err.println ("*** Stack trace of contained exception ***"); //$NON-NLS-1$
-		throwable.printStackTrace ();
-	}
 }
 
 }

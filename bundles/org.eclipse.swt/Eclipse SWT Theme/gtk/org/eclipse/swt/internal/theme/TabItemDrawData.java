@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.swt.internal.theme;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.cairo.Cairo;
 import org.eclipse.swt.internal.gtk.*;
 
 public class TabItemDrawData extends DrawData {
-	
+
 	public TabFolderDrawData parent;
 	public int position;
 
@@ -30,7 +29,7 @@ public TabItemDrawData() {
 @Override
 Rectangle computeTrim(Theme theme, GC gc) {
 	long /*int*/ notebookHandle = theme.notebookHandle;
-	long /*int*/ gtkStyle = OS.gtk_widget_get_style(notebookHandle);
+	long /*int*/ gtkStyle = gtk_widget_get_style(notebookHandle);
 	int	hborder = theme.getWidgetProperty(notebookHandle, "tab-hborder");
 	int	vborder = theme.getWidgetProperty(notebookHandle, "tab-vborder");
 	int focus_width = theme.getWidgetProperty(notebookHandle, "focus-line-width");
@@ -48,8 +47,8 @@ Rectangle computeTrim(Theme theme, GC gc) {
 @Override
 void draw(Theme theme, GC gc, Rectangle bounds) {
 	long /*int*/ notebookHandle = theme.notebookHandle;
-	long /*int*/ gtkStyle = OS.gtk_widget_get_style (notebookHandle);
-	long /*int*/ drawable = gc.getGCData().drawable;
+	long /*int*/ gtkStyle = gtk_widget_get_style (notebookHandle);
+	long /*int*/ drawable = OS.GTK3 ? gc.getGCData().cairo : gc.getGCData().drawable;
 	theme.transferClipping(gc, gtkStyle);
 	int x = bounds.x, y = bounds.y, width = bounds.width, height = bounds.height;
 	if ((state[DrawData.WIDGET_WHOLE] & DrawData.SELECTED) == 0) {
@@ -95,10 +94,7 @@ int hit(Theme theme, Point position, Rectangle bounds) {
 
 void gtk_render_extension(long /*int*/ style, long /*int*/ window, int state_type, int shadow_type, GdkRectangle area, long /*int*/ widget, byte[] detail, int x , int y, int width, int height, int gap_side) {
 	if (OS.GTK3) {
-		long /*int*/ cairo = OS.gdk_cairo_create (window);
-		long /*int*/ context = OS.gtk_widget_get_style_context (style);
-		OS.gtk_render_extension(context, cairo, x, y, width, height, gap_side);
-		Cairo.cairo_destroy (cairo);
+		OS.gtk_render_extension(style, window, x, y, width, height, gap_side);
 	} else {
 		OS.gtk_paint_extension (style, window, state_type, shadow_type, area, widget, detail, x, y, width, height, gap_side);
 	}

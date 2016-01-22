@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.examples.browser.demos.BrowserDemoPlugin;
 import org.eclipse.swt.examples.browser.demos.Pawns;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabItem;
@@ -77,15 +75,12 @@ public class PawnTab {
 		menu = new Menu(browser.getShell(), SWT.POP_UP);
 		MenuItem item2 = new MenuItem(menu, SWT.PUSH);
 		item2.setText("End Game");
-		item2.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				game = null;
-				isWhite = true;
-				cntWhite = 0; cntBlack = 0;
-				ttr = null;
-				browser.setUrl(URL_WELCOME);
-			}
+		item2.addListener(SWT.Selection, e -> {
+			game = null;
+			isWhite = true;
+			cntWhite = 0; cntBlack = 0;
+			ttr = null;
+			browser.setUrl(URL_WELCOME);
 		});
 		browser.setMenu(menu);
 		
@@ -151,11 +146,7 @@ public class PawnTab {
 				game = new byte[8][8];
 				if (computer) ttr = new Pawns();
 				for (int i = 0; i < 5; i++) game[(int)(Math.random()*game.length)][(int)(Math.random()*game[0].length)] = WALL;
-				e.display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						browser.setText(getHtml(TYPE_BOARD));
-				}});
+				e.display.asyncExec(() -> browser.setText(getHtml(TYPE_BOARD)));
 				e.doit = false;
 				return;
 			}
@@ -164,11 +155,7 @@ public class PawnTab {
 				CSS_FOLDER = e.location.substring(index, index + 4);
 				URL_CSS = PLUGIN_PATH+CSS_FOLDER+"/style.css";
 				URL_WELCOME = PLUGIN_PATH+CSS_FOLDER+"/welcome.html";
-				e.display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						browser.setUrl(URL_WELCOME);
-				}});
+				e.display.asyncExec(() -> browser.setUrl(URL_WELCOME));
 				e.doit = false;
 				return;
 			}
@@ -259,14 +246,11 @@ public class PawnTab {
 	
 	public static void play(final Display display, final Browser browser, int delay) {
 		ttr.playRequest(game, BLACK);
-		display.timerExec(3000, new Runnable() {
-				@Override
-				public void run() {
-					ttr.getBestMove(move);
-					boolean hasMore = add(move[0], move[1], BLACK);
-					isWhite = true;
-					browser.setText(getHtml(hasMore ? TYPE_BOARD : TYPE_BOARD_OVER));
-				}
+		display.timerExec(3000, () -> {
+			ttr.getBestMove(move);
+			boolean hasMore = add(move[0], move[1], BLACK);
+			isWhite = true;
+			browser.setText(getHtml(hasMore ? TYPE_BOARD : TYPE_BOARD_OVER));
 		});
 	}
 	

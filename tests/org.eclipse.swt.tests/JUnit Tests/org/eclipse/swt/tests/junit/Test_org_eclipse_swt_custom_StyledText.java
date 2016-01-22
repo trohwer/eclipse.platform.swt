@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Display;
@@ -75,7 +76,7 @@ final static RGB YELLOW = new RGB(255,255,0);
 final static RGB CYAN = new RGB(0,255,255);
 final static RGB PURPLE = new RGB(255,0,255);
 final static String PLATFORM_LINE_DELIMITER = System.getProperty("line.separator");
-Map<RGB, Color> colors = new HashMap<RGB, Color>();
+Map<RGB, Color> colors = new HashMap<>();
 private boolean listenerCalled;	
 private boolean listener2Called;
 
@@ -163,6 +164,7 @@ public void test_addExtendedModifyListenerLorg_eclipse_swt_custom_ExtendedModify
 	final String line = "Line1";
 	boolean exceptionThrown = false;
 	ExtendedModifyListener listener = new ExtendedModifyListener() {
+		@Override
 		public void modifyText(ExtendedModifyEvent event) {
 			listenerCalled = true;
 			assertEquals("ExtendedModify event data invalid", 0, event.start);
@@ -193,6 +195,7 @@ public void test_addExtendedModifyListenerLorg_eclipse_swt_custom_ExtendedModify
 	listenerCalled = false;
 	text.removeExtendedModifyListener(listener);
 	listener = new ExtendedModifyListener() {
+		@Override
 		public void modifyText(ExtendedModifyEvent event) {
 			listenerCalled = true;
 			assertEquals("ExtendedModify event data invalid", 0, event.start);
@@ -207,6 +210,7 @@ public void test_addExtendedModifyListenerLorg_eclipse_swt_custom_ExtendedModify
 	listenerCalled = false;
 	text.removeExtendedModifyListener(listener);
 	listener = new ExtendedModifyListener() {
+		@Override
 		public void modifyText(ExtendedModifyEvent event) {
 			listenerCalled = true;
 			assertEquals("ExtendedModify event data invalid", 0, event.start);
@@ -248,6 +252,7 @@ public void test_addBidiSegmentListenerLorg_eclipse_swt_custom_BidiSegmentListen
 	String line = "Line1";
 	boolean exceptionThrown = false;
 	BidiSegmentListener listener = new BidiSegmentListener() {
+		@Override
 		public void lineGetSegments(BidiSegmentEvent event) {
 			listenerCalled = true;
 		}
@@ -284,6 +289,7 @@ public void test_addLineBackgroundListenerLorg_eclipse_swt_custom_LineBackground
 	String line = "Line1";
 	boolean exceptionThrown = false;
 	LineBackgroundListener listener = new LineBackgroundListener() {
+		@Override
 		public void lineGetBackground(LineBackgroundEvent event) {
 			listenerCalled = true;
 		}
@@ -319,6 +325,7 @@ public void test_addLineStyleListenerLorg_eclipse_swt_custom_LineStyleListener()
 	String line = "Line1";
 	boolean exceptionThrown = false;
 	LineStyleListener listener = new LineStyleListener() {
+		@Override
 		public void lineGetStyle(LineStyleEvent event) {
 			listenerCalled = true;
 		}
@@ -354,6 +361,7 @@ public void test_addModifyListenerLorg_eclipse_swt_events_ModifyListener() {
 	String line = "Line1";
 	boolean exceptionThrown = false;
 	ModifyListener listener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent event) {
 			listenerCalled = true;
 		}
@@ -398,9 +406,11 @@ public void test_addSelectionListenerLorg_eclipse_swt_events_SelectionListener()
 	String line = "Line1";
 	boolean exceptionThrown = false;
 	SelectionListener listener = new SelectionListener() {
+		@Override
 		public void widgetSelected(SelectionEvent event) {
 			listenerCalled = true;
 		}
+		@Override
 		public void widgetDefaultSelected(SelectionEvent event) {
 			listener2Called = true;
 		}
@@ -436,6 +446,7 @@ public void test_addSelectionListenerLorg_eclipse_swt_events_SelectionListener()
 public void test_addVerifyKeyListenerLorg_eclipse_swt_custom_VerifyKeyListener() {
 	boolean exceptionThrown = false;
 	VerifyKeyListener listener = new VerifyKeyListener() {
+		@Override
 		public void verifyKey(VerifyEvent event) {
 		}
 	};
@@ -461,6 +472,7 @@ public void test_addVerifyListenerLorg_eclipse_swt_events_VerifyListener() {
 	final int textLength;
 	boolean exceptionThrown = false;
 	VerifyListener listener = new VerifyListener() {
+		@Override
 		public void verifyText(VerifyEvent event) {
 			listenerCalled = true;
 			assertEquals("Verify event data invalid", 0, event.start);
@@ -496,6 +508,7 @@ public void test_addVerifyListenerLorg_eclipse_swt_events_VerifyListener() {
 	listenerCalled = false;
 	text.removeVerifyListener(listener);
 	listener = new VerifyListener() {
+		@Override
 		public void verifyText(VerifyEvent event) {
 			listenerCalled = true;
 			assertEquals("Verify event data invalid", 0, event.start);
@@ -515,6 +528,7 @@ public void test_addVerifyListenerLorg_eclipse_swt_events_VerifyListener() {
 	listenerCalled = false;
 	text.removeVerifyListener(listener);
 	listener = new VerifyListener() {
+		@Override
 		public void verifyText(VerifyEvent event) {
 			listenerCalled = true;
 			assertEquals("Verify event data invalid", 0, event.start);
@@ -534,6 +548,7 @@ public void test_addVerifyListenerLorg_eclipse_swt_events_VerifyListener() {
 
 	listenerCalled = false;	
 	listener = new VerifyListener() {
+		@Override
 		public void verifyText(VerifyEvent event) {
 			listenerCalled = true;
 			assertEquals("Verify event data invalid", 2, event.start);
@@ -592,6 +607,19 @@ public void test_appendLjava_lang_String() {
 @Test
 public void test_computeSizeIIZ() {
 	// inherited test is sufficient
+}
+
+@Test
+public void test_computeSizeAlignment(){
+    shell.setLayout(new GridLayout());
+    StyledText singleText = new StyledText(shell, SWT.SINGLE);
+    shell.layout(true);
+    Point beforeAlignment = singleText.computeSize(100, SWT.DEFAULT);
+    //Should not change the computed size
+    singleText.setAlignment(SWT.RIGHT);
+    Point afterAlignment = singleText.computeSize(100, SWT.DEFAULT);
+    assertEquals(beforeAlignment, afterAlignment);
+    singleText.dispose();
 }
 
 @Test
@@ -757,33 +785,44 @@ public void test_getContent() {
 	
 	assertTrue(content != null);
 	content = new StyledTextContent() {
+		@Override
 		public void addTextChangeListener(TextChangeListener listener) {
 		}
+		@Override
 		public int getCharCount() {
 			return 0;
 		}
+		@Override
 		public String getLine(int lineIndex) {
 			return "";
 		}
+		@Override
 		public int getLineAtOffset(int offset) {
 			return 0;
 		}
+		@Override
 		public int getLineCount() {
 			return 0;
 		}
+		@Override
 		public String getLineDelimiter() {
 			return "";
 		}
+		@Override
 		public int getOffsetAtLine(int lineIndex) {
 			return 0;
 		}		
+		@Override
 		public String getTextRange(int start, int length) {
 			return "";
 		}
+		@Override
 		public void removeTextChangeListener(TextChangeListener listener) {
 		}
+		@Override
 		public void replaceTextRange(int start, int replaceLength, String text) {
 		}
+		@Override
 		public void setText(String text) {
 		}
 	};
@@ -969,33 +1008,44 @@ public void test_getLineDelimiter() {
 	assertEquals(content.getLineDelimiter(), text.getLineDelimiter());
 
 	content = new StyledTextContent() {
+		@Override
 		public void addTextChangeListener(TextChangeListener listener) {
 		}
+		@Override
 		public int getCharCount() {
 			return 0;
 		}
+		@Override
 		public String getLine(int lineIndex) {
 			return "";
 		}
+		@Override
 		public int getLineAtOffset(int offset) {
 			return 0;
 		}
+		@Override
 		public int getLineCount() {
 			return 0;
 		}
+		@Override
 		public String getLineDelimiter() {
 			return lineDelimiter;
 		}
+		@Override
 		public int getOffsetAtLine(int lineIndex) {
 			return 0;
 		}		
+		@Override
 		public String getTextRange(int start, int length) {
 			return "";
 		}
+		@Override
 		public void removeTextChangeListener(TextChangeListener listener) {
 		}
+		@Override
 		public void replaceTextRange(int start, int replaceLength, String text) {
 		}
+		@Override
 		public void setText(String text) {
 		}
 	};
@@ -1882,7 +1932,7 @@ public void test_getTextRangeII() {
 		assertTrue(":a:", exceptionThrown);
 	}	
 	text.setText("testing");
-	assertTrue(":d:", text.getTextRange(0,0).equals(""));
+	assertTrue(":d:", text.getTextRange(0,0).isEmpty());
 	assertTrue(":d:", text.getTextRange(0,1).equals("t"));	
 	assertTrue(":d:", text.getTextRange(0,2).equals("te"));
 	assertTrue(":d:", text.getTextRange(1,5).equals("estin"));
@@ -1962,9 +2012,9 @@ public void test_insertLjava_lang_String(){
 	}
 	catch (IllegalArgumentException e) {
 	}
-	assertTrue(":a:", text.getText().equals(""));
+	assertTrue(":a:", text.getText().isEmpty());
 	text.insert("");
-	assertTrue(":b:", text.getText().equals(""));
+	assertTrue(":b:", text.getText().isEmpty());
 	text.insert("fred");
 	assertTrue(":c:", text.getText().equals("fred"));
 	text.setSelection(2);
@@ -3158,33 +3208,44 @@ public void test_setCaretOffsetI(){
 public void test_setContentLorg_eclipse_swt_custom_StyledTextContent() {
 	boolean exceptionThrown;
 	StyledTextContent content = new StyledTextContent() {
+		@Override
 		public void addTextChangeListener(TextChangeListener listener) {
 		}
+		@Override
 		public int getCharCount() {
 			return 0;
 		}
+		@Override
 		public String getLine(int lineIndex) {
 			return "";
 		}
+		@Override
 		public int getLineAtOffset(int offset) {
 			return 0;
 		}
+		@Override
 		public int getLineCount() {
 			return 0;
 		}
+		@Override
 		public String getLineDelimiter() {
 			return "";
 		}
+		@Override
 		public int getOffsetAtLine(int lineIndex) {
 			return 0;
 		}		
+		@Override
 		public String getTextRange(int start, int length) {
 			return "";
 		}
+		@Override
 		public void removeTextChangeListener(TextChangeListener listener) {
 		}
+		@Override
 		public void replaceTextRange(int start, int replaceLength, String text) {
 		}
+		@Override
 		public void setText(String text) {
 		}
 	};
@@ -3557,6 +3618,74 @@ public void test_setSelectionII(){
 			fail("should not throw exception for out of range");
 		}
 	}	
+}
+
+@Test
+public void test_addSelectionListener() {
+	text.setText("0123456789");
+	class TestSelectionListener extends SelectionAdapter {
+		public int counter;
+		public Point eventSelection = new Point(0, 0);
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			eventSelection.x = e.x;
+			eventSelection.y = e.y;
+			counter++;
+		}
+	}
+	final TestSelectionListener selectionListener = new TestSelectionListener();
+	text.addSelectionListener(selectionListener);
+	
+	assertEquals(0, selectionListener.counter);
+	assertEquals(new Point(0, 0), selectionListener.eventSelection);
+	
+	text.invokeAction(ST.COLUMN_NEXT);
+	assertEquals(new Point(1, 1), text.getSelection());
+	
+	text.invokeAction(ST.SELECT_COLUMN_NEXT);
+	assertEquals(1, selectionListener.counter);
+	assertEquals(new Point(1, 2), selectionListener.eventSelection);
+	
+	text.invokeAction(ST.SELECT_COLUMN_NEXT);
+	assertEquals(2, selectionListener.counter);
+	assertEquals(new Point(1, 3), selectionListener.eventSelection);
+	
+	// replace text while selection is non-empty:
+	text.replaceTextRange(0, 1, "a");
+	assertEquals(2, selectionListener.counter);
+	assertEquals(new Point(1, 3), selectionListener.eventSelection);
+	
+	text.replaceTextRange(9, 1, "z");
+	assertEquals(2, selectionListener.counter);
+	assertEquals(new Point(1, 3), selectionListener.eventSelection);
+	
+	text.replaceTextRange(0, 1, "ab");
+	assertEquals(3, selectionListener.counter);
+	assertEquals(new Point(2, 4), selectionListener.eventSelection);
+	assertEquals(new Point(2, 4), text.getSelection());
+	
+	text.invokeAction(ST.COLUMN_NEXT);
+	assertEquals(4, selectionListener.counter);
+	assertEquals(new Point(4, 4), selectionListener.eventSelection);
+	assertEquals(new Point(4, 4), text.getSelection());
+	
+	// replace text while selection is empty:
+	text.replaceTextRange(0, 2, "a");
+	assertEquals(4, selectionListener.counter);
+	assertEquals(new Point(3, 3), text.getSelection());
+	
+	text.replaceTextRange(9, 1, "9");
+	assertEquals(4, selectionListener.counter);
+	assertEquals(new Point(3, 3), text.getSelection());
+	
+	text.replaceTextRange(0, 1, "0");
+	assertEquals(4, selectionListener.counter);
+	assertEquals(new Point(3, 3), text.getSelection());
+	
+	// replace text that overlaps empty selection:
+	text.replaceTextRange(0, 9, "");
+	assertEquals(4, selectionListener.counter);
+	assertEquals(new Point(0, 0), text.getSelection());
 }
 
 @Test
@@ -4630,6 +4759,7 @@ protected void rtfCopy() {
 	String lines = "Line0\nLine1\nLine2\nLine3\nLine4\nLine5";
 	final int[] linesCalled = new int[] {0};
 	LineStyleListener listener = new LineStyleListener() {
+		@Override
 		public void lineGetStyle(LineStyleEvent event) {
 			Display display = Display.getDefault();
 			Color red = display.getSystemColor(SWT.COLOR_RED);

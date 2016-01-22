@@ -42,12 +42,13 @@ public void setUp() {
 @Test
 public void test_modifyTextLorg_eclipse_swt_custom_ExtendedModifyEvent() {
 	ExtendedModifyListener listener = new ExtendedModifyListener() {
+		@Override
 		public void modifyText(ExtendedModifyEvent event) {
 			switch(verify) {
 				case 1 : {
 					assertTrue(":1a:", event.start == 0);
 					assertTrue(":1b:", event.length == 1);
-					assertTrue(":1c:", event.replacedText.equals(""));
+					assertTrue(":1c:", event.replacedText.isEmpty());
 					break;
 				}
 				case 2 : {
@@ -69,7 +70,7 @@ public void test_modifyTextLorg_eclipse_swt_custom_ExtendedModifyEvent() {
 				case 5 : {
 					assertTrue(":5a:", event.start == 0);
 					assertTrue(":5b:", event.length == 1);
-					assertTrue(":5c:", event.replacedText.equals(""));
+					assertTrue(":5c:", event.replacedText.isEmpty());
 					break;
 				}
 				case 6 : {
@@ -107,13 +108,13 @@ public void test_modifyTextLorg_eclipse_swt_custom_ExtendedModifyEvent() {
 				case 12: {
 					assertTrue(":12a:", event.start == 3);
 					assertTrue(":12b:", event.length == 1);
-					assertTrue(":12c:", event.replacedText.equals(""));
+					assertTrue(":12c:", event.replacedText.isEmpty());
 					break;
 				}
 				case 13: {
 					assertTrue(":13a:", event.start == 2);
 					assertTrue(":13b:", event.length == 1);
-					assertTrue(":13c:", event.replacedText.equals(""));
+					assertTrue(":13c:", event.replacedText.isEmpty());
 					break;
 				}
 				case 14: {
@@ -137,13 +138,13 @@ public void test_modifyTextLorg_eclipse_swt_custom_ExtendedModifyEvent() {
 				case 18: {
 					assertTrue(":18a:", event.start == 3);
 					assertTrue(":18b:", event.length == 7);
-					assertTrue(":18c:", event.replacedText.equals(""));
+					assertTrue(":18c:", event.replacedText.isEmpty());
 					break;
 				}
 				case 19: {
 					assertTrue(":19a:", event.start == 2);
 					assertTrue(":19b:", event.length == 7);
-					assertTrue(":19c:", event.replacedText.equals(""));
+					assertTrue(":19c:", event.replacedText.isEmpty());
 					break;
 				}
 				case 20: {

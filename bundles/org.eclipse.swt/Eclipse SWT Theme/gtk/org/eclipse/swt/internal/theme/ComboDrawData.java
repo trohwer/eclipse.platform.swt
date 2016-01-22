@@ -12,7 +12,6 @@ package org.eclipse.swt.internal.theme;
 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.cairo.Cairo;
 import org.eclipse.swt.internal.gtk.*;
 
 public class ComboDrawData extends DrawData {
@@ -27,10 +26,10 @@ public ComboDrawData() {
 @Override
 void draw(Theme theme, GC gc, Rectangle bounds) {
 	long /*int*/ buttonHandle = theme.buttonHandle;
-	long /*int*/ gtkStyle = OS.gtk_widget_get_style(buttonHandle);
+	long /*int*/ gtkStyle = gtk_widget_get_style(buttonHandle);
 	long /*int*/ drawable = gc.getGCData().drawable;
 	theme.transferClipping(gc, gtkStyle);
-	
+
 	int x = bounds.x;
 	int y = bounds.y ;
 	int width = bounds.width;
@@ -39,7 +38,7 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
 	int shadow_type = OS.GTK_SHADOW_OUT;
 	if ((state[DrawData.COMBO_ARROW] & DrawData.PRESSED) != 0) shadow_type = OS.GTK_SHADOW_IN;
 	int state_type = getStateType(DrawData.COMBO_ARROW);
-	
+
 	int relief = OS.gtk_button_get_relief(buttonHandle);
 	int interior_focus = theme.getWidgetProperty(buttonHandle, "interior-focus");
 	int focus_line_width = theme.getWidgetProperty(buttonHandle, "focus-line-width");
@@ -54,20 +53,20 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
 		x_border += focus_line_width;
 		//y_border += focus_line_width;
 	}
-	int arrow_button_width = arrow_width + x_border * 2;		
+	int arrow_button_width = arrow_width + x_border * 2;
 	int arrow_button_x = x + width - arrow_button_width;
 	int arrow_x = arrow_button_x + (arrow_button_width - arrow_width) / 2;
 	int arrow_y = y + (height - arrow_height) / 2 + 1;
 	if (relief != OS.GTK_RELIEF_NONE || ((state[DrawData.COMBO_ARROW] & (DrawData.PRESSED | DrawData.HOT)) != 0)) {
 		byte[] detail = Converter.wcsToMbcs(null, "button", true);
 		gtk_render_box (gtkStyle, drawable, state_type, shadow_type, null, buttonHandle, detail, arrow_button_x, y, arrow_button_width, height);
-	}		
+	}
 	byte[] arrow_detail = Converter.wcsToMbcs(null, "arrow", true);
 	long /*int*/ arrowHandle = theme.arrowHandle;
 	gtk_render_arrow (gtkStyle, drawable, state_type, OS.GTK_SHADOW_OUT, null, arrowHandle, arrow_detail, OS.GTK_ARROW_DOWN, true, arrow_x, arrow_y, arrow_width, arrow_height);
-	
+
 	long /*int*/ entryHandle = theme.entryHandle;
-	gtkStyle = OS.gtk_widget_get_style(entryHandle);
+	gtkStyle = gtk_widget_get_style(entryHandle);
 	theme.transferClipping(gc, gtkStyle);
 	state_type = getStateType(DrawData.WIDGET_WHOLE);
 	byte[] detail = Converter.wcsToMbcs(null, "entry", true);
@@ -80,13 +79,13 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
 	height -= 2 * ythickness;
 	detail = Converter.wcsToMbcs(null, "entry_bg", true);
 	gtk_render_frame (gtkStyle, drawable, state_type, OS.GTK_SHADOW_NONE, null, entryHandle, detail, x, y, width - arrow_button_width, height);
-		
+
 	if (clientArea != null) {
 		clientArea.x = x;
 		clientArea.y = y;
 		clientArea.width = width - arrow_button_width;
 		clientArea.height = height;
-	}	
+	}
 }
 
 @Override
@@ -105,7 +104,7 @@ int getStateType(int part) {
 int hit(Theme theme, Point position, Rectangle bounds) {
 	if (!bounds.contains(position)) return DrawData.WIDGET_NOWHERE;
 	long /*int*/ buttonHandle = theme.buttonHandle;
-	long /*int*/ gtkStyle = OS.gtk_widget_get_style(buttonHandle);
+	long /*int*/ gtkStyle = gtk_widget_get_style(buttonHandle);
 	int interior_focus = theme.getWidgetProperty(buttonHandle, "interior-focus");
 	int focus_line_width = theme.getWidgetProperty(buttonHandle, "focus-line-width");
 	int focus_padding = theme.getWidgetProperty(buttonHandle, "focus-padding");
@@ -118,7 +117,7 @@ int hit(Theme theme, Point position, Rectangle bounds) {
 		x_border += focus_line_width;
 		//y_border += focus_line_width;
 	}
-	int arrow_button_width = arrow_width + x_border * 2;		
+	int arrow_button_width = arrow_width + x_border * 2;
 	int arrow_button_x = bounds.x + bounds.width - arrow_button_width;
 
 	Rectangle arrowRect = new Rectangle(arrow_button_x, bounds.y, arrow_button_width, bounds.height);
@@ -128,12 +127,9 @@ int hit(Theme theme, Point position, Rectangle bounds) {
 
 void gtk_render_shadow(long /*int*/ style, long /*int*/ window, int state_type, int shadow_type, GdkRectangle area, long /*int*/ widget, byte[] detail, int x , int y, int width, int height) {
 	if (OS.GTK3) {
-		long /*int*/ cairo = OS.gdk_cairo_create (window);
-		long /*int*/ context = OS.gtk_widget_get_style_context (style);
-		OS.gtk_style_context_save(context);
+		OS.gtk_style_context_save(style);
 		OS.gtk_style_context_set_state (style, state_type);
-		OS.gtk_render_frame (context, cairo, x, y, width, height);
-		Cairo.cairo_destroy (cairo);
+		OS.gtk_render_frame (style, window, x, y, width, height);
 	} else {
 		OS.gtk_paint_shadow(style, window, state_type, shadow_type, area, widget, detail, x, y, width, height);
 	}

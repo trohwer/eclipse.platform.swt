@@ -13,7 +13,6 @@ package org.eclipse.swt.internal.theme;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.cairo.Cairo;
 import org.eclipse.swt.internal.gtk.*;
 
 public class ToolItemDrawData extends DrawData {
@@ -30,7 +29,7 @@ public ToolItemDrawData() {
 @Override
 Rectangle computeTrim(Theme theme, GC gc) {
 	long /*int*/ buttonHandle = theme.buttonHandle;
-	long /*int*/ gtkStyle = OS.gtk_widget_get_style(buttonHandle);
+	long /*int*/ gtkStyle = gtk_widget_get_style(buttonHandle);
 	int focus_width = theme.getWidgetProperty(buttonHandle, "focus-line-width");
 	int focus_padding = theme.getWidgetProperty(buttonHandle, "focus-padding");
 	int xthickness = OS.gtk_style_get_xthickness(gtkStyle);
@@ -50,29 +49,23 @@ Rectangle computeTrim(Theme theme, GC gc) {
 @Override
 void draw(Theme theme, GC gc, Rectangle bounds) {
 	int state = this.state[DrawData.WIDGET_WHOLE];
-	long /*int*/ drawable = gc.getGCData().drawable;
+	long /*int*/ drawable = OS.GTK3 ? gc.getGCData().cairo : gc.getGCData().drawable;
 
 	if ((style & SWT.SEPARATOR) != 0) {
 		int state_type = getStateType(DrawData.WIDGET_WHOLE);
 		long /*int*/ separatorHandle = theme.separatorHandle;
 		byte[] detail = Converter.wcsToMbcs(null, "vseparator", true);
-		long /*int*/ gtkStyle = OS.gtk_widget_get_style (separatorHandle);
+		long /*int*/ gtkStyle = gtk_widget_get_style (separatorHandle);
 		theme.transferClipping(gc, gtkStyle);
 		if ((parent.style & SWT.VERTICAL) != 0) {
 			if (OS.GTK3) {
-				long /*int*/ cairo = OS.gdk_cairo_create (drawable);
-				long /*int*/ context = OS.gtk_widget_get_style_context (separatorHandle);
-				OS.gtk_render_line (context, cairo, bounds.x, bounds.y + bounds.height / 2, bounds.x + bounds.width, bounds.y + bounds.height / 2);
-				Cairo.cairo_destroy(cairo);
+				OS.gtk_render_line (gtkStyle, drawable, bounds.x, bounds.y + bounds.height / 2, bounds.x + bounds.width, bounds.y + bounds.height / 2);
 			} else {
 				OS.gtk_paint_hline(gtkStyle, drawable, state_type, null, separatorHandle, detail, bounds.x, bounds.x + bounds.width, bounds.y + bounds.height / 2);
-			}	
+			}
 		} else {
 			if (OS.GTK3) {
-				long /*int*/ cairo = OS.gdk_cairo_create (drawable);
-				long /*int*/ context = OS.gtk_widget_get_style_context (separatorHandle);
-				OS.gtk_render_line (context, cairo, bounds.x + bounds.width / 2, bounds.y, bounds.x + bounds.width / 2, bounds.y + bounds.height);
-				Cairo.cairo_destroy (cairo);
+				OS.gtk_render_line (gtkStyle, drawable, bounds.x + bounds.width / 2, bounds.y, bounds.x + bounds.width / 2, bounds.y + bounds.height);
 			} else {
 				OS.gtk_paint_vline(gtkStyle, drawable, state_type, null, separatorHandle, detail, bounds.y, bounds.y + bounds.height, bounds.x + bounds.width / 2);
 			}
@@ -81,7 +74,7 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
 	}
 
 	long /*int*/ buttonHandle = theme.buttonHandle;
-	long /*int*/ gtkStyle = OS.gtk_widget_get_style (buttonHandle);
+	long /*int*/ gtkStyle = gtk_widget_get_style (buttonHandle);
 	theme.transferClipping (gc, gtkStyle);
 	int focus_line_width = theme.getWidgetProperty(buttonHandle, "focus-line-width");
 	int focus_padding = theme.getWidgetProperty(buttonHandle, "focus-padding");
@@ -98,7 +91,7 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
 	} else if ((style & (SWT.CHECK | SWT.RADIO)) != 0) {
 		detail = Converter.wcsToMbcs(null, "togglebutton", true);
 	}
-	
+
 	int[] relief = new int[1];
 	long /*int*/ toolbarHandle = theme.toolbarHandle;
 	OS.gtk_widget_style_get(toolbarHandle, OS.button_relief, relief, 0);
@@ -106,7 +99,7 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
 	int shadow_type = OS.GTK_SHADOW_OUT;
 	if ((state & (DrawData.SELECTED | DrawData.PRESSED)) != 0) shadow_type = OS.GTK_SHADOW_IN;
 	int state_type = getStateType(DrawData.WIDGET_WHOLE);
-		
+
 	if (relief[0] != OS.GTK_RELIEF_NONE || ((state & (DrawData.PRESSED | DrawData.HOT | DrawData.SELECTED)) != 0)) {
 		gtk_render_box(gtkStyle, drawable, state_type, shadow_type, null, buttonHandle, detail, x, y, width, height);
 	}
@@ -137,7 +130,7 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
     	int child_displacement_y = theme.getWidgetProperty(buttonHandle, "child-displacement-y");
     	int child_displacement_x = theme.getWidgetProperty(buttonHandle, "child-displacement-x");
     	int displace_focus = theme.getWidgetProperty(buttonHandle, "displace-focus");
-    	
+
     	if (interior_focus != 0) {
     		int ythickness = OS.gtk_style_get_ythickness(gtkStyle);
     		x += xthickness + focus_padding;
@@ -150,12 +143,12 @@ void draw(Theme theme, GC gc, Rectangle bounds) {
     		width += 2 * (focus_line_width + focus_padding);
     		height += 2 * (focus_line_width + focus_padding);
     	}
-    	
+
     	if ((state & (DrawData.PRESSED | DrawData.SELECTED)) != 0 && displace_focus != 0) {
               x += child_displacement_x;
               y += child_displacement_y;
     	}
-    	
+
     	gtk_render_focus (gtkStyle, drawable, state_type, null, buttonHandle, detail, x, y, width, height);
     }
 }
@@ -165,7 +158,7 @@ int hit(Theme theme, Point position, Rectangle bounds) {
 	if (!bounds.contains(position)) return DrawData.WIDGET_NOWHERE;
 	if ((style & SWT.DROP_DOWN) != 0) {
 		long /*int*/ buttonHandle = theme.buttonHandle;
-		long /*int*/ gtkStyle = OS.gtk_widget_get_style (buttonHandle);
+		long /*int*/ gtkStyle = gtk_widget_get_style (buttonHandle);
 		int xthickness = OS.gtk_style_get_xthickness(gtkStyle);
 		int interior_focus = theme.getWidgetProperty(buttonHandle, "interior-focus");
 		int focus_line_width = theme.getWidgetProperty(buttonHandle, "focus-line-width");
@@ -175,7 +168,7 @@ int hit(Theme theme, Point position, Rectangle bounds) {
 		if (interior_focus == 0) arrow_x -= focus_line_width;
 		if (arrow_x <= position.x) return DrawData.TOOLITEM_ARROW;
 	}
-	return DrawData.WIDGET_WHOLE; 
+	return DrawData.WIDGET_WHOLE;
 }
 
 }

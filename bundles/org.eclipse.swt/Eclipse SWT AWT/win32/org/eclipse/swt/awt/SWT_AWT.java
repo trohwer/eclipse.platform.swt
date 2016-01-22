@@ -31,21 +31,20 @@ import org.eclipse.swt.widgets.Event;
  *
  * @see <a href="http://www.eclipse.org/swt/snippets/#awt">Swing/AWT snippets</a>
  * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
- * 
+ *
  * @since 3.0
  */
-@SuppressWarnings("rawtypes")
 public class SWT_AWT {
 
 	/**
 	 * The name of the embedded Frame class. The default class name
-	 * for the platform will be used if <code>null</code>. 
+	 * for the platform will be used if <code>null</code>.
 	 */
 	public static String embeddedFrameClass;
 
 	/**
 	 * Key for looking up the embedded frame for a Composite using
-	 * getData(). 
+	 * getData().
 	 */
 	static String EMBEDDED_FRAME_KEY = "org.eclipse.swt.awt.SWT_AWT.embeddedFrame";
 
@@ -74,25 +73,23 @@ static synchronized void initializeSwing() {
 	swingInitialized = true;
 	try {
 		/* Initialize the default focus traversal policy */
-		Class[] emptyClass = new Class[0];
-		Object[] emptyObject = new Object[0];
-		Class clazz = Class.forName("javax.swing.UIManager");
-		Method method = clazz.getMethod("getDefaults", emptyClass);
-		if (method != null) method.invoke(clazz, emptyObject);
+		Class<?> clazz = Class.forName("javax.swing.UIManager");
+		Method method = clazz.getMethod("getDefaults");
+		if (method != null) method.invoke(clazz);
 	} catch (Throwable e) {}
 }
 
 /**
  * Returns a <code>java.awt.Frame</code> which is the embedded frame
  * associated with the specified composite.
- * 
+ *
  * @param parent the parent <code>Composite</code> of the <code>java.awt.Frame</code>
  * @return a <code>java.awt.Frame</code> the embedded frame or <code>null</code>.
- * 
+ *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
  * </ul>
- * 
+ *
  * @since 3.2
  */
 public static Frame getFrame (Composite parent) {
@@ -113,15 +110,15 @@ public static Frame getFrame (Composite parent) {
  * strongly recommended that a heavyweight component such as <code>java.awt.Panel</code>
  * be added to the frame as the root of all components.
  * </p>
- * 
+ *
  * @param parent the parent <code>Composite</code> of the new <code>java.awt.Frame</code>
  * @return a <code>java.awt.Frame</code> to be the parent of the embedded AWT components
- * 
+ *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the parent Composite does not have the SWT.EMBEDDED style</li> 
+ *    <li>ERROR_INVALID_ARGUMENT - if the parent Composite does not have the SWT.EMBEDDED style</li>
  * </ul>
- * 
+ *
  * @since 3.0
  */
 public static Frame new_Frame (final Composite parent) {
@@ -140,7 +137,7 @@ public static Frame new_Frame (final Composite parent) {
 				 * and other JREs take a long.  To handle this binary incompatibility, use
 				 * reflection to create the embedded frame.
 				 */
-				Class clazz = null;
+				Class<?> clazz = null;
 				try {
 					String className = embeddedFrameClass != null ? embeddedFrameClass : "sun.awt.windows.WEmbeddedFrame";
 					clazz = Class.forName(className);
@@ -150,24 +147,24 @@ public static Frame new_Frame (final Composite parent) {
 				}
 				initializeSwing ();
 				Object value = null;
-				Constructor constructor = null;
+				Constructor<?> constructor = null;
 				try {
-					constructor = clazz.getConstructor (new Class [] {int.class});
-					value = constructor.newInstance (new Object [] {new Integer ((int)/*64*/handle)});
+					constructor = clazz.getConstructor (int.class);
+					value = constructor.newInstance (new Integer ((int)/*64*/handle));
 				} catch (Throwable e1) {
 					try {
-						constructor = clazz.getConstructor (new Class [] {long.class});
-						value = constructor.newInstance (new Object [] {new Long (handle)});
+						constructor = clazz.getConstructor (long.class);
+						value = constructor.newInstance (new Long (handle));
 					} catch (Throwable e2) {
 						exception[0] = e2;
 						return;
 					}
 				}
 				final Frame frame = (Frame) value;
-				
+
 				/*
 				* TEMPORARY CODE
-				* 
+				*
 				* For some reason, the graphics configuration of the embedded
 				* frame is not initialized properly. This causes an exception
 				* when the depth of the screen is changed.
@@ -178,7 +175,7 @@ public static Frame new_Frame (final Composite parent) {
 					field.setAccessible(true);
 					field.set(frame.getPeer(), frame.getGraphicsConfiguration());
 				} catch (Throwable e) {}
-				
+
 				result[0] = frame;
 			} finally {
 				synchronized(result) {
@@ -214,8 +211,8 @@ public static Frame new_Frame (final Composite parent) {
 	}
 	final Frame frame = result[0];
 
-	parent.setData(EMBEDDED_FRAME_KEY, frame);	
-	
+	parent.setData(EMBEDDED_FRAME_KEY, frame);
+
 	/* Forward the iconify and deiconify events */
 	final Listener shellListener = new Listener () {
 		public void handleEvent (Event e) {
@@ -240,7 +237,7 @@ public static Frame new_Frame (final Composite parent) {
 	Shell shell = parent.getShell ();
 	shell.addListener (SWT.Deiconify, shellListener);
 	shell.addListener (SWT.Iconify, shellListener);
-	
+
 	/*
 	* Generate the appropriate events to activate and deactivate
 	* the embedded frame. This is needed in order to make keyboard
@@ -266,54 +263,34 @@ public static Frame new_Frame (final Composite parent) {
 				case SWT.Activate:
 					EventQueue.invokeLater(new Runnable () {
 						public void run () {
-							if (Library.JAVA_VERSION < Library.JAVA_VERSION(1, 4, 0)) {
-								frame.dispatchEvent (new WindowEvent (frame, WindowEvent.WINDOW_ACTIVATED));
-								frame.dispatchEvent (new FocusEvent (frame, FocusEvent.FOCUS_GAINED));
-							} else if (Library.JAVA_VERSION < Library.JAVA_VERSION(1, 5, 0)) {
-								frame.dispatchEvent (new WindowEvent (frame, WindowEvent.WINDOW_ACTIVATED));
-								frame.dispatchEvent (new WindowEvent (frame, 207 /*WindowEvent.WINDOW_GAINED_FOCUS*/));
-							} else {
-								if (frame.isActive()) return;
-								try {
-									Class clazz = frame.getClass();
-									Method method = clazz.getMethod("synthesizeWindowActivation", new Class[]{boolean.class});
-									if (method != null) method.invoke(frame, new Object[]{Boolean.TRUE});
-								} catch (Throwable e) {}
-							}
+							if (frame.isActive()) return;
+							try {
+								Class<?> clazz = frame.getClass();
+								Method method = clazz.getMethod("synthesizeWindowActivation", boolean.class);
+								if (method != null) method.invoke(frame, Boolean.TRUE);
+							} catch (Throwable e) {}
 						}
 					});
 					break;
 				case SWT.Deactivate:
 					EventQueue.invokeLater(new Runnable () {
 						public void run () {
-							if (Library.JAVA_VERSION < Library.JAVA_VERSION(1, 4, 0)) {
-								frame.dispatchEvent (new WindowEvent (frame, WindowEvent.WINDOW_DEACTIVATED));
-								frame.dispatchEvent (new FocusEvent (frame, FocusEvent.FOCUS_LOST));
-							} else if (Library.JAVA_VERSION < Library.JAVA_VERSION(1, 5, 0)) {
-								frame.dispatchEvent (new WindowEvent (frame, 208 /*WindowEvent.WINDOW_LOST_FOCUS*/));
-								frame.dispatchEvent (new WindowEvent (frame, WindowEvent.WINDOW_DEACTIVATED));
-							} else {
-								if (!frame.isActive()) return;
-								try {
-									Class clazz = frame.getClass();
-									Method method = clazz.getMethod("synthesizeWindowActivation", new Class[]{boolean.class});
-									if (method != null) method.invoke(frame, new Object[]{Boolean.FALSE});
-								} catch (Throwable e) {}
-							}
+							if (!frame.isActive()) return;
+							try {
+								Class<?> clazz = frame.getClass();
+								Method method = clazz.getMethod("synthesizeWindowActivation", boolean.class);
+								if (method != null) method.invoke(frame, Boolean.FALSE);
+							} catch (Throwable e) {}
 						}
 					});
 					break;
 			}
 		}
 	};
-	if (Library.JAVA_VERSION < Library.JAVA_VERSION(1, 5, 0)) {
-		parent.addListener (SWT.Activate, listener);
-	} else {
-		parent.addListener (SWT.FocusIn, listener);
-	}
+	parent.addListener (SWT.FocusIn, listener);
 	parent.addListener (SWT.Deactivate, listener);
 	parent.addListener (SWT.Dispose, listener);
-	
+
 	parent.getDisplay().asyncExec(new Runnable() {
 		public void run () {
 			if (parent.isDisposed()) return;
@@ -331,18 +308,18 @@ public static Frame new_Frame (final Composite parent) {
 
 /**
  * Creates a new <code>Shell</code>. This Shell is the root for
- * the SWT widgets that will be embedded within the AWT canvas. 
- * 
+ * the SWT widgets that will be embedded within the AWT canvas.
+ *
  * @param display the display for the new Shell
  * @param parent the parent <code>java.awt.Canvas</code> of the new Shell
  * @return a <code>Shell</code> to be the parent of the embedded SWT widgets
- * 
+ *
  * @exception IllegalArgumentException <ul>
  *    <li>ERROR_NULL_ARGUMENT - if the display is null</li>
  *    <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
  *    <li>ERROR_INVALID_ARGUMENT - if the parent's peer is not created</li>
  * </ul>
- * 
+ *
  * @since 3.0
  */
 public static Shell new_Shell (final Display display, final Canvas parent) {

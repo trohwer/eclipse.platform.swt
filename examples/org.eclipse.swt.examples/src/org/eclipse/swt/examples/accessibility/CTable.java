@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,12 +193,7 @@ public CTable (Composite parent, int style) {
 	arrowBounds = getArrowDownImage ().getBounds ();
 	clientArea = getClientArea ();
 	
-	Listener listener = new Listener () {
-		@Override
-		public void handleEvent (Event event) {
-			handleEvents (event);
-		}
-	};
+	Listener listener = event -> handleEvents (event);
 	addListener (SWT.Paint, listener);
 	addListener (SWT.MouseDown, listener);
 	addListener (SWT.MouseUp, listener);
@@ -224,19 +219,16 @@ public CTable (Composite parent, int style) {
 	header.addListener (SWT.MouseExit, listener);
 	header.addListener (SWT.MenuDetect, listener);
 
-	toolTipListener = new Listener () {
-		@Override
-		public void handleEvent (Event event) {
-			switch (event.type) {
-				case SWT.MouseHover:
-				case SWT.MouseMove:
-					if (headerUpdateToolTip (event.x)) break;
-					// FALL THROUGH
-				case SWT.MouseExit:
-				case SWT.MouseDown:
-					headerHideToolTip ();
-					break;
-			}
+	toolTipListener = event -> {
+		switch (event.type) {
+			case SWT.MouseHover:
+			case SWT.MouseMove:
+				if (headerUpdateToolTip (event.x)) break;
+				// FALL THROUGH
+			case SWT.MouseExit:
+			case SWT.MouseDown:
+				headerHideToolTip ();
+				break;
 		}
 	};
 
@@ -2125,26 +2117,23 @@ static void initImages (final Display display) {
 		display.setData (ID_GRAYUNCHECKED, new Image (display, grayUnchecked));
 	}
 
-	display.disposeExec (new Runnable () {
-		@Override
-		public void run() {
-			Image unchecked = (Image) display.getData (ID_UNCHECKED);
-			if (unchecked != null) unchecked.dispose ();
-			Image grayUnchecked = (Image) display.getData (ID_GRAYUNCHECKED);
-			if (grayUnchecked != null) grayUnchecked.dispose ();
-			Image checkmark = (Image) display.getData (ID_CHECKMARK);
-			if (checkmark != null) checkmark.dispose ();
-			Image arrowDown = (Image) display.getData (ID_ARROWDOWN);
-			if (arrowDown != null) arrowDown.dispose ();
-			Image arrowUp = (Image) display.getData (ID_ARROWUP);
-			if (arrowUp != null) arrowUp.dispose ();
+	display.disposeExec (() -> {
+		Image unchecked = (Image) display.getData (ID_UNCHECKED);
+		if (unchecked != null) unchecked.dispose ();
+		Image grayUnchecked = (Image) display.getData (ID_GRAYUNCHECKED);
+		if (grayUnchecked != null) grayUnchecked.dispose ();
+		Image checkmark1 = (Image) display.getData (ID_CHECKMARK);
+		if (checkmark1 != null) checkmark1.dispose ();
+		Image arrowDown = (Image) display.getData (ID_ARROWDOWN);
+		if (arrowDown != null) arrowDown.dispose ();
+		Image arrowUp = (Image) display.getData (ID_ARROWUP);
+		if (arrowUp != null) arrowUp.dispose ();
 
-			display.setData (ID_UNCHECKED, null);
-			display.setData (ID_GRAYUNCHECKED, null);
-			display.setData (ID_CHECKMARK, null);
-			display.setData (ID_ARROWDOWN, null);
-			display.setData (ID_ARROWUP, null);
-		}
+		display.setData (ID_UNCHECKED, null);
+		display.setData (ID_GRAYUNCHECKED, null);
+		display.setData (ID_CHECKMARK, null);
+		display.setData (ID_ARROWDOWN, null);
+		display.setData (ID_ARROWUP, null);
 	});
 }
 /**
