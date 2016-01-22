@@ -811,7 +811,7 @@ public Color getBackground() {
  * have x and y values of 0, and the width and height of the
  * image.
  *
- * @return a rectangle specifying the currently used image's bounds.
+ * @return a rectangle specifying the image's bounds at 100% zoom.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -853,8 +853,7 @@ public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBounds();
 	if (bounds != null && zoom > 100) {
-		float scaleFactor = (float)zoom / 100f;
-		bounds = DPIUtil.scale(bounds, scaleFactor);
+		bounds = DPIUtil.scale(bounds, zoom, 100);
 	}
 	return bounds;
 }
@@ -864,7 +863,8 @@ public Rectangle getBounds(int zoom) {
  * Modifications made to this <code>ImageData</code> will not
  * affect the Image.
  *
- * @return an <code>ImageData</code> containing the image's data and attributes
+ * @return an <code>ImageData</code> containing the image's data and
+ *         attributes at 100% zoom level.
  *
  * @exception SWTException <ul>
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
@@ -875,6 +875,14 @@ public Rectangle getBounds(int zoom) {
  */
 public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	ImageData imageData = _getImageData();
+	if (imageData != null && getEnableAutoScaling()) {
+		data = DPIUtil.autoScaleImageData(data, 100, currentDeviceZoom);
+	}
+	return imageData;
+}
+
+ImageData _getImageData() {
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
