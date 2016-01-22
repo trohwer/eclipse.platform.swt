@@ -81,10 +81,10 @@ public abstract class Device implements Drawable {
 
 	/* Device dpi */
 	Point dpi;
-	
+
 	/*Device Scale Factor in percentage*/
 	int scaleFactor;
-	
+
 	/* Auto-Scaling of images */
 	boolean enableAutoScaling = true;
 
@@ -987,14 +987,14 @@ int _getDPIx () {
 	return scaleFactor * 96/100;
 }
 /**
- * Gets the scaling factor from the device 
+ * Gets the scaling factor from the device
  * @return scaling factor in percentage. scaling factor 1 corresponds to 100%
  * @since 3.105
  */
 public int getScalingFactor() {
 	final String schemaId = "com.ubuntu.user-interface";
 	final String key = "scale-factor";
-	final String monitorId = "eDP1";
+	final String monitorId = "VGA-0";
 	int fontHeight = 0;
 
 	byte[] schema_id = Converter.wcsToMbcs (null, schemaId, true);
@@ -1004,7 +1004,7 @@ public int getScalingFactor() {
 		byte[] keyString = Converter.wcsToMbcs (null, key, true);
 		long /*int*/ settingsDict = OS.g_settings_get_value (displaySettings, keyString);
 		long /*int*/ keyArray = 0;
-		
+
 		long /*int*/ iter = OS.g_variant_iter_new (settingsDict);
 		int size = OS.g_variant_iter_init(iter, settingsDict);
 		for (int i =0; i<size; i++) {
@@ -1025,7 +1025,7 @@ public int getScalingFactor() {
 			OS.g_free(keyArray);
 			OS.g_variant_unref(iterValue);
 		}
-		
+
 		OS.g_variant_iter_free(iter);
 		return (int) (fontHeight * 100 / 8);
 	} else {
@@ -1035,16 +1035,16 @@ public int getScalingFactor() {
 		GdkRectangle dest = new GdkRectangle ();
 		OS.gdk_screen_get_monitor_geometry(screen, monitor, dest);
 		int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
-		return (Compatibility.round (254 * dest.width, widthMM * 10)*100/96);		
+		return (Compatibility.round (254 * dest.width, widthMM * 10)*100/96);
 	}
 }
 
 /**
  * Returns autoScaling settings for hiDpi screens
- * 
+ *
  * @return boolean value for autoScaling
  * @since 3.105
- * 
+ *
  */
 public boolean getEnableAutoScaling () {
 	return enableAutoScaling;
@@ -1052,7 +1052,7 @@ public boolean getEnableAutoScaling () {
 /**
  * Sets autoScaling settings for hiDpi screens
  * @since 3.105
- * 
+ *
  */
 public void setEnableAutoScaling (boolean autoScale) {
 	enableAutoScaling = autoScale;
