@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1401,7 +1401,10 @@ public Rectangle getBounds() {
 	}
 	return bounds;
 }
-	
+
+/**
+ * @return a rectangle specifying the image's bounds at current zoom.
+ */	
 Rectangle _getBounds() {
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
@@ -1474,13 +1477,13 @@ public Rectangle getBounds(int zoom) {
  */
 public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	ImageData imageData = _getImageData();
-	if (imageData != null && getEnableAutoScaling()) {
-		data = DPIUtil.autoScaleImageData(data, 100, currentDeviceZoom);
-	}
-	return imageData;
+	return getImageData(100);
 }
 
+/**
+ * @return an <code>ImageData</code> containing the image's data and
+ *         attributes at current zoom level.
+ */
 ImageData _getImageData() {
 	BITMAP bm;
 	int depth, width, height;
