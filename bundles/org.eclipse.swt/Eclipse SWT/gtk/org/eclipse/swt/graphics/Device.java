@@ -994,8 +994,9 @@ int _getDPIx () {
 public int getScalingFactor() {
 	final String schemaId = "com.ubuntu.user-interface";
 	final String key = "scale-factor";
-	final String monitorId = "VGA-0";
 	int fontHeight = 0;
+	long /*int*/ screen = OS.gdk_screen_get_default();
+	int monitor = OS.gdk_screen_get_monitor_at_point(screen, 0, 0);
 
 	byte[] schema_id = Converter.wcsToMbcs (null, schemaId, true);
 	long /*int*/ schemaSource = OS.g_settings_schema_source_get_default ();
@@ -1014,9 +1015,9 @@ public int getScalingFactor() {
 			byte[] buffer = new byte [len];
 			OS.memmove (buffer, keyArray, len);
 			String type = new String(Converter.mbcsToWcs(null, buffer));
-			if (type.contains(monitorId)) {
-				int index = type.indexOf(monitorId);
-				String height = type.substring((index + monitorId.length() + 2), (type.length() - 1));
+			if (i == monitor) {
+				int index = type.indexOf(",");
+				String height = type.substring((index + 1), (type.length() - 1));
 				fontHeight = Integer.valueOf(height.trim());
 				OS.g_free(keyArray);
 				OS.g_variant_unref(iterValue);
@@ -1029,9 +1030,6 @@ public int getScalingFactor() {
 		OS.g_variant_iter_free(iter);
 		return (int) (fontHeight * 100 / 8);
 	} else {
-		long /*int*/ screen = OS.gdk_screen_get_default();
-		int monitor = OS.gdk_screen_get_monitor_at_point(screen, 0, 0);
-
 		GdkRectangle dest = new GdkRectangle ();
 		OS.gdk_screen_get_monitor_geometry(screen, monitor, dest);
 		int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
