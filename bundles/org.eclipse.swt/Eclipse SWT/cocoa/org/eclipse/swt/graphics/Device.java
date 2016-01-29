@@ -776,5 +776,14 @@ public void setWarnings (boolean warnings) {
 	checkDevice ();
 	this.warnings = warnings;
 }
+/**
+ * Gets the scaling factor from the device and calculates zoom level
+ * @return zoom in percentage. scaling factor 1 corresponds to 100%
+ * @since 3.105
+ */
+public int getDeviceZoom() {
+	return 100;
+}
+}
 
 }

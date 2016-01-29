@@ -149,7 +149,7 @@ public class DPIUtil {
 	public static float getScalingFactor (Device device) {
 		float scalingFactor = 1;
 		if (getAutoScale()) {
-			scalingFactor = ( device.getScalingFactor () / 100f );
+			scalingFactor = ( device.getDeviceZoom () / 100f );
 		}
 		return scalingFactor;
 	}

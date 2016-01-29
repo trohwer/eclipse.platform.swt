@@ -1174,7 +1174,7 @@ public Point getSize () {
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 : allocation.height;
 	if (this.getLayoutData() instanceof GridData) {
-		float scalingFactor = display.getScalingFactor ()/100f;
+		float scalingFactor = display.getDeviceZoom ()/100f;
 		width = (int) (width / scalingFactor);
 		height = (int) (height / scalingFactor);
 	}
@@ -1421,7 +1421,7 @@ public void pack (boolean changed) {
 public void setLayoutData (Object layoutData) {
 	checkWidget();
 	if ((layoutData instanceof GridData)) {
-		float scalingFactor = display.getScalingFactor ()/100f;
+		float scalingFactor = display.getDeviceZoom ()/100f;
 		((GridData) layoutData).heightHint *= scalingFactor;
 		((GridData) layoutData).widthHint *= scalingFactor;
 	}

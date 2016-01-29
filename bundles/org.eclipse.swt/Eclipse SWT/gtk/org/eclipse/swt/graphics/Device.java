@@ -582,7 +582,7 @@ public boolean getWarnings () {
  */
 protected void init () {
 	this.dpi = getDPI();
-	this.scaleFactor = getScalingFactor();
+	this.scaleFactor = getDeviceZoom();
 
 	if (xDisplay != 0 && !OS.USE_CAIRO) {
 		int[] event_basep = new int[1], error_basep = new int [1];
@@ -984,11 +984,11 @@ int _getDPIx () {
 	return scaleFactor * 96/100;
 }
 /**
- * Gets the scaling factor from the device
- * @return scaling factor in percentage. scaling factor 1 corresponds to 100%
+ * Gets the scaling factor from the device and calculates zoom level
+ * @return zoom in percentage. scaling factor 1 corresponds to 100%
  * @since 3.105
  */
-public int getScalingFactor() {
+public int getDeviceZoom() {
 	final String schemaId = "com.ubuntu.user-interface";
 	final String key = "scale-factor";
 	int fontHeight = 0;
