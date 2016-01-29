@@ -465,6 +465,10 @@ void printWidget (GC gc, long /*int*/ drawable, int depth, int x, int y) {
 	state &= ~OBSCURED;
 	long /*int*/ topHandle = topHandle ();
 	long /*int*/ window = gtk_widget_get_window (topHandle);
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	x = (int) (x * scaleFactor);
+	y = (int) (y * scaleFactor);
+
 	printWindow (true, this, gc, drawable, depth, window, x, y);
 	if (obscured) state |= OBSCURED;
 }
@@ -842,6 +846,12 @@ public Rectangle getBounds () {
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 :allocation.height;
 	if ((parent.style & SWT.MIRRORED) != 0) x = parent.getClientWidth () - width - x;
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	x = (int) (x / scaleFactor);
+	y = (int) (y / scaleFactor);
+	width = (int) (width / scaleFactor);
+	height = (int) (height / scaleFactor);
+
 	return new Rectangle (x, y, width, height);
 }
 
@@ -1110,6 +1120,9 @@ public Point getLocation () {
 		int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 		x = parent.getClientWidth () - width - x;
 	}
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	x = (int) (x / scaleFactor);
+	y = (int) (y / scaleFactor);
 	return new Point (x, y);
 }
 
@@ -1173,11 +1186,9 @@ public Point getSize () {
 	OS.gtk_widget_get_allocation (topHandle, allocation);
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 : allocation.height;
-	if (this.getLayoutData() instanceof GridData) {
-		float scalingFactor = display.getDeviceZoom ()/100f;
-		width = (int) (width / scalingFactor);
-		height = (int) (height / scalingFactor);
-	}
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	width = (int) (width / scaleFactor);
+	height = (int) (height / scaleFactor);
 	return new Point (width, height);
 }
 
@@ -3853,6 +3864,11 @@ void redrawChildren () {
 
 void redrawWidget (int x, int y, int width, int height, boolean redrawAll, boolean all, boolean trim) {
 	if (!gtk_widget_get_realized(handle)) return;
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	x = (int) (x * scaleFactor);
+	y = (int) (y * scaleFactor);
+	width = (int) (width * scaleFactor);
+	height = (int) (height * scaleFactor);
 	long /*int*/ window = paintWindow ();
 	GdkRectangle rect = new GdkRectangle ();
 	if (redrawAll) {

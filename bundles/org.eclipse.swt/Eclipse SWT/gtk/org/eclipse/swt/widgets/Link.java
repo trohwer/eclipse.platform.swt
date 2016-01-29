@@ -138,6 +138,10 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	int border = getBorderWidth ();
 	width += border * 2;
 	height += border * 2;
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	width = (int) (width / scaleFactor);
+	height = (int) (height / scaleFactor);
+
 	return new Point (width, height);
 }
 

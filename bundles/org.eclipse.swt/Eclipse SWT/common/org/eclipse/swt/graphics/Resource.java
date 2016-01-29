@@ -119,8 +119,8 @@ public abstract boolean isDisposed();
 /**
  * @since 3.105
  */
-public int getDeviceZoom() {
-	return DPIUtil.mapDPIToZoom(device._getDPIx());
+public int getDeviceZoom () {
+	return device.getDeviceZoom ();
 }
 
 }

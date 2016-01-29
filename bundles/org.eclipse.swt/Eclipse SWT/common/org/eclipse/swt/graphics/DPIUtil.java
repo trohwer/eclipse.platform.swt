@@ -146,7 +146,7 @@ static ImageData getImageData (Image image, int zoom) {
 public static float getScalingFactor (Device device) {
 	float scalingFactor = 1;
 	if (getAutoScale ()) {
-		scalingFactor = (device.getScalingFactor ()/100f);
+		scalingFactor = (device.getDeviceZoom ()/100f);
 	}
 	return scalingFactor;
 }
@@ -155,7 +155,7 @@ public static boolean getAutoScale () {
 	return autoScale;
 }
 
-public static void setAutoScale(boolean autoScale) {
+public static void setAutoScale (boolean autoScale) {
 	DPIUtil.autoScale = autoScale;
 }
 }

@@ -125,6 +125,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 			if (hHint == SWT.DEFAULT) hHint = DEFAULT_HEIGHT;
 		}
 	}
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	Point size;
 	/*
 	* Feature in GTK. GTK has a predetermined maximum width for wrapping text.
@@ -157,6 +158,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		}
 		size.x += wHint == SWT.DEFAULT ? w [0] : wHint;
 		size.y += hHint == SWT.DEFAULT ? h [0] : hHint;
+		size.x = (int) (size.x / scaleFactor);
+		size.y = (int) (size.y /scaleFactor);
 	} else {
 		if (frameHandle != 0) {
 			int [] reqWidth = new int [1], reqHeight = new int [1];
@@ -202,6 +205,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 			fontHeight += 2 * getThickness (frameHandle).y;
 			fontHeight += 2 * OS.gtk_container_get_border_width (frameHandle);
 		}
+		fontHeight = (int) (fontHeight / scaleFactor);
 		size.y = Math.max (size.y, fontHeight);
 	}
 	return size;
