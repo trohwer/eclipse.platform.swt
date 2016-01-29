@@ -16,13 +16,15 @@ import org.eclipse.swt.*;
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
  * functionality.
  *
- * @since 3.104
+ * @since 3.105
  */
-class DPIUtil {
+public class DPIUtil {
 
 	/* DPI Constants */
 	static final int DPI_ZOOM_200 = 192;
 	static final int DPI_ZOOM_150 = 144;
+
+	private static boolean autoScale = true;
 
 	/**
 	 * Compute the zoom value based on the DPI value.
@@ -94,7 +96,7 @@ class DPIUtil {
 		ImageData imageData = new ImageData(filename);
 		return autoScaleImageData(imageData, targetZoom, currentZoom);
 	}
-	
+
 	/**
 	 * Returns a new rectangle as per the scaleFactor.
 	 */
@@ -108,7 +110,7 @@ class DPIUtil {
 		returnRect.height = (int) (rect.height * scaleFactor);
 		return returnRect;
 	}
-	
+
 	/**
 	 * Returns an <code>ImageData</code> for specified zoom.
 	 */
@@ -138,5 +140,25 @@ class DPIUtil {
 			imageData = DPIUtil.autoScaleImageData(imageData, zoom, image.currentDeviceZoom);
 		}
 		return imageData;
+	}
+
+	/**
+	 * Returns Scaling factor from the display
+	 * @return float scaling factor
+	 */
+	public static float getScalingFactor (Device device) {
+		float scalingFactor = 1;
+		if (getAutoScale()) {
+			scalingFactor = ( device.getScalingFactor () / 100f );
+		}
+		return scalingFactor;
+	}
+
+	public static boolean getAutoScale() {
+		return autoScale;
+	}
+
+	public static void setAutoScale(boolean autoScale) {
+		DPIUtil.autoScale = autoScale;
 	}
 }

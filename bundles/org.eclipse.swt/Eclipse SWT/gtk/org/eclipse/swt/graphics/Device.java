@@ -85,9 +85,6 @@ public abstract class Device implements Drawable {
 	/*Device Scale Factor in percentage*/
 	int scaleFactor;
 
-	/* Auto-Scaling of images */
-	boolean enableAutoScaling = true;
-
 	long /*int*/ emptyTab;
 
 	boolean useXRender;
@@ -1035,24 +1032,5 @@ public int getScalingFactor() {
 		int widthMM = OS.gdk_screen_get_monitor_width_mm(screen, monitor);
 		return (Compatibility.round (254 * dest.width, widthMM * 10)*100/96);
 	}
-}
-
-/**
- * Returns autoScaling settings for hiDpi screens
- *
- * @return boolean value for autoScaling
- * @since 3.105
- *
- */
-public boolean getEnableAutoScaling () {
-	return enableAutoScaling;
-}
-/**
- * Sets autoScaling settings for hiDpi screens
- * @since 3.105
- *
- */
-public void setEnableAutoScaling (boolean autoScale) {
-	enableAutoScaling = autoScale;
 }
 }

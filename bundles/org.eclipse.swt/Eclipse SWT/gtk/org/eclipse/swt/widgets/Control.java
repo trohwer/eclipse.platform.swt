@@ -732,6 +732,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 
 Point computeNativeSize (long /*int*/ h, int wHint, int hHint, boolean changed) {
 	int width = wHint, height = hHint;
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (OS.GTK3){
 		if (wHint == SWT.DEFAULT && hHint == SWT.DEFAULT) {
 			GtkRequisition requisition = new GtkRequisition ();
@@ -748,6 +749,8 @@ Point computeNativeSize (long /*int*/ h, int wHint, int hHint, boolean changed) 
 				height = natural_size [0];
 			}
 		}
+		width = (int) (width / scaleFactor);
+		height = (int) (height / scaleFactor);
 		return new Point(width, height);
 	}
 	if (wHint == SWT.DEFAULT && hHint == SWT.DEFAULT) {
@@ -765,6 +768,8 @@ Point computeNativeSize (long /*int*/ h, int wHint, int hHint, boolean changed) 
 		width = wHint == SWT.DEFAULT ? requisition.width : wHint;
 		height = hHint == SWT.DEFAULT ? requisition.height : hHint;
 	}
+	width = (int) (width / scaleFactor);
+	height = (int) (height / scaleFactor);
 	return new Point (width, height);
 }
 
@@ -942,6 +947,9 @@ void moveHandle (int x, int y) {
 
 void resizeHandle (int width, int height) {
 	long /*int*/ topHandle = topHandle ();
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	width = (int) (width * scaleFactor);
+	height = (int) (height * scaleFactor);
 	if (OS.GTK3) {
 		OS.swt_fixed_resize (OS.gtk_widget_get_parent (topHandle), topHandle, width, height);
 		if (topHandle != handle) {
@@ -955,6 +963,12 @@ void resizeHandle (int width, int height) {
 
 int setBounds (int x, int y, int width, int height, boolean move, boolean resize) {
 	// bug in GTK2 crashes JVM, in GTK3 the new shell only. See bug 472743
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	width = (int) (width * scaleFactor);
+	height = (int) (height * scaleFactor);
+	x = (int) (x * scaleFactor);
+	y = (int) (y * scaleFactor);
+
 	width = Math.min(width, (2 << 14) - 1);
 	height = Math.min(height, (2 << 14) - 1);
 

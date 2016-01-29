@@ -168,6 +168,7 @@ public void addSelectionListener (SelectionListener listener) {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
 	/*
@@ -237,6 +238,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		size = new Point(0, 0);
 		size.x += wHint == SWT.DEFAULT ? w [0] + imageWidth + trimWidth : wHint;
 		size.y += hHint == SWT.DEFAULT ? Math.max(Math.max(imageHeight, indicatorHeight), h [0]) + trimHeight : hHint;
+		size.x = (int) (size.x / scaleFactor);
+		size.y = (int) (size.y / scaleFactor);
 	} else {
 		size = computeNativeSize (handle, wHint, hHint, changed);
 	}
@@ -246,8 +249,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (wHint != SWT.DEFAULT || hHint != SWT.DEFAULT) {
 		if (OS.gtk_widget_get_can_default (handle)) {
 			GtkBorder border = getBorder (OS.default_border, handle, DEFAULT_BORDER);
-			if (wHint != SWT.DEFAULT) size.x += border.left + border.right;
-			if (hHint != SWT.DEFAULT) size.y += border.top + border.bottom;
+			if (wHint != SWT.DEFAULT) size.x += (int) ((border.left + border.right)/scaleFactor);
+			if (hHint != SWT.DEFAULT) size.y += (int) ((border.top + border.bottom)/scaleFactor);
 		}
 	}
 	return size;
@@ -827,6 +830,7 @@ void setBackgroundColor (GdkColor color) {
 
 @Override
 int setBounds (int x, int y, int width, int height, boolean move, boolean resize) {
+
 	/*
 	* Bug in GTK.  For some reason, when the label is
 	* wrappable and its container is resized, it does not
