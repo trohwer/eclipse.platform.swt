@@ -89,7 +89,7 @@ public Device getDevice() {
  * @since 3.105
  *
  */
-public boolean getEnableAutoScaling () {
+public boolean getEnableAutoScaling() {
 	return DPIUtil.getAutoScale();
 }
 /**
@@ -97,7 +97,7 @@ public boolean getEnableAutoScaling () {
  * @since 3.105
  *
  */
-void setEnableAutoScaling (boolean value) {
+void setEnableAutoScaling(boolean value) {
 	DPIUtil.setAutoScale(value);
 }
 void init() {
@@ -119,8 +119,8 @@ public abstract boolean isDisposed();
 /**
  * @since 3.105
  */
-public int getDeviceZoom () {
-	return DPIUtil.mapDPIToZoom ( device._getDPIx ());
+public int getDeviceZoom() {
+	return DPIUtil.mapDPIToZoom(device._getDPIx());
 }
 
 }
