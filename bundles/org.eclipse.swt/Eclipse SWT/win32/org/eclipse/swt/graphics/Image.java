@@ -136,7 +136,7 @@ public final class Image extends Resource implements Drawable {
 	/**
 	 * Attribute to cache current device zoom level
 	 */
-	int currentDeviceZoom = 100;
+	private int currentDeviceZoom = 100;
 
 	/**
 	 * width of the image
@@ -1817,7 +1817,7 @@ ImageData _getImageData() {
  */
 public ImageData getImageData (int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.getImageData (this, zoom);
+	return DPIUtil.getImageData (this, currentDeviceZoom, zoom);
 }
 
 /**

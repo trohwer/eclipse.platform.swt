@@ -42,7 +42,7 @@ public static ImageData autoScaleDown (ImageData imageData, Device device) {
 public static int autoScaleDown (int size, Device device) {
 	if (!getAutoScale () || device == null) return size;
 	float scaleFactor = getScalingFactor (device);
-	return (int)(scaleFactor ==1 ? size : size / scaleFactor);
+	return (int)(size / scaleFactor);
 }
 
 /**
@@ -98,7 +98,7 @@ public static ImageData autoScaleUp (ImageData imageData, Device device) {
 public static int autoScaleUp (int size, Device device) {
 	if (!getAutoScale () || device == null) return size;
 	float scaleFactor = getScalingFactor (device);
-	return (int)(scaleFactor == 1 ? size : size * scaleFactor);
+	return (int)(size * scaleFactor);
 }
 
 /**
@@ -135,27 +135,27 @@ public static boolean getAutoScale () {
 /**
  * Returns an <code>ImageData</code> for specified zoom.
  */
-static ImageData getImageData (Image image, int zoom) {
-	if (image.currentDeviceZoom == zoom) return image._getImageData ();
+static ImageData getImageData (Image image, int source_zoom, int target_zoom) {
+	if (source_zoom == target_zoom) return image._getImageData ();
 	ImageData imageData = null;
 	if (image.imageDataProvider != null) {
 		boolean[] found = new boolean[1];
-		imageData = DPIUtil.validateAndGetImageDataAtZoom (image.imageDataProvider, zoom, found);
+		imageData = DPIUtil.validateAndGetImageDataAtZoom (image.imageDataProvider, target_zoom, found);
 		if (!found[0]) {
-			imageData = DPIUtil.autoScaleImageData (imageData, zoom, 100);
+			imageData = DPIUtil.autoScaleImageData (imageData, target_zoom, 100);
 		}
 	} else if (image.imageFileNameProvider != null) {
 		boolean[] found = new boolean[1];
-		String filename = DPIUtil.validateAndGetImagePathAtZoom (image.imageFileNameProvider, zoom, found);
+		String filename = DPIUtil.validateAndGetImagePathAtZoom (image.imageFileNameProvider, target_zoom, found);
 		if (!found[0]) {
-			imageData = DPIUtil.autoScaleImageData (new ImageData(filename), zoom, 100);
+			imageData = DPIUtil.autoScaleImageData (new ImageData(filename), target_zoom, 100);
 		} else {
 			imageData = new ImageData (filename);
 		}
 	} else {
 		/* Get ImageData at currentZoom and scale it to specified zoom. */
 		imageData = image._getImageData ();
-		imageData = DPIUtil.autoScaleImageData (imageData, zoom, image.currentDeviceZoom);
+		imageData = DPIUtil.autoScaleImageData (imageData, target_zoom, source_zoom);
 	}
 	return imageData;
 }
