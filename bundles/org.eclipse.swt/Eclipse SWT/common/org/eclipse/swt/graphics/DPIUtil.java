@@ -75,28 +75,103 @@ static ImageData validateAndGetImageDataAtZoom (ImageDataProvider provider, int 
 /**
  * Gets scaling factor for the current Image
  */
-static float getscalingFactor (Image image) {
-	float scalingFactor = ((float)image.getDeviceZoom ())/((float) 100);
-	return scalingFactor;
+public static float getscalingFactor (Image image) {
+	return ((float)image.getDevice ().getDeviceZoom ()) / 100f;
+}
+/**
+ * Auto-scale up int dimensions.
+ */
+public static int autoScaleUp (int size, Device device) {
+	if (!getAutoScale () || device == null) return size;
+	float scaleFactor = getScalingFactor (device);
+	return (int)(scaleFactor ==1 ? size : size * scaleFactor);
+}
+/**
+ * Auto-scale down int dimensions.
+ */
+public static int autoScaleDown (int size, Device device) {
+	if (!getAutoScale () || device == null) return size;
+	float scaleFactor = getScalingFactor (device);
+	return (int)(scaleFactor ==1 ? size : size / scaleFactor);
+}
+/**
+ * Auto-scale up ImageData
+ */
+public static ImageData autoScaleUp (ImageData imageData, Device device) {
+	if (!getAutoScale () || imageData == null || device == null) return imageData;
+	float scaleFactor = getScalingFactor (device);
+	return scaleFactor == 1 ? imageData
+			: imageData.scaledTo ((int)((float)imageData.width * scaleFactor), (int)((float)imageData.height * scaleFactor));
 }
 /**
  * Auto-scale image with ImageData
  */
-static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int currentZoom) {
-	if (imageData == null || targetZoom == currentZoom) return imageData;
+private static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int currentZoom) {
+	if (!getAutoScale () || imageData == null || targetZoom == currentZoom) return imageData;
 	float scaleFactor = ((float) targetZoom)/((float) currentZoom);
 	return imageData.scaledTo ((int)((float)imageData.width * scaleFactor), (int)((float)imageData.height * scaleFactor));
-
 }
 /**
- * Auto-scale image with ImageFileName
+ * Auto-scale down ImageData
  */
-static ImageData autoScaleImageFileName (String filename, int targetZoom, int currentZoom) {
-	if (filename == null) return null;
-	ImageData imageData = new ImageData (filename);
-	return autoScaleImageData (imageData, targetZoom, currentZoom);
+public static ImageData autoScaleDown (ImageData imageData, Device device) {
+	if (!getAutoScale () || imageData == null || device == null) return imageData;
+	float scaleFactor = getScalingFactor (device);
+	return scaleFactor == 1 ? imageData
+			: imageData.scaledTo ((int)((float)imageData.width / scaleFactor), (int)((float)imageData.height / scaleFactor));
 }
-
+/**
+ * Returns a new scaled up Rectangle.
+ */
+public static Rectangle autoScaleUp (Rectangle rect, Device device) {
+	if (!getAutoScale () || rect == null || device == null) return rect;
+	float scaleFactor = getScalingFactor (device);
+	if (scaleFactor == 1) return rect;
+	Rectangle scaledRect = new Rectangle (0,0,0,0);
+	scaledRect.x = (int) (rect.x * scaleFactor);
+	scaledRect.y = (int) (rect.y * scaleFactor);
+	scaledRect.width = (int) (rect.width * scaleFactor);
+	scaledRect.height = (int) (rect.height * scaleFactor);
+	return scaledRect;
+}
+/**
+ * Returns a new scaled down Rectangle.
+ */
+public static Rectangle autoScaleDown (Rectangle rect, Device device) {
+	if (!getAutoScale () || rect == null || device == null) return rect;
+	float scaleFactor = getScalingFactor (device);
+	if (scaleFactor == 1) return rect;
+	Rectangle scaledRect = new Rectangle (0,0,0,0);
+	scaledRect.x = (int) (rect.x / scaleFactor);
+	scaledRect.y = (int) (rect.y / scaleFactor);
+	scaledRect.width = (int) (rect.width / scaleFactor);
+	scaledRect.height = (int) (rect.height / scaleFactor);
+	return scaledRect;
+}
+/**
+ * Returns a new scaled up Point.
+ */
+public static Point autoScaleUp (Point point, Device device) {
+	if (!getAutoScale () || point == null || device == null) return point;
+	float scaleFactor = getScalingFactor (device);
+	if (scaleFactor == 1) return point;
+	Point scaledPoint = new Point (0,0);
+	scaledPoint.x = (int) (point.x * scaleFactor);
+	scaledPoint.y = (int) (point.y * scaleFactor);
+	return scaledPoint;
+}
+/**
+ * Returns a new scaled down Point.
+ */
+public static Point autoScaleDown (Point point, Device device) {
+	if (!getAutoScale () || point == null || device == null) return point;
+	float scaleFactor = getScalingFactor (device);
+	if (scaleFactor == 1) return point;
+	Point scaledPoint = new Point (0,0);
+	scaledPoint.x = (int) (point.x / scaleFactor);
+	scaledPoint.y = (int) (point.y / scaleFactor);
+	return scaledPoint;
+}
 /**
  * Returns a new rectangle as per the scaleFactor.
  */
@@ -110,7 +185,6 @@ static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
 	returnRect.height = (int) (rect.height * scaleFactor);
 	return returnRect;
 }
-
 /**
  * Returns an <code>ImageData</code> for specified zoom.
  */
@@ -127,7 +201,7 @@ static ImageData getImageData (Image image, int zoom) {
 		boolean[] found = new boolean[1];
 		String filename = DPIUtil.validateAndGetImagePathAtZoom (image.imageFileNameProvider, zoom, found);
 		if (!found[0]) {
-			imageData = DPIUtil.autoScaleImageFileName (filename, zoom, 100);
+			imageData = DPIUtil.autoScaleImageData (new ImageData(filename), zoom, 100);
 		} else {
 			imageData = new ImageData (filename);
 		}
@@ -155,7 +229,4 @@ public static boolean getAutoScale () {
 	return autoScale;
 }
 
-public static void setAutoScale (boolean autoScale) {
-	DPIUtil.autoScale = autoScale;
-}
 }
