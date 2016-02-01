@@ -1000,4 +1000,8 @@ void setEnableAutoScaling(boolean value) {
 	enableAutoScaling = value;
 }
 
+public int getDeviceZoom () {
+	return DPIUtil.mapDPIToZoom ( _getDPIx ());
+}
+
 }
