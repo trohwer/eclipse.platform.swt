@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2016 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public static ImageData autoScaleDown (ImageData imageData, Device device) {
 	if (!getAutoScale () || imageData == null || device == null) return imageData;
 	float scaleFactor = getScalingFactor (device);
 	return scaleFactor == 1 ? imageData
-			: imageData.scaledTo ((int)((float)imageData.width / scaleFactor), (int)((float)imageData.height / scaleFactor));
+			: imageData.scaledTo (Math.round ((float)imageData.width / scaleFactor), Math.round ((float)imageData.height / scaleFactor));
 }
 
 /**
@@ -42,7 +42,7 @@ public static ImageData autoScaleDown (ImageData imageData, Device device) {
 public static int autoScaleDown (int size, Device device) {
 	if (!getAutoScale () || device == null) return size;
 	float scaleFactor = getScalingFactor (device);
-	return (int)(size / scaleFactor);
+	return Math.round (size / scaleFactor);
 }
 
 /**
@@ -53,8 +53,8 @@ public static Point autoScaleDown (Point point, Device device) {
 	float scaleFactor = getScalingFactor (device);
 	if (scaleFactor == 1) return point;
 	Point scaledPoint = new Point (0,0);
-	scaledPoint.x = (int) (point.x / scaleFactor);
-	scaledPoint.y = (int) (point.y / scaleFactor);
+	scaledPoint.x = Math.round (point.x / scaleFactor);
+	scaledPoint.y = Math.round (point.y / scaleFactor);
 	return scaledPoint;
 }
 
@@ -66,10 +66,10 @@ public static Rectangle autoScaleDown (Rectangle rect, Device device) {
 	float scaleFactor = getScalingFactor (device);
 	if (scaleFactor == 1) return rect;
 	Rectangle scaledRect = new Rectangle (0,0,0,0);
-	scaledRect.x = (int) (rect.x / scaleFactor);
-	scaledRect.y = (int) (rect.y / scaleFactor);
-	scaledRect.width = (int) (rect.width / scaleFactor);
-	scaledRect.height = (int) (rect.height / scaleFactor);
+	scaledRect.x = Math.round (rect.x / scaleFactor);
+	scaledRect.y = Math.round (rect.y / scaleFactor);
+	scaledRect.width = Math.round (rect.width / scaleFactor);
+	scaledRect.height = Math.round (rect.height / scaleFactor);
 	return scaledRect;
 }
 
@@ -79,7 +79,7 @@ public static Rectangle autoScaleDown (Rectangle rect, Device device) {
 private static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int currentZoom) {
 	if (!getAutoScale () || imageData == null || targetZoom == currentZoom) return imageData;
 	float scaleFactor = ((float) targetZoom)/((float) currentZoom);
-	return imageData.scaledTo ((int)((float)imageData.width * scaleFactor), (int)((float)imageData.height * scaleFactor));
+	return imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
 }
 
 /**
@@ -89,7 +89,7 @@ public static ImageData autoScaleUp (ImageData imageData, Device device) {
 	if (!getAutoScale () || imageData == null || device == null) return imageData;
 	float scaleFactor = getScalingFactor (device);
 	return scaleFactor == 1 ? imageData
-			: imageData.scaledTo ((int)((float)imageData.width * scaleFactor), (int)((float)imageData.height * scaleFactor));
+			: imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
 }
 
 /**
@@ -98,7 +98,7 @@ public static ImageData autoScaleUp (ImageData imageData, Device device) {
 public static int autoScaleUp (int size, Device device) {
 	if (!getAutoScale () || device == null) return size;
 	float scaleFactor = getScalingFactor (device);
-	return (int)(size * scaleFactor);
+	return Math.round (size * scaleFactor);
 }
 
 /**
@@ -109,8 +109,8 @@ public static Point autoScaleUp (Point point, Device device) {
 	float scaleFactor = getScalingFactor (device);
 	if (scaleFactor == 1) return point;
 	Point scaledPoint = new Point (0,0);
-	scaledPoint.x = (int) (point.x * scaleFactor);
-	scaledPoint.y = (int) (point.y * scaleFactor);
+	scaledPoint.x = Math.round (point.x * scaleFactor);
+	scaledPoint.y = Math.round (point.y * scaleFactor);
 	return scaledPoint;
 }
 
@@ -122,10 +122,10 @@ public static Rectangle autoScaleUp (Rectangle rect, Device device) {
 	float scaleFactor = getScalingFactor (device);
 	if (scaleFactor == 1) return rect;
 	Rectangle scaledRect = new Rectangle (0,0,0,0);
-	scaledRect.x = (int) (rect.x * scaleFactor);
-	scaledRect.y = (int) (rect.y * scaleFactor);
-	scaledRect.width = (int) (rect.width * scaleFactor);
-	scaledRect.height = (int) (rect.height * scaleFactor);
+	scaledRect.x = Math.round (rect.x * scaleFactor);
+	scaledRect.y = Math.round (rect.y * scaleFactor);
+	scaledRect.width = Math.round (rect.width * scaleFactor);
+	scaledRect.height = Math.round (rect.height * scaleFactor);
 	return scaledRect;
 }
 public static boolean getAutoScale () {
@@ -202,10 +202,10 @@ static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
 	if (rect == null || targetZoom == currentZoom) return rect;
 	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
 	Rectangle returnRect = new Rectangle (0,0,0,0);
-	returnRect.x = (int) (rect.x * scaleFactor);
-	returnRect.y = (int) (rect.y * scaleFactor);
-	returnRect.width = (int) (rect.width * scaleFactor);
-	returnRect.height = (int) (rect.height * scaleFactor);
+	returnRect.x = Math.round (rect.x * scaleFactor);
+	returnRect.y = Math.round (rect.y * scaleFactor);
+	returnRect.width = Math.round (rect.width * scaleFactor);
+	returnRect.height = Math.round (rect.height * scaleFactor);
 	return returnRect;
 }
 
