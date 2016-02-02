@@ -292,34 +292,35 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 
 	checkWidget ();
 	Rectangle trim = super.computeTrim (x, y, width, height);
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	int xborder = 0, yborder = 0;
 		if (OS.GTK3) {
 			GtkBorder tmp = new GtkBorder ();
 			long /*int*/ context = OS.gtk_widget_get_style_context (textEntryHandle);
 			int styleState = OS.gtk_widget_get_state_flags(textEntryHandle);
 			OS.gtk_style_context_get_padding (context, styleState, tmp);
-			trim.x -= tmp.left;
-			trim.y -= tmp.top;
-			trim.width += tmp.left + tmp.right;
-			trim.height += tmp.top + tmp.bottom;
+			trim.x -= (int) (tmp.left/scaleFactor);
+			trim.y -= (int) (tmp.top/scaleFactor);
+			trim.width += (int) ((tmp.left + tmp.right)/scaleFactor);
+			trim.height += (int) ((tmp.top + tmp.bottom)/scaleFactor);
 			if ((style & SWT.BORDER) != 0) {
 				OS.gtk_style_context_get_border (context, styleState, tmp);
-				trim.x -= tmp.left;
-				trim.y -= tmp.top;
-				trim.width += tmp.left + tmp.right;
-				trim.height += tmp.top + tmp.bottom;
+				trim.x -= (int) (tmp.left/scaleFactor);
+				trim.y -= (int) (tmp.top/scaleFactor);
+				trim.width += (int) ((tmp.left + tmp.right)/scaleFactor);
+				trim.height += (int) ((tmp.top + tmp.bottom)/scaleFactor);
 			}
 		} else {
 			if ((style & SWT.BORDER) != 0) {
 				Point thickness = getThickness (textEntryHandle);
-				xborder += thickness.x;
-				yborder += thickness.y;
+				xborder += (int) (thickness.x/scaleFactor);
+				yborder += (int) (thickness.y/scaleFactor);
 			}
 			GtkBorder innerBorder = Display.getEntryInnerBorder (textEntryHandle);
-			trim.x -= innerBorder.left;
-			trim.y -= innerBorder.top;
-			trim.width += innerBorder.left + innerBorder.right;
-			trim.height += innerBorder.top + innerBorder.bottom;
+			trim.x -= (int) (innerBorder.left/scaleFactor);
+			trim.y -= (int) (innerBorder.top/scaleFactor);
+			trim.width += (int) ((innerBorder.left + innerBorder.right)/scaleFactor);
+			trim.height += (int) ((innerBorder.top + innerBorder.bottom)/scaleFactor);
 		}
 		trim.x -= xborder;
 		trim.y -= yborder;

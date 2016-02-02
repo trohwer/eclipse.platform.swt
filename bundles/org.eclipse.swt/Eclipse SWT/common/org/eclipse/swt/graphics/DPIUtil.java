@@ -106,8 +106,8 @@ static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
 	Rectangle returnRect = new Rectangle (0,0,0,0);
 	returnRect.x = (int) (rect.x * scaleFactor);
 	returnRect.y = (int) (rect.y * scaleFactor);
-	returnRect.width = (int) (rect.width * scaleFactor);
-	returnRect.height = (int) (rect.height * scaleFactor);
+	returnRect.width = Math.max(1, (int) (rect.width * scaleFactor));
+	returnRect.height = Math.max(1, (int) (rect.height * scaleFactor));
 	return returnRect;
 }
 

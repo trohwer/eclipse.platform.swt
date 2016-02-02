@@ -274,10 +274,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	 */
 	if (size.y == 0 && hHint == SWT.DEFAULT) size.y = DEFAULT_HEIGHT;
 	Rectangle trim = computeTrim (0, 0, size.x, size.y);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-
-	size.x = (int) (trim.width / scaleFactor);
-	size.y = (int) (trim.height / scaleFactor);
+	size.x = trim.width;
+	size.y = trim.height;
 	return size;
 }
 

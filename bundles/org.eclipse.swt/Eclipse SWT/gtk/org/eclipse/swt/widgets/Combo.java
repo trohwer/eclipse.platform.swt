@@ -425,6 +425,9 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	width = Math.max (listRequesition.width, width) + arrowRequesition.width;
 	width = wHint == SWT.DEFAULT ? width : wHint;
 	height = hHint == SWT.DEFAULT ? height : hHint;
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	width = (int) (width /scaleFactor);
+	height = (int) (height /scaleFactor);
 	return new Point (width, height);
 }
 
@@ -945,7 +948,8 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget();
-	return fontHeight (getFontDescription (), handle);
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	return (int) (fontHeight (getFontDescription (), handle)/scaleFactor);
 }
 
 /**

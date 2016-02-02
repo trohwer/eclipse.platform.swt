@@ -12,10 +12,10 @@ package org.eclipse.swt.custom;
 
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * The CCombo class represents a selectable user interface object
@@ -448,7 +448,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 	Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 	Point listSize = list.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-	int borderWidth = getBorderWidth ();
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	int borderWidth = (int) (getBorderWidth () / scaleFactor);
 
 	height = Math.max (textSize.y, arrowSize.y);
 	width = Math.max (textWidth + 2*spacer + arrowSize.x + 2*borderWidth, listSize.x);

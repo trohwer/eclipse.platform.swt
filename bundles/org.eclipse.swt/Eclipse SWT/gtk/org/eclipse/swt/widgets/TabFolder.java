@@ -201,6 +201,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (OS.GTK_VERSION >= OS.VERSION (3, 2, 0)) {
 		int[] initialGap = new int[1];
 		OS.gtk_widget_style_get (handle, OS.initial_gap, initialGap, 0);
+		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+		initialGap[0] = (int) (initialGap[0] / scaleFactor);
 		notebookSize.x += initialGap[0]*2;
 	}
 	size.x = Math.max (notebookSize.x, size.x);
@@ -215,15 +217,16 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	long /*int*/ clientHandle = clientHandle ();
 	GtkAllocation allocation = new GtkAllocation ();
 	OS.gtk_widget_get_allocation (clientHandle, allocation);
-	int clientX = allocation.x;
-	int clientY = allocation.y;
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	int clientX = (int) (allocation.x/scaleFactor);
+	int clientY = (int) (allocation.y/scaleFactor);
 	x -= clientX;
 	y -= clientY;
 	width +=  clientX + clientX;
 	if ((style & SWT.BOTTOM) != 0) {
-		int clientHeight = allocation.height;
+		int clientHeight = (int) (allocation.height/scaleFactor);
 		OS.gtk_widget_get_allocation (handle, allocation);
-		int parentHeight = allocation.height;
+		int parentHeight = (int) (allocation.height/scaleFactor);
 		height += parentHeight - clientHeight;
 	} else {
 		height +=  clientX + clientY;

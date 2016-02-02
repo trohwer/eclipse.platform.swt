@@ -1544,6 +1544,7 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget();
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (itemCount == 0) {
 		long /*int*/ column = OS.gtk_tree_view_get_column (handle, 0);
 		int [] w = new int [1], h = new int [1];
@@ -1556,7 +1557,7 @@ public int getItemHeight () {
 			height += h [0];
 		}
 		ignoreSize = false;
-		return height;
+		return (int) (height/scaleFactor);
 	} else {
 		int height = 0;
 		long /*int*/ iter = OS.g_malloc (OS.GtkTreeIter_sizeof ());
@@ -1570,7 +1571,7 @@ public int getItemHeight () {
 			height = Math.max (height, h [0]);
 		}
 		OS.g_free (iter);
-		return height;
+		return (int) (height/scaleFactor);
 	}
 }
 

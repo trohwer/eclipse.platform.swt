@@ -594,6 +594,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle trim = super.computeTrim (x, y, width, height);
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	int xborder = 0, yborder = 0;
 	if ((style & SWT.SINGLE) != 0) {
 		if (OS.GTK3) {
@@ -601,46 +602,46 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 			long /*int*/ context = OS.gtk_widget_get_style_context (handle);
 			int styleState = OS.gtk_widget_get_state_flags(handle);
 			OS.gtk_style_context_get_padding (context, styleState, tmp);
-			trim.x -= tmp.left;
-			trim.y -= tmp.top;
-			trim.width += tmp.left + tmp.right;
-			trim.height += tmp.top + tmp.bottom;
+			trim.x -= (int) (tmp.left/scaleFactor);
+			trim.y -= (int) (tmp.top/scaleFactor);
+			trim.width += (int) ((tmp.left + tmp.right)/scaleFactor);
+			trim.height += (int) ((tmp.top + tmp.bottom)/scaleFactor);
 			if ((style & SWT.BORDER) != 0) {
 				OS.gtk_style_context_get_border (context, styleState, tmp);
-				trim.x -= tmp.left;
-				trim.y -= tmp.top;
-				trim.width += tmp.left + tmp.right;
-				trim.height += tmp.top + tmp.bottom;
+				trim.x -= (int) (tmp.left/scaleFactor);
+				trim.y -= (int) (tmp.top/scaleFactor);
+				trim.width += (int) ((tmp.left + tmp.right)/scaleFactor);
+				trim.height += (int) ((tmp.top + tmp.bottom)/scaleFactor);
 			}
 			GdkRectangle icon_area = new GdkRectangle();
 			OS.gtk_entry_get_icon_area(handle, OS.GTK_ENTRY_ICON_PRIMARY, icon_area);
-			trim.x -= icon_area.width;
-			trim.width += icon_area.width;
+			trim.x -= (int) (icon_area.width/scaleFactor);
+			trim.width += (int) (icon_area.width/scaleFactor);
 			OS.gtk_entry_get_icon_area(handle, OS.GTK_ENTRY_ICON_SECONDARY, icon_area);
-			trim.width += icon_area.width;
+			trim.width += (int) (icon_area.width/scaleFactor);
 		} else {
 			if ((style & SWT.BORDER) != 0) {
 				Point thickness = getThickness (handle);
-				xborder += thickness.x;
-				yborder += thickness.y;
+				xborder += (int) (thickness.x/scaleFactor);
+				yborder += (int) (thickness.y/scaleFactor);
 			}
 			GtkBorder innerBorder = Display.getEntryInnerBorder (handle);
-			trim.x -= innerBorder.left;
-			trim.y -= innerBorder.top;
-			trim.width += innerBorder.left + innerBorder.right;
-			trim.height += innerBorder.top + innerBorder.bottom;
+			trim.x -= (int) (innerBorder.left/scaleFactor);
+			trim.y -= (int) (innerBorder.top/scaleFactor);
+			trim.width += (int) ((innerBorder.left + innerBorder.right)/scaleFactor);
+			trim.height += (int) ((innerBorder.top + innerBorder.bottom)/scaleFactor);
 		}
 	} else {
 		int borderWidth = OS.gtk_container_get_border_width (handle);
-		xborder += borderWidth;
-		yborder += borderWidth;
+		xborder += (int) (borderWidth/scaleFactor);
+		yborder += (int) (borderWidth/scaleFactor);
 	}
 	int [] property = new int [1];
 	OS.gtk_widget_style_get (handle, OS.interior_focus, property, 0);
 	if (property [0] == 0) {
 		OS.gtk_widget_style_get (handle, OS.focus_line_width, property, 0);
-		xborder += property [0];
-		yborder += property [0];
+		xborder += (int) (property [0]/scaleFactor);
+		yborder += (int) (property [0]/scaleFactor);
 	}
 	trim.x -= xborder;
 	trim.y -= yborder;
@@ -829,7 +830,9 @@ public int getBorderWidth () {
 	checkWidget();
 	if ((style & SWT.MULTI) != 0) return super.getBorderWidth ();
 	if ((this.style & SWT.BORDER) != 0) {
-		 return getThickness (handle).x;
+		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+
+		return (int) (getThickness (handle).x/scaleFactor);
 	}
 	return 0;
 }
@@ -1066,7 +1069,8 @@ public String getLineDelimiter () {
  */
 public int getLineHeight () {
 	checkWidget ();
-	return fontHeight (getFontDescription (), handle);
+	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+	return (int) (fontHeight (getFontDescription (), handle)/scaleFactor);
 }
 
 /**

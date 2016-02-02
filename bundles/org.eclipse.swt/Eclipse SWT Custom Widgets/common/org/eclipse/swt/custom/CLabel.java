@@ -11,10 +11,10 @@
 package org.eclipse.swt.custom;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A Label which supports aligned text and/or an image and different border styles.
@@ -265,7 +265,8 @@ private Point getTotalSize(Image image, String text) {
 		size.y = Math.max(size.y, e.y);
 		if (image != null) size.x += GAP;
 	} else {
-		size.y = Math.max(size.y, gc.getFontMetrics().getHeight());
+		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
+		size.y = Math.max(size.y, (int)(gc.getFontMetrics().getHeight()/scaleFactor));
 	}
 	gc.dispose();
 
