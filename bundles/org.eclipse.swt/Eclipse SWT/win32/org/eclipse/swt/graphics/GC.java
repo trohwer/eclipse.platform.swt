@@ -170,7 +170,7 @@ public GC(Drawable drawable, int style) {
 	if (device == null) device = Device.getDevice();
 	if (device == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.device = data.device = device;
-	this.autoScaleEnabled = getEnableAutoScaling ();
+	this.autoScaleEnabled = DPIUtil.getAutoScale ();
 	init (drawable, data, hDC);
 	init();
 }
@@ -450,11 +450,8 @@ public void copyArea(Image image, int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.type != SWT.BITMAP || image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	if (autoScaleEnabled) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100f;
-		x = (int)(x * scaleFactor);
-		y = (int)(y * scaleFactor);		
-	}
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
  	/* Copy the bitmap area */
 	Rectangle rect = image.getBounds();
 	long /*int*/ memHdc = OS.CreateCompatibleDC(handle);
@@ -736,13 +733,8 @@ void disposeGdip() {
 public void drawArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
-	if (autoScaleEnabled) {
-		float scaleFactor = ((float)getDeviceZoom()) / 100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height * scaleFactor);
-	}
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 	if (width < 0) {
 		x = x + width;
 		width = -width;
@@ -840,13 +832,11 @@ public void drawArc (int x, int y, int width, int height, int startAngle, int ar
  */
 public void drawFocus (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+
 	if ((data.uiState & OS.UISF_HIDEFOCUS) != 0) return;
 	data.focusDrawn = true;
 	long /*int*/ hdc = handle;
@@ -1698,13 +1688,10 @@ void drawBitmap(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight,
  */
 public void drawLine (int x1, int y1, int x2, int y2) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x1 = (int) (x1 * scaleFactor);
-		x2 = (int) (x2 * scaleFactor);
-		y1 = (int) (y1 * scaleFactor);
-		y2 = (int) (y2 *scaleFactor);
-	}
+	x1 = DPIUtil.autoScaleUp (x1, device);
+	x2 = DPIUtil.autoScaleUp (x2, device);
+	y1 = DPIUtil.autoScaleUp (y1, device);
+	y2 = DPIUtil.autoScaleUp (y2, device);
 
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
@@ -1755,13 +1742,11 @@ public void drawLine (int x1, int y1, int x2, int y2) {
  */
 public void drawOval (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -1830,11 +1815,9 @@ public void drawPath (Path path) {
  */
 public void drawPoint (int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+
 	if (data.gdipGraphics != 0) {
 		checkGC(DRAW);
 		Gdip.Graphics_FillRectangle(data.gdipGraphics, getFgBrush(), x, y, 1, 1);
@@ -1957,11 +1940,10 @@ public void drawPolyline(int[] pointArray) {
 public void drawRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
+		x = DPIUtil.autoScaleUp (x, device);
+		y = DPIUtil.autoScaleUp (y, device);
+		width = DPIUtil.autoScaleUp (width, device);
+		height = DPIUtil.autoScaleUp (height, device);
 	}
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
@@ -2039,15 +2021,13 @@ public void drawRectangle (Rectangle rect) {
  */
 public void drawRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-		arcWidth = (int)(arcWidth *scaleFactor);
-		arcHeight = (int)(arcHeight * scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+	arcWidth = DPIUtil.autoScaleUp (arcWidth, device);
+	arcHeight = DPIUtil.autoScaleUp (arcHeight, device);
+
 	checkGC(DRAW);
 	if (data.gdipGraphics != 0) {
 		drawRoundRectangleGdip(data.gdipGraphics, data.gdipPen, x, y, width, height, arcWidth, arcHeight);
@@ -2744,13 +2724,11 @@ public boolean equals (Object object) {
  */
 public void fillArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+
 	checkGC(FILL);
 	if (width < 0) {
 		x = x + width;
@@ -2852,13 +2830,11 @@ public void fillArc (int x, int y, int width, int height, int startAngle, int ar
  */
 public void fillGradientRectangle(int x, int y, int width, int height, boolean vertical) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+
 	if (width == 0 || height == 0) return;
 
 	RGB backgroundRGB, foregroundRGB;
@@ -2985,13 +2961,11 @@ public void fillGradientRectangle(int x, int y, int width, int height, boolean v
  */
 public void fillOval (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		Gdip.Graphics_FillEllipse(data.gdipGraphics, data.gdipBrush, x, y, width, height);
@@ -3094,11 +3068,10 @@ public void fillPolygon(int[] pointArray) {
 public void fillRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (autoScaleEnabled) {
-		float scaleFactor = (float) getDeviceZoom()/100f;
-		x = (int) (x * scaleFactor);
-		y = (int) (y * scaleFactor);
-		width = (int) (width * scaleFactor);
-		height = (int) (height *scaleFactor);
+		x = DPIUtil.autoScaleUp (x, device);
+		y = DPIUtil.autoScaleUp (y, device);
+		width = DPIUtil.autoScaleUp (width, device);
+		height = DPIUtil.autoScaleUp (height, device);
 	}
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
@@ -3163,15 +3136,13 @@ public void fillRectangle (Rectangle rect) {
  */
 public void fillRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = this.getDeviceZoom() / 100f;
-		x = (int)(x * scaleFactor);
-		y = (int)(y * scaleFactor);
-		width = (int)(width * scaleFactor);
-		height = (int)(height * scaleFactor);
-		arcWidth = (int)(arcWidth *scaleFactor);
-		arcHeight = (int)(arcHeight * scaleFactor);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
+	arcWidth = DPIUtil.autoScaleUp (arcWidth, device);
+	arcHeight = DPIUtil.autoScaleUp (arcHeight, device);
+
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		fillRoundRectangleGdip(data.gdipGraphics, data.gdipBrush, x, y, width, height, arcWidth, arcHeight);
@@ -3810,12 +3781,7 @@ public int getLineStyle() {
  */
 public int getLineWidth() {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	int returnVal = (int)data.lineWidth;
-	if (autoScaleEnabled) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100f;
-		returnVal = (int)(returnVal / scaleFactor);
-	}
-	return returnVal;
+	return DPIUtil.autoScaleDown((int)data.lineWidth, device);
 }
 
 /**
@@ -4887,10 +4853,8 @@ public void setLineStyle(int lineStyle) {
  */
 public void setLineWidth(int lineWidth) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100f;
-		lineWidth = (int)(lineWidth * scaleFactor);
-	}
+	lineWidth = DPIUtil.autoScaleUp (lineWidth, device);
+
 	if (data.lineWidth == lineWidth) return;
 	data.lineWidth = lineWidth;
 	data.state &= ~(LINE_WIDTH | DRAW_OFFSET);

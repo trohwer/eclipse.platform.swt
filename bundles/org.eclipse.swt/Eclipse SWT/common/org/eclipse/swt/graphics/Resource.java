@@ -82,24 +82,6 @@ public Device getDevice() {
 	return device;
 }
 
-/**
- * Returns autoScaling settings for hiDpi screens
- *
- * @return boolean value for autoScaling
- * @since 3.105
- *
- */
-public boolean getEnableAutoScaling() {
-	return DPIUtil.getAutoScale();
-}
-/**
- * Sets autoScaling settings for hiDpi screens
- * @since 3.105
- *
- */
-void setEnableAutoScaling(boolean value) {
-	DPIUtil.setAutoScale(value);
-}
 void init() {
 	if (device.tracking) device.new_Object(this);
 }
@@ -115,12 +97,5 @@ void init() {
  * @return <code>true</code> when the resource is disposed and <code>false</code> otherwise
  */
 public abstract boolean isDisposed();
-
-/**
- * @since 3.105
- */
-public int getDeviceZoom () {
-	return device.getDeviceZoom ();
-}
 
 }

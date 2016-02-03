@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.graphics;
 
-
-import org.eclipse.swt.internal.cocoa.*;
-import org.eclipse.swt.*;
 import java.io.*;
+
+import org.eclipse.swt.*;
+import org.eclipse.swt.internal.cocoa.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -875,14 +875,14 @@ public Rectangle getBounds(int zoom) {
  */
 public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	ImageData imageData = _getImageData();
-	if (imageData != null && getEnableAutoScaling()) {
-		data = DPIUtil.autoScaleImageData(data, 100, currentDeviceZoom);
-	}
-	return imageData;
+	return _getImageData();
 }
 
-ImageData _getImageData() {
+ImageData _getImageData () {
+	return _getImageData(100);
+}
+
+ImageData _getImageData(int zoom) {
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
@@ -953,7 +953,6 @@ ImageData _getImageData() {
 }
 
 /**
-<<<<<<< HEAD
  * Returns an <code>ImageData</code> for specified zoom, based on the receiver
  * Modifications made to this <code>ImageData</code> will not affect the
  * Image.
@@ -971,17 +970,15 @@ ImageData _getImageData() {
  * </ul>
  *
  * @see ImageData
- * 
+ *
  * @since 3.105
  */
 public ImageData getImageData (int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.getImageData (this, zoom);
+	return _getImageData (zoom);
 }
 
-/**	 
-=======
->>>>>>> refs/remotes/origin/master
+/**
  * Invokes platform specific functionality to allocate a new image.
  * <p>
  * <b>IMPORTANT:</b> This method is <em>not</em> part of the public

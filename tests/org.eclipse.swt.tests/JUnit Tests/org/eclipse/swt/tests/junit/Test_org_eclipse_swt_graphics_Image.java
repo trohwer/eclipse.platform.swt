@@ -738,7 +738,7 @@ public void test_getBounds_Zoom() {
 	Rectangle bounds = new Rectangle(0, 0, 10, 20);
 	Rectangle bounds2 = new Rectangle(0, 0, 20, 40);
 	Image image = new Image(display, bounds.width, bounds.height);
-	int zoom = image.getDeviceZoom();
+	int zoom = image.getDevice ().getDeviceZoom();
 	image.dispose();
 	try {
 		image.getBounds(zoom);
