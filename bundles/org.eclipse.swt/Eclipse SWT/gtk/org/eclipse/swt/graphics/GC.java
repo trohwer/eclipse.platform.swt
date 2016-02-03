@@ -4051,10 +4051,9 @@ public void setLineStyle(int lineStyle) {
  */
 public void setLineWidth(int lineWidth) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (this.getEnableAutoScaling ()) {
-		float scaleFactor = ((float)this.getDeviceZoom()) / 100;
-		lineWidth = (int)(lineWidth * scaleFactor);
-	}
+
+	float scaleFactor = DPIUtil.getScalingFactor(device);
+	lineWidth = (int)(lineWidth * scaleFactor);
 	if (data.lineWidth == lineWidth) return;
 	data.lineWidth = lineWidth;
 	data.state &= ~(LINE_WIDTH | DRAW_OFFSET);

@@ -76,7 +76,7 @@ public static Rectangle autoScaleDown (Rectangle rect, Device device) {
 /**
  * Auto-scale image with ImageData
  */
-private static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int currentZoom) {
+static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int currentZoom) {
 	if (!getAutoScale () || imageData == null || targetZoom == currentZoom) return imageData;
 	float scaleFactor = ((float) targetZoom)/((float) currentZoom);
 	return imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
@@ -237,6 +237,15 @@ static String validateAndGetImagePathAtZoom (ImageFileNameProvider provider, int
 	if (zoom != 100 && !found [0]) filename = provider.getImagePath (100);
 	if (filename == null) SWT.error (SWT.ERROR_INVALID_ARGUMENT);
 	return filename;
+}
+
+/**
+ * Auto-scale image with ImageFileName
+ */
+static ImageData autoScaleImageFileName (String filename, int targetZoom, int currentZoom) {
+	if (filename == null) return null;
+	ImageData imageData = new ImageData (filename);
+	return autoScaleImageData (imageData, targetZoom, currentZoom);
 }
 
 }

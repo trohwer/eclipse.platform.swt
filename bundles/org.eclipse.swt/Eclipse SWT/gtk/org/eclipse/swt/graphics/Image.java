@@ -866,8 +866,9 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
  */
 boolean refreshImageForZoom () {
 	boolean refreshed = false;
+	int deviceZoom = Math.round (DPIUtil.getscalingFactor(this) * 100);
 	if (imageFileNameProvider != null) {
-		int deviceZoomLevel = getDeviceZoom();
+		int deviceZoomLevel = deviceZoom;
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
 			String filename = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, deviceZoomLevel, found);
@@ -894,7 +895,7 @@ boolean refreshImageForZoom () {
 			currentDeviceZoom = deviceZoomLevel;
 		}
 	} else if (imageDataProvider != null) {
-		int deviceZoomLevel = getDeviceZoom();
+		int deviceZoomLevel = deviceZoom;
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
 			ImageData data = DPIUtil.validateAndGetImageDataAtZoom (imageDataProvider, deviceZoomLevel, found);
