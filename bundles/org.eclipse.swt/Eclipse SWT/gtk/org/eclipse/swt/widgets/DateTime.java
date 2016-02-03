@@ -292,42 +292,41 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 
 	checkWidget ();
 	Rectangle trim = super.computeTrim (x, y, width, height);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	int xborder = 0, yborder = 0;
-		if (OS.GTK3) {
-			GtkBorder tmp = new GtkBorder ();
-			long /*int*/ context = OS.gtk_widget_get_style_context (textEntryHandle);
-			int styleState = OS.gtk_widget_get_state_flags(textEntryHandle);
-			OS.gtk_style_context_get_padding (context, styleState, tmp);
-			trim.x -= (int) (tmp.left/scaleFactor);
-			trim.y -= (int) (tmp.top/scaleFactor);
-			trim.width += (int) ((tmp.left + tmp.right)/scaleFactor);
-			trim.height += (int) ((tmp.top + tmp.bottom)/scaleFactor);
-			if ((style & SWT.BORDER) != 0) {
-				OS.gtk_style_context_get_border (context, styleState, tmp);
-				trim.x -= (int) (tmp.left/scaleFactor);
-				trim.y -= (int) (tmp.top/scaleFactor);
-				trim.width += (int) ((tmp.left + tmp.right)/scaleFactor);
-				trim.height += (int) ((tmp.top + tmp.bottom)/scaleFactor);
-			}
-		} else {
-			if ((style & SWT.BORDER) != 0) {
-				Point thickness = getThickness (textEntryHandle);
-				xborder += (int) (thickness.x/scaleFactor);
-				yborder += (int) (thickness.y/scaleFactor);
-			}
-			GtkBorder innerBorder = Display.getEntryInnerBorder (textEntryHandle);
-			trim.x -= (int) (innerBorder.left/scaleFactor);
-			trim.y -= (int) (innerBorder.top/scaleFactor);
-			trim.width += (int) ((innerBorder.left + innerBorder.right)/scaleFactor);
-			trim.height += (int) ((innerBorder.top + innerBorder.bottom)/scaleFactor);
+	if (OS.GTK3) {
+		GtkBorder tmp = new GtkBorder ();
+		long /*int*/ context = OS.gtk_widget_get_style_context (textEntryHandle);
+		int styleState = OS.gtk_widget_get_state_flags(textEntryHandle);
+		OS.gtk_style_context_get_padding (context, styleState, tmp);
+		trim.x -= DPIUtil.autoScaleDown(tmp.left, getDisplay());
+		trim.y -= DPIUtil.autoScaleDown(tmp.top, getDisplay());
+		trim.width += DPIUtil.autoScaleDown((tmp.left + tmp.right), getDisplay());
+		trim.height += DPIUtil.autoScaleDown((tmp.top + tmp.bottom), getDisplay());
+		if ((style & SWT.BORDER) != 0) {
+			OS.gtk_style_context_get_border (context, styleState, tmp);
+			trim.x -= DPIUtil.autoScaleDown (tmp.left, getDisplay());
+			trim.y -= DPIUtil.autoScaleDown (tmp.top, getDisplay());
+			trim.width += DPIUtil.autoScaleDown ((tmp.left + tmp.right), getDisplay());
+			trim.height += DPIUtil.autoScaleDown ((tmp.top + tmp.bottom), getDisplay());
 		}
-		trim.x -= xborder;
-		trim.y -= yborder;
-		trim.width += 2 * xborder;
-		trim.height += 2 * yborder;
-		trim.width += SPACE_FOR_CURSOR;
-		return new Rectangle (trim.x, trim.y, trim.width, trim.height);
+	} else {
+		if ((style & SWT.BORDER) != 0) {
+			Point thickness = DPIUtil.autoScaleDown(getThickness (textEntryHandle), getDisplay());
+			xborder += thickness.x;
+			yborder += thickness.y;
+		}
+		GtkBorder innerBorder = Display.getEntryInnerBorder (textEntryHandle);
+		trim.x -= DPIUtil.autoScaleDown (innerBorder.left, getDisplay());
+		trim.y -= DPIUtil.autoScaleDown (innerBorder.top, getDisplay());
+		trim.width += DPIUtil.autoScaleDown ((innerBorder.left + innerBorder.right), getDisplay());
+		trim.height += DPIUtil.autoScaleDown ((innerBorder.top + innerBorder.bottom), getDisplay());
+	}
+	trim.x -= xborder;
+	trim.y -= yborder;
+	trim.width += 2 * xborder;
+	trim.height += 2 * yborder;
+	trim.width += SPACE_FOR_CURSOR;
+	return new Rectangle (trim.x, trim.y, trim.width, trim.height);
 }
 
 

@@ -44,6 +44,14 @@ public static int autoScaleDown (int size, Device device) {
 	float scaleFactor = getScalingFactor (device);
 	return Math.round (size / scaleFactor);
 }
+/**
+ * Auto-scale down float dimensions.
+ */
+public static float autoScaleDown (float size, Device device) {
+	if (!getAutoScale () || device == null) return size;
+	float scaleFactor = getScalingFactor (device);
+	return (size / scaleFactor);
+}
 
 /**
  * Returns a new scaled down Point.
@@ -171,7 +179,7 @@ public static float getscalingFactor (Image image) {
  * Returns Scaling factor from the display
  * @return float scaling factor
  */
-public static float getScalingFactor (Device device) {
+private static float getScalingFactor (Device device) {
 	float scalingFactor = 1;
 	if (getAutoScale ()) {
 		scalingFactor = (device.getDeviceZoom ()/100f);
@@ -239,13 +247,10 @@ static String validateAndGetImagePathAtZoom (ImageFileNameProvider provider, int
 	return filename;
 }
 
-/**
- * Auto-scale image with ImageFileName
- */
-static ImageData autoScaleImageFileName (String filename, int targetZoom, int currentZoom) {
-	if (filename == null) return null;
-	ImageData imageData = new ImageData (filename);
-	return autoScaleImageData (imageData, targetZoom, currentZoom);
+public static float autoScaleUp(float size, Device device) {
+	if (!getAutoScale () || device == null) return size;
+	float scaleFactor = getScalingFactor (device);
+	return (size * scaleFactor);
 }
 
 }

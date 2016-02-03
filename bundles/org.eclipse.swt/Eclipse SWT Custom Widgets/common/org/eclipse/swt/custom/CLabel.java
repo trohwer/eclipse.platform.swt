@@ -265,8 +265,7 @@ private Point getTotalSize(Image image, String text) {
 		size.y = Math.max(size.y, e.y);
 		if (image != null) size.x += GAP;
 	} else {
-		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-		size.y = Math.max(size.y, (int)(gc.getFontMetrics().getHeight()/scaleFactor));
+		size.y = DPIUtil.autoScaleDown(gc.getFontMetrics().getHeight(), getDisplay());
 	}
 	gc.dispose();
 

@@ -133,11 +133,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	}
 	if (wHint != SWT.DEFAULT) width = wHint + (border * 2);
 	if (hHint != SWT.DEFAULT) height = hHint + (border * 2);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	width = (int) (width / scaleFactor);
-	height = (int) (height / scaleFactor);
 
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown (new Point (width, height), getDisplay());
 }
 
 @Override
@@ -153,11 +150,10 @@ void createHandle (int index) {
 
 void drawBand (int x, int y, int width, int height) {
 	if ((style & SWT.SMOOTH) != 0) return;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
+	width = DPIUtil.autoScaleUp (width, getDisplay());
+	height = DPIUtil.autoScaleUp (height, getDisplay());
+	x = DPIUtil.autoScaleUp (x, getDisplay());
+	y = DPIUtil.autoScaleUp (y, getDisplay());
 
 	long /*int*/ window = gtk_widget_get_window (parent.paintHandle());
 	if (window == 0) return;

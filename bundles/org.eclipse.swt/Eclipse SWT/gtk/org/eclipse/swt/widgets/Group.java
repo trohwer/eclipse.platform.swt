@@ -115,9 +115,8 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	forceResize ();
 	GtkAllocation allocation = new GtkAllocation();
 	OS.gtk_widget_get_allocation (clientHandle, allocation);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	int clientX = (int) (allocation.x/scaleFactor);
-	int clientY = (int) (allocation.y/scaleFactor);
+	int clientX = DPIUtil.autoScaleDown (allocation.x, getDisplay());
+	int clientY = DPIUtil.autoScaleDown (allocation.y, getDisplay());
 	x -= clientX;
 	y -= clientY;
 	width += clientX + clientX;

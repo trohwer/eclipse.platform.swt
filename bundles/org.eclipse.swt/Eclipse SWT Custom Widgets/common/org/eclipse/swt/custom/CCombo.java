@@ -448,8 +448,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 	Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
 	Point listSize = list.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	int borderWidth = (int) (getBorderWidth () / scaleFactor);
+	int borderWidth = DPIUtil.autoScaleDown(getBorderWidth (), getDisplay());
 
 	height = Math.max (textSize.y, arrowSize.y);
 	width = Math.max (textWidth + 2*spacer + arrowSize.x + 2*borderWidth, listSize.x);

@@ -465,9 +465,8 @@ void printWidget (GC gc, long /*int*/ drawable, int depth, int x, int y) {
 	state &= ~OBSCURED;
 	long /*int*/ topHandle = topHandle ();
 	long /*int*/ window = gtk_widget_get_window (topHandle);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
+	x = DPIUtil.autoScaleUp (x, getDisplay());
+	y = DPIUtil.autoScaleUp (y, getDisplay());
 
 	printWindow (true, this, gc, drawable, depth, window, x, y);
 	if (obscured) state |= OBSCURED;
@@ -736,7 +735,6 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 
 Point computeNativeSize (long /*int*/ h, int wHint, int hHint, boolean changed) {
 	int width = wHint, height = hHint;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (OS.GTK3){
 		if (wHint == SWT.DEFAULT && hHint == SWT.DEFAULT) {
 			GtkRequisition requisition = new GtkRequisition ();
@@ -753,9 +751,7 @@ Point computeNativeSize (long /*int*/ h, int wHint, int hHint, boolean changed) 
 				height = natural_size [0];
 			}
 		}
-		width = (int) (width / scaleFactor);
-		height = (int) (height / scaleFactor);
-		return new Point(width, height);
+		return DPIUtil.autoScaleDown(new Point(width, height), getDisplay());
 	}
 	if (wHint == SWT.DEFAULT && hHint == SWT.DEFAULT) {
 		GtkRequisition requisition = new GtkRequisition ();
@@ -772,9 +768,7 @@ Point computeNativeSize (long /*int*/ h, int wHint, int hHint, boolean changed) 
 		width = wHint == SWT.DEFAULT ? requisition.width : wHint;
 		height = hHint == SWT.DEFAULT ? requisition.height : hHint;
 	}
-	width = (int) (width / scaleFactor);
-	height = (int) (height / scaleFactor);
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point(width, height), getDisplay());
 }
 
 void forceResize () {
@@ -846,13 +840,8 @@ public Rectangle getBounds () {
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 :allocation.height;
 	if ((parent.style & SWT.MIRRORED) != 0) x = parent.getClientWidth () - width - x;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	x = (int) (x / scaleFactor);
-	y = (int) (y / scaleFactor);
-	width = (int) (width / scaleFactor);
-	height = (int) (height / scaleFactor);
 
-	return new Rectangle (x, y, width, height);
+	return DPIUtil.autoScaleDown (new Rectangle (x, y, width, height), getDisplay());
 }
 
 /**
@@ -957,9 +946,6 @@ void moveHandle (int x, int y) {
 
 void resizeHandle (int width, int height) {
 	long /*int*/ topHandle = topHandle ();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
 	if (OS.GTK3) {
 		OS.swt_fixed_resize (OS.gtk_widget_get_parent (topHandle), topHandle, width, height);
 		if (topHandle != handle) {
@@ -973,11 +959,10 @@ void resizeHandle (int width, int height) {
 
 int setBounds (int x, int y, int width, int height, boolean move, boolean resize) {
 	// bug in GTK2 crashes JVM, in GTK3 the new shell only. See bug 472743
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
+	width = DPIUtil.autoScaleUp(width, getDisplay());
+	height = DPIUtil.autoScaleUp(height, getDisplay());
+	x = DPIUtil.autoScaleUp(x, getDisplay());
+	y = DPIUtil.autoScaleUp(y, getDisplay());
 
 	width = Math.min(width, (2 << 14) - 1);
 	height = Math.min(height, (2 << 14) - 1);
@@ -1120,10 +1105,7 @@ public Point getLocation () {
 		int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 		x = parent.getClientWidth () - width - x;
 	}
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	x = (int) (x / scaleFactor);
-	y = (int) (y / scaleFactor);
-	return new Point (x, y);
+	return DPIUtil.autoScaleDown (new Point (x, y), getDisplay());
 }
 
 /**
@@ -1186,10 +1168,7 @@ public Point getSize () {
 	OS.gtk_widget_get_allocation (topHandle, allocation);
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 : allocation.height;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	width = (int) (width / scaleFactor);
-	height = (int) (height / scaleFactor);
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown (new Point (width, height), getDisplay());
 }
 
 /**
@@ -3864,11 +3843,10 @@ void redrawChildren () {
 
 void redrawWidget (int x, int y, int width, int height, boolean redrawAll, boolean all, boolean trim) {
 	if (!gtk_widget_get_realized(handle)) return;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
+	x = DPIUtil.autoScaleUp (x, getDisplay());
+	y = DPIUtil.autoScaleUp (y, getDisplay());
+	width = DPIUtil.autoScaleUp (width, getDisplay());
+	height = DPIUtil.autoScaleUp (height, getDisplay());
 	long /*int*/ window = paintWindow ();
 	GdkRectangle rect = new GdkRectangle ();
 	if (redrawAll) {

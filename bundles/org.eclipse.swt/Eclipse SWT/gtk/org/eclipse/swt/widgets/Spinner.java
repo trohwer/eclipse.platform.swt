@@ -247,9 +247,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		width = wHint == SWT.DEFAULT ? w [0] : wHint;
 		height = hHint == SWT.DEFAULT ? h [0] : hHint;
 	}
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	width = (int) (width /scaleFactor);
-	height = (int) (height/scaleFactor);
+	width = DPIUtil.autoScaleDown (width, getDisplay());
+	height = DPIUtil.autoScaleDown (height, getDisplay());
 	Rectangle trim = computeTrim (0, 0, width, height);
 	return new Point (trim.width, trim.height);
 }
@@ -259,7 +258,6 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
 	int xborder = 0, yborder = 0;
 	Rectangle trim = super.computeTrim (x, y, width, height);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (OS.GTK3) {
 		GtkBorder tmp = new GtkBorder();
 		long /*int*/ context = OS.gtk_widget_get_style_context (handle);
@@ -267,39 +265,39 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 		OS.gtk_style_context_get_padding (context, styleState, tmp);
 		if ((style & SWT.BORDER) != 0) {
 			OS.gtk_style_context_get_border (context, styleState, tmp);
-			trim.x -= (int) (tmp.left/scaleFactor);
-			trim.y -= (int) (tmp.top/scaleFactor);
-			trim.width += (int)((tmp.left + tmp.right)/scaleFactor);
-			trim.height += (int)((tmp.top + tmp.bottom)/scaleFactor);
+			trim.x -= DPIUtil.autoScaleDown(tmp.left, getDisplay());
+			trim.y -= DPIUtil.autoScaleDown(tmp.top, getDisplay());
+			trim.width += DPIUtil.autoScaleDown((tmp.left + tmp.right), getDisplay());
+			trim.height += DPIUtil.autoScaleDown((tmp.top + tmp.bottom), getDisplay());
 		}
 	}else {
-		Point thickness = getThickness (handle);
+		Point thickness = DPIUtil.autoScaleDown(getThickness (handle), getDisplay()) ;
 		if ((this.style & SWT.BORDER) != 0) {
-			xborder += (int)(thickness.x/scaleFactor);
-			yborder += (int)(thickness.y/scaleFactor);
+			xborder += thickness.x;
+			yborder += thickness.y;
 		}
 		long /*int*/ fontDesc = getFontDescription ();
 		int fontSize = OS.pango_font_description_get_size (fontDesc);
 		int arrowSize = Math.max (OS.PANGO_PIXELS (fontSize), MIN_ARROW_WIDTH);
-		arrowSize = (int) ((arrowSize - arrowSize % 2)/scaleFactor);
-		trim.width += arrowSize + (2 * thickness.x/scaleFactor);
+		arrowSize = DPIUtil.autoScaleDown((arrowSize - arrowSize % 2), getDisplay());
+		trim.width += arrowSize + (2 * DPIUtil.autoScaleDown(thickness.x, getDisplay()));
 	}
 	int [] property = new int [1];
 	OS.gtk_widget_style_get (handle, OS.interior_focus, property, 0);
 	if (property [0] == 0) {
 		OS.gtk_widget_style_get (handle, OS.focus_line_width, property, 0);
-		xborder += (int) (property [0]/scaleFactor);
-		yborder += (int) (property [0]/scaleFactor);
+		xborder += DPIUtil.autoScaleDown(property [0], getDisplay());
+		yborder += DPIUtil.autoScaleDown(property [0], getDisplay());
 	}
 	trim.x -= xborder;
 	trim.y -= yborder;
 	trim.width += 2 * xborder;
 	trim.height += 2 * yborder;
 	GtkBorder innerBorder = Display.getEntryInnerBorder (handle);
-	trim.x -= (int) (innerBorder.left/scaleFactor);
-	trim.y -= (int) (innerBorder.top/scaleFactor);
-	trim.width += (int) ((innerBorder.left + innerBorder.right)/scaleFactor);
-	trim.height += (int) ((innerBorder.top + innerBorder.bottom)/scaleFactor);
+	trim.x -= DPIUtil.autoScaleDown (innerBorder.left, getDisplay());
+	trim.y -= DPIUtil.autoScaleDown (innerBorder.top, getDisplay());
+	trim.width += DPIUtil.autoScaleDown ((innerBorder.left + innerBorder.right), getDisplay());
+	trim.height += DPIUtil.autoScaleDown ((innerBorder.top + innerBorder.bottom), getDisplay());
 	return new Rectangle (trim.x, trim.y, trim.width, trim.height);
 }
 
@@ -420,8 +418,7 @@ GdkColor getBackgroundColor () {
 public int getBorderWidth () {
 	checkWidget();
 	if ((this.style & SWT.BORDER) != 0) {
-		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-		return (int) (getThickness (handle).x/scaleFactor);
+		return DPIUtil.autoScaleDown(getThickness (handle).x, getDisplay());
 	}
 	return 0;
 }

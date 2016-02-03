@@ -258,13 +258,12 @@ void reskinChildren (int flags) {
  */
 public void scroll (int destX, int destY, int x, int y, int width, int height, boolean all) {
 	checkWidget();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	destX = (int) (destX * scaleFactor);
-	destY = (int) (destY * scaleFactor);
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
+	destX = DPIUtil.autoScaleUp(destX, getDisplay());
+	destY = DPIUtil.autoScaleUp(destY, getDisplay());
+	x = DPIUtil.autoScaleUp(x, getDisplay());
+	y = DPIUtil.autoScaleUp(y, getDisplay());
+	width = DPIUtil.autoScaleUp(width, getDisplay());
+	height = DPIUtil.autoScaleUp(height, getDisplay());
 
 	if (width <= 0 || height <= 0) return;
 	if ((style & SWT.MIRRORED) != 0) {

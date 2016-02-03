@@ -168,7 +168,6 @@ public void addSelectionListener (SelectionListener listener) {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
 	/*
@@ -238,8 +237,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		size = new Point(0, 0);
 		size.x += wHint == SWT.DEFAULT ? w [0] + imageWidth + trimWidth : wHint;
 		size.y += hHint == SWT.DEFAULT ? Math.max(Math.max(imageHeight, indicatorHeight), h [0]) + trimHeight : hHint;
-		size.x = (int) (size.x / scaleFactor);
-		size.y = (int) (size.y / scaleFactor);
+		size = DPIUtil.autoScaleDown(size, getDisplay());
 	} else {
 		size = computeNativeSize (handle, wHint, hHint, changed);
 	}
@@ -249,8 +247,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (wHint != SWT.DEFAULT || hHint != SWT.DEFAULT) {
 		if (OS.gtk_widget_get_can_default (handle)) {
 			GtkBorder border = getBorder (OS.default_border, handle, DEFAULT_BORDER);
-			if (wHint != SWT.DEFAULT) size.x += (int) ((border.left + border.right)/scaleFactor);
-			if (hHint != SWT.DEFAULT) size.y += (int) ((border.top + border.bottom)/scaleFactor);
+			if (wHint != SWT.DEFAULT) size.x += DPIUtil.autoScaleDown((border.left + border.right), getDisplay());
+			if (hHint != SWT.DEFAULT) size.y += DPIUtil.autoScaleDown((border.top + border.bottom), getDisplay());
 		}
 	}
 	return size;

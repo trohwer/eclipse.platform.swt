@@ -690,8 +690,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget();
 	Rectangle trim =  renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, x, y, width, height);
 	Point size = new Point(width, height);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	int wrapHeight = (int) (getWrappedHeight(size)/scaleFactor);
+	int wrapHeight = DPIUtil.autoScaleDown(getWrappedHeight(size), getDisplay());
 	if (onBottom) {
 		trim.height += wrapHeight;
 	} else {
@@ -854,8 +853,7 @@ public Rectangle getClientArea() {
 	//TODO: HACK - find a better way to get padding
 	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.FILL, 0, 0, 0, 0);
 	Point size = getSize();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	int wrapHeight = (int) (getWrappedHeight(size)/scaleFactor);
+	int wrapHeight = DPIUtil.autoScaleDown(getWrappedHeight(size), getDisplay());
 	if (onBottom) {
 		trim.height += wrapHeight;
 	} else {
@@ -1244,9 +1242,8 @@ public int getStyle() {
  */
 public int getTabHeight(){
 	checkWidget();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	if (fixedTabHeight != SWT.DEFAULT) return (int) (fixedTabHeight/scaleFactor);
-	return (int) ((tabHeight - 1)/scaleFactor); // -1 for line drawn across top of tab //TODO: replace w/ computeTrim of tab area?
+	if (fixedTabHeight != SWT.DEFAULT) return DPIUtil.autoScaleDown(fixedTabHeight, getDisplay());
+	return DPIUtil.autoScaleDown ((tabHeight - 1), getDisplay()); // -1 for line drawn across top of tab //TODO: replace w/ computeTrim of tab area?
 }
 /**
  * Returns the position of the tab.  Possible values are SWT.TOP or SWT.BOTTOM.
@@ -3455,8 +3452,7 @@ public void setTabHeight(int height) {
 	if (height < -1) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	fixedTabHeight = (int) (height * scaleFactor);
+	fixedTabHeight = DPIUtil.autoScaleUp(height, getDisplay());
 	updateFolder(UPDATE_TAB_HEIGHT);
 }
 /**

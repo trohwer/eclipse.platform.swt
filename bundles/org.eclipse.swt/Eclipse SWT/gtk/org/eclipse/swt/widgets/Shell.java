@@ -662,15 +662,14 @@ void closeWidget () {
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget();
 	Rectangle trim = super.computeTrim (x, y, width, height);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	int border = 0;
 	if ((style & (SWT.NO_TRIM | SWT.BORDER | SWT.SHELL_TRIM)) == 0) {
-		border = (int) (OS.gtk_container_get_border_width (shellHandle)/scaleFactor);
+		border = DPIUtil.autoScaleDown (OS.gtk_container_get_border_width (shellHandle), getDisplay());
 	}
 	if (isCustomResize ()) {
-		border = (int) (OS.gtk_container_get_border_width (shellHandle)/scaleFactor);
+		border = DPIUtil.autoScaleDown (OS.gtk_container_get_border_width (shellHandle), getDisplay());
 	}
-	int trimWidth = (int) (trimWidth ()/scaleFactor), trimHeight = (int) (trimHeight ()/scaleFactor);
+	int trimWidth = DPIUtil.autoScaleDown (trimWidth (), getDisplay()), trimHeight = DPIUtil.autoScaleDown (trimHeight (), getDisplay());
 
 	trim.x -= (trimWidth / 2) + border;
 	trim.y -= trimHeight - (trimWidth / 2) + border;
@@ -680,7 +679,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 		forceResize ();
 		GtkAllocation allocation = new GtkAllocation ();
 		OS.gtk_widget_get_allocation (menuBar.handle, allocation);
-		int menuBarHeight = (int) (allocation.height/scaleFactor);
+		int menuBarHeight = DPIUtil.autoScaleDown (allocation.height, getDisplay());
 		trim.y -= menuBarHeight;
 		trim.height += menuBarHeight;
 	}
@@ -1134,16 +1133,15 @@ public boolean getModified () {
 @Override
 public Point getSize () {
 	checkWidget ();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	GtkAllocation allocation = new GtkAllocation ();
 	OS.gtk_widget_get_allocation (vboxHandle, allocation);
-	int width = (int) (allocation.width/scaleFactor);
-	int height = (int) (allocation.height/scaleFactor);
+	int width = DPIUtil.autoScaleDown (allocation.width, getDisplay());
+	int height = DPIUtil.autoScaleDown (allocation.height, getDisplay());
 	int border = 0;
 	if ((style & (SWT.NO_TRIM | SWT.BORDER | SWT.SHELL_TRIM)) == 0) {
-		border = (int) (OS.gtk_container_get_border_width (shellHandle)/scaleFactor);
+		border = DPIUtil.autoScaleDown (OS.gtk_container_get_border_width (shellHandle), getDisplay());
 	}
-	return new Point (width + (int)(trimWidth ()/scaleFactor) + 2*border, height + trimHeight () + 2*border);
+	return new Point (width + DPIUtil.autoScaleDown(trimWidth (), getDisplay()) + 2*border, height + DPIUtil.autoScaleDown (trimHeight (), getDisplay()) + 2*border);
 }
 
 @Override
@@ -2655,18 +2653,17 @@ public void forceActive () {
 @Override
 public Rectangle getBounds () {
 	checkWidget ();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	int [] x = new int [1], y = new int [1];
 	OS.gtk_window_get_position (shellHandle, x, y);
 	GtkAllocation allocation = new GtkAllocation ();
 	OS.gtk_widget_get_allocation (vboxHandle, allocation);
-	int width = (int) (allocation.width/scaleFactor);
-	int height = (int) (allocation.height/scaleFactor);
+	int width = DPIUtil.autoScaleDown (allocation.width, getDisplay());
+	int height = DPIUtil.autoScaleDown (allocation.height, getDisplay());
 	int border = 0;
 	if ((style & (SWT.NO_TRIM | SWT.BORDER | SWT.SHELL_TRIM)) == 0) {
-		border = (int) (OS.gtk_container_get_border_width (shellHandle)/scaleFactor);
+		border = DPIUtil.autoScaleDown (OS.gtk_container_get_border_width (shellHandle), getDisplay());
 	}
-	return new Rectangle (x [0], y [0], width + (int)(trimWidth ()/scaleFactor) + 2*border, height + (int)(trimHeight ()/scaleFactor) + 2*border);
+	return new Rectangle (x [0], y [0], width + DPIUtil.autoScaleDown(trimWidth (), getDisplay()) + 2*border, height + DPIUtil.autoScaleDown(trimHeight (), getDisplay()) + 2*border);
 }
 
 @Override

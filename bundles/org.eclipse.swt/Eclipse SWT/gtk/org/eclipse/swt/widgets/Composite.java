@@ -238,9 +238,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 			changed |= (state & LAYOUT_CHANGED) != 0;
 			size = layout.computeSize (this, wHint, hHint, changed);
-			float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-			size.x = (int) (size.x/scaleFactor);
-			size.y = (int) (size.y/scaleFactor);
+			size = DPIUtil.autoScaleDown(size, getDisplay());
 			state &= ~LAYOUT_CHANGED;
 		} else {
 			size = new Point (wHint, hHint);
@@ -664,10 +662,7 @@ public Rectangle getClientArea () {
 		OS.gtk_widget_get_allocation (clientHandle, allocation);
 		int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 		int height = (state & ZERO_HEIGHT) != 0 ? 0 : allocation.height;
-		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-		width = (int) (width/scaleFactor);
-		height = (int) (height/scaleFactor);
-		return new Rectangle (0, 0, width, height);
+		return DPIUtil.autoScaleDown(new Rectangle (0, 0, width, height), getDisplay());
 	}
 	return super.getClientArea();
 }

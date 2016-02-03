@@ -511,7 +511,6 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget();
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 
 	int itemCount = OS.gtk_tree_model_iter_n_children (modelHandle, 0);
 	long /*int*/ column = OS.gtk_tree_view_get_column (handle, 0);
@@ -524,9 +523,8 @@ public int getItemHeight () {
 			OS.gtk_cell_renderer_get_preferred_height_for_width (textRenderer, handle, 0, h, null);
 			height += h [0];
 		}
-		height = (int) (height / scaleFactor);
 
-		return height;
+		return DPIUtil.autoScaleDown (height, getDisplay());
 	} else {
 		long /*int*/ iter = OS.g_malloc (OS.GtkTreeIter_sizeof ());
 		OS.gtk_tree_model_get_iter_first (modelHandle, iter);
@@ -534,9 +532,8 @@ public int getItemHeight () {
 		int [] w = new int [1], h = new int [1];
 		OS.gtk_tree_view_column_cell_get_size (column, null, null, null, w, h);
 		OS.g_free (iter);
-		h [0] = (int) (h [0] / scaleFactor);
 
-		return h [0];
+		return DPIUtil.autoScaleDown (h [0], getDisplay());
 	}
 }
 

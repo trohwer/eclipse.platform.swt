@@ -3074,9 +3074,8 @@ public Point map (Control from, Control to, int x, int y) {
 
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
-	float scaleFactor = DPIUtil.getScalingFactor(this);
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, this);
+	y = DPIUtil.autoScaleUp(y, this);
 	Point point = new Point (x, y);
 	if (from == to) return point;
 	if (from != null) {
@@ -3091,8 +3090,7 @@ public Point map (Control from, Control to, int x, int y) {
 		point.y -= origin.y;
 		if ((to.style & SWT.MIRRORED) != 0) point.x = to.getClientWidth () - point.x;
 	}
-	point.x = (int) (point.x / scaleFactor);
-	point.y = (int) (point.y / scaleFactor);
+	point = DPIUtil.autoScaleDown(point, this);
 	return point;
 }
 
@@ -3201,11 +3199,10 @@ long /*int*/ menuPositionProc (long /*int*/ menu, long /*int*/ x, long /*int*/ y
  */
 public Rectangle map (Control from, Control to, int x, int y, int width, int height) {
 	checkDevice();
-	float scaleFactor = DPIUtil.getScalingFactor(this);
-	x = (int) (x * scaleFactor);
-	y = (int) (y * scaleFactor);
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
+	x = DPIUtil.autoScaleUp (x, this);
+	y = DPIUtil.autoScaleUp (y, this);
+	width = DPIUtil.autoScaleUp (width, this);
+	height = DPIUtil.autoScaleUp (height, this);
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	Rectangle rect = new Rectangle (x, y, width, height);
@@ -3225,10 +3222,7 @@ public Rectangle map (Control from, Control to, int x, int y, int width, int hei
 	}
 
 	if (fromRTL != toRTL) rect.x -= rect.width;
-	rect.x = (int) (rect.x / scaleFactor);
-	rect.y = (int) (rect.y / scaleFactor);
-	rect.width = (int) (rect.width / scaleFactor);
-	rect.height = (int) (rect.height / scaleFactor);
+	rect = DPIUtil.autoScaleDown(rect, this);
 	return rect;
 }
 

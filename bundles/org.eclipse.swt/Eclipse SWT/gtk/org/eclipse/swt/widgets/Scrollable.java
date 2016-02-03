@@ -110,17 +110,16 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	int border = 0;
 	if (fixedHandle != 0) border += OS.gtk_container_get_border_width (fixedHandle);
 	if (scrolledHandle != 0) border += OS.gtk_container_get_border_width (scrolledHandle);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	border =  (int) (border / scaleFactor);
+	border =  DPIUtil.autoScaleDown(border, getDisplay());
 	int trimX = x - border, trimY = y - border;
 	int trimWidth = width + (border * 2), trimHeight = height + (border * 2);
-	trimHeight += (int) (hScrollBarWidth () / scaleFactor);
-	trimWidth  += (int) (vScrollBarWidth () / scaleFactor);
+	trimHeight += DPIUtil.autoScaleDown(hScrollBarWidth (), getDisplay());
+	trimWidth  += DPIUtil.autoScaleDown(vScrollBarWidth (), getDisplay());
 	if (scrolledHandle != 0) {
 		if (OS.gtk_scrolled_window_get_shadow_type (scrolledHandle) != OS.GTK_SHADOW_NONE) {
 			Point thickness = getThickness (scrolledHandle);
-			int xthickness = (int) (thickness.x/scaleFactor);
-			int ythickness = (int) (thickness.y/scaleFactor);
+			int xthickness = DPIUtil.autoScaleDown(thickness.x, getDisplay());
+			int ythickness = DPIUtil.autoScaleDown(thickness.y, getDisplay());
 			trimX -= xthickness;
 			trimY -= ythickness;
 			trimWidth += xthickness * 2;
@@ -194,7 +193,6 @@ void destroyScrollBar (ScrollBar bar) {
 public int getBorderWidth () {
 	checkWidget();
 	int border = 0;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
 	if (fixedHandle != 0) border += OS.gtk_container_get_border_width (fixedHandle);
 	if (scrolledHandle != 0) {
 		border += OS.gtk_container_get_border_width (scrolledHandle);
@@ -202,7 +200,7 @@ public int getBorderWidth () {
 			border += getThickness (scrolledHandle).x;
 		}
 	}
-	return (int) (border/scaleFactor);
+	return DPIUtil.autoScaleDown(border, getDisplay());
 }
 
 /**
@@ -229,12 +227,7 @@ public Rectangle getClientArea () {
 	int y = allocation.y;
 	int width = (state & ZERO_WIDTH) != 0 ? 0 : allocation.width;
 	int height = (state & ZERO_HEIGHT) != 0 ? 0 : allocation.height;
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	x		= (int) (x / scaleFactor);
-	y		= (int) (y / scaleFactor);
-	width	= (int) (width / scaleFactor);
-	height	= (int) (height / scaleFactor);
-	return new Rectangle (x, y, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (x, y, width, height), getDisplay());
 }
 /**
  * Returns the receiver's horizontal scroll bar if it has

@@ -478,9 +478,8 @@ public void copyArea(Image image, int x, int y) {
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.type != SWT.BITMAP || image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
 
 	if (OS.USE_CAIRO) {
 		long /*int*/ cairo = Cairo.cairo_create(image.surface);
@@ -560,13 +559,12 @@ public void copyArea(int srcX, int srcY, int width, int height, int destX, int d
 public void copyArea(int srcX, int srcY, int width, int height, int destX, int destY, boolean paint) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width <= 0 || height <= 0) return;
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	srcX = (int) (srcX * scaleFactor);
-	srcY = (int) (srcY * scaleFactor);
-	width = (int) (width * scaleFactor);
-	height = (int) (height * scaleFactor);
-	destX = (int) (destX * scaleFactor);
-	destY = (int) (destY * scaleFactor);
+	srcX = DPIUtil.autoScaleUp(srcX, device);
+	srcY = DPIUtil.autoScaleUp(srcY, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
+	destX = DPIUtil.autoScaleUp(destX, device);
+	destY = DPIUtil.autoScaleUp(destY, device);
 	int deltaX = destX - srcX, deltaY = destY - srcY;
 	if (deltaX == 0 && deltaY == 0) return;
 	long /*int*/ drawable = data.drawable;
@@ -736,11 +734,10 @@ public void drawArc(int x, int y, int width, int height, int startAngle, int arc
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if (width < 0) {
 		x = x + width;
@@ -797,11 +794,10 @@ public void drawArc(int x, int y, int width, int height, int startAngle, int arc
 public void drawFocus(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
@@ -904,15 +900,14 @@ public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeig
 }
 
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	srcX = (int) (srcX * scaleFactor);
-	srcY = (int) (srcY * scaleFactor);
-	srcWidth = (int) (srcWidth * scaleFactor);
-	srcHeight = (int) (srcHeight * scaleFactor);
-	destX = (int) (destX * scaleFactor);
-	destY = (int) (destY * scaleFactor);
-	destWidth = (int) (destWidth * scaleFactor);
-	destHeight = (int) (destHeight * scaleFactor);
+	srcX = DPIUtil.autoScaleUp(srcX, device);
+	srcY = DPIUtil.autoScaleUp(srcY, device);
+	srcWidth = DPIUtil.autoScaleUp(srcWidth, device);
+	srcHeight = DPIUtil.autoScaleUp(srcHeight, device);
+	destX = DPIUtil.autoScaleUp(destX, device);
+	destY = DPIUtil.autoScaleUp(destY, device);
+	destWidth = DPIUtil.autoScaleUp(destWidth, device);
+	destHeight = DPIUtil.autoScaleUp(destHeight, device);
 	/* Refresh Image as per zoom level, if required. */
 	srcImage.refreshImageForZoom ();
 	int imgWidth, imgHeight;
@@ -1047,15 +1042,14 @@ void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, 
 	}
 }
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple, int imgWidth, int imgHeight) {
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	srcX = (int) (srcX * scaleFactor);
-	srcY = (int) (srcY * scaleFactor);
-	srcWidth = (int) (srcWidth * scaleFactor);
-	srcHeight = (int) (srcHeight * scaleFactor);
-	destX = (int) (destX * scaleFactor);
-	destY = (int) (destY * scaleFactor);
-	destWidth = (int) (destWidth * scaleFactor);
-	destHeight = (int) (destHeight * scaleFactor);
+	srcX = DPIUtil.autoScaleUp(srcX, device);
+	srcY = DPIUtil.autoScaleUp(srcY, device);
+	srcWidth = DPIUtil.autoScaleUp(srcWidth, device);
+	srcHeight = DPIUtil.autoScaleUp(srcHeight, device);
+	destX = DPIUtil.autoScaleUp(destX, device);
+	destY = DPIUtil.autoScaleUp(destY, device);
+	destWidth = DPIUtil.autoScaleUp(destWidth, device);
+	destHeight = DPIUtil.autoScaleUp(destHeight, device);
 
 	/* Refresh Image as per zoom level, if required. */
 	srcImage.refreshImageForZoom ();
@@ -1301,11 +1295,10 @@ long /*int*/ scale(long /*int*/ src, int srcX, int srcY, int srcWidth, int srcHe
 public void drawLine(int x1, int y1, int x2, int y2) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	x2 = (int)(x2 * scaleFactor);
-	y2 = (int)(y2 * scaleFactor);
-	x1 = (int)(x1 * scaleFactor);
-	y1 = (int)(y1 * scaleFactor);
+	x1 = DPIUtil.autoScaleUp(x1, device);
+	x2 = DPIUtil.autoScaleUp(x2, device);
+	y1 = DPIUtil.autoScaleUp(y1, device);
+	y2 = DPIUtil.autoScaleUp(y2, device);
 
 	checkGC(DRAW);
 	long /*int*/ cairo = data.cairo;
@@ -1344,11 +1337,10 @@ public void drawOval(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if (width < 0) {
 		x = x + width;
@@ -1437,9 +1429,8 @@ public void drawPath(Path path) {
 public void drawPoint (int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
 
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
@@ -1471,9 +1462,8 @@ public void drawPolygon(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
-	float scaleFactor = DPIUtil.getScalingFactor(device);
 	int[] scaledPointArray = pointArray;
-	scaledPointArray = scalePointArray(pointArray, scaleFactor);
+	scaledPointArray = scalePointArray(pointArray, device);
 
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
@@ -1484,10 +1474,10 @@ public void drawPolygon(int[] pointArray) {
 	OS.gdk_draw_polygon(data.drawable, handle, 0, scaledPointArray, scaledPointArray.length / 2);
 }
 
-private int[] scalePointArray(int[] pointArray, float scaleFactor) {
+private int[] scalePointArray(int[] pointArray, Device device) {
 	int [] returnArray = new int[pointArray.length];
 	for (int i = 0; i < pointArray.length; i++) {
-		returnArray [i] = (int) (pointArray [i] * scaleFactor);
+		returnArray [i] = DPIUtil.autoScaleUp(pointArray [i], device);
 	}
 	return returnArray;
 }
@@ -1513,9 +1503,8 @@ public void drawPolyline(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
-	float scaleFactor = DPIUtil.getScalingFactor(device);
 	int[] scaledPointArray = pointArray;
-	scaledPointArray = scalePointArray(pointArray, scaleFactor);
+	scaledPointArray = scalePointArray(pointArray, device);
 	long /*int*/ cairo = data.cairo;
 	if (cairo != 0) {
 		drawPolyline(cairo, scaledPointArray, false);
@@ -1528,9 +1517,8 @@ public void drawPolyline(int[] pointArray) {
 void drawPolyline(long /*int*/ cairo, int[] pointArray, boolean close) {
 	int count = pointArray.length / 2;
 	if (count == 0) return;
-	float scaleFactor = DPIUtil.getScalingFactor(device);
 	int[] scaledPointArray = pointArray;
-	scaledPointArray = scalePointArray(pointArray, scaleFactor);
+	scaledPointArray = scalePointArray(pointArray, device);
 	double xOffset = data.cairoXoffset, yOffset = data.cairoYoffset;
 	Cairo.cairo_move_to(cairo, scaledPointArray[0] + xOffset, scaledPointArray[1] + yOffset);
 	for (int i = 1, j=2; i < count; i++, j += 2) {
@@ -1558,11 +1546,10 @@ public void drawRectangle(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if (width < 0) {
 		x = x + width;
@@ -1627,13 +1614,12 @@ public void drawRoundRectangle(int x, int y, int width, int height, int arcWidth
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
 	checkGC(DRAW);
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	arcWidth = (int)(arcWidth *scaleFactor);
-	arcHeight = (int)(arcHeight * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
+	arcWidth = DPIUtil.autoScaleUp(arcWidth, device);
+	arcHeight = DPIUtil.autoScaleUp(arcHeight, device);
 
 	int nx = x;
 	int ny = y;
@@ -1839,9 +1825,8 @@ public void drawText (String string, int x, int y, int flags) {
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (string.length() == 0) return;
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
 
 	long /*int*/ cairo = data.cairo;
 	setString(string, flags);
@@ -1950,11 +1935,10 @@ public void fillArc(int x, int y, int width, int height, int startAngle, int arc
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if (width < 0) {
 		x = x + width;
@@ -2015,11 +1999,10 @@ public void fillArc(int x, int y, int width, int height, int startAngle, int arc
 public void fillGradientRectangle(int x, int y, int width, int height, boolean vertical) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if ((width == 0) || (height == 0)) return;
 
@@ -2094,11 +2077,10 @@ public void fillOval(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if (width < 0) {
 		x = x + width;
@@ -2213,11 +2195,10 @@ public void fillRectangle(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	fillRectangleActual (x, y, width, height);
 }
@@ -2300,13 +2281,12 @@ public void fillRoundRectangle(int x, int y, int width, int height, int arcWidth
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	arcWidth = (int)(arcWidth *scaleFactor);
-	arcHeight = (int)(arcHeight * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
+	arcWidth = DPIUtil.autoScaleUp(arcWidth, device);
+	arcHeight = DPIUtil.autoScaleUp(arcHeight, device);
 
 	int nx = x;
 	int ny = y;
@@ -2603,13 +2583,7 @@ public Rectangle getClipping() {
 		height = rect.height;
 	}
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width / scaleFactor);
-	height = (int)(height / scaleFactor);
-	x = (int)(x / scaleFactor);
-	y = (int)(y / scaleFactor);
-
-	return new Rectangle(x, y, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle(x, y, width, height), device);
 }
 
 /**
@@ -2824,8 +2798,7 @@ public LineAttributes getLineAttributes() {
 		dashes = new float[data.lineDashes.length];
 		System.arraycopy(data.lineDashes, 0, dashes, 0, dashes.length);
 	}
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	return new LineAttributes(data.lineWidth/scaleFactor, data.lineCap, data.lineJoin, data.lineStyle, dashes, data.lineDashesOffset, data.lineMiterLimit);
+	return new LineAttributes(DPIUtil.autoScaleDown(data.lineWidth, device), data.lineCap, data.lineJoin, data.lineStyle, dashes, data.lineDashesOffset, data.lineMiterLimit);
 }
 
 /**
@@ -2918,8 +2891,7 @@ public int getLineStyle() {
 public int getLineWidth() {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	float returnVal =  data.lineWidth;
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	returnVal = (int)(returnVal / scaleFactor);
+	returnVal = DPIUtil.autoScaleDown(returnVal, device);
 	return (int) returnVal;
 }
 
@@ -2947,7 +2919,6 @@ public int getStyle () {
 }
 
 void getSize(int[] width, int[] height) {
-	float scaleFactor = DPIUtil.getScalingFactor(device);
 	if (data.width != -1 && data.height != -1) {
 		width[0] = data.width;
 		height[0] = data.height;
@@ -2955,12 +2926,12 @@ void getSize(int[] width, int[] height) {
 	}
 	if (data.drawable != 0) {
 		if (OS.GTK_VERSION >= OS.VERSION(2, 24, 0)) {
-			width[0] = (int) (OS.gdk_window_get_width(data.drawable)/scaleFactor);
-			height[0] = (int) (OS.gdk_window_get_height(data.drawable)/scaleFactor);
+			width[0] = DPIUtil.autoScaleDown (OS.gdk_window_get_width(data.drawable), device);
+			height[0] = DPIUtil.autoScaleDown (OS.gdk_window_get_height(data.drawable), device);
 		} else {
 			OS.gdk_drawable_get_size(data.drawable, width, height);
-			width[0] = (int) (width[0] / scaleFactor);
-			height[0] = (int) (height[0] / scaleFactor);
+			width[0] = DPIUtil.autoScaleDown (width[0] , device);
+			height[0] = DPIUtil.autoScaleDown (height[0] , device);
 		}
 		return;
 	}
@@ -2968,12 +2939,12 @@ void getSize(int[] width, int[] height) {
 		long /*int*/ surface = Cairo.cairo_get_target(handle);
 		switch (Cairo.cairo_surface_get_type(surface)) {
 			case Cairo.CAIRO_SURFACE_TYPE_IMAGE:
-				width[0] = (int) (Cairo.cairo_image_surface_get_width(surface)/scaleFactor);
-				height[0] = (int) (Cairo.cairo_image_surface_get_height(surface)/scaleFactor);
+				width[0] = DPIUtil.autoScaleDown (Cairo.cairo_image_surface_get_width(surface), device);
+				height[0] = DPIUtil.autoScaleDown (Cairo.cairo_image_surface_get_height(surface), device);
 				break;
 			case Cairo.CAIRO_SURFACE_TYPE_XLIB:
-				width[0] = (int) (Cairo.cairo_xlib_surface_get_width(surface)/scaleFactor);
-				height[0] = (int) (Cairo.cairo_xlib_surface_get_height(surface)/scaleFactor);
+				width[0] = DPIUtil.autoScaleDown (Cairo.cairo_xlib_surface_get_width(surface), device);
+				height[0] = DPIUtil.autoScaleDown (Cairo.cairo_xlib_surface_get_height(surface), device);
 				break;
 		}
 	}
@@ -3146,9 +3117,8 @@ void initCairo() {
 void computeStringSize() {
 	int[] width = new int[1], height = new int[1];
 	OS.pango_layout_get_pixel_size(data.layout, width, height);
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	data.stringHeight = (int) (height[0]/scaleFactor);
-	data.stringWidth = (int) (width[0]/scaleFactor);
+	data.stringHeight = DPIUtil.autoScaleDown (height[0], device);
+	data.stringWidth = DPIUtil.autoScaleDown (width[0], device);
 }
 
 /**
@@ -3507,11 +3477,10 @@ void setClipping(long /*int*/ clipRgn) {
 public void setClipping(int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	width = (int)(width * scaleFactor);
-	height = (int)(height * scaleFactor);
-	x = (int)(x * scaleFactor);
-	y = (int)(y * scaleFactor);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
 
 	if (width < 0) {
 		x = x + width;
@@ -3802,9 +3771,8 @@ public void setInterpolation(int interpolation) {
 public void setLineAttributes(LineAttributes attributes) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (attributes == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	float scaleFactor = DPIUtil.getScalingFactor(device);
 	int mask = 0;
-	float lineWidth = attributes.width * scaleFactor;
+	float lineWidth = DPIUtil.autoScaleUp(attributes.width, device);
 	if (lineWidth != data.lineWidth) {
 		mask |= LINE_WIDTH | DRAW_OFFSET;
 	}
@@ -4052,8 +4020,7 @@ public void setLineStyle(int lineStyle) {
 public void setLineWidth(int lineWidth) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
-	float scaleFactor = DPIUtil.getScalingFactor(device);
-	lineWidth = (int)(lineWidth * scaleFactor);
+	lineWidth = DPIUtil.autoScaleUp (lineWidth, device);
 	if (data.lineWidth == lineWidth) return;
 	data.lineWidth = lineWidth;
 	data.state &= ~(LINE_WIDTH | DRAW_OFFSET);
