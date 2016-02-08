@@ -20,6 +20,8 @@ import org.eclipse.swt.internal.cairo.*;
 
 public class OS extends C {
 	static {
+		String scalingProperty = "GDK_SCALE";
+		OS.setenv(ascii(scalingProperty), ascii("1"), 1);
 		String propertyName = "SWT_GTK3";
 		String gtk3 = getEnvironmentalVariable (propertyName);
 		if (gtk3 != null && gtk3.equals("0")) {
@@ -6511,7 +6513,7 @@ public static final void gtk_adjustment_value_changed(long /*int*/ adjustment) {
 
 /**
  * @method flags=dynamic
- * @param arrow_type cast=(GtkArrowType) 
+ * @param arrow_type cast=(GtkArrowType)
  * @param shadow_type cast=(GtkShadowType)
  */
 public static final native long /*int*/ _gtk_arrow_new(int arrow_type, int shadow_type);
@@ -17147,7 +17149,7 @@ public static final void g_variant_iter_free (long /*int*/ variant) {
 }
 /**
  * @method flags=dynamic
- * @param iter cast=(GVariantIter *) 
+ * @param iter cast=(GVariantIter *)
  * @param variant cast=(GVariant *)
  */
 public static final native int _g_variant_iter_init (long /*int*/ iter, long /*int*/ variant);

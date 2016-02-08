@@ -1332,8 +1332,9 @@ public Rectangle getBounds() {
 
 /**
  * @return a rectangle specifying the image's bounds at current zoom.
+ * @since 3.105
  */
-Rectangle _getBounds() {
+public Rectangle _getBounds() {
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
 	}
