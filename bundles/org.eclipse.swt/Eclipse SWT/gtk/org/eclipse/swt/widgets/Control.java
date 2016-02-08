@@ -19,7 +19,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
-import org.eclipse.swt.layout.*;
 
 /**
  * Control is the abstract superclass of all windowed user interface classes.
@@ -1410,11 +1409,6 @@ public void pack (boolean changed) {
  */
 public void setLayoutData (Object layoutData) {
 	checkWidget();
-	if ((layoutData instanceof GridData)) {
-		float scalingFactor = display.getDeviceZoom ()/100f;
-		((GridData) layoutData).heightHint *= scalingFactor;
-		((GridData) layoutData).widthHint *= scalingFactor;
-	}
 	this.layoutData = layoutData;
 }
 
