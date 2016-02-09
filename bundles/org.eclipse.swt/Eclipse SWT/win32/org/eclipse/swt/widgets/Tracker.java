@@ -488,7 +488,7 @@ public boolean open () {
 	* second window is used for drawing the rectangles.
 	*/
 	if (IsVista && parent == null) {
-		Rectangle bounds = display.getBounds();
+		Rectangle bounds = display.getBoundsInPixels();
 		hwndTransparent = OS.CreateWindowEx (
 			OS.WS_EX_LAYERED | OS.WS_EX_NOACTIVATE | OS.WS_EX_TOOLWINDOW,
 			display.windowClass,
@@ -531,7 +531,7 @@ public boolean open () {
 		* outside of our visible windows (ie.- over the desktop).
 		*/
 		if (!mouseDown) {
-			Rectangle bounds = display.getBounds();
+			Rectangle bounds = display.getBoundsInPixels();
 			hwndTransparent = OS.CreateWindowEx (
 				OS.WS_EX_TRANSPARENT,
 				display.windowClass,

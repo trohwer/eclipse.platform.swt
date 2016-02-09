@@ -293,7 +293,7 @@ public void setControl (Control control) {
 	if (this.control != null) {
 		int index = parent.indexOf (this);
 		if (index == parent.getSelectionIndex ()){
-			this.control.setBounds(parent.getClientArea ());
+			this.control.setBounds(parent.getClientAreaInPixels ());
 			this.control.setVisible(true);
 		} else {
 		    int selectedIndex = parent.getSelectionIndex();

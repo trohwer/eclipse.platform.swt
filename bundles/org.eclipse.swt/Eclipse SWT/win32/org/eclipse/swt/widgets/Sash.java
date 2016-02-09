@@ -127,9 +127,9 @@ static int checkStyle (int style) {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	int width = border * 2, height = border * 2;
 	if ((style & SWT.HORIZONTAL) != 0) {
 		width += DEFAULT_WIDTH;  height += 3;
@@ -253,7 +253,7 @@ LRESULT WM_KEYDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 			if (isDisposed ()) return LRESULT.ZERO;
 			if (event.doit) {
 				if ((style & SWT.SMOOTH) != 0) {
-					setBounds (event.x, event.y, width, height);
+					setBoundsInPixel (event.x, event.y, width, height);
 				}
 			}
 			return result;
@@ -313,7 +313,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 		}
 		drawBand (event.x, event.y, width, height);
 		if ((style & SWT.SMOOTH) != 0) {
-			setBounds (event.x, event.y, width, height);
+			setBoundsInPixel (event.x, event.y, width, height);
 			// widget could be disposed at this point
 		}
 	}
@@ -344,7 +344,7 @@ LRESULT WM_LBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 	if (isDisposed ()) return result;
 	if (event.doit) {
 		if ((style & SWT.SMOOTH) != 0) {
-			setBounds (event.x, event.y, width, height);
+			setBoundsInPixel (event.x, event.y, width, height);
 			// widget could be disposed at this point
 		}
 	}
@@ -401,7 +401,7 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 	}
 	drawBand (lastX, lastY, width, height);
 	if ((style & SWT.SMOOTH) != 0) {
-		setBounds (lastX, lastY, width, height);
+		setBoundsInPixel (lastX, lastY, width, height);
 		// widget could be disposed at this point
 	}
 	return result;

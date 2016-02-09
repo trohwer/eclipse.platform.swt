@@ -201,7 +201,7 @@ public class CTabFolderRenderer {
 		if (outerColor != null) {
 			int index = 0;
 			boolean left = true;
-			int oldY = parent.onBottom ? 0 : parent.getSize().y;
+			int oldY = parent.onBottom ? 0 : parent.getSizeInPixels().y;
 			int[] outer = new int[shape.length];
 			for (int i = 0; i < shape.length/2; i++) {
 				if (left && (index + 3 < shape.length)) {
@@ -218,7 +218,7 @@ public class CTabFolderRenderer {
 			int[] inner = new int[shape.length];
 			int index = 0;
 			boolean left = true;
-			int oldY = parent.onBottom ? 0 : parent.getSize().y;
+			int oldY = parent.onBottom ? 0 : parent.getSizeInPixels().y;
 			for (int i = 0; i < shape.length/2; i++) {
 				if (left && (index + 3 < shape.length)) {
 					left = parent.onBottom ? oldY <= shape[index+3] : oldY >= shape[index+3];
@@ -634,7 +634,7 @@ public class CTabFolderRenderer {
 		Color[] colors = selected ? parent.selectionGradientColors : parent.gradientColors;
 		int[] percents = selected ? parent.selectionGradientPercents : parent.gradientPercents;
 		boolean vertical = selected ? parent.selectionGradientVertical : parent.gradientVertical;
-		Point size = parent.getSize();
+		Point size = parent.getSizeInPixels();
 		int width = size.x;
 		int height = parent.tabHeight + ((parent.getStyle() & SWT.FLAT) != 0 ? 1 : 3);
 		int x = 0;
@@ -714,7 +714,7 @@ public class CTabFolderRenderer {
 					}
 				} else { //horizontal gradient
 					y = 0;
-					height = parent.getSize().y;
+					height = parent.getSizeInPixels().y;
 					Color lastColor = colors[0];
 					if (lastColor == null) lastColor = defaultBackground;
 					int pos = 0;
@@ -1298,7 +1298,7 @@ public class CTabFolderRenderer {
 		int borderTop = parent.onBottom ? borderLeft : 0;
 		int borderBottom = parent.onBottom ? 0 : borderLeft;
 
-		Point size = parent.getSize();
+		Point size = parent.getSizeInPixels();
 
 		int rightEdge = Math.min (x + width, parent.getRightItemEdge(gc));
 		//	 Draw selection border across all tabs
@@ -1489,7 +1489,7 @@ public class CTabFolderRenderer {
 	}
 
 	void drawTabArea(GC gc, Rectangle bounds, int state) {
-		Point size = parent.getSize();
+		Point size = parent.getSizeInPixels();
 		int[] shape = null;
 		Color borderColor = parent.getDisplay().getSystemColor(BORDER1_COLOR);
 		int tabHeight = parent.tabHeight;

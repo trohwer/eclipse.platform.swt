@@ -11,9 +11,9 @@
 package org.eclipse.swt.custom;
 
 
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
 
 /**
  * Instances of this class implement a Composite that positions and sizes
@@ -189,7 +189,7 @@ static int checkStyle (int style) {
 //}
 
 @Override
-public Rectangle computeTrim (int x, int y, int width, int height) {
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	int trimX = x - borderLeft - highlight;
 	int trimY = y - borderTop - highlight;
@@ -198,9 +198,9 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	return new Rectangle(trimX, trimY, trimWidth, trimHeight);
 }
 @Override
-public Rectangle getClientArea() {
+public Rectangle getClientAreaInPixels() {
 	checkWidget();
-	Rectangle clientArea = super.getClientArea();
+	Rectangle clientArea = super.getClientAreaInPixels();
 	clientArea.x += borderLeft;
 	clientArea.y += borderTop;
 	clientArea.width -= borderLeft + borderRight;
@@ -260,7 +260,7 @@ void onDispose(Event event) {
 }
 void onPaint(GC gc) {
 	Color gcForeground = gc.getForeground();
-	Point size = getSize();
+	Point size = getSizeInPixels();
 	Color border = getDisplay().getSystemColor(BORDER1_COLOR);
 	if (showBorder) {
 		gc.setForeground(border);
@@ -285,7 +285,7 @@ void onPaint(GC gc) {
 	gc.setForeground(gcForeground);
 }
 void onResize() {
-	Point size = getSize();
+	Point size = getSizeInPixels();
 	if (oldSize == null || oldSize.x == 0 || oldSize.y == 0) {
 		redraw();
 	} else {
@@ -295,7 +295,7 @@ void onResize() {
 		} else if (oldSize.x > size.x) {
 			width = borderRight + highlight;
 		}
-		redraw(size.x - width, 0, width, size.y, false);
+		redrawInPixels(size.x - width, 0, width, size.y, false);
 
 		int height = 0;
 		if (oldSize.y < size.y) {
@@ -304,7 +304,7 @@ void onResize() {
 		if (oldSize.y > size.y) {
 			height = borderBottom + highlight;
 		}
-		redraw(0, size.y - height, size.x, height, false);
+		redrawInPixels(0, size.y - height, size.x, height, false);
 	}
 	oldSize = size;
 }
@@ -327,7 +327,7 @@ public void setContent(Control content) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (this.content != null && !this.content.isDisposed()) {
-		this.content.setBounds(OFFSCREEN, OFFSCREEN, 0, 0);
+		this.content.setBoundsInPixel(OFFSCREEN, OFFSCREEN, 0, 0);
 	}
 	this.content = content;
 	layout(false);
@@ -379,8 +379,8 @@ public void setTopCenter(Control topCenter) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (this.topCenter != null && !this.topCenter.isDisposed()) {
-		Point size = this.topCenter.getSize();
-		this.topCenter.setLocation(OFFSCREEN - size.x, OFFSCREEN - size.y);
+		Point size = this.topCenter.getSizeInPixels();
+		this.topCenter.setLocationInPixels(OFFSCREEN - size.x, OFFSCREEN - size.y);
 	}
 	this.topCenter = topCenter;
 	layout(false);
@@ -405,8 +405,8 @@ public void setTopLeft(Control c) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (this.topLeft != null && !this.topLeft.isDisposed()) {
-		Point size = this.topLeft.getSize();
-		this.topLeft.setLocation(OFFSCREEN - size.x, OFFSCREEN - size.y);
+		Point size = this.topLeft.getSizeInPixels();
+		this.topLeft.setLocationInPixels(OFFSCREEN - size.x, OFFSCREEN - size.y);
 	}
 	this.topLeft = c;
 	layout(false);
@@ -431,8 +431,8 @@ public void setTopRight(Control c) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (this.topRight != null && !this.topRight.isDisposed()) {
-		Point size = this.topRight.getSize();
-		this.topRight.setLocation(OFFSCREEN - size.x, OFFSCREEN - size.y);
+		Point size = this.topRight.getSizeInPixels();
+		this.topRight.setLocationInPixels(OFFSCREEN - size.x, OFFSCREEN - size.y);
 	}
 	this.topRight = c;
 	layout(false);

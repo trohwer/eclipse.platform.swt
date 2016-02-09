@@ -193,7 +193,7 @@ GridData getData (Control [][] grid, int row, int column, int rowCount, int colu
 
 @Override
 protected void layout (Composite composite, boolean flushCache) {
-	Rectangle rect = composite.getClientArea ();
+	Rectangle rect = composite.getClientAreaInPixels ();
 	layout (composite, true, rect.x, rect.y, rect.width, rect.height, flushCache);
 }
 
@@ -224,10 +224,10 @@ Point layout (Composite composite, boolean move, int x, int y, int width, int he
 				int trim = 0;
 				//TEMPORARY CODE
 				if (child instanceof Scrollable) {
-					Rectangle rect = ((Scrollable) child).computeTrim (0, 0, 0, 0);
+					Rectangle rect = ((Scrollable) child).computeTrimInPixels (0, 0, 0, 0);
 					trim = rect.width;
 				} else {
-					trim = child.getBorderWidth () * 2;
+					trim = child.getBorderWidthInPixels () * 2;
 				}
 				data.cacheWidth = data.cacheHeight = SWT.DEFAULT;
 				data.computeSize (child, Math.max (0, data.minimumWidth - trim), data.heightHint, false);
@@ -473,10 +473,10 @@ Point layout (Composite composite, boolean move, int x, int y, int width, int he
 						if ((currentWidth != data.cacheWidth && data.horizontalAlignment == SWT.FILL) || (data.cacheWidth > currentWidth)) {
 							int trim = 0;
 							if (child instanceof Scrollable) {
-								Rectangle rect = ((Scrollable) child).computeTrim (0, 0, 0, 0);
+								Rectangle rect = ((Scrollable) child).computeTrimInPixels (0, 0, 0, 0);
 								trim = rect.width;
 							} else {
-								trim = child.getBorderWidth () * 2;
+								trim = child.getBorderWidthInPixels () * 2;
 							}
 							data.cacheWidth = data.cacheHeight = SWT.DEFAULT;
 							data.computeSize (child, Math.max (0, currentWidth - trim), data.heightHint, false);
@@ -690,7 +690,7 @@ Point layout (Composite composite, boolean move, int x, int y, int width, int he
 					}
 					Control child = grid [i][j];
 					if (child != null) {
-						child.setBounds (childX, childY, childWidth, childHeight);
+						child.setBoundsInPixel (childX, childY, childWidth, childHeight);
 					}
 				}
 				gridX += widths [j] + horizontalSpacing;

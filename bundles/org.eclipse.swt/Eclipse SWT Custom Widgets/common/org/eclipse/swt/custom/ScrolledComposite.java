@@ -328,17 +328,17 @@ public boolean getShowFocusedControl() {
 
 void hScroll() {
 	if (content == null) return;
-	Point location = content.getLocation ();
+	Point location = content.getLocationInPixels ();
 	ScrollBar hBar = getHorizontalBar ();
 	int hSelection = hBar.getSelection ();
-	content.setLocation (-hSelection, location.y);
+	content.setLocationInPixels (-hSelection, location.y);
 }
 boolean needHScroll(Rectangle contentRect, boolean vVisible) {
 	ScrollBar hBar = getHorizontalBar();
 	if (hBar == null) return false;
 
-	Rectangle hostRect = getBounds();
-	int border = getBorderWidth();
+	Rectangle hostRect = getBoundsInPixels();
+	int border = getBorderWidthInPixels();
 	hostRect.width -= 2*border;
 	ScrollBar vBar = getVerticalBar();
 	if (vVisible && vBar != null) hostRect.width -= vBar.getSize().x;
@@ -352,8 +352,8 @@ boolean needVScroll(Rectangle contentRect, boolean hVisible) {
 	ScrollBar vBar = getVerticalBar();
 	if (vBar == null) return false;
 
-	Rectangle hostRect = getBounds();
-	int border = getBorderWidth();
+	Rectangle hostRect = getBoundsInPixels();
+	int border = getBorderWidthInPixels();
 	hostRect.height -= 2*border;
 	ScrollBar hBar = getHorizontalBar();
 	if (hVisible && hBar != null) hostRect.height -= hBar.getSize().y;
@@ -381,7 +381,7 @@ boolean needVScroll(Rectangle contentRect, boolean hVisible) {
 public Point getOrigin() {
 	checkWidget();
 	if (content == null) return new Point(0, 0);
-	Point location = content.getLocation();
+	Point location = content.getLocationInPixels();
 	return new Point(-location.x, -location.y);
 }
 /**
@@ -438,7 +438,7 @@ public void setOrigin(int x, int y) {
 	} else {
 		y = 0;
 	}
-	content.setLocation(x, y);
+	content.setLocationInPixels(x, y);
 }
 /**
  * Set the Always Show Scrollbars flag.  True if the scrollbars are
@@ -496,7 +496,7 @@ public void setContent(Control content) {
 			hBar.setThumb (0);
 			hBar.setSelection(0);
 		}
-		content.setLocation(0, 0);
+		content.setLocationInPixels(0, 0);
 		layout(false);
 		this.content.addListener(SWT.Resize, contentListener);
 	} else {
@@ -688,8 +688,8 @@ public void showControl(Control control) {
 	if (control.isDisposed ()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (!contains(control)) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 
-	Rectangle itemRect = getDisplay().map(control.getParent(), this, control.getBounds());
-	Rectangle area = getClientArea();
+	Rectangle itemRect = getDisplay().mapInPixels(control.getParent(), this, control.getBoundsInPixels());
+	Rectangle area = getClientAreaInPixels();
 	Point origin = getOrigin();
 	if (itemRect.x < 0) {
 		origin.x = Math.max(0, origin.x + itemRect.x);
@@ -706,9 +706,9 @@ public void showControl(Control control) {
 
 void vScroll() {
 	if (content == null) return;
-	Point location = content.getLocation ();
+	Point location = content.getLocationInPixels ();
 	ScrollBar vBar = getVerticalBar ();
 	int vSelection = vBar.getSelection ();
-	content.setLocation (location.x, -vSelection);
+	content.setLocationInPixels (location.x, -vSelection);
 }
 }

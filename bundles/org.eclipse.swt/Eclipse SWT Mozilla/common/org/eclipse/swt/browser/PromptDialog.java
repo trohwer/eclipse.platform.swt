@@ -39,7 +39,7 @@ class PromptDialog extends Dialog {
 		GridData data = new GridData();
 		Monitor monitor = parent.getMonitor();
 		int maxWidth = monitor.getBounds().width * 2 / 3;
-		int width = label.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		int width = label.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		data.widthHint = Math.min(width, maxWidth);
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
@@ -91,7 +91,7 @@ class PromptDialog extends Dialog {
 		text.setEditable(false);
 		text.setBackground(shell.getBackground());
 		text.setText(message);
-		int width = messageComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		int width = messageComposite.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		GridData data = new GridData();
 		data.widthHint = Math.min(width, maxWidth);
 		data.horizontalAlignment = GridData.FILL;
@@ -109,7 +109,7 @@ class PromptDialog extends Dialog {
 		style.metrics = new GlyphMetrics(0, 0, 30);
 		Bullet bullet0 = new Bullet (style);
 		problemsText.setLineBullet(0, problems.length, bullet0);
-		width = problemsText.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		width = problemsText.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		data = new GridData();
 		data.widthHint = Math.min(width, maxWidth);
 		data.horizontalAlignment = GridData.FILL;
@@ -218,7 +218,7 @@ class PromptDialog extends Dialog {
 		GridData data = new GridData();
 		Monitor monitor = parent.getMonitor();
 		int maxWidth = monitor.getBounds().width * 2 / 3;
-		int width = label.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		int width = label.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		data.widthHint = Math.min(width, maxWidth);
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
@@ -298,7 +298,7 @@ class PromptDialog extends Dialog {
 		GridData data = new GridData();
 		Monitor monitor = parent.getMonitor();
 		int maxWidth = monitor.getBounds().width * 2 / 3;
-		int width = label.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		int width = label.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		data.widthHint = Math.min(width, maxWidth);
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
@@ -307,7 +307,7 @@ class PromptDialog extends Dialog {
 		final Text valueText = new Text(shell, SWT.BORDER);
 		if (value[0] != null) valueText.setText(value[0]);
 		data = new GridData();
-		width = valueText.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		width = valueText.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		if (width > maxWidth) data.widthHint = maxWidth;
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
@@ -363,7 +363,7 @@ class PromptDialog extends Dialog {
 		GridData data = new GridData();
 		Monitor monitor = parent.getMonitor();
 		int maxWidth = monitor.getBounds().width * 2 / 3;
-		int width = label.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		int width = label.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 		data.widthHint = Math.min(width, maxWidth);
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;

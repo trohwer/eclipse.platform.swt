@@ -150,7 +150,7 @@ private static int checkStyle (int style) {
 }
 
 @Override
-public Point computeSize(int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels(int wHint, int hHint, boolean changed) {
 	checkWidget();
 	Point e = getTotalSize(image, text);
 	if (wHint == SWT.DEFAULT){
@@ -265,8 +265,7 @@ private Point getTotalSize(Image image, String text) {
 		size.y = Math.max(size.y, e.y);
 		if (image != null) size.x += GAP;
 	} else {
-		float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-		size.y = Math.max(size.y, (int)(gc.getFontMetrics().getHeight()/scaleFactor));
+		size.y = DPIUtil.autoScaleDown(gc.getFontMetrics().getHeight(), getDisplay());
 	}
 	gc.dispose();
 
@@ -338,7 +337,7 @@ private void initAccessible() {
 
 		@Override
 		public void getLocation(AccessibleControlEvent e) {
-			Rectangle rect = getDisplay().map(getParent(), null, getBounds());
+			Rectangle rect = getDisplay().mapInPixels(getParent(), null, getBoundsInPixels());
 			e.x = rect.x;
 			e.y = rect.y;
 			e.width = rect.width;
@@ -402,7 +401,7 @@ void onMnemonic(TraverseEvent event) {
 }
 
 void onPaint(PaintEvent event) {
-	Rectangle rect = getClientArea();
+	Rectangle rect = getClientAreaInPixels();
 	if (rect.width == 0 || rect.height == 0) return;
 
 	boolean shortenText = false;

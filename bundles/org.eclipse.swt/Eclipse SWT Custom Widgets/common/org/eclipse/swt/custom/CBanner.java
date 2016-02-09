@@ -11,9 +11,9 @@
 package org.eclipse.swt.custom;
 
 
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
 
 /**
  * Instances of this class implement a Composite that lays out its
@@ -181,7 +181,7 @@ public Control getBottom() {
 	return bottom;
 }
 @Override
-public Rectangle getClientArea() {
+public Rectangle getClientAreaInPixels() {
 	return new Rectangle(0, 0, 0, 0);
 }
 
@@ -240,7 +240,7 @@ public int getRightWidth() {
 	checkWidget();
 	if (right == null) return 0;
 	if (rightWidth == SWT.DEFAULT) {
-		Point size = right.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
+		Point size = right.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT, false);
 		return size.x;
 	}
 	return rightWidth;
@@ -278,11 +278,11 @@ void onMouseExit() {
 }
 void onMouseMove(int x, int y) {
 	if (dragging) {
-		Point size = getSize();
+		Point size = getSizeInPixels();
 		if (!(0 < x && x < size.x)) return;
 		rightWidth = Math.max(0, size.x - x - rightDragDisplacement);
 		if (rightMinWidth == SWT.DEFAULT) {
-			Point minSize = right.computeSize(rightMinWidth, rightMinHeight);
+			Point minSize = right.computeSizeInPixels(rightMinWidth, rightMinHeight);
 			rightWidth = Math.max(minSize.x, rightWidth);
 		} else {
 			rightWidth = Math.max(rightMinWidth, rightWidth);
@@ -307,10 +307,10 @@ void onPaint(GC gc) {
 //	gc.fillRectangle(-10, -10, size.x+20, size.y+20);
 //	}
 	if (left == null && right == null) return;
-	Point size = getSize();
+	Point size = getSizeInPixels();
 	Color border1 = getDisplay().getSystemColor(BORDER1);
 	if (bottom != null) {
-		int y = bottom.getBounds().y - BORDER_STRIPE - 1;
+		int y = bottom.getBoundsInPixels().y - BORDER_STRIPE - 1;
 		gc.setForeground(border1);
 		gc.drawLine(0, y, size.x, y);
 	}
@@ -374,7 +374,7 @@ void onPaint(GC gc) {
 }
 
 void onResize() {
-	updateCurve(getSize().y);
+	updateCurve(getSizeInPixels().y);
 }
 /**
 * Set the control that appears on the bottom side of the banner.
@@ -397,8 +397,8 @@ public void setBottom(Control control) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (bottom != null && !bottom.isDisposed()) {
-		Point size = bottom.getSize();
-		bottom.setLocation(OFFSCREEN - size.x, OFFSCREEN - size.y);
+		Point size = bottom.getSizeInPixels();
+		bottom.setLocationInPixels(OFFSCREEN - size.x, OFFSCREEN - size.y);
 	}
 	bottom = control;
 	layout(false);
@@ -445,8 +445,8 @@ public void setLeft(Control control) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (left != null && !left.isDisposed()) {
-		Point size = left.getSize();
-		left.setLocation(OFFSCREEN - size.x, OFFSCREEN - size.y);
+		Point size = left.getSizeInPixels();
+		left.setLocationInPixels(OFFSCREEN - size.x, OFFSCREEN - size.y);
 	}
 	left = control;
 	layout(false);
@@ -472,8 +472,8 @@ public void setRight(Control control) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (right != null && !right.isDisposed()) {
-		Point size = right.getSize();
-		right.setLocation(OFFSCREEN - size.x, OFFSCREEN - size.y);
+		Point size = right.getSizeInPixels();
+		right.setLocationInPixels(OFFSCREEN - size.x, OFFSCREEN - size.y);
 	}
 	right = control;
 	layout(false);
@@ -540,7 +540,7 @@ public void setSimple(boolean simple) {
 			curve_width = 50;
 			curve_indent = 5;
 		}
-		updateCurve(getSize().y);
+		updateCurve(getSizeInPixels().y);
 		layout(false);
 		redraw();
 	}

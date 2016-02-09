@@ -65,8 +65,8 @@ public PopupList(Shell parent, int style) {
 	shell.addControlListener(new ControlListener() {
 		public void controlMoved(ControlEvent e){}
 		public void controlResized(ControlEvent e){
-			Rectangle shellSize = shell.getClientArea();
-			list.setSize(shellSize.width, shellSize.height);
+			Rectangle shellSize = shell.getClientAreaInPixels();
+			list.setSizeInPixels(shellSize.width, shellSize.height);
 		}
 	});
 
@@ -139,8 +139,8 @@ public int getMinimumWidth () {
 */
 public String open (Rectangle rect) {
 
-	Point listSize = list.computeSize (rect.width, SWT.DEFAULT, false);
-	Rectangle screenSize = shell.getDisplay().getBounds();
+	Point listSize = list.computeSizeInPixels (rect.width, SWT.DEFAULT, false);
+	Rectangle screenSize = shell.getDisplay().getBoundsInPixels();
 
 	// Position the dialog so that it does not run off the screen and the largest number of items are visible
 	int spaceBelow = screenSize.height - (rect.y + rect.height) - 30;
@@ -175,7 +175,7 @@ public String open (Rectangle rect) {
 	// Align right side of dialog with right side of cell
 	int x = rect.x + rect.width - listSize.x;
 
-	shell.setBounds(x, y, listSize.x, listSize.y);
+	shell.setBoundsInPixel(x, y, listSize.x, listSize.y);
 
 	shell.open();
 	list.setFocus();

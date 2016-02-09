@@ -95,7 +95,7 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 	int maxWidth = 0;
 	int maxHeight = 0;
 	for (int i = 0; i < children.length; i++) {
-		Point size = children[i].computeSize(wHint, hHint, flushCache);
+		Point size = children[i].computeSizeInPixels(wHint, hHint, flushCache);
 		maxWidth = Math.max(size.x, maxWidth);
 		maxHeight = Math.max(size.y, maxHeight);
 	}
@@ -114,7 +114,7 @@ protected boolean flushCache(Control control) {
 @Override
 protected void layout(Composite composite, boolean flushCache) {
 	Control children[] = composite.getChildren();
-	Rectangle rect = composite.getClientArea();
+	Rectangle rect = composite.getClientAreaInPixels();
 	rect.x += marginWidth;
 	rect.y += marginHeight;
 	rect.width -= 2 * marginWidth;

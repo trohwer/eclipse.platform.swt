@@ -163,7 +163,7 @@ public CCombo (Composite parent, int style) {
 
 	createPopup(null, -1);
 	if ((style & SWT.SIMPLE) == 0) {
-		int itemHeight = list.getItemHeight ();
+		int itemHeight = list.getItemHeightInPixels ();
 		if (itemHeight != 0) {
 			int maxHeight = getMonitor().getClientArea().height / 3;
 			visibleItemCount = Math.max(visibleItemCount, maxHeight / itemHeight);
@@ -326,14 +326,14 @@ void arrowEvent (Event event) {
 		case SWT.MouseEnter:
 		case SWT.MouseExit:
 		case SWT.MouseHover: {
-			Point pt = getDisplay ().map (arrow, this, event.x, event.y);
+			Point pt = getDisplay ().mapInPixels (arrow, this, event.x, event.y);
 			event.x = pt.x; event.y = pt.y;
 			notifyListeners (event.type, event);
 			event.type = SWT.None;
 			break;
 		}
 		case SWT.MouseWheel: {
-			Point pt = getDisplay ().map (arrow, this, event.x, event.y);
+			Point pt = getDisplay ().mapInPixels (arrow, this, event.x, event.y);
 			event.x = pt.x; event.y = pt.y;
 			notifyListeners (SWT.MouseWheel, event);
 			event.type = SWT.None;
@@ -434,7 +434,7 @@ void comboEvent (Event event) {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0;
 	String[] items = list.getItems ();
@@ -445,11 +445,10 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		textWidth = Math.max (gc.stringExtent (items[i]).x, textWidth);
 	}
 	gc.dispose ();
-	Point textSize = text.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-	Point arrowSize = arrow.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-	Point listSize = list.computeSize (SWT.DEFAULT, SWT.DEFAULT, changed);
-	float scaleFactor = DPIUtil.getScalingFactor(getDisplay());
-	int borderWidth = (int) (getBorderWidth () / scaleFactor);
+	Point textSize = text.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed);
+	Point arrowSize = arrow.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed);
+	Point listSize = list.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed);
+	int borderWidth = getBorderWidthInPixels ();
 
 	height = Math.max (textSize.y, arrowSize.y);
 	width = Math.max (textWidth + 2*spacer + arrowSize.x + 2*borderWidth, listSize.x);
@@ -575,18 +574,18 @@ void dropDown (boolean drop) {
 		createPopup (items, selectionIndex);
 	}
 
-	Point comboSize = getSize ();
+	Point comboSize = getSizeInPixels ();
 	int itemCount = list.getItemCount ();
 	itemCount = (itemCount == 0) ? visibleItemCount : Math.min(visibleItemCount, itemCount);
-	int itemHeight = list.getItemHeight () * itemCount;
-	Point listSize = list.computeSize (SWT.DEFAULT, itemHeight, false);
+	int itemHeight = list.getItemHeightInPixels () * itemCount;
+	Point listSize = list.computeSizeInPixels (SWT.DEFAULT, itemHeight, false);
 	Rectangle displayRect = getMonitor ().getClientArea ();
-	list.setBounds (1, 1, Math.max (comboSize.x - 2, Math.min(listSize.x, displayRect.width - 2)), listSize.y);
+	list.setBoundsInPixel (1, 1, Math.max (comboSize.x - 2, Math.min(listSize.x, displayRect.width - 2)), listSize.y);
 
 	int index = list.getSelectionIndex ();
 	if (index != -1) list.setTopIndex (index);
-	Rectangle listRect = list.getBounds ();
-	Rectangle parentRect = display.map (getParent (), null, getBounds ());
+	Rectangle listRect = list.getBoundsInPixels ();
+	Rectangle parentRect = display.mapInPixels (getParent (), null, getBoundsInPixels ());
 	int width = listRect.width + 2;
 	int height = listRect.height + 2;
 	int x = parentRect.x;
@@ -611,8 +610,8 @@ void dropDown (boolean drop) {
 	 */
 	ScrollBar hBar = list.getHorizontalBar();
 	int emptyHBarSpace = hBar.isVisible () ? 0 : hBar.getSize ().y;
-	list.setSize (listRect.width, listRect.height - emptyHBarSpace);
-	popup.setBounds (x, y, width, height - emptyHBarSpace);
+	list.setSizeInPixels (listRect.width, listRect.height - emptyHBarSpace);
+	popup.setBoundsInPixel (x, y, width, height - emptyHBarSpace);
 	popup.setVisible (true);
 	if (isFocusControl()) list.setFocus ();
 
@@ -727,7 +726,7 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget ();
-	return list.getItemHeight ();
+	return list.getItemHeightInPixels ();
 }
 /**
  * Returns an array of <code>String</code>s which are the items
@@ -855,7 +854,7 @@ public String getText () {
  */
 public int getTextHeight () {
 	checkWidget ();
-	return text.getLineHeight ();
+	return text.getLineHeightInPixels ();
 }
 /**
  * Returns the maximum number of characters that the receiver's
@@ -1039,14 +1038,14 @@ void initAccessible() {
 		@Override
 		public void getChildAtPoint (AccessibleControlEvent e) {
 			Point testPoint = toControl (e.x, e.y);
-			if (getBounds ().contains (testPoint)) {
+			if (getBoundsInPixels ().contains (testPoint)) {
 				e.childID = ACC.CHILDID_SELF;
 			}
 		}
 
 		@Override
 		public void getLocation (AccessibleControlEvent e) {
-			Rectangle location = getBounds ();
+			Rectangle location = getBoundsInPixels ();
 			Point pt = getParent().toDisplay (location.x, location.y);
 			e.x = pt.x;
 			e.y = pt.y;
@@ -1111,12 +1110,12 @@ boolean isParentScrolling(Control scrollableParent) {
 }
 void internalLayout (boolean changed) {
 	if (isDropped ()) dropDown (false);
-	Rectangle rect = getClientArea ();
+	Rectangle rect = getClientAreaInPixels ();
 	int width = rect.width;
 	int height = rect.height;
-	Point arrowSize = arrow.computeSize (SWT.DEFAULT, height, changed);
-	text.setBounds (0, 0, width - arrowSize.x, height);
-	arrow.setBounds (width - arrowSize.x, 0, arrowSize.x, arrowSize.y);
+	Point arrowSize = arrow.computeSizeInPixels (SWT.DEFAULT, height, changed);
+	text.setBoundsInPixel (0, 0, width - arrowSize.x, height);
+	arrow.setBoundsInPixel (width - arrowSize.x, 0, arrowSize.x, arrowSize.y);
 }
 void listEvent (Event event) {
 	switch (event.type) {
@@ -1144,8 +1143,8 @@ void listEvent (Event event) {
 			 * show it again. To prevent the popup from showing again, we will detect
 			 * this case and let the selection event of the arrow button hide the popup.
 			 */
-			Point point = arrow.toControl(getDisplay().getCursorLocation());
-			Point size = arrow.getSize();
+			Point point = arrow.toControl(getDisplay().getCursorLocationInPixels());
+			Point size = arrow.getSizeInPixels();
 			Rectangle rect = new Rectangle(0, 0, size.x, size.y);
 			if (rect.contains(point)) {
 				boolean comboShellActivated = getDisplay ().getActiveShell () == getShell ();
@@ -1266,7 +1265,7 @@ void popupEvent(Event event) {
 	switch (event.type) {
 		case SWT.Paint:
 			// draw black rectangle around list
-			Rectangle listRect = list.getBounds();
+			Rectangle listRect = list.getBoundsInPixels();
 			Color black = getDisplay().getSystemColor(SWT.COLOR_BLACK);
 			event.gc.setForeground(black);
 			event.gc.drawRectangle(0, 0, listRect.width + 1, listRect.height + 1);
@@ -1285,8 +1284,8 @@ public void redraw () {
 	if (popup.isVisible()) list.redraw();
 }
 @Override
-public void redraw (int x, int y, int width, int height, boolean all) {
-	super.redraw(x, y, width, height, true);
+public void redrawInPixels (int x, int y, int width, int height, boolean all) {
+	super.redrawInPixels(x, y, width, height, true);
 }
 
 /**
@@ -1750,7 +1749,7 @@ void textEvent (Event event) {
 		case SWT.MouseEnter:
 		case SWT.MouseExit:
 		case SWT.MouseHover: {
-			Point pt = getDisplay ().map (text, this, event.x, event.y);
+			Point pt = getDisplay ().mapInPixels (text, this, event.x, event.y);
 			event.x = pt.x; event.y = pt.y;
 			notifyListeners (event.type, event);
 			event.type = SWT.None;
@@ -1814,7 +1813,7 @@ void textEvent (Event event) {
 			e.x = event.x;
 			e.y = event.y;
 			if (event.detail == SWT.MENU_KEYBOARD) {
-				Point pt = getDisplay().map(text, null, text.getCaretLocation());
+				Point pt = getDisplay().mapInPixels(text, null, text.getCaretLocation());
 				e.x = pt.x;
 				e.y = pt.y;
 			}
@@ -1832,7 +1831,7 @@ void textEvent (Event event) {
 			break;
 		}
 		case SWT.MouseDown: {
-			Point pt = getDisplay ().map (text, this, event.x, event.y);
+			Point pt = getDisplay ().mapInPixels (text, this, event.x, event.y);
 			Event mouseEvent = new Event ();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;
@@ -1852,7 +1851,7 @@ void textEvent (Event event) {
 			break;
 		}
 		case SWT.MouseUp: {
-			Point pt = getDisplay ().map (text, this, event.x, event.y);
+			Point pt = getDisplay ().mapInPixels (text, this, event.x, event.y);
 			Event mouseEvent = new Event ();
 			mouseEvent.button = event.button;
 			mouseEvent.count = event.count;

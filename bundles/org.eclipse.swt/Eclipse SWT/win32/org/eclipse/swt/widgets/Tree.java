@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class provide a selectable user interface object
@@ -1812,7 +1812,7 @@ long /*int*/ CompareFunc (long /*int*/ lParam1, long /*int*/ lParam2, long /*int
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0;
 	if (hwndHeader != 0) {
@@ -1848,7 +1848,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	width += border * 2;
 	height += border * 2;
 	if ((style & SWT.V_SCROLL) != 0) {
@@ -2981,7 +2981,7 @@ public boolean getHeaderVisible () {
 
 Point getImageSize () {
 	if (imageList != null) return imageList.getImageSize ();
-	return new Point (0, getItemHeight ());
+	return new Point (0, getItemHeightInPixels ());
 }
 
 long /*int*/ getBottomItem () {
@@ -3269,6 +3269,13 @@ int getItemCount (long /*int*/ hItem) {
  * </ul>
  */
 public int getItemHeight () {
+	return DPIUtil.autoScaleDown(getItemHeightInPixels(), getDisplay());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getItemHeightInPixels () {
 	checkWidget ();
 	return (int)/*64*/OS.SendMessage (handle, OS.TVM_GETITEMHEIGHT, 0, 0);
 }
@@ -4474,7 +4481,7 @@ Event sendMeasureItemEvent (TreeItem item, int index, long /*int*/ hDC, int deta
 			}
 		}
 	}
-	if (event.height > getItemHeight ()) setItemHeight (event.height);
+	if (event.height > getItemHeightInPixels ()) setItemHeight (event.height);
 	return event;
 }
 
@@ -5634,7 +5641,7 @@ void updateImages () {
 
 @Override
 void updateMenuLocation (Event event) {
-	Rectangle clientArea = getClientArea ();
+	Rectangle clientArea = getClientAreaInPixels ();
 	int x = clientArea.x, y = clientArea.y;
 	TreeItem focusItem = getFocusItem ();
 	if (focusItem != null) {

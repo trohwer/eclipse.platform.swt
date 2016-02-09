@@ -11,10 +11,10 @@
 package org.eclipse.swt.custom;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A TableCursor provides a way for the user to navigate around a Table
@@ -282,11 +282,11 @@ void keyDown(Event event) {
 			{
 				int index = table.getTopIndex();
 				if (index == rowIndex) {
-					Rectangle rect = table.getClientArea();
+					Rectangle rect = table.getClientAreaInPixels();
 					TableItem item = table.getItem(index);
 					Rectangle itemRect = item.getBounds(0);
 					rect.height -= itemRect.y;
-					int height = table.getItemHeight();
+					int height = table.getItemHeightInPixels();
 					int page = Math.max(1, rect.height / height);
 					index = Math.max(0, index - page + 1);
 				}
@@ -296,11 +296,11 @@ void keyDown(Event event) {
 		case SWT.PAGE_DOWN :
 			{
 				int index = table.getTopIndex();
-				Rectangle rect = table.getClientArea();
+				Rectangle rect = table.getClientAreaInPixels();
 				TableItem item = table.getItem(index);
 				Rectangle itemRect = item.getBounds(0);
 				rect.height -= itemRect.y;
-				int height = table.getItemHeight();
+				int height = table.getItemHeightInPixels();
 				int page = Math.max(1, rect.height / height);
 				int end = table.getItemCount() - 1;
 				index = Math.min(end, index + page - 1);
@@ -321,7 +321,7 @@ void paint(Event event) {
 	gc.setForeground(getForeground());
 	gc.fillRectangle(event.x, event.y, event.width, event.height);
 	int x = 0;
-	Point size = getSize();
+	Point size = getSizeInPixels();
 	Image image = row.getImage(columnIndex);
 	if (image != null) {
 		Rectangle imageSize = image.getBounds();
@@ -399,7 +399,7 @@ void tableMouseDown(Event event) {
 	} else {
 		int start = item != null ? table.indexOf(item) : table.getTopIndex();
 		int end = table.getItemCount();
-		Rectangle clientRect = table.getClientArea();
+		Rectangle clientRect = table.getClientAreaInPixels();
 		for (int i = start; i < end; i++) {
 			TableItem nextItem = table.getItem(i);
 			Rectangle rect = nextItem.getBounds(0);
@@ -518,7 +518,7 @@ public void removeSelectionListener(SelectionListener listener) {
 
 void _resize() {
 	if (row == null) {
-		setBounds(-200, -200, 0, 0);
+		setBoundsInPixel(-200, -200, 0, 0);
 	} else {
 		int columnIndex = column == null ? 0 : table.indexOf(column);
 		setBounds(row.getBounds(columnIndex));

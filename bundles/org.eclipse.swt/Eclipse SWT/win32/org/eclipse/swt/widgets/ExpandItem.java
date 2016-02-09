@@ -404,9 +404,9 @@ void setBounds (int x, int y, int width, int height, boolean move, boolean size)
 			width = Math.max (0, width - BORDER * 2);
 			height = Math.max (0, height - BORDER);
 		}
-		if (move && size) control.setBounds (x, y + headerHeight, width, height);
-		if (move && !size) control.setLocation (x, y + headerHeight);
-		if (!move && size) control.setSize (width, height);
+		if (move && size) control.setBoundsInPixel (x, y + headerHeight, width, height);
+		if (move && !size) control.setLocationInPixels (x, y + headerHeight);
+		if (!move && size) control.setSizeInPixels (width, height);
 	}
 }
 
@@ -437,9 +437,9 @@ public void setControl (Control control) {
 		if (!parent.isAppThemed ()) {
 			int width = Math.max (0, this.width - BORDER * 2);
 			int height = Math.max (0, this.height - BORDER);
-			control.setBounds (x + BORDER, y + headerHeight, width, height);
+			control.setBoundsInPixel (x + BORDER, y + headerHeight, width, height);
 		} else {
-			control.setBounds (x, y + headerHeight, width, height);
+			control.setBoundsInPixel (x, y + headerHeight, width, height);
 		}
 	}
 }

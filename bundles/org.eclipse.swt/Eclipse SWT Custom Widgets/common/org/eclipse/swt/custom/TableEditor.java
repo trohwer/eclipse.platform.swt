@@ -117,7 +117,7 @@ Rectangle computeBounds () {
 		cell.x = rect.x + rect.width;
 		cell.width -= (imageGap + rect.width);
 	}
-	Rectangle area = table.getClientArea();
+	Rectangle area = table.getClientAreaInPixels();
 	if (cell.x < area.x + area.width) {
 		if (cell.x + cell.width > area.x + area.width) {
 			cell.width = area.x + area.width - cell.x;

@@ -280,7 +280,7 @@ boolean showAuthenticationDialog (final String[] user, final String[] password, 
 	GridData data = new GridData ();
 	Monitor monitor = browser.getMonitor ();
 	int maxWidth = monitor.getBounds ().width * 2 / 3;
-	int width = label.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	int width = label.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	data.widthHint = Math.min (width, maxWidth);
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;
@@ -333,11 +333,11 @@ boolean showAuthenticationDialog (final String[] user, final String[] password, 
 
 	shell.setDefaultButton (buttons[1]);
 	shell.pack ();
-	Rectangle parentSize = parent.getBounds ();
-	Rectangle shellSize = shell.getBounds ();
-	int x = parent.getLocation().x + (parentSize.width - shellSize.width) / 2;
-	int y = parent.getLocation().y + (parentSize.height - shellSize.height) / 2;
-	shell.setLocation (x, y);
+	Rectangle parentSize = parent.getBoundsInPixels ();
+	Rectangle shellSize = shell.getBoundsInPixels ();
+	int x = parent.getLocationInPixels().x + (parentSize.width - shellSize.width) / 2;
+	int y = parent.getLocationInPixels().y + (parentSize.height - shellSize.height) / 2;
+	shell.setLocationInPixels (x, y);
 	shell.open ();
 	Display display = browser.getDisplay ();
 	while (!shell.isDisposed ()) {

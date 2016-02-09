@@ -100,7 +100,7 @@ public class DropTargetEffect extends DropTargetAdapter {
 		coordinates = table.toControl(coordinates);
 		TableItem item = table.getItem(coordinates);
 		if (item != null) return item;
-		Rectangle area = table.getClientArea();
+		Rectangle area = table.getClientAreaInPixels();
 		int tableBottom = area.y + area.height;
 		int itemCount = table.getItemCount();
 		for (int i=table.getTopIndex(); i<itemCount; i++) {
@@ -119,7 +119,7 @@ public class DropTargetEffect extends DropTargetAdapter {
 		point = tree.toControl(point);
 		TreeItem item = tree.getItem(point);
 		if (item == null) {
-			Rectangle area = tree.getClientArea();
+			Rectangle area = tree.getClientAreaInPixels();
 			if (area.contains(point)) {
 				int treeBottom = area.y + area.height;
 				item = tree.getTopItem();

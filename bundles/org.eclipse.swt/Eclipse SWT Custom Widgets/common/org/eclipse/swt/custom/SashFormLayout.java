@@ -37,14 +37,14 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 	int maxValue = 0;
 	for (int i = 0; i < cArray.length; i++) {
 		if (vertical) {
-			Point size = cArray[i].computeSize(wHint, SWT.DEFAULT, flushCache);
+			Point size = cArray[i].computeSizeInPixels(wHint, SWT.DEFAULT, flushCache);
 			if (size.y > maxValue) {
 				maxIndex = i;
 				maxValue = size.y;
 			}
 			width = Math.max(width, size.x);
 		} else {
-			Point size = cArray[i].computeSize(SWT.DEFAULT, hHint, flushCache);
+			Point size = cArray[i].computeSizeInPixels(SWT.DEFAULT, hHint, flushCache);
 			if (size.x > maxValue) {
 				maxIndex = i;
 				maxValue = size.x;
@@ -68,15 +68,15 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 		total += ratios[i];
 	}
 	if (ratios[maxIndex] > 0) {
-		int sashwidth = sashForm.sashes.length > 0 ? sashForm.SASH_WIDTH + sashForm.sashes [0].getBorderWidth() * 2 : sashForm.SASH_WIDTH;
+		int sashwidth = sashForm.sashes.length > 0 ? sashForm.SASH_WIDTH + sashForm.sashes [0].getBorderWidthInPixels() * 2 : sashForm.SASH_WIDTH;
 		if (vertical) {
 			height += (int)(total * maxValue / ratios[maxIndex]) + (cArray.length - 1) * sashwidth;
 		} else {
 			width += (int)(total * maxValue / ratios[maxIndex]) + (cArray.length - 1) * sashwidth;
 		}
 	}
-	width += sashForm.getBorderWidth()*2;
-	height += sashForm.getBorderWidth()*2;
+	width += sashForm.getBorderWidthInPixels()*2;
+	height += sashForm.getBorderWidthInPixels()*2;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
 	return new Point(width, height);
@@ -90,7 +90,7 @@ protected boolean flushCache(Control control) {
 @Override
 protected void layout(Composite composite, boolean flushCache) {
 	SashForm sashForm = (SashForm)composite;
-	Rectangle area = sashForm.getClientArea();
+	Rectangle area = sashForm.getClientAreaInPixels();
 	if (area.width <= 1 || area.height <= 1) return;
 
 	Control[] newControls = sashForm.getControls(true);
@@ -102,7 +102,7 @@ protected void layout(Composite composite, boolean flushCache) {
 	if (sashForm.maxControl != null && !sashForm.maxControl.isDisposed()) {
 		for (int i= 0; i < controls.length; i++){
 			if (controls[i] != sashForm.maxControl) {
-				controls[i].setBounds(-200, -200, 0, 0);
+				controls[i].setBoundsInPixel(-200, -200, 0, 0);
 			} else {
 				controls[i].setBounds(area);
 			}
@@ -152,42 +152,42 @@ protected void layout(Composite composite, boolean flushCache) {
 		total += ratios[i];
 	}
 
-	int sashwidth = sashes.length > 0 ? sashForm.SASH_WIDTH + sashes [0].getBorderWidth() * 2 : sashForm.SASH_WIDTH;
+	int sashwidth = sashes.length > 0 ? sashForm.SASH_WIDTH + sashes [0].getBorderWidthInPixels() * 2 : sashForm.SASH_WIDTH;
 	if (sashForm.getOrientation() == SWT.HORIZONTAL) {
 		int width = (int)(ratios[0] * (area.width - sashes.length * sashwidth) / total);
 		int x = area.x;
-		controls[0].setBounds(x, area.y, width, area.height);
+		controls[0].setBoundsInPixel(x, area.y, width, area.height);
 		x += width;
 		for (int i = 1; i < controls.length - 1; i++) {
-			sashes[i - 1].setBounds(x, area.y, sashwidth, area.height);
+			sashes[i - 1].setBoundsInPixel(x, area.y, sashwidth, area.height);
 			x += sashwidth;
 			width = (int)(ratios[i] * (area.width - sashes.length * sashwidth) / total);
-			controls[i].setBounds(x, area.y, width, area.height);
+			controls[i].setBoundsInPixel(x, area.y, width, area.height);
 			x += width;
 		}
 		if (controls.length > 1) {
-			sashes[sashes.length - 1].setBounds(x, area.y, sashwidth, area.height);
+			sashes[sashes.length - 1].setBoundsInPixel(x, area.y, sashwidth, area.height);
 			x += sashwidth;
 			width = area.width - x;
-			controls[controls.length - 1].setBounds(x, area.y, width, area.height);
+			controls[controls.length - 1].setBoundsInPixel(x, area.y, width, area.height);
 		}
 	} else {
 		int height = (int)(ratios[0] * (area.height - sashes.length * sashwidth) / total);
 		int y = area.y;
-		controls[0].setBounds(area.x, y, area.width, height);
+		controls[0].setBoundsInPixel(area.x, y, area.width, height);
 		y += height;
 		for (int i = 1; i < controls.length - 1; i++) {
-			sashes[i - 1].setBounds(area.x, y, area.width, sashwidth);
+			sashes[i - 1].setBoundsInPixel(area.x, y, area.width, sashwidth);
 			y += sashwidth;
 			height = (int)(ratios[i] * (area.height - sashes.length * sashwidth) / total);
-			controls[i].setBounds(area.x, y, area.width, height);
+			controls[i].setBoundsInPixel(area.x, y, area.width, height);
 			y += height;
 		}
 		if (controls.length > 1) {
-			sashes[sashes.length - 1].setBounds(area.x, y, area.width, sashwidth);
+			sashes[sashes.length - 1].setBoundsInPixel(area.x, y, area.width, sashwidth);
 			y += sashwidth;
 			height = area.height - y;
-			controls[controls.length - 1].setBounds(area.x, y, area.width, height);
+			controls[controls.length - 1].setBoundsInPixel(area.x, y, area.width, height);
 		}
 
 	}

@@ -1086,7 +1086,7 @@ static long /*int*/ create32bitDIB (long /*int*/ hBitmap, int alpha, byte [] alp
 
 static Image createIcon (Image image) {
 	Device device = image.getDevice ();
-	ImageData data = image.getImageData ();
+	ImageData data = image.getImageData (device.getDeviceZoom ());
 	if (data.alpha == -1 && data.alphaData == null) {
 		ImageData mask = data.getTransparencyMask ();
 		return new Image (device, data, mask);
@@ -1511,7 +1511,7 @@ public Menu getMenuBar () {
  * </ul>
  */
 @Override
-public Rectangle getBounds () {
+public Rectangle getBoundsInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		int width = OS.GetSystemMetrics (OS.SM_CXSCREEN);
@@ -1579,7 +1579,7 @@ int getClickCount (int type, int button, long /*int*/ hwnd, long /*int*/ lParam)
  * @see #getBounds
  */
 @Override
-public Rectangle getClientArea () {
+public Rectangle getClientAreaInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		RECT rect = new RECT ();
@@ -1659,6 +1659,13 @@ public Control getCursorControl () {
  * </ul>
  */
 public Point getCursorLocation () {
+	return DPIUtil.autoScaleDown(getCursorLocationInPixels(), this);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getCursorLocationInPixels () {
 	checkDevice ();
 	POINT pt = new POINT ();
 	OS.GetCursorPos (pt);
@@ -2946,9 +2953,17 @@ boolean isValidThread () {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, Point point) {
+	point = DPIUtil.autoScaleUp(point, this);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, point), this);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point mapInPixels (Control from, Control to, Point point) {
 	checkDevice ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return map (from, to, point.x, point.y);
+	return mapInPixels (from, to, point.x, point.y);
 }
 
 /**
@@ -2988,6 +3003,15 @@ public Point map (Control from, Control to, Point point) {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, int x, int y) {
+	x = DPIUtil.autoScaleUp(x, this);
+	y = DPIUtil.autoScaleUp(y, this);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y), this);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point mapInPixels (Control from, Control to, int x, int y) {
 	checkDevice ();
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
@@ -3038,9 +3062,17 @@ public Point map (Control from, Control to, int x, int y) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, Rectangle rectangle) {
+	rectangle = DPIUtil.autoScaleUp(rectangle, this);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, rectangle), this);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
 	checkDevice ();
 	if (rectangle == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return map (from, to, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+	return mapInPixels (from, to, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 }
 
 /**
@@ -3082,6 +3114,16 @@ public Rectangle map (Control from, Control to, Rectangle rectangle) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, int x, int y, int width, int height) {
+	x = DPIUtil.autoScaleUp(x, this);
+	y = DPIUtil.autoScaleUp(y, this);
+	width = DPIUtil.autoScaleUp(width, this);
+	height = DPIUtil.autoScaleUp(height, this);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y, width, height), this);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle mapInPixels (Control from, Control to, int x, int y, int width, int height) {
 	checkDevice ();
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);

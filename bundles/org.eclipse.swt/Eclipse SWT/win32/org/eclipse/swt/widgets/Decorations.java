@@ -349,7 +349,7 @@ Control computeTabRoot () {
 }
 
 @Override
-public Rectangle computeTrim (int x, int y, int width, int height) {
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 
 	/* Get the size of the trimmings */
@@ -492,7 +492,7 @@ void fixDecorations (Decorations newDecorations, Control control, Menu [] menus)
 }
 
 @Override
-public Rectangle getBounds () {
+public Rectangle getBoundsInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
@@ -509,11 +509,11 @@ public Rectangle getBounds () {
 			return new Rectangle (lpwndpl.left, lpwndpl.top, width, height);
 		}
 	}
-	return super.getBounds ();
+	return super.getBoundsInPixels ();
 }
 
 @Override
-public Rectangle getClientArea () {
+public Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	/*
 	* Note: The CommandBar is part of the client area,
@@ -521,7 +521,7 @@ public Rectangle getClientArea () {
 	* subtract the height of the CommandBar.
 	*/
 	if (OS.IsHPC) {
-		Rectangle rect = super.getClientArea ();
+		Rectangle rect = super.getClientAreaInPixels ();
 		if (menuBar != null) {
 			long /*int*/ hwndCB = menuBar.hwndCB;
 			int height = OS.CommandBar_Height (hwndCB);
@@ -563,7 +563,7 @@ public Rectangle getClientArea () {
 			return new Rectangle (0, 0, width, height);
 		}
 	}
-	return super.getClientArea ();
+	return super.getClientAreaInPixels ();
 }
 
 /**
@@ -647,7 +647,7 @@ public Image [] getImages () {
 }
 
 @Override
-public Point getLocation () {
+public Point getLocationInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
@@ -660,7 +660,7 @@ public Point getLocation () {
 			return new Point (lpwndpl.left, lpwndpl.top);
 		}
 	}
-	return super.getLocation ();
+	return super.getLocationInPixels ();
 }
 
 /**
@@ -727,7 +727,7 @@ String getNameText () {
 }
 
 @Override
-public Point getSize () {
+public Point getSizeInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
@@ -744,7 +744,7 @@ public Point getSize () {
 			return new Point (width, height);
 		}
 	}
-	return super.getSize ();
+	return super.getSizeInPixels ();
 }
 
 /**
@@ -871,7 +871,7 @@ void saveFocus () {
 }
 
 @Override
-void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean defer) {
 	swFlags = OS.SW_SHOWNOACTIVATE;
 	if (OS.IsWinCE) {
 		swFlags = OS.SW_RESTORE;
@@ -902,7 +902,7 @@ void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
 			return;
 		}
 	}
-	super.setBounds (x, y, width, height, flags, defer);
+	super.setBoundsInPixels (x, y, width, height, flags, defer);
 }
 
 /**
@@ -1290,7 +1290,7 @@ void setPlacement (int x, int y, int width, int height, int flags) {
 	if (OS.IsIconic (handle)) {
 		if (sameOrigin) {
 			moved = true;
-			Point location = getLocation ();
+			Point location = getLocationInPixels ();
 			oldX = location.x;
 			oldY = location.y;
 			sendEvent (SWT.Move);
@@ -1298,7 +1298,7 @@ void setPlacement (int x, int y, int width, int height, int flags) {
 		}
 		if (sameExtent) {
 			resized = true;
-			Rectangle rect = getClientArea ();
+			Rectangle rect = getClientAreaInPixels ();
 			oldWidth = rect.width;
 			oldHeight = rect.height;
 			sendEvent (SWT.Resize);
@@ -1437,13 +1437,13 @@ public void setVisible (boolean visible) {
 			opened = true;
 			if (!moved) {
 				moved = true;
-				Point location = getLocation ();
+				Point location = getLocationInPixels ();
 				oldX = location.x;
 				oldY = location.y;
 			}
 			if (!resized) {
 				resized = true;
-				Rectangle rect = getClientArea ();
+				Rectangle rect = getClientAreaInPixels ();
 				oldWidth = rect.width;
 				oldHeight = rect.height;
 			}
@@ -1771,7 +1771,7 @@ LRESULT WM_KILLFOCUS (long /*int*/ wParam, long /*int*/ lParam) {
 @Override
 LRESULT WM_MOVE (long /*int*/ wParam, long /*int*/ lParam) {
 	if (moved) {
-		Point location = getLocation ();
+		Point location = getLocationInPixels ();
 		if (location.x == oldX && location.y == oldY) {
 			return null;
 		}
@@ -1839,7 +1839,7 @@ LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 				newHeight = OS.HIWORD (lParam);
 				break;
 			case OS.SIZE_MINIMIZED:
-				Rectangle rect = getClientArea ();
+				Rectangle rect = getClientAreaInPixels ();
 				newWidth = rect.width;
 				newHeight = rect.height;
 				break;

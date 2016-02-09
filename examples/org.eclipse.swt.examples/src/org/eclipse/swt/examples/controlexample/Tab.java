@@ -961,7 +961,7 @@ abstract class Tab {
 		 */
 		Rectangle bounds = dialog.getBounds();
 		Rectangle trim = dialog.computeTrim(0, 0, 0, 0);
-		Rectangle clientArea = display.getClientArea();
+		Rectangle clientArea = display.getClientAreaInPixels();
 		if (bounds.height > clientArea.height) {
 			dialog.setSize(bounds.width, clientArea.height - trim.height);
 		}

@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class represent a selectable user interface object that
@@ -168,8 +168,8 @@ void _setImage (Image image) {
 		if (image != null) {
 			switch (image.type) {
 				case SWT.BITMAP: {
-					Rectangle rect = image.getBounds ();
-					ImageData data = image.getImageData ();
+					Rectangle rect = image.getBounds (image.getDevice().getDeviceZoom());
+					ImageData data = image.getImageData (image.getDevice().getDeviceZoom());
 					switch (data.getTransparencyType ()) {
 						case SWT.TRANSPARENCY_PIXEL:
 							if (rect.width <= ICON_WIDTH && rect.height <= ICON_HEIGHT) {
@@ -398,9 +398,9 @@ int computeLeftMargin () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
-	int width = 0, height = 0, border = getBorderWidth ();
+	int width = 0, height = 0, border = getBorderWidthInPixels ();
 	if ((style & SWT.ARROW) != 0) {
 		if ((style & (SWT.UP | SWT.DOWN)) != 0) {
 			width += OS.GetSystemMetrics (OS.SM_CXVSCROLL);

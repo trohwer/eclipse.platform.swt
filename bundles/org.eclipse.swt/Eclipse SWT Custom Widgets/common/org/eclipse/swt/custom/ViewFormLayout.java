@@ -92,10 +92,10 @@ Point computeChildSize(Control control, int wHint, int hHint, boolean flushCache
 
 int computeTrim(Control c) {
 	if (c instanceof Scrollable) {
-		Rectangle rect = ((Scrollable) c).computeTrim (0, 0, 0, 0);
+		Rectangle rect = ((Scrollable) c).computeTrimInPixels (0, 0, 0, 0);
 		return rect.width;
 	}
-	return c.getBorderWidth () * 2;
+	return c.getBorderWidthInPixels () * 2;
 }
 
 @Override
@@ -113,7 +113,7 @@ protected void layout(Composite composite, boolean flushCache) {
 	Control right = form.topRight;
 	Control content = form.content;
 
-	Rectangle rect = composite.getClientArea();
+	Rectangle rect = composite.getClientAreaInPixels();
 
 	Point leftSize = new Point(0, 0);
 	if (left != null && !left.isDisposed()) {
@@ -144,7 +144,7 @@ protected void layout(Composite composite, boolean flushCache) {
 		if (right != null && !right.isDisposed()) {
 			top = true;
 			x -= rightSize.x;
-			right.setBounds(x, y, rightSize.x, topHeight);
+			right.setBoundsInPixel(x, y, rightSize.x, topHeight);
 			x -= form.horizontalSpacing;
 		}
 		if (left != null && !left.isDisposed()) {
@@ -152,7 +152,7 @@ protected void layout(Composite composite, boolean flushCache) {
 			int trim = computeTrim(left);
 			int leftW = x - rect.x - form.marginWidth - form.highlight - trim;
 			leftSize = computeChildSize(left, leftW, SWT.DEFAULT, false);
-			left.setBounds(rect.x + form.marginWidth + form.highlight, y, leftSize.x, topHeight);
+			left.setBoundsInPixel(rect.x + form.marginWidth + form.highlight, y, leftSize.x, topHeight);
 		}
 		if (top) y += topHeight + form.verticalSpacing;
 		if (center != null && !center.isDisposed()) {
@@ -163,7 +163,7 @@ protected void layout(Composite composite, boolean flushCache) {
 			if (size.x < centerSize.x) {
 				centerSize = size;
 			}
-			center.setBounds(rect.x + rect.width - form.marginWidth - form.highlight - centerSize.x, y, centerSize.x, centerSize.y);
+			center.setBoundsInPixel(rect.x + rect.width - form.marginWidth - form.highlight - centerSize.x, y, centerSize.x, centerSize.y);
 			y += centerSize.y + form.verticalSpacing;
 		}
 	} else {
@@ -171,22 +171,22 @@ protected void layout(Composite composite, boolean flushCache) {
 		if (right != null && !right.isDisposed()) {
 			top = true;
 			x -= rightSize.x;
-			right.setBounds(x, y, rightSize.x, topHeight);
+			right.setBoundsInPixel(x, y, rightSize.x, topHeight);
 			x -= form.horizontalSpacing;
 		}
 		if (center != null && !center.isDisposed()) {
 			top = true;
 			x -= centerSize.x;
-			center.setBounds(x, y, centerSize.x, topHeight);
+			center.setBoundsInPixel(x, y, centerSize.x, topHeight);
 			x -= form.horizontalSpacing;
 		}
 		if (left != null && !left.isDisposed()) {
 			top = true;
-			Rectangle trim = left instanceof Composite ? ((Composite)left).computeTrim(0, 0, 0, 0) : new Rectangle(0, 0, 0, 0);
+			Rectangle trim = left instanceof Composite ? ((Composite)left).computeTrimInPixels(0, 0, 0, 0) : new Rectangle(0, 0, 0, 0);
 			int w = x - rect.x - form.marginWidth - form.highlight - trim.width;
 			int h = topHeight - trim.height;
 			leftSize = computeChildSize(left, w, h, false);
-			left.setBounds(rect.x + form.marginWidth + form.highlight, y, leftSize.x, topHeight);
+			left.setBoundsInPixel(rect.x + form.marginWidth + form.highlight, y, leftSize.x, topHeight);
 		}
 		if (top)y += topHeight + form.verticalSpacing;
 	}
@@ -197,7 +197,7 @@ protected void layout(Composite composite, boolean flushCache) {
 			form.separator = y;
 			y++;
 		}
-		 content.setBounds(rect.x + form.marginWidth + form.highlight, y, rect.width - 2 * form.marginWidth - 2*form.highlight, rect.y + rect.height - y - form.marginHeight - form.highlight);
+		 content.setBoundsInPixel(rect.x + form.marginWidth + form.highlight, y, rect.width - 2 * form.marginWidth - 2*form.highlight, rect.y + rect.height - y - form.marginHeight - form.highlight);
 	}
 	if (oldSeperator != form.separator) {
 		int t, b;
@@ -211,7 +211,7 @@ protected void layout(Composite composite, boolean flushCache) {
 			t = Math.min(form.separator, oldSeperator);
 			b = Math.max(form.separator, oldSeperator);
 		}
-		form.redraw(form.borderLeft, t, form.getSize().x - form.borderLeft - form.borderRight, b - t, false);
+		form.redrawInPixels(form.borderLeft, t, form.getSizeInPixels().x - form.borderLeft - form.borderRight, b - t, false);
 	}
 }
 }

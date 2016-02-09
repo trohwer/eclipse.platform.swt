@@ -181,10 +181,10 @@ int CreateChromeWindow2 (long /*int*/ parent, int chromeFlags, int contextFlags,
 			public void hide (WindowEvent event) {
 			}
 			public void show (WindowEvent event) {
-				if (event.location != null) shell.setLocation (event.location);
+				if (event.location != null) shell.setLocationInPixels (event.location);
 				if (event.size != null) {
 					Point size = event.size;
-					shell.setSize (shell.computeSize (size.x, size.y));
+					shell.setSizeInPixels (shell.computeSizeInPixels (size.x, size.y));
 				}
 				shell.open ();
 			}

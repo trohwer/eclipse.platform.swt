@@ -223,7 +223,7 @@ void calculate(int startLine, int lineCount) {
 void calculateClientArea () {
 	int index = Math.max (0, styledText.getTopIndex());
 	int lineCount = content.getLineCount();
-	int height = styledText.getClientArea().height;
+	int height = styledText.getClientAreaInPixels().height;
 	int y = 0;
 	/*
 	 * There exists a possibility of ArrayIndexOutOfBounds Exception in
@@ -364,7 +364,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 	if (styledText.getBlockSelection()) {
 		selectionStart = selectionEnd = 0;
 	}
-	Rectangle client = styledText.getClientArea();
+	Rectangle client = styledText.getClientAreaInPixels();
 	Color lineBackground = getLineBackground(lineIndex, null);
 	StyledTextEvent event = styledText.getLineBackgroundData(lineOffset, line);
 	if (event != null && event.lineBackground != null) lineBackground = event.lineBackground;

@@ -12,8 +12,8 @@ package org.eclipse.swt.custom;
 
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * The SashForm is a composite control that lays out its children in a
@@ -209,11 +209,11 @@ void onDragSash(Event event) {
 
 	Control c1 = controls[sashIndex];
 	Control c2 = controls[sashIndex + 1];
-	Rectangle b1 = c1.getBounds();
-	Rectangle b2 = c2.getBounds();
+	Rectangle b1 = c1.getBoundsInPixels();
+	Rectangle b2 = c2.getBoundsInPixels();
 
-	Rectangle sashBounds = sash.getBounds();
-	Rectangle area = getClientArea();
+	Rectangle sashBounds = sash.getBoundsInPixels();
+	Rectangle area = getClientAreaInPixels();
 	boolean correction = false;
 	if (getOrientation() == SWT.HORIZONTAL) {
 		correction = b1.width < DRAG_MINIMUM || b2.width < DRAG_MINIMUM;
@@ -284,7 +284,7 @@ void onDragSash(Event event) {
 	}
 	if (correction || (event.doit && event.detail != SWT.DRAG)) {
 		c1.setBounds(b1);
-		sash.setBounds(event.x, event.y, event.width, event.height);
+		sash.setBoundsInPixel(event.x, event.y, event.width, event.height);
 		c2.setBounds(b2);
 	}
 }

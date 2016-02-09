@@ -137,7 +137,7 @@ public TableTreeEditor (TableTree tableTree) {
 Rectangle computeBounds () {
 	if (item == null || column == -1 || item.isDisposed() || item.tableItem == null) return new Rectangle(0, 0, 0, 0);
 	Rectangle cell = item.getBounds(column);
-	Rectangle area = tableTree.getClientArea();
+	Rectangle area = tableTree.getClientAreaInPixels();
 	if (cell.x < area.x + area.width) {
 		if (cell.x + cell.width > area.x + area.width) {
 			cell.width = area.x + area.width - cell.x;

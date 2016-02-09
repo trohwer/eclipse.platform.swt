@@ -96,10 +96,10 @@ Point computeChildSize(Control control, int wHint, int hHint, boolean flushCache
 }
 int computeTrim(Control c) {
 	if (c instanceof Scrollable) {
-		Rectangle rect = ((Scrollable) c).computeTrim (0, 0, 0, 0);
+		Rectangle rect = ((Scrollable) c).computeTrimInPixels (0, 0, 0, 0);
 		return rect.width;
 	}
-	return c.getBorderWidth () * 2;
+	return c.getBorderWidthInPixels () * 2;
 }
 @Override
 protected boolean flushCache(Control control) {
@@ -114,10 +114,10 @@ protected void layout(Composite composite, boolean flushCache) {
 	Control right = banner.right;
 	Control bottom = banner.bottom;
 
-	Point size = banner.getSize();
+	Point size = banner.getSizeInPixels();
 	boolean showCurve = left != null && right != null;
-	int width = size.x - 2*banner.getBorderWidth();
-	int height = size.y - 2*banner.getBorderWidth();
+	int width = size.x - 2*banner.getBorderWidthInPixels();
+	int height = size.y - 2*banner.getBorderWidthInPixels();
 
 	Point bottomSize = new Point(0, 0);
 	if (bottom != null) {
@@ -171,10 +171,10 @@ protected void layout(Composite composite, boolean flushCache) {
 		rightRect = new Rectangle(x, y, rightSize.x, rightSize.y);
 	}
 	if (banner.curveStart < oldStart) {
-		banner.redraw(banner.curveStart - CBanner.CURVE_TAIL, 0, oldStart + banner.curve_width - banner.curveStart + CBanner.CURVE_TAIL + 5, size.y, false);
+		banner.redrawInPixels(banner.curveStart - CBanner.CURVE_TAIL, 0, oldStart + banner.curve_width - banner.curveStart + CBanner.CURVE_TAIL + 5, size.y, false);
 	}
 	if (banner.curveStart > oldStart) {
-		banner.redraw(oldStart - CBanner.CURVE_TAIL, 0, banner.curveStart + banner.curve_width - oldStart + CBanner.CURVE_TAIL + 5, size.y, false);
+		banner.redrawInPixels(oldStart - CBanner.CURVE_TAIL, 0, banner.curveStart + banner.curve_width - oldStart + CBanner.CURVE_TAIL + 5, size.y, false);
 	}
 	/*
 	 * The paint events must be flushed in order to make the curve draw smoothly

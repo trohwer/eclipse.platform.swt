@@ -136,7 +136,7 @@ Rectangle computeBounds () {
 	Rectangle rect = item.getImageBounds(column);
 	cell.x = rect.x + rect.width;
 	cell.width -= rect.width;
-	Rectangle area = tree.getClientArea();
+	Rectangle area = tree.getClientAreaInPixels();
 	if (cell.x < area.x + area.width) {
 		if (cell.x + cell.width > area.x + area.width) {
 			cell.width = area.x + area.width - cell.x;

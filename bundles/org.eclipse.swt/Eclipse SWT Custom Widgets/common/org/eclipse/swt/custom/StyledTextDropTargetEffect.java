@@ -148,7 +148,7 @@ public class StyledTextDropTargetEffect extends DropTargetEffect {
 		int effect = event.feedback;
 		StyledText text = (StyledText) getControl();
 
-		Point pt = text.getDisplay().map(null, text, event.x, event.y);
+		Point pt = text.getDisplay().mapInPixels(null, text, event.x, event.y);
 		if ((effect & DND.FEEDBACK_SCROLL) == 0) {
 			scrollBeginTime = 0;
 			scrollX = scrollY = -1;
@@ -161,7 +161,7 @@ public class StyledTextDropTargetEffect extends DropTargetEffect {
 					(pt.x >= scrollX && pt.x <= (scrollX + SCROLL_TOLERANCE) ||
 					 pt.y >= scrollY && pt.y <= (scrollY + SCROLL_TOLERANCE))) {
 					if (System.currentTimeMillis() >= scrollBeginTime) {
-						Rectangle area = text.getClientArea();
+						Rectangle area = text.getClientAreaInPixels();
 						GC gc = new GC(text);
 						FontMetrics fm = gc.getFontMetrics();
 						gc.dispose();
@@ -211,12 +211,12 @@ public class StyledTextDropTargetEffect extends DropTargetEffect {
 			if (oldOffset != -1) {
 				Point oldPos = text.getLocationAtOffset(oldOffset);
 				int oldHeight = text.getLineHeight(oldOffset);
-				text.redraw (oldPos.x, oldPos.y, CARET_WIDTH, oldHeight, false);
+				text.redrawInPixels (oldPos.x, oldPos.y, CARET_WIDTH, oldHeight, false);
 			}
 			if (newOffset != -1) {
 				Point newPos = text.getLocationAtOffset(newOffset);
 				int newHeight = text.getLineHeight(newOffset);
-				text.redraw (newPos.x, newPos.y, CARET_WIDTH, newHeight, false);
+				text.redrawInPixels (newPos.x, newPos.y, CARET_WIDTH, newHeight, false);
 			}
 		}
 	}

@@ -407,7 +407,7 @@ public class StyledText extends Canvas {
 		Point dpi = printer.getDPI();
 
 		printerFont = new Font(printer, fontData.getName(), fontData.getHeight(), SWT.NORMAL);
-		clientArea = printer.getClientArea();
+		clientArea = printer.getClientAreaInPixels();
 		pageWidth = clientArea.width;
 		// one inch margin around text
 		clientArea.x = dpi.x + trim.x;
@@ -1719,14 +1719,14 @@ void clearSelection(boolean sendEvent) {
 	}
 }
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget();
 	int lineCount = (getStyle() & SWT.SINGLE) != 0 ? 1 : content.getLineCount();
 	int width = 0;
 	int height = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 		Display display = getDisplay();
-		int maxHeight = display.getClientArea().height;
+		int maxHeight = display.getClientAreaInPixels().height;
 		for (int lineIndex = 0; lineIndex < lineCount; lineIndex++) {
 			TextLayout layout = renderer.getTextLayout(lineIndex);
 			int wrapWidth = layout.getWidth();
@@ -1749,7 +1749,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (hHint != SWT.DEFAULT) height = hHint;
 	int wTrim = getLeftMargin() + rightMargin + getCaretWidth();
 	int hTrim = topMargin + bottomMargin;
-	Rectangle rect = computeTrim(0, 0, width + wTrim, height + hTrim);
+	Rectangle rect = computeTrimInPixels(0, 0, width + wTrim, height + hTrim);
 	return new Point (rect.width, rect.height);
 }
 /**
@@ -2746,8 +2746,8 @@ void doLineUp(boolean select) {
 }
 void doMouseLinkCursor() {
 	Display display = getDisplay();
-	Point point = display.getCursorLocation();
-	point = display.map(null, this, point);
+	Point point = display.getCursorLocationInPixels();
+	point = display.mapInPixels(null, this, point);
 	doMouseLinkCursor(point.x, point.y);
 }
 void doMouseLinkCursor(int x, int y) {
@@ -5767,7 +5767,7 @@ void internalRedrawRange(int start, int length) {
 		rect.width = clientAreaWidth - rightMargin - rect.x;
 		rect.x += lineX;
 		rect.y += startLineY;
-		super.redraw(rect.x, rect.y, rect.width, rect.height, false);
+		super.redrawInPixels(rect.x, rect.y, rect.width, rect.height, false);
 	}
 
 	if (startLine == endLine) {
@@ -5777,7 +5777,7 @@ void internalRedrawRange(int start, int length) {
 			Rectangle rect = layout.getBounds(start, end - 1);
 			rect.x += lineX;
 			rect.y += startLineY;
-			super.redraw(rect.x, rect.y, rect.width, rect.height, false);
+			super.redrawInPixels(rect.x, rect.y, rect.width, rect.height, false);
 			renderer.disposeTextLayout(layout);
 			return;
 		}
@@ -5794,7 +5794,7 @@ void internalRedrawRange(int start, int length) {
 	startRect.x += lineX;
 	startRect.y += startLineY;
 	startRect.width = clientAreaWidth - rightMargin - startRect.x;
-	super.redraw(startRect.x, startRect.y, startRect.width, startRect.height, false);
+	super.redrawInPixels(startRect.x, startRect.y, startRect.width, startRect.height, false);
 
 	/* Redraw end line from the beginning of the line to the end offset */
 	if (startLine != endLine) {
@@ -5811,13 +5811,13 @@ void internalRedrawRange(int start, int length) {
 	}
 	endRect.x += lineX;
 	endRect.y += getLinePixel(endLine);
-	super.redraw(endRect.x, endRect.y, endRect.width, endRect.height, false);
+	super.redrawInPixels(endRect.x, endRect.y, endRect.width, endRect.height, false);
 	renderer.disposeTextLayout(layout);
 
 	/* Redraw all lines in between start and end line */
 	int y = startRect.y + startRect.height;
 	if (endRect.y > y) {
-		super.redraw(leftMargin, y, clientAreaWidth - rightMargin - leftMargin, endRect.y - y, false);
+		super.redrawInPixels(leftMargin, y, clientAreaWidth - rightMargin - leftMargin, endRect.y - y, false);
 	}
 }
 void handleCompositionOffset (Event event) {
@@ -6034,7 +6034,7 @@ void handleKeyUp(Event event) {
  */
 void handleMenuDetect(Event event) {
 	if (event.detail == SWT.MENU_KEYBOARD) {
-		Point point = getDisplay().map(this, null, getPointAtOffset(caretOffset));
+		Point point = getDisplay().mapInPixels(this, null, getPointAtOffset(caretOffset));
 		event.x = point.x;
 		event.y = point.y + getLineHeight(caretOffset);
 	}
@@ -6189,7 +6189,7 @@ void handlePaint(Event event) {
 void handleResize(Event event) {
 	int oldHeight = clientAreaHeight;
 	int oldWidth = clientAreaWidth;
-	Rectangle clientArea = getClientArea();
+	Rectangle clientArea = getClientAreaInPixels();
 	clientAreaHeight = clientArea.height;
 	clientAreaWidth = clientArea.width;
 	if (!alwaysShowScroll && ignoreResize != 0) return;
@@ -6253,7 +6253,7 @@ void handleTextChanged(TextChangedEvent event) {
 		if (lastLineBottom != newLastLineBottom) {
 			super.redraw();
 		} else {
-			super.redraw(0, firstLineTop, clientAreaWidth, newLastLineBottom - firstLineTop, false);
+			super.redrawInPixels(0, firstLineTop, clientAreaWidth, newLastLineBottom - firstLineTop, false);
 			redrawLinesBullet(renderer.redrawLines);
 		}
 	}
@@ -6503,7 +6503,7 @@ void initializeAccessible() {
 			StyledText st = StyledText.this;
 			Point point = new Point (e.x, e.y);
 			Display display = st.getDisplay();
-			point = display.map(null, st, point);
+			point = display.mapInPixels(null, st, point);
 			e.offset = st.getOffsetAtPoint(point.x, point.y, null, true);
 		}
 		@Override
@@ -6541,7 +6541,7 @@ void initializeAccessible() {
 					rect.width = layout.getBounds().width - rect.x;
 					st.renderer.disposeTextLayout(layout);
 				}
-				rects [index++] = rect = display.map(st, null, rect);
+				rects [index++] = rect = display.mapInPixels(st, null, rect);
 				if (bounds == null) {
 					bounds = new Rectangle(rect.x, rect.y, rect.width, rect.height);
 				} else {
@@ -6594,7 +6594,7 @@ void initializeAccessible() {
 			StyledText st = StyledText.this;
 			Point point = new Point (e.x, e.y);
 			Display display = st.getDisplay();
-			point = display.map(null, st, point);
+			point = display.mapInPixels(null, st, point);
 			e.ranges = getRanges(point.x, point.y, point.x + e.width, point.y + e.height);
 			if (e.ranges.length > 0) {
 				e.start = e.ranges[0];
@@ -6736,7 +6736,7 @@ void initializeAccessible() {
 				case ACC.SCROLL_TYPE_POINT: {
 					Point point = new Point(e.x, e.y);
 					Display display = st.getDisplay();
-					point = display.map(null, st, point);
+					point = display.mapInPixels(null, st, point);
 					Rectangle rect = st.getBoundsAtOffset(e.start);
 					topPixel = topPixel - point.y + rect.y;
 					horizontalPixel = horizontalPixel - point.x + rect.x;
@@ -7512,8 +7512,8 @@ public void redraw() {
  * @see Control#update()
  */
 @Override
-public void redraw(int x, int y, int width, int height, boolean all) {
-	super.redraw(x, y, width, height, all);
+public void redrawInPixels(int x, int y, int width, int height, boolean all) {
+	super.redrawInPixels(x, y, width, height, all);
 	if (height > 0) {
 		int firstLine = getLineIndex(y);
 		int lastLine = getLineIndex(y + height);
@@ -7540,7 +7540,7 @@ void redrawLines(int startLine, int lineCount, boolean bottomChanged) {
 	int redrawBottom = getLinePixel(endLine + 1);
 	if (bottomChanged) redrawBottom = clientAreaHeight - bottomMargin;
 	int redrawWidth = clientAreaWidth - leftMargin - rightMargin;
-	super.redraw(leftMargin, redrawTop, redrawWidth, redrawBottom - redrawTop, true);
+	super.redrawInPixels(leftMargin, redrawTop, redrawWidth, redrawBottom - redrawTop, true);
 }
 void redrawLinesBullet (int[] redrawLines) {
 	if (redrawLines == null) return;
@@ -7556,10 +7556,10 @@ void redrawLinesBullet (int[] redrawLines) {
 			GlyphMetrics metrics = style.metrics;
 			width = metrics.width;
 		}
-		if (width == -1) width = getClientArea().width;
+		if (width == -1) width = getClientAreaInPixels().width;
 		int height = renderer.getLineHeight(lineIndex);
 		int y = getLinePixel(lineIndex);
-		super.redraw(0, y, width, height, false);
+		super.redrawInPixels(0, y, width, height, false);
 	}
 }
 void redrawMargins(int oldHeight, int oldWidth) {
@@ -7567,13 +7567,13 @@ void redrawMargins(int oldHeight, int oldWidth) {
 	if (oldWidth != clientAreaWidth) {
 		if (rightMargin > 0) {
 			int x = (oldWidth < clientAreaWidth ? oldWidth : clientAreaWidth) - rightMargin;
-			super.redraw(x, 0, rightMargin, oldHeight, false);
+			super.redrawInPixels(x, 0, rightMargin, oldHeight, false);
 		}
 	}
 	if (oldHeight != clientAreaHeight) {
 		if (bottomMargin > 0) {
 			int y = (oldHeight < clientAreaHeight ? oldHeight : clientAreaHeight) - bottomMargin;
-			super.redraw(0, y, oldWidth, bottomMargin, false);
+			super.redrawInPixels(0, y, oldWidth, bottomMargin, false);
 		}
 	}
 }
@@ -7978,15 +7978,15 @@ void resetSelection() {
 }
 
 @Override
-public void scroll(int destX, int destY, int x, int y, int width, int height, boolean all) {
-	super.scroll(destX, destY, x, y, width, height, false);
+public void scrollInPixels(int destX, int destY, int x, int y, int width, int height, boolean all) {
+	super.scrollInPixels(destX, destY, x, y, width, height, false);
 	if (all) {
 		int deltaX = destX - x, deltaY = destY - y;
 		Control[] children = getChildren();
 		for (int i=0; i<children.length; i++) {
 			Control child = children[i];
-			Rectangle rect = child.getBounds();
-			child.setLocation(rect.x + deltaX, rect.y + deltaY);
+			Rectangle rect = child.getBoundsInPixels();
+			child.setLocationInPixels(rect.x + deltaX, rect.y + deltaY);
 		}
 	}
 }
@@ -8015,19 +8015,19 @@ boolean scrollHorizontal(int pixels, boolean adjustScrollBar) {
 		int sourceX = leftMargin + pixels;
 		int scrollWidth = clientAreaWidth - sourceX - rightMargin;
 		if (scrollWidth > 0) {
-			scroll(leftMargin, topMargin, sourceX, topMargin, scrollWidth, scrollHeight, true);
+			scrollInPixels(leftMargin, topMargin, sourceX, topMargin, scrollWidth, scrollHeight, true);
 		}
 		if (sourceX > scrollWidth) {
-			super.redraw(leftMargin + scrollWidth, topMargin, pixels - scrollWidth, scrollHeight, true);
+			super.redrawInPixels(leftMargin + scrollWidth, topMargin, pixels - scrollWidth, scrollHeight, true);
 		}
 	} else {
 		int destinationX = leftMargin - pixels;
 		int scrollWidth = clientAreaWidth - destinationX - rightMargin;
 		if (scrollWidth > 0) {
-			scroll(destinationX, topMargin, leftMargin, topMargin, scrollWidth, scrollHeight, true);
+			scrollInPixels(destinationX, topMargin, leftMargin, topMargin, scrollWidth, scrollHeight, true);
 		}
 		if (destinationX > scrollWidth) {
-			super.redraw(leftMargin + scrollWidth, topMargin, -pixels - scrollWidth, scrollHeight, true);
+			super.redrawInPixels(leftMargin + scrollWidth, topMargin, -pixels - scrollWidth, scrollHeight, true);
 		}
 	}
 	horizontalScrollOffset += pixels;
@@ -8059,23 +8059,23 @@ boolean scrollVertical(int pixels, boolean adjustScrollBar) {
 			int sourceY = topMargin + pixels;
 			int scrollHeight = clientAreaHeight - sourceY - bottomMargin;
 			if (scrollHeight > 0) {
-				scroll(leftMargin, topMargin, leftMargin, sourceY, scrollWidth, scrollHeight, true);
+				scrollInPixels(leftMargin, topMargin, leftMargin, sourceY, scrollWidth, scrollHeight, true);
 			}
 			if (sourceY > scrollHeight) {
 				int redrawY = Math.max(0, topMargin + scrollHeight);
 				int redrawHeight = Math.min(clientAreaHeight, pixels - scrollHeight);
-				super.redraw(leftMargin, redrawY, scrollWidth, redrawHeight, true);
+				super.redrawInPixels(leftMargin, redrawY, scrollWidth, redrawHeight, true);
 			}
 		} else {
 			int destinationY = topMargin - pixels;
 			int scrollHeight = clientAreaHeight - destinationY - bottomMargin;
 			if (scrollHeight > 0) {
-				scroll(leftMargin, destinationY, leftMargin, topMargin, scrollWidth, scrollHeight, true);
+				scrollInPixels(leftMargin, destinationY, leftMargin, topMargin, scrollWidth, scrollHeight, true);
 			}
 			if (destinationY > scrollHeight) {
 				int redrawY = Math.max(0, topMargin + scrollHeight);
 				int redrawHeight = Math.min(clientAreaHeight, -pixels - scrollHeight);
-				super.redraw(leftMargin, redrawY, scrollWidth, redrawHeight, true);
+				super.redrawInPixels(leftMargin, redrawY, scrollWidth, redrawHeight, true);
 			}
 		}
 		verticalScrollOffset += pixels;
@@ -8096,18 +8096,18 @@ void scrollText(int srcY, int destY) {
 	} else {
 		scrollHeight = clientAreaHeight - destY - bottomMargin;
 	}
-	scroll(leftMargin, destY, leftMargin, srcY, scrollWidth, scrollHeight, true);
+	scrollInPixels(leftMargin, destY, leftMargin, srcY, scrollWidth, scrollHeight, true);
 	if ((0 < srcY + scrollHeight) && (topMargin > srcY)) {
-		super.redraw(leftMargin, deltaY, scrollWidth, topMargin, false);
+		super.redrawInPixels(leftMargin, deltaY, scrollWidth, topMargin, false);
 	}
 	if ((0 < destY + scrollHeight) && (topMargin > destY)) {
-		super.redraw(leftMargin, 0, scrollWidth, topMargin, false);
+		super.redrawInPixels(leftMargin, 0, scrollWidth, topMargin, false);
 	}
 	if ((clientAreaHeight - bottomMargin < srcY + scrollHeight) && (clientAreaHeight > srcY)) {
-		super.redraw(leftMargin, clientAreaHeight - bottomMargin + deltaY, scrollWidth, bottomMargin, false);
+		super.redrawInPixels(leftMargin, clientAreaHeight - bottomMargin + deltaY, scrollWidth, bottomMargin, false);
 	}
 	if ((clientAreaHeight - bottomMargin < destY + scrollHeight) && (clientAreaHeight > destY)) {
-		super.redraw(leftMargin, clientAreaHeight - bottomMargin, scrollWidth, bottomMargin, false);
+		super.redrawInPixels(leftMargin, clientAreaHeight - bottomMargin, scrollWidth, bottomMargin, false);
 	}
 }
 void sendAccessibleTextCaretMoved() {
@@ -9942,7 +9942,7 @@ void setStyleRanges(int start, int length, int[] ranges, StyleRange[] styles, bo
 			if (!isFixedLineHeight() && bottom != expectedBottom) {
 				bottom = clientAreaHeight;
 			}
-			super.redraw(0, top, clientAreaWidth, bottom - top, false);
+			super.redrawInPixels(0, top, clientAreaWidth, bottom - top, false);
 		}
 	}
 	int oldColumnX = columnX;

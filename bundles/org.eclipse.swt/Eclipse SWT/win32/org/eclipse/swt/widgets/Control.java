@@ -568,7 +568,7 @@ void checkBackground () {
 }
 
 void checkBorder () {
-	if (getBorderWidth () == 0) style &= ~SWT.BORDER;
+	if (getBorderWidthInPixels () == 0) style &= ~SWT.BORDER;
 }
 
 void checkBuffered () {
@@ -618,7 +618,16 @@ void checkMirrored () {
  * @see "computeTrim, getClientArea for controls that implement them"
  */
 public Point computeSize (int wHint, int hHint) {
-	return computeSize (wHint, hHint, true);
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
+	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint), getDisplay ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point computeSizeInPixels (int wHint, int hHint) {
+	return computeSizeInPixels (wHint, hHint, true);
 }
 
 /**
@@ -655,13 +664,22 @@ public Point computeSize (int wHint, int hHint) {
  * @see #pack(boolean)
  * @see "computeTrim, getClientArea for controls that implement them"
  */
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSize (int wHint, int hHint, boolean changed){
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
+	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint, changed), getDisplay ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = DEFAULT_WIDTH;
 	int height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	width += border * 2;
 	height += border * 2;
 	return new Point (width, height);
@@ -1220,6 +1238,13 @@ int getBackgroundPixel () {
  * </ul>
  */
 public int getBorderWidth () {
+	return DPIUtil.autoScaleDown(getBorderWidthInPixels (), getDisplay ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getBorderWidthInPixels () {
 	checkWidget ();
 	long /*int*/ borderHandle = borderHandle ();
 	int bits1 = OS.GetWindowLong (borderHandle, OS.GWL_EXSTYLE);
@@ -1243,7 +1268,13 @@ public int getBorderWidth () {
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
  */
-public Rectangle getBounds () {
+public Rectangle getBounds (){
+	return DPIUtil.autoScaleDown(getBoundsInPixels (), getDisplay ());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();
@@ -1418,6 +1449,13 @@ public Object getLayoutData () {
  * </ul>
  */
 public Point getLocation () {
+	return DPIUtil.autoScaleDown(getLocationInPixels(), getDisplay ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getLocationInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();
@@ -1585,7 +1623,14 @@ public Shell getShell () {
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
  */
-public Point getSize () {
+public Point getSize (){
+	return DPIUtil.autoScaleDown(getSizeInPixels (), getDisplay ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getSizeInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();
@@ -1897,7 +1942,7 @@ boolean isShowing () {
 	if (!isVisible ()) return false;
 	Control control = this;
 	while (control != null) {
-		Point size = control.getSize ();
+		Point size = control.getSizeInPixels ();
 		if (size.x == 0 || size.y == 0) {
 			return false;
 		}
@@ -2144,7 +2189,7 @@ public void pack () {
  */
 public void pack (boolean changed) {
 	checkWidget ();
-	setSize (computeSize (SWT.DEFAULT, SWT.DEFAULT, changed));
+	setSizeInPixels (computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed));
 }
 
 /**
@@ -2426,6 +2471,16 @@ void redraw (boolean all) {
  * @see SWT#DOUBLE_BUFFERED
  */
 public void redraw (int x, int y, int width, int height, boolean all) {
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
+	redrawInPixels(x, y, width, height, all);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void redrawInPixels (int x, int y, int width, int height, boolean all) {
 	checkWidget ();
 	if (width <= 0 || height <= 0) return;
 	if (!OS.IsWindowVisible (handle)) return;
@@ -3155,17 +3210,28 @@ void setBackgroundPixel (int pixel) {
  *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
  * </ul>
  */
-public void setBounds (int x, int y, int width, int height) {
+public void setBounds(int x, int y, int width, int height) {
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
+	setBoundsInPixel(x, y, width, height);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setBoundsInPixel (int x, int y, int width, int height) {
 	checkWidget ();
 	int flags = OS.SWP_NOZORDER | OS.SWP_DRAWFRAME | OS.SWP_NOACTIVATE;
-	setBounds (x, y, Math.max (0, width), Math.max (0, height), flags);
+	setBoundsInPixels (x, y, Math.max (0, width), Math.max (0, height), flags);
 }
 
-void setBounds (int x, int y, int width, int height, int flags) {
-	setBounds (x, y, width, height, flags, true);
+void setBoundsInPixels (int x, int y, int width, int height, int flags) {
+	setBoundsInPixels (x, y, width, height, flags, true);
 }
 
-void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean defer) {
 	if (findImageControl () != null) {
 		if (backgroundImage == null) flags |= OS.SWP_NOCOPYBITS;
 	} else {
@@ -3225,7 +3291,8 @@ void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
 public void setBounds (Rectangle rect) {
 	checkWidget ();
 	if (rect == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setBounds (rect.x, rect.y, rect.width, rect.height);
+	rect = DPIUtil.autoScaleUp(rect, getDisplay ());
+	setBoundsInPixel (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -3474,6 +3541,15 @@ public void setLayoutData (Object layoutData) {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	setLocationInPixels(x, y);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (int x, int y) {
 	checkWidget ();
 	int flags = OS.SWP_NOSIZE | OS.SWP_NOZORDER | OS.SWP_NOACTIVATE;
 	/*
@@ -3483,7 +3559,7 @@ public void setLocation (int x, int y) {
 	* not running on WinCE.
 	*/
 	if (!OS.IsWinCE) flags |= OS.SWP_DRAWFRAME;
-	setBounds (x, y, 0, 0, flags);
+	setBoundsInPixels (x, y, 0, 0, flags);
 }
 
 /**
@@ -3501,9 +3577,16 @@ public void setLocation (int x, int y) {
  * </ul>
  */
 public void setLocation (Point location) {
+	setLocationInPixels(DPIUtil.autoScaleUp(location, getDisplay ()));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setLocation (location.x, location.y);
+	setLocationInPixels (location.x, location.y);
 }
 
 /**
@@ -3697,9 +3780,18 @@ boolean setSavedFocus () {
  * </ul>
  */
 public void setSize (int width, int height) {
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
+	setSizeInPixels(width, height);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSizeInPixels (int width, int height) {
 	checkWidget ();
 	int flags = OS.SWP_NOMOVE | OS.SWP_NOZORDER | OS.SWP_DRAWFRAME | OS.SWP_NOACTIVATE;
-	setBounds (0, 0, Math.max (0, width), Math.max (0, height), flags);
+	setBoundsInPixels (0, 0, Math.max (0, width), Math.max (0, height), flags);
 }
 
 /**
@@ -3721,9 +3813,16 @@ public void setSize (int width, int height) {
  * </ul>
  */
 public void setSize (Point size) {
+	setSizeInPixels(DPIUtil.autoScaleUp(size, getDisplay ()));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSizeInPixels (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setSize (size.x, size.y);
+	setSizeInPixels (size.x, size.y);
 }
 
 @Override
@@ -3913,7 +4012,7 @@ void subclass () {
  * to coordinates relative to the receiver.
  * <p>
  * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
+ * {@link Display#mapInPixels(Control, Control, Rectangle)}.
  * </p>
  *
  * @param x the x coordinate to be translated
@@ -3941,7 +4040,7 @@ public Point toControl (int x, int y) {
  * to coordinates relative to the receiver.
  * <p>
  * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
+ * {@link Display#mapInPixels(Control, Control, Rectangle)}.
  * </p>
  *
  * @param point the point to be translated (must not be null)
@@ -3967,7 +4066,7 @@ public Point toControl (Point point) {
  * the receiver, to display relative coordinates.
  * <p>
  * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
+ * {@link Display#mapInPixels(Control, Control, Rectangle)}.
  * </p>
  *
  * @param x the x coordinate to be translated
@@ -3995,7 +4094,7 @@ public Point toDisplay (int x, int y) {
  * the receiver, to display relative coordinates.
  * <p>
  * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
+ * {@link Display#mapInPixels(Control, Control, Rectangle)}.
  * </p>
  *
  * @param point the point to be translated (must not be null)

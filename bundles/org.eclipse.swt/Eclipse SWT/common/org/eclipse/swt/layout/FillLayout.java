@@ -154,11 +154,11 @@ Point computeChildSize (Control control, int wHint, int hHint, boolean flushCach
 		// TEMPORARY CODE
 		int trimX, trimY;
 		if (control instanceof Scrollable) {
-			Rectangle rect = ((Scrollable) control).computeTrim (0, 0, 0, 0);
+			Rectangle rect = ((Scrollable) control).computeTrimInPixels (0, 0, 0, 0);
 			trimX = rect.width;
 			trimY = rect.height;
 		} else {
-			trimX = trimY = control.getBorderWidth () * 2;
+			trimX = trimY = control.getBorderWidthInPixels () * 2;
 		}
 		int w = wHint == SWT.DEFAULT ? wHint : Math.max (0, wHint - trimX);
 		int h = hHint == SWT.DEFAULT ? hHint : Math.max (0, hHint - trimY);
@@ -183,7 +183,7 @@ String getName () {
 
 @Override
 protected void layout (Composite composite, boolean flushCache) {
-	Rectangle rect = composite.getClientArea ();
+	Rectangle rect = composite.getClientAreaInPixels ();
 	Control [] children = composite.getChildren ();
 	int count = children.length;
 	if (count == 0) return;
@@ -201,7 +201,7 @@ protected void layout (Composite composite, boolean flushCache) {
 			} else {
 				if (i == count - 1) childWidth += (extra + 1) / 2;
 			}
-			child.setBounds (x, y, childWidth, height);
+			child.setBoundsInPixel (x, y, childWidth, height);
 			x += childWidth + spacing;
 		}
 	} else {
@@ -216,7 +216,7 @@ protected void layout (Composite composite, boolean flushCache) {
 			} else {
 				if (i == count - 1) childHeight += (extra + 1) / 2;
 			}
-			child.setBounds (x, y, width, childHeight);
+			child.setBoundsInPixel (x, y, width, childHeight);
 			y += childHeight + spacing;
 		}
 	}

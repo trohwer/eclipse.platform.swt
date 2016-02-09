@@ -41,7 +41,7 @@ public final class RowData {
 	 *
 	 * The default value is SWT.DEFAULT.
 	 *
-	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int, boolean)
+	 * @see org.eclipse.swt.widgets.Control#computeSizeInPixels(int, int, boolean)
 	 */
 	public int width = SWT.DEFAULT;
 	/**
@@ -51,7 +51,7 @@ public final class RowData {
 	 *
 	 * The default value is SWT.DEFAULT.
 	 *
-	 * @see org.eclipse.swt.widgets.Control#computeSize(int, int, boolean)
+	 * @see org.eclipse.swt.widgets.Control#computeSizeInPixels(int, int, boolean)
 	 */
 	public int height = SWT.DEFAULT;
 

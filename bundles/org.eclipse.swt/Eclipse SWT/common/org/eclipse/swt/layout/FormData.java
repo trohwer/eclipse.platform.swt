@@ -51,7 +51,7 @@ public final class FormData {
 	 *
 	 * The default value is SWT.DEFAULT.
 	 *
-	 * @see Control#computeSize(int, int, boolean)
+	 * @see Control#computeSizeInPixels(int, int, boolean)
 	 */
 	public int width = SWT.DEFAULT;
 	/**
@@ -61,7 +61,7 @@ public final class FormData {
 	 *
 	 * The default value is SWT.DEFAULT.
 	 *
-	 * @see Control#computeSize(int, int, boolean)
+	 * @see Control#computeSizeInPixels(int, int, boolean)
 	 */
 	public int height = SWT.DEFAULT;
 	/**
@@ -114,7 +114,7 @@ void computeSize (Control control, int wHint, int hHint, boolean flushCache) {
 	if (cacheWidth != -1 && cacheHeight != -1) return;
 	if (wHint == this.width && hHint == this.height) {
 		if (defaultWidth == -1 || defaultHeight == -1 || wHint != defaultWhint || hHint != defaultHhint) {
-			Point size =  control.computeSize (wHint, hHint, flushCache);
+			Point size =  control.computeSizeInPixels (wHint, hHint, flushCache);
 			defaultWhint = wHint;
 			defaultHhint = hHint;
 			defaultWidth = size.x;
@@ -125,7 +125,7 @@ void computeSize (Control control, int wHint, int hHint, boolean flushCache) {
 		return;
 	}
 	if (currentWidth == -1 || currentHeight == -1 || wHint != currentWhint || hHint != currentHhint) {
-		Point size =  control.computeSize (wHint, hHint, flushCache);
+		Point size =  control.computeSizeInPixels (wHint, hHint, flushCache);
 		currentWhint = wHint;
 		currentHhint = hHint;
 		currentWidth = size.x;

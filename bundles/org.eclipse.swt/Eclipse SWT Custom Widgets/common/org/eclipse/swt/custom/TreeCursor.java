@@ -312,7 +312,7 @@ int findIndex(TreeItem[] items, TreeItem treeItem) {
 		if (rect.y > rect1.y && i == items.length - 1) {
 			return index + findIndex(currentItem.getItems(), treeItem);
 		}
-		if (rect.y >= rect1.y + (1 + currentItem.getItemCount()) * tree.getItemHeight() && currentItem.getExpanded()) {
+		if (rect.y >= rect1.y + (1 + currentItem.getItemCount()) * tree.getItemHeightInPixels() && currentItem.getExpanded()) {
 			index += countSubTreePages(currentItem);
 			continue;
 		}
@@ -547,11 +547,11 @@ void keyDown(Event event) {
 			break;
 		}
 		case SWT.PAGE_UP: {
-			Rectangle rect = tree.getClientArea();
+			Rectangle rect = tree.getClientAreaInPixels();
 			Rectangle itemRect = tree.getTopItem().getBounds();
 			TreeItem item = row;
 			int index = findIndex(tree.getItems(), item);
-			int itemHeight = tree.getItemHeight();
+			int itemHeight = tree.getItemHeightInPixels();
 			rect.height -= itemRect.y;
 			int page = Math.max(1, rect.height / itemHeight);
 			if (index - page <= 0) {
@@ -566,11 +566,11 @@ void keyDown(Event event) {
 			break;
 		}
 		case SWT.PAGE_DOWN: {
-			Rectangle rect = tree.getClientArea();
+			Rectangle rect = tree.getClientAreaInPixels();
 			Rectangle itemRect = tree.getTopItem().getBounds();
 			TreeItem item = row;
 			int index = findIndex(tree.getItems(), item);
-			int height = tree.getItemHeight();
+			int height = tree.getItemHeightInPixels();
 			rect.height -= itemRect.y;
 			TreeItem last = getLastVisibleItem(tree.getItems());
 			int page = Math.max(1, rect.height / height);
@@ -636,7 +636,7 @@ void paint(Event event) {
 			x += 2;
 		}
 	}
-	Point size = getSize();
+	Point size = getSizeInPixels();
 	if (image != null) {
 		Rectangle imageSize = image.getBounds();
 		int imageY = (size.y - imageSize.height) / 2;
@@ -720,7 +720,7 @@ public void removeSelectionListener(SelectionListener listener) {
 
 void _resize() {
 	if (row == null) {
-		setBounds(-200, -200, 0, 0);
+		setBoundsInPixel(-200, -200, 0, 0);
 	} else {
 		int columnIndex = column == null ? 0 : tree.indexOf(column);
 		setBounds(row.getBounds(columnIndex));
@@ -920,7 +920,7 @@ void treeMouseDown(Event event) {
 			parentItem = currentItem.getParentItem();
 		}
 		int start = tree.indexOf(currentItem);
-		int viewportItemCount = tree.getClientArea().height / tree.getItemHeight();
+		int viewportItemCount = tree.getClientAreaInPixels().height / tree.getItemHeightInPixels();
 		int end = Math.min(start + viewportItemCount, tree.getItemCount() - 1);
 		TreeItem[] allItems = tree.getItems();
 		TreeItem[] items = new TreeItem[end - start + 1];

@@ -1721,7 +1721,7 @@ boolean headerUpdateToolTip (int x) {
 	toolTipLabel.setSize (area.width, area.height);
 
 	/* Position the tooltip and ensure it's not located off the screen */
-	Point cursorLocation = getDisplay ().getCursorLocation ();
+	Point cursorLocation = getDisplay ().getCursorLocationInPixels ();
 	int cursorHeight = 21;	/* assuming cursor is 21x21 */ 
 	Point size = toolTipShell.getSize ();
 	Rectangle rect = getMonitor ().getBounds ();

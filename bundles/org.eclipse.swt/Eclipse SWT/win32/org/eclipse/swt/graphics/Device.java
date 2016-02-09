@@ -67,7 +67,7 @@ public abstract class Device implements Drawable {
 	String[] loadedFonts;
 
 	boolean disposed;
-	
+
 	/* Auto-Scaling*/
 	boolean enableAutoScaling = true;
 
@@ -366,7 +366,13 @@ long /*int*/ EnumFontFamProc (long /*int*/ lpelfe, long /*int*/ lpntme, long /*i
  *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Rectangle getBounds () {
+public Rectangle getBounds() {
+	return DPIUtil.autoScaleDown(getBoundsInPixels(), this);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkDevice ();
 	long /*int*/ hDC = internal_new_GC (null);
 	int width = OS.GetDeviceCaps (hDC, OS.HORZRES);
@@ -430,7 +436,14 @@ public DeviceData getDeviceData () {
  * @see #getBounds
  */
 public Rectangle getClientArea () {
-	return getBounds ();
+	return DPIUtil.autoScaleDown(getClientAreaInPixels(), this);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getClientAreaInPixels () {
+	return getBoundsInPixels ();
 }
 
 /**

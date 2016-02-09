@@ -140,7 +140,7 @@ public ControlEditor (Composite parent) {
 	if (vBar != null) vBar.addListener (SWT.Selection, scrollbarListener);
 }
 Rectangle computeBounds () {
-	Rectangle clientArea = parent.getClientArea();
+	Rectangle clientArea = parent.getClientAreaInPixels();
 	Rectangle editorRect = new Rectangle(clientArea.x, clientArea.y, minimumWidth, minimumHeight);
 
 	if (grabHorizontal)

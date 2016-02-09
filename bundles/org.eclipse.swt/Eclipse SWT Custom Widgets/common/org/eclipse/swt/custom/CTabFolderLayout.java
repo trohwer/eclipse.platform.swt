@@ -51,7 +51,7 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 				} else {
 					rightControl = true;
 				}
-				width += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				width += control.computeSizeInPixels(SWT.DEFAULT, SWT.DEFAULT).x;
 			}
 		}
 	} else {
@@ -86,7 +86,7 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 	for (int i = 0; i < items.length; i++) {
 		Control control = items[i].control;
 		if (control != null && !control.isDisposed()){
-			Point size = control.computeSize (wHint, hHint, flushCache);
+			Point size = control.computeSizeInPixels (wHint, hHint, flushCache);
 			controlW = Math.max (controlW, size.x);
 			controlH = Math.max (controlH, size.y);
 		}
@@ -113,7 +113,7 @@ protected void layout(Composite composite, boolean flushCache) {
 	if (folder.selectedIndex != -1) {
 		Control control = folder.items[folder.selectedIndex].control;
 		if (control != null && !control.isDisposed()) {
-			control.setBounds(folder.getClientArea());
+			control.setBounds(folder.getClientAreaInPixels());
 		}
 	}
 }

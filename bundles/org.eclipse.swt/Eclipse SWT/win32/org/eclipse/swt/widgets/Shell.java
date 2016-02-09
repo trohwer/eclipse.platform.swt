@@ -504,8 +504,8 @@ long /*int*/ callWindowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, lo
 
 void center () {
 	if (parent == null) return;
-	Rectangle rect = getBounds ();
-	Rectangle parentRect = display.map (parent, null, parent.getClientArea());
+	Rectangle rect = getBoundsInPixels ();
+	Rectangle parentRect = display.mapInPixels (parent, null, parent.getClientAreaInPixels());
 	int x = Math.max (parentRect.x, parentRect.x + (parentRect.width - rect.width) / 2);
 	int y = Math.max (parentRect.y, parentRect.y + (parentRect.height - rect.height) / 2);
 	Rectangle monitorRect = parent.getMonitor ().getClientArea();
@@ -519,7 +519,7 @@ void center () {
 	} else {
 		y = Math.max (y, monitorRect.y);
 	}
-	setLocation (x, y);
+	setLocationInPixels (x, y);
 }
 
 /**
@@ -931,10 +931,10 @@ public int getAlpha () {
 }
 
 @Override
-public Rectangle getBounds () {
+public Rectangle getBoundsInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
-		if (OS.IsIconic (handle)) return super.getBounds ();
+		if (OS.IsIconic (handle)) return super.getBoundsInPixels ();
 	}
 	RECT rect = new RECT ();
 	OS.GetWindowRect (handle, rect);
@@ -1031,11 +1031,11 @@ public int getImeInputMode () {
 }
 
 @Override
-public Point getLocation () {
+public Point getLocationInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
-			return super.getLocation ();
+			return super.getLocationInPixels ();
 		}
 	}
 	RECT rect = new RECT ();
@@ -1131,10 +1131,10 @@ public Shell getShell () {
 }
 
 @Override
-public Point getSize () {
+public Point getSizeInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
-		if (OS.IsIconic (handle)) return super.getSize ();
+		if (OS.IsIconic (handle)) return super.getSizeInPixels ();
 	}
 	RECT rect = new RECT ();
 	OS.GetWindowRect (handle, rect);
@@ -1576,7 +1576,7 @@ public void setAlpha (int alpha) {
 }
 
 @Override
-void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean defer) {
 	if (fullScreen) setFullScreen (false);
 	/*
 	* Bug in Windows.  When a window has alpha and
@@ -1590,7 +1590,7 @@ void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
 	if ((bits & OS.WS_EX_LAYERED) != 0) {
 		flags &= ~OS.SWP_DRAWFRAME;
 	}
-	super.setBounds (x, y, width, height, flags, false);
+	super.setBoundsInPixels (x, y, width, height, flags, false);
 }
 
 @Override
@@ -1748,12 +1748,12 @@ public void setMinimumSize (int width, int height) {
 	}
 	minWidth = Math.max (widthLimit, width);
 	minHeight = Math.max (heightLimit, height);
-	Point size = getSize ();
+	Point size = getSizeInPixels ();
 	int newWidth = Math.max (size.x, minWidth);
 	int newHeight = Math.max (size.y, minHeight);
 	if (minWidth <= widthLimit) minWidth = SWT.DEFAULT;
 	if (minHeight <= heightLimit) minHeight = SWT.DEFAULT;
-	if (newWidth != size.x || newHeight != size.y) setSize (newWidth, newHeight);
+	if (newWidth != size.x || newHeight != size.y) setSizeInPixels (newWidth, newHeight);
 }
 
 /**
@@ -1840,7 +1840,7 @@ public void setRegion (Region region) {
 	if ((style & SWT.NO_TRIM) == 0) return;
 	if (region != null) {
 		Rectangle bounds = region.getBounds ();
-		setSize (bounds.x + bounds.width, bounds.y + bounds.height);
+		setSizeInPixels (bounds.x + bounds.width, bounds.y + bounds.height);
 	}
 	super.setRegion (region);
 }

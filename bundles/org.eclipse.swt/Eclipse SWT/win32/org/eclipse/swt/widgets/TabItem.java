@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -284,7 +284,7 @@ public void setControl (Control control) {
 		}
 	}
 	if (newControl != null) {
-		newControl.setBounds (parent.getClientArea ());
+		newControl.setBounds (parent.getClientAreaInPixels ());
 		newControl.setVisible (true);
 	}
 	if (oldControl != null && newControl != null && oldControl != newControl)

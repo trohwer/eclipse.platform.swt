@@ -218,7 +218,7 @@ Point computeSize (Control control, boolean flushCache) {
 		wHint = data.width;
 		hHint = data.height;
 	}
-	return control.computeSize (wHint, hHint, flushCache);
+	return control.computeSizeInPixels (wHint, hHint, flushCache);
 }
 
 @Override
@@ -235,7 +235,7 @@ String getName () {
 
 @Override
 protected void layout (Composite composite, boolean flushCache) {
-	Rectangle clientArea = composite.getClientArea ();
+	Rectangle clientArea = composite.getClientAreaInPixels ();
 	if (type == SWT.HORIZONTAL) {
 		layoutHorizontal (composite, true, wrap, clientArea.width, flushCache);
 	} else {
@@ -268,7 +268,7 @@ Point layoutHorizontal (Composite composite, boolean move, boolean wrap, int wid
 	}
 	int clientX = 0, clientY = 0;
 	if (move) {
-		Rectangle rect = composite.getClientArea ();
+		Rectangle rect = composite.getClientAreaInPixels ();
 		clientX = rect.x;
 		clientY = rect.y;
 	}
@@ -302,7 +302,7 @@ Point layoutHorizontal (Composite composite, boolean move, boolean wrap, int wid
 			if (justify || fill || center) {
 				bounds [i] = new Rectangle (childX, childY, childWidth, childHeight);
 			} else {
-				child.setBounds (childX, childY, childWidth, childHeight);
+				child.setBoundsInPixel (childX, childY, childWidth, childHeight);
 			}
 		}
 		x += spacing + childWidth;
@@ -387,7 +387,7 @@ Point layoutVertical (Composite composite, boolean move, boolean wrap, int heigh
 	}
 	int clientX = 0, clientY = 0;
 	if (move) {
-		Rectangle rect = composite.getClientArea ();
+		Rectangle rect = composite.getClientAreaInPixels ();
 		clientX = rect.x;
 		clientY = rect.y;
 	}
@@ -421,7 +421,7 @@ Point layoutVertical (Composite composite, boolean move, boolean wrap, int heigh
 			if (justify || fill || center) {
 				bounds [i] = new Rectangle (childX, childY, childWidth, childHeight);
 			} else {
-				child.setBounds (childX, childY, childWidth, childHeight);
+				child.setBoundsInPixel (childX, childY, childWidth, childHeight);
 			}
 		}
 		y += spacing + childHeight;

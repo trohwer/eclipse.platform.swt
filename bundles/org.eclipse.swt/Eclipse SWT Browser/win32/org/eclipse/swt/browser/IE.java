@@ -417,7 +417,7 @@ public void create(Composite parent, int style) {
 					break;
 				}
 				case SWT.Resize: {
-					frame.setBounds(browser.getClientArea());
+					frame.setBounds(browser.getClientAreaInPixels());
 					break;
 				}
 				case SWT.MouseWheel: {
@@ -1889,7 +1889,7 @@ void handleDOMEvent (OleEvent e) {
 	pVarResult.dispose();
 
 	Point position = new Point(screenX, screenY);
-	position = browser.getDisplay().map(null, browser, position);
+	position = browser.getDisplay().mapInPixels(null, browser, position);
 	newEvent.x = position.x; newEvent.y = position.y;
 
 	rgdispid = event.getIDsOfNames(new String[] { PROPERTY_CTRLKEY });

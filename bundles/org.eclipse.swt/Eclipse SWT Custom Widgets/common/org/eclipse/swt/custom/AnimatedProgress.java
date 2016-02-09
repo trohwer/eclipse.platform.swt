@@ -11,9 +11,9 @@
 package org.eclipse.swt.custom;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
 
 /**
  * A control for showing progress feedback for a long running operation.
@@ -111,7 +111,7 @@ public synchronized void clear(){
 	redraw();
 }
 @Override
-public Point computeSize(int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels(int wHint, int hHint, boolean changed) {
 	checkWidget();
 	Point size = null;
 	if (orientation == SWT.HORIZONTAL) {
@@ -137,7 +137,7 @@ void paint(PaintEvent event) {
 	GC gc = event.gc;
 	Display disp= getDisplay();
 
-	Rectangle rect= getClientArea();
+	Rectangle rect= getClientAreaInPixels();
 	gc.fillRectangle(rect);
 	if (showBorder) {
 		drawBevelRect(gc, rect.x, rect.y, rect.width-1, rect.height-1,
@@ -151,7 +151,7 @@ void paintStripes(GC gc) {
 
 	if (!showStripes) return;
 
-	Rectangle rect= getClientArea();
+	Rectangle rect= getClientAreaInPixels();
 	// Subtracted border painted by paint.
 	rect = new Rectangle(rect.x+2, rect.y+2, rect.width-4, rect.height-4);
 

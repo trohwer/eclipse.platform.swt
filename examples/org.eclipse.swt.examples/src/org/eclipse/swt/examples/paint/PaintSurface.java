@@ -76,7 +76,7 @@ public class PaintSurface {
 		clearStatus();
 
 		/* Set up the drawing surface */
-		Rectangle displayRect = paintCanvas.getDisplay().getClientArea();
+		Rectangle displayRect = paintCanvas.getDisplay().getClientAreaInPixels();
 		imageWidth = displayRect.width;
 		imageHeight = displayRect.height;
 		image = new Image(paintCanvas.getDisplay(), imageWidth, imageHeight);
@@ -145,7 +145,7 @@ public class PaintSurface {
 					}
 					if (paintImage == null) {
 						Display display = getDisplay();
-						Rectangle rect = display.getClientArea();
+						Rectangle rect = display.getClientAreaInPixels();
 						paintImage = new Image(display,
 							Math.max(rect.width, event.width + event.x),
 							Math.max(rect.height, event.height + event.y));

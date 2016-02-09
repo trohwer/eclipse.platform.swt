@@ -281,7 +281,7 @@ int computeWidth (Control control, FormData data, boolean flushCache) {
 
 @Override
 protected void layout (Composite composite, boolean flushCache) {
-	Rectangle rect = composite.getClientArea ();
+	Rectangle rect = composite.getClientAreaInPixels ();
 	int x = rect.x + marginLeft + marginWidth;
 	int y = rect.y + marginTop + marginHeight;
 	int width = Math.max (0, rect.width - marginLeft - 2 * marginWidth - marginRight);
@@ -313,10 +313,10 @@ Point layout (Composite composite, boolean move, int x, int y, int width, int he
 				int trim = 0;
 				//TEMPORARY CODE
 				if (child instanceof Scrollable) {
-					Rectangle rect = ((Scrollable) child).computeTrim (0, 0, 0, 0);
+					Rectangle rect = ((Scrollable) child).computeTrimInPixels (0, 0, 0, 0);
 					trim = rect.width;
 				} else {
-					trim = child.getBorderWidth () * 2;
+					trim = child.getBorderWidthInPixels () * 2;
 				}
 				data.cacheWidth = data.cacheHeight = -1;
 				int currentWidth = Math.max (0, x2 - x1 - trim);

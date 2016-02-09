@@ -216,14 +216,14 @@ private static int checkStyle (int style) {
 	return style;
 }
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget();
-	return table.computeSize (wHint, hHint, changed);
+	return table.computeSizeInPixels (wHint, hHint, changed);
 }
 @Override
-public Rectangle computeTrim (int x, int y, int width, int height) {
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget();
-	return table.computeTrim(x, y, width, height);
+	return table.computeTrimInPixels(x, y, width, height);
 }
 
 /**
@@ -265,8 +265,8 @@ public Color getBackground () {
 	return table.getBackground();
 }
 @Override
-public Rectangle getClientArea () {
-	return table.getClientArea();
+public Rectangle getClientAreaInPixels () {
+	return table.getClientAreaInPixels();
 }
 @Override
 public Color getForeground () {
@@ -301,7 +301,7 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget();
-	return table.getItemHeight();
+	return table.getItemHeightInPixels();
 }
 
 /**
@@ -470,8 +470,8 @@ void onDispose(Event e) {
 }
 
 void onResize(Event e) {
-	Point size = getSize();
-	table.setBounds(0, 0, size.x, size.y);
+	Point size = getSizeInPixels();
+	table.setBoundsInPixel(0, 0, size.x, size.y);
 }
 
 void onSelection(Event e) {

@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class provide a surface for drawing
@@ -196,6 +196,18 @@ void reskinChildren (int flags) {
  * </ul>
  */
 public void scroll (int destX, int destY, int x, int y, int width, int height, boolean all) {
+	destX = DPIUtil.autoScaleUp(destX, getDisplay());
+	destY = DPIUtil.autoScaleUp(destY, getDisplay());
+	x = DPIUtil.autoScaleUp(x, getDisplay());
+	y = DPIUtil.autoScaleUp(y, getDisplay());
+	width = DPIUtil.autoScaleUp(width, getDisplay());
+	height = DPIUtil.autoScaleUp(height, getDisplay());
+	scrollInPixels(destX, destY, x, y, width, height, all);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void scrollInPixels (int destX, int destY, int x, int y, int width, int height, boolean all) {
 	checkWidget ();
 	forceResize ();
 	boolean isFocus = caret != null && caret.isFocusCaret ();
@@ -252,10 +264,10 @@ public void scroll (int destX, int destY, int x, int y, int width, int height, b
 		Control [] children = _getChildren ();
 		for (int i=0; i<children.length; i++) {
 			Control child = children [i];
-			Rectangle rect = child.getBounds ();
+			Rectangle rect = child.getBoundsInPixels ();
 			if (Math.min (x + width, rect.x + rect.width) >= Math.max (x, rect.x) &&
 				Math.min (y + height, rect.y + rect.height) >= Math.max (y, rect.y)) {
-					child.setLocation (rect.x + deltaX, rect.y + deltaY);
+					child.setLocationInPixels (rect.x + deltaX, rect.y + deltaY);
 			}
 		}
 	}

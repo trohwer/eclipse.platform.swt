@@ -2851,7 +2851,7 @@ void initWebBrowserWindows () {
 
 	nsIBaseWindow baseWindow = new nsIBaseWindow (result[0]);
 	result[0] = 0;
-	Rectangle rect = browser.getClientArea ();
+	Rectangle rect = browser.getClientAreaInPixels ();
 	if (rect.isEmpty ()) {
 		rect.width = 1;
 		rect.height = 1;
@@ -3214,7 +3214,7 @@ void navigate (long /*int*/ requestHandle) {
 }
 
 void onResize () {
-	Rectangle rect = browser.getClientArea ();
+	Rectangle rect = browser.getClientAreaInPixels ();
 	int width = Math.max (1, rect.width);
 	int height = Math.max (1, rect.height);
 
@@ -4444,7 +4444,7 @@ int SizeBrowserTo (int aCX, int aCY) {
 	boolean isChrome = (chromeFlags & nsIWebBrowserChrome.CHROME_OPENAS_CHROME) != 0;
 	if (isChrome) {
 		Shell shell = browser.getShell ();
-		shell.setSize (shell.computeSize (size.x, size.y));
+		shell.setSizeInPixels (shell.computeSizeInPixels (size.x, size.y));
 	}
 	return XPCOM.NS_OK;
 }
@@ -4497,18 +4497,18 @@ int SetDimensions (int flags, int x, int y, int cx, int cy) {
 	if ((flags & nsIEmbeddingSiteWindow.DIM_FLAGS_POSITION) != 0) {
 		location = new Point (x, y);
 		if (isChrome) {
-			browser.getShell ().setLocation (x, y);
+			browser.getShell ().setLocationInPixels (x, y);
 		}
 	}
 	if ((flags & nsIEmbeddingSiteWindow.DIM_FLAGS_SIZE_INNER) != 0) {
 		size = new Point (cx, cy);
 		if (isChrome) {
-			browser.setSize (cx, cy);
+			browser.setSizeInPixels (cx, cy);
 		}
 	}
 	if ((flags & nsIEmbeddingSiteWindow.DIM_FLAGS_SIZE_OUTER) != 0) {
 		if (isChrome) {
-			browser.getShell ().setSize (cx, cy);
+			browser.getShell ().setSizeInPixels (cx, cy);
 		}
 	}
 	return XPCOM.NS_OK;
@@ -4516,17 +4516,17 @@ int SetDimensions (int flags, int x, int y, int cx, int cy) {
 
 int GetDimensions (int flags, long /*int*/ x, long /*int*/ y, long /*int*/ cx, long /*int*/ cy) {
 	if ((flags & nsIEmbeddingSiteWindow.DIM_FLAGS_POSITION) != 0) {
-		Point location = browser.getShell ().getLocation ();
+		Point location = browser.getShell ().getLocationInPixels ();
 		if (x != 0) C.memmove (x, new int[] {location.x}, 4); /* PRInt32 */
 		if (y != 0) C.memmove (y, new int[] {location.y}, 4); /* PRInt32 */
 	}
 	if ((flags & nsIEmbeddingSiteWindow.DIM_FLAGS_SIZE_INNER) != 0) {
-		Point size = browser.getSize ();
+		Point size = browser.getSizeInPixels ();
 		if (cx != 0) C.memmove (cx, new int[] {size.x}, 4); /* PRInt32 */
 		if (cy != 0) C.memmove (cy, new int[] {size.y}, 4); /* PRInt32 */
 	}
 	if ((flags & nsIEmbeddingSiteWindow.DIM_FLAGS_SIZE_OUTER) != 0) {
-		Point size = browser.getShell().getSize ();
+		Point size = browser.getShell().getSizeInPixels ();
 		if (cx != 0) C.memmove (cx, new int[] {size.x}, 4); /* PRInt32 */
 		if (cy != 0) C.memmove (cy, new int[] {size.y}, 4); /* PRInt32 */
 	}
@@ -4846,12 +4846,12 @@ int OnShowTooltip (int aXCoords, int aYCoords, long /*int*/ aTipText) {
 	* elements inside an inline frame (IFrame tag).  The workaround is
 	* to position the tooltip based on the mouse cursor location.
 	*/
-	Point point = display.getCursorLocation ();
+	Point point = display.getCursorLocationInPixels ();
 	/* Assuming cursor is 21x21 because this is the size of
 	 * the arrow cursor on Windows
 	 */
 	point.y += 21;
-	tip.setLocation (point);
+	tip.setLocationInPixels (point);
 	tip.pack ();
 	tip.setVisible (true);
 	return XPCOM.NS_OK;
@@ -5146,7 +5146,7 @@ int HandleEvent (long /*int*/ event) {
 	rc = domMouseEvent.GetScreenY (aScreenY);
 	if (rc != XPCOM.NS_OK) error (rc);
 	Point position = new Point (aScreenX[0], aScreenY[0]);
-	position = browser.getDisplay ().map (null, browser, position);
+	position = browser.getDisplay ().mapInPixels (null, browser, position);
 
 	int[] aDetail = new int[1]; /* PRInt32 */
 	rc = domMouseEvent.GetDetail (aDetail);

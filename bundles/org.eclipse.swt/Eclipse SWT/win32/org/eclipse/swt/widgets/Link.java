@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
-import org.eclipse.swt.internal.BidiUtil;
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a selectable
@@ -177,7 +177,7 @@ long /*int*/ callWindowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, lo
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
@@ -223,7 +223,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	}
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	width += border * 2;
 	height += border * 2;
 	return new Point (width, height);
@@ -338,7 +338,7 @@ void initAccessible () {
 
 		@Override
 		public void getLocation (AccessibleControlEvent e) {
-			Rectangle rect = display.map (getParent (), null, getBounds ());
+			Rectangle rect = display.mapInPixels (getParent (), null, getBoundsInPixels ());
 			e.x = rect.x;
 			e.y = rect.y;
 			e.width = rect.width;
@@ -937,7 +937,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 				oldSelectionY = temp;
 			}
 			Rectangle rect = layout.getBounds (oldSelectionX, oldSelectionY);
-			redraw (rect.x, rect.y, rect.width, rect.height, false);
+			redrawInPixels (rect.x, rect.y, rect.width, rect.height, false);
 		}
 		for (int j = 0; j < offsets.length; j++) {
 			Rectangle [] rects = getRectangles (j);
@@ -1011,7 +1011,7 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 					newSelection = temp;
 				}
 				Rectangle rect = layout.getBounds (oldSelection, newSelection);
-				redraw (rect.x, rect.y, rect.width, rect.height, false);
+				redrawInPixels (rect.x, rect.y, rect.width, rect.height, false);
 			}
 		} else {
 			for (int j = 0; j < offsets.length; j++) {

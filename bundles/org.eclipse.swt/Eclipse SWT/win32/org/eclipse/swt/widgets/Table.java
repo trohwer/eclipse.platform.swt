@@ -1464,7 +1464,7 @@ public void clearAll () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (fixScrollWidth) setScrollWidth (null, true);
 	//This code is intentionally commented
@@ -1514,7 +1514,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	width += border * 2;  height += border * 2;
 	if ((style & SWT.V_SCROLL) != 0) {
 		width += OS.GetSystemMetrics (OS.SM_CXVSCROLL);
@@ -2652,6 +2652,13 @@ public int getItemCount () {
  * </ul>
  */
 public int getItemHeight () {
+	return DPIUtil.autoScaleDown(getItemHeightInPixels(), getDisplay());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getItemHeightInPixels () {
 	checkWidget ();
 	if (!painted && hooks (SWT.MeasureItem)) hitTestSelection (0, 0, 0);
 	long /*int*/ empty = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 0, 0);
@@ -4250,7 +4257,7 @@ void setBackgroundTransparent (boolean transparent) {
 }
 
 @Override
-void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean defer) {
 	/*
 	* Bug in Windows.  If the table column widths are adjusted
 	* in WM_SIZE or WM_POSITIONCHANGED using LVM_SETCOLUMNWIDTH
@@ -4267,7 +4274,7 @@ void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
 	* time.
 	*/
 	setDeferResize (true);
-	super.setBounds (x, y, width, height, flags, false);
+	super.setBoundsInPixels (x, y, width, height, flags, false);
 	setDeferResize (false);
 }
 
@@ -5701,7 +5708,7 @@ void updateImages () {
 
 @Override
 void updateMenuLocation (Event event) {
-	Rectangle clientArea = getClientArea ();
+	Rectangle clientArea = getClientAreaInPixels ();
 	int x = clientArea.x, y = clientArea.y;
 	int focusIndex = getFocusIndex ();
 	if (focusIndex != -1) {

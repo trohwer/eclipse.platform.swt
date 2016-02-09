@@ -172,7 +172,7 @@ void openDownloadWindow (final IWebDownload download, String name) {
 	GridData data = new GridData ();
 	Monitor monitor = browser.getMonitor ();
 	int maxWidth = monitor.getBounds ().width / 2;
-	int width = nameLabel.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	int width = nameLabel.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	data.widthHint = Math.min (width, maxWidth);
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;

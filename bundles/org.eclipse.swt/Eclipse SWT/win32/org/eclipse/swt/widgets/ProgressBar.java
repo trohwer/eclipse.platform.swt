@@ -123,9 +123,9 @@ static int checkStyle (int style) {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	int width = border * 2, height = border * 2;
 	if ((style & SWT.HORIZONTAL) != 0) {
 		width += OS.GetSystemMetrics (OS.SM_CXHSCROLL) * 10;

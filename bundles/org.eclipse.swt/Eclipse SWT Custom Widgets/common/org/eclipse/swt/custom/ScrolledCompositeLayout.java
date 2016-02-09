@@ -30,8 +30,8 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 	ScrolledComposite sc = (ScrolledComposite)composite;
 	Point size = new Point(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	if (sc.content != null) {
-		Point preferredSize = sc.content.computeSize(wHint, hHint, flushCache);
-		Point currentSize = sc.content.getSize();
+		Point preferredSize = sc.content.computeSizeInPixels(wHint, hHint, flushCache);
+		Point currentSize = sc.content.getSizeInPixels();
 		size.x = sc.getExpandHorizontal() ? preferredSize.x : currentSize.x;
 		size.y = sc.getExpandVertical() ? preferredSize.y : currentSize.y;
 	}
@@ -55,17 +55,17 @@ protected void layout(Composite composite, boolean flushCache) {
 	ScrollBar hBar = sc.getHorizontalBar();
 	ScrollBar vBar = sc.getVerticalBar();
 	if (hBar != null) {
-		if (hBar.getSize().y >= sc.getSize().y) {
+		if (hBar.getSize().y >= sc.getSizeInPixels().y) {
 			return;
 		}
 	}
 	if (vBar != null) {
-		if (vBar.getSize().x >= sc.getSize().x) {
+		if (vBar.getSize().x >= sc.getSizeInPixels().x) {
 			return;
 		}
 	}
 	inLayout = true;
-	Rectangle contentRect = sc.content.getBounds();
+	Rectangle contentRect = sc.content.getBoundsInPixels();
 	if (!sc.alwaysShowScroll) {
 		boolean hVisible = sc.needHScroll(contentRect, false);
 		boolean vVisible = sc.needVScroll(contentRect, hVisible);
@@ -73,7 +73,7 @@ protected void layout(Composite composite, boolean flushCache) {
 		if (hBar != null) hBar.setVisible(hVisible);
 		if (vBar != null) vBar.setVisible(vVisible);
 	}
-	Rectangle hostRect = sc.getClientArea();
+	Rectangle hostRect = sc.getClientAreaInPixels();
 	if (sc.expandHorizontal) {
 		contentRect.width = Math.max(sc.minWidth, hostRect.width);
 	}
