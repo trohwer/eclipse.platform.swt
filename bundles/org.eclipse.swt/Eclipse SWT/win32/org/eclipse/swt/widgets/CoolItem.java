@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class are selectable user interface
@@ -185,6 +185,8 @@ protected void checkSubclass () {
  */
 public Point computeSize (int wHint, int hHint) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int index = parent.indexOf (this);
 	if (index == -1) return new Point (0, 0);
 	int width = wHint, height = hHint;
@@ -195,7 +197,7 @@ public Point computeSize (int wHint, int hHint) {
 	} else {
 		width += parent.getMargin (index);
 	}
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 @Override
@@ -234,9 +236,9 @@ public Rectangle getBounds () {
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
 	if ((parent.style & SWT.VERTICAL) != 0) {
-		return new Rectangle (rect.top, rect.left, height, width);
+		return DPIUtil.autoScaleDown(new Rectangle (rect.top, rect.left, height, width), getDisplay ());
 	}
-	return new Rectangle (rect.left, rect.top, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, width, height), getDisplay ());
 }
 
 Rectangle getClientArea () {
@@ -384,9 +386,9 @@ public Point getPreferredSize () {
 	OS.SendMessage (hwnd, OS.RB_GETBANDINFO, index, rbBand);
 	int width = rbBand.cxIdeal + parent.getMargin (index);
 	if ((parent.style & SWT.VERTICAL) != 0) {
-		return new Point (rbBand.cyMaxChild, width);
+		return DPIUtil.autoScaleDown(new Point (rbBand.cyMaxChild, width), getDisplay ());
 	}
-	return new Point (width, rbBand.cyMaxChild);
+	return DPIUtil.autoScaleDown(new Point (width, rbBand.cyMaxChild), getDisplay ());
 }
 
 /**
@@ -402,6 +404,8 @@ public Point getPreferredSize () {
  */
 public void setPreferredSize (int width, int height) {
 	checkWidget ();
+	width = DPIUtil.autoScaleUp (width, getDisplay ());
+	height = DPIUtil.autoScaleUp (height, getDisplay ());
 	int index = parent.indexOf (this);
 	if (index == -1) return;
 	width = Math.max (0, width);
@@ -482,9 +486,9 @@ public Point getSize() {
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
 	if ((parent.style & SWT.VERTICAL) != 0) {
-		return new Point (height, width);
+		return DPIUtil.autoScaleDown(new Point (height, width), getDisplay ());
 	}
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 /**
@@ -505,6 +509,8 @@ public Point getSize() {
  */
 public void setSize (int width, int height) {
 	checkWidget ();
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
 	int index = parent.indexOf (this);
 	if (index == -1) return;
 	width = Math.max (0, width);
@@ -594,9 +600,9 @@ public Point getMinimumSize () {
 	rbBand.fMask = OS.RBBIM_CHILDSIZE;
 	OS.SendMessage (hwnd, OS.RB_GETBANDINFO, index, rbBand);
 	if ((parent.style & SWT.VERTICAL) != 0) {
-		return new Point (rbBand.cyMinChild, rbBand.cxMinChild);
+		return DPIUtil.autoScaleDown(new Point (rbBand.cyMinChild, rbBand.cxMinChild), getDisplay ());
 	}
-	return new Point (rbBand.cxMinChild, rbBand.cyMinChild);
+	return DPIUtil.autoScaleDown(new Point (rbBand.cxMinChild, rbBand.cyMinChild), getDisplay ());
 }
 
 /**
@@ -615,6 +621,8 @@ public Point getMinimumSize () {
  */
 public void setMinimumSize (int width, int height) {
 	checkWidget ();
+	width = DPIUtil.autoScaleUp (width, getDisplay ());
+	height = DPIUtil.autoScaleUp (height, getDisplay ());
 	int index = parent.indexOf (this);
 	if (index == -1) return;
 	width = Math.max (0, width);

@@ -14,7 +14,7 @@ package org.eclipse.swt.widgets;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -667,6 +667,8 @@ public void clearSelection () {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int height = 0, width = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 		long /*int*/ newFont, oldFont = 0;
@@ -709,6 +711,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
+	width = DPIUtil.autoScaleDown(width, getDisplay ());
+	height = DPIUtil.autoScaleDown(height, getDisplay ());
 	Rectangle trim = computeTrim (0, 0, width, height);
 	return new Point (trim.width, trim.height);
 }
@@ -717,6 +721,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle rect = super.computeTrim (x, y, width, height);
+	rect = DPIUtil.autoScaleUp(rect, getDisplay ());
 	/*
 	* The preferred height of a single-line text widget
 	* has been hand-crafted to be the same height as
@@ -733,7 +738,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 		rect.width += 2;
 		rect.height += 2;
 	}
-	return rect;
+	return DPIUtil.autoScaleDown(rect, getDisplay ());
 }
 
 /**
@@ -907,7 +912,7 @@ public int getBorderWidth () {
 //	if ((style & SWT.BORDER) != 0 && (style & SWT.FLAT) != 0) {
 //		return OS.GetSystemMetrics (OS.SM_CXBORDER);
 //	}
-	return super.getBorderWidth ();
+	return DPIUtil.autoScaleDown(super.getBorderWidth (), getDisplay ());
 }
 
 /**
@@ -982,7 +987,7 @@ public Point getCaretLocation () {
 			OS.SendMessage (handle, OS.EM_SETSEL, start [0], end [0]);
 		}
 	}
-	return new Point (OS.GET_X_LPARAM (caretPos), OS.GET_Y_LPARAM (caretPos));
+	return DPIUtil.autoScaleDown(new Point (OS.GET_X_LPARAM (caretPos), OS.GET_Y_LPARAM (caretPos)), getDisplay ());
 }
 
 /**
@@ -1177,7 +1182,7 @@ public int getLineHeight () {
 	OS.GetTextMetrics (hDC, tm);
 	if (newFont != 0) OS.SelectObject (hDC, oldFont);
 	OS.ReleaseDC (handle, hDC);
-	return tm.tmHeight;
+	return DPIUtil.autoScaleDown(tm.tmHeight, getDisplay ());
 }
 
 /**
@@ -1892,6 +1897,7 @@ boolean sendKeyEvent (int type, int msg, long /*int*/ wParam, long /*int*/ lPara
 
 @Override
 void setBounds (int x, int y, int width, int height, int flags) {
+	// AutoScaleUp happens in super.setBounds
 	/*
 	* Feature in Windows.  When the caret is moved,
 	* the text widget scrolls to show the new location.
@@ -1916,6 +1922,10 @@ void setBounds (int x, int y, int width, int height, int flags) {
 			int [] start = new int [1], end = new int [1];
 			OS.SendMessage (handle, OS.EM_GETSEL, start, end);
 			if (start [0] != 0 || end [0] != 0) {
+				x = DPIUtil.autoScaleUp(x, getDisplay ());
+				y = DPIUtil.autoScaleUp(y, getDisplay ());
+				width = DPIUtil.autoScaleUp(width, getDisplay ());
+				height = DPIUtil.autoScaleUp(height, getDisplay ());
 				SetWindowPos (handle, 0, x, y, width, height, flags);
 				OS.SendMessage (handle, OS.EM_SETSEL, 0, 0);
 				OS.SendMessage (handle, OS.EM_SETSEL, start [0], end [0]);

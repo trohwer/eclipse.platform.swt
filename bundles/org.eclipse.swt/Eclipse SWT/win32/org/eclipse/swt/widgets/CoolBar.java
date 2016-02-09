@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class provide an area for dynamically
@@ -143,10 +143,12 @@ protected void checkSubclass () {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int width = 0, height = 0;
 	int border = getBorderWidth ();
-	int newWidth = wHint == SWT.DEFAULT ? 0x3FFF : wHint + (border * 2);
-	int newHeight = hHint == SWT.DEFAULT ? 0x3FFF : hHint + (border * 2);
+	int newWidth = wHint == SWT.DEFAULT ? DPIUtil.autoScaleUp(0x3FFF, getDisplay()) : wHint + (border * 2);
+	int newHeight = hHint == SWT.DEFAULT ? DPIUtil.autoScaleUp(0x3FFF, getDisplay()) : hHint + (border * 2);
 	int count = (int)/*64*/OS.SendMessage (handle, OS.RB_GETBANDCOUNT, 0, 0);
 	if (count != 0) {
 		ignoreResize = true;
@@ -207,7 +209,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (hHint != SWT.DEFAULT) height = hHint;
 	height += border * 2;
 	width += border * 2;
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 @Override
@@ -584,6 +586,9 @@ public Point [] getItemSizes () {
 			sizes [i] = new Point (rect.right - rect.left, rbBand.cyChild);
 		}
 	}
+	for (int i = 0; i < sizes.length; i++) {
+		sizes [i] = DPIUtil.autoScaleDown(sizes [i], getDisplay ());
+	}
 	return sizes;
 }
 
@@ -905,6 +910,9 @@ void setItemOrder (int [] itemOrder) {
  */
 void setItemSizes (Point [] sizes) {
 	if (sizes == null) error (SWT.ERROR_NULL_ARGUMENT);
+	for (int i = 0; i < sizes.length; i++) {
+		sizes [i] = DPIUtil.autoScaleUp(sizes [i], getDisplay ());
+	}
 	int count = (int)/*64*/OS.SendMessage (handle, OS.RB_GETBANDCOUNT, 0, 0);
 	if (sizes.length != count) error (SWT.ERROR_INVALID_ARGUMENT);
 	REBARBANDINFO rbBand = new REBARBANDINFO ();

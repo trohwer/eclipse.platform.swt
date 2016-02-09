@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * This class is the abstract superclass of all classes which
@@ -116,6 +116,10 @@ long /*int*/ callWindowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, lo
  */
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
+	x = DPIUtil.autoScaleUp (x, getDisplay ());
+	y = DPIUtil.autoScaleUp (y, getDisplay ());
+	width = DPIUtil.autoScaleUp (width, getDisplay ());
+	height = DPIUtil.autoScaleUp (height, getDisplay ());
 	long /*int*/ scrolledHandle = scrolledHandle ();
 	RECT rect = new RECT ();
 	OS.SetRect (rect, x, y, x + width, y + height);
@@ -125,7 +129,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	if (horizontalBar != null) rect.bottom += OS.GetSystemMetrics (OS.SM_CYHSCROLL);
 	if (verticalBar != null) rect.right += OS.GetSystemMetrics (OS.SM_CXVSCROLL);
 	int nWidth = rect.right - rect.left, nHeight = rect.bottom - rect.top;
-	return new Rectangle (rect.left, rect.top, nWidth, nHeight);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, nWidth, nHeight), getDisplay ());
 }
 
 ScrollBar createScrollBar (int type) {
@@ -207,7 +211,7 @@ public Rectangle getClientArea () {
 		x = -rect.left;
 		y = -rect.top;
 	}
-	return new Rectangle (x, y, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (x, y, width, height), getDisplay ());
 }
 
 /**

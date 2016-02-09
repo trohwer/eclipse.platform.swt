@@ -13,7 +13,7 @@ package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -131,6 +131,8 @@ static int checkStyle (int style) {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int width = 0, height = 0, border = getBorderWidth ();
 	if ((style & SWT.SEPARATOR) != 0) {
 		int lineWidth = OS.GetSystemMetrics (OS.SM_CXBORDER);
@@ -142,7 +144,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		if (wHint != SWT.DEFAULT) width = wHint;
 		if (hHint != SWT.DEFAULT) height = hHint;
 		width += border * 2; height += border * 2;
-		return new Point (width, height);
+		return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 	}
 	int bits = OS.GetWindowLong (handle, OS.GWL_STYLE);
 	boolean drawText = true;
@@ -195,7 +197,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	* this trim.
 	*/
 	if (OS.IsWinCE && !drawImage) width += 2;
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 @Override

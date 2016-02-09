@@ -351,7 +351,10 @@ Control computeTabRoot () {
 @Override
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
-
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
 	/* Get the size of the trimmings */
 	RECT rect = new RECT ();
 	OS.SetRect (rect, x, y, x + width, y + height);
@@ -376,7 +379,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 			OS.SendMessage (handle, OS.WM_NCCALCSIZE, 0, testRect);
 		}
 	}
-	return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top), getDisplay ());
 }
 
 void createAccelerators () {
@@ -655,9 +658,9 @@ public Point getLocation () {
 			lpwndpl.length = WINDOWPLACEMENT.sizeof;
 			OS.GetWindowPlacement (handle, lpwndpl);
 			if ((lpwndpl.flags & OS.WPF_RESTORETOMAXIMIZED) != 0) {
-				return new Point (maxRect.left, maxRect.top);
+				return DPIUtil.autoScaleDown(new Point (maxRect.left, maxRect.top), getDisplay ());
 			}
-			return new Point (lpwndpl.left, lpwndpl.top);
+			return DPIUtil.autoScaleDown(new Point (lpwndpl.left, lpwndpl.top), getDisplay ());
 		}
 	}
 	return super.getLocation ();
@@ -737,11 +740,11 @@ public Point getSize () {
 			if ((lpwndpl.flags & OS.WPF_RESTORETOMAXIMIZED) != 0) {
 				int width = maxRect.right - maxRect.left;
 				int height = maxRect.bottom - maxRect.top;
-				return new Point (width, height);
+				return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 			}
 			int width = lpwndpl.right - lpwndpl.left;
 			int height = lpwndpl.bottom - lpwndpl.top;
-			return new Point (width, height);
+			return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 		}
 	}
 	return super.getSize ();
@@ -872,6 +875,10 @@ void saveFocus () {
 
 @Override
 void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+	x = DPIUtil.autoScaleUp (x, getDisplay ());
+	y = DPIUtil.autoScaleUp (y, getDisplay ());
+	width = DPIUtil.autoScaleUp (width, getDisplay());
+	height = DPIUtil.autoScaleUp (height, getDisplay());
 	swFlags = OS.SW_SHOWNOACTIVATE;
 	if (OS.IsWinCE) {
 		swFlags = OS.SW_RESTORE;
@@ -902,6 +909,10 @@ void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
 			return;
 		}
 	}
+	x = DPIUtil.autoScaleDown (x, getDisplay ());
+	y = DPIUtil.autoScaleDown (y, getDisplay ());
+	width = DPIUtil.autoScaleDown (width, getDisplay());
+	height = DPIUtil.autoScaleDown (height, getDisplay());
 	super.setBounds (x, y, width, height, flags, defer);
 }
 

@@ -940,7 +940,7 @@ public Rectangle getBounds () {
 	OS.GetWindowRect (handle, rect);
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
-	return new Rectangle (rect.left, rect.top, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, width, height), getDisplay ());
 }
 
 ToolTip getCurrentToolTip () {
@@ -1040,7 +1040,7 @@ public Point getLocation () {
 	}
 	RECT rect = new RECT ();
 	OS.GetWindowRect (handle, rect);
-	return new Point (rect.left, rect.top);
+	return DPIUtil.autoScaleDown(new Point (rect.left, rect.top), getDisplay ());
 }
 
 @Override
@@ -1140,7 +1140,7 @@ public Point getSize () {
 	OS.GetWindowRect (handle, rect);
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 /**

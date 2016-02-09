@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of the receiver represent a selectable user interface object
@@ -129,6 +129,8 @@ static int checkStyle (int style) {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int border = getBorderWidth ();
 	int width = border * 2, height = border * 2;
 	if ((style & SWT.HORIZONTAL) != 0) {
@@ -138,11 +140,15 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	}
 	if (wHint != SWT.DEFAULT) width = wHint + (border * 2);
 	if (hHint != SWT.DEFAULT) height = hHint + (border * 2);
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 void drawBand (int x, int y, int width, int height) {
 	if ((style & SWT.SMOOTH) != 0) return;
+	x = DPIUtil.autoScaleUp (x, getDisplay ());
+	y = DPIUtil.autoScaleUp (y, getDisplay ());
+	width = DPIUtil.autoScaleUp (width, getDisplay ());
+	height = DPIUtil.autoScaleUp (height, getDisplay ());
 	long /*int*/ hwndTrack = parent.handle;
 	byte [] bits = {-86, 0, 85, 0, -86, 0, 85, 0, -86, 0, 85, 0, -86, 0, 85, 0};
 	long /*int*/ stippleBitmap = OS.CreateBitmap (8, 8, 1, 1, bits);

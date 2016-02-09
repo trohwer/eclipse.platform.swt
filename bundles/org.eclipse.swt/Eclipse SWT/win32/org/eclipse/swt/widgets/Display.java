@@ -1086,7 +1086,7 @@ static long /*int*/ create32bitDIB (long /*int*/ hBitmap, int alpha, byte [] alp
 
 static Image createIcon (Image image) {
 	Device device = image.getDevice ();
-	ImageData data = image.getImageData ();
+	ImageData data = image.getImageData (device.getDeviceZoom ());
 	if (data.alpha == -1 && data.alphaData == null) {
 		ImageData mask = data.getTransparencyMask ();
 		return new Image (device, data, mask);
@@ -1586,13 +1586,13 @@ public Rectangle getClientArea () {
 		OS.SystemParametersInfo (OS.SPI_GETWORKAREA, 0, rect, 0);
 		int width = rect.right - rect.left;
 		int height = rect.bottom - rect.top;
-		return new Rectangle (rect.left, rect.top, width, height);
+		return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, width, height), this);
 	}
 	int x = OS.GetSystemMetrics (OS.SM_XVIRTUALSCREEN);
 	int y = OS.GetSystemMetrics (OS.SM_YVIRTUALSCREEN);
 	int width = OS.GetSystemMetrics (OS.SM_CXVIRTUALSCREEN);
 	int height = OS.GetSystemMetrics (OS.SM_CYVIRTUALSCREEN);
-	return new Rectangle (x, y, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (x, y, width, height), this);
 }
 
 Control getControl (long /*int*/ handle) {
@@ -1662,7 +1662,7 @@ public Point getCursorLocation () {
 	checkDevice ();
 	POINT pt = new POINT ();
 	OS.GetCursorPos (pt);
-	return new Point (pt.x, pt.y);
+	return DPIUtil.autoScaleDown(new Point (pt.x, pt.y), this);
 }
 
 /**
@@ -2995,10 +2995,10 @@ public Point map (Control from, Control to, int x, int y) {
 	long /*int*/ hwndFrom = from != null ? from.handle : 0;
 	long /*int*/ hwndTo = to != null ? to.handle : 0;
 	POINT point = new POINT ();
-	point.x = x;
-	point.y = y;
+	point.x = DPIUtil.autoScaleUp(x, this);
+	point.y = DPIUtil.autoScaleUp(y, this);
 	OS.MapWindowPoints (hwndFrom, hwndTo, point, 1);
-	return new Point (point.x, point.y);
+	return DPIUtil.autoScaleDown(new Point (point.x, point.y), this);
 }
 
 /**
@@ -3089,12 +3089,12 @@ public Rectangle map (Control from, Control to, int x, int y, int width, int hei
 	long /*int*/ hwndFrom = from != null ? from.handle : 0;
 	long /*int*/ hwndTo = to != null ? to.handle : 0;
 	RECT rect = new RECT ();
-	rect.left = x;
-	rect.top  = y;
-	rect.right = x + width;
-	rect.bottom = y + height;
+	rect.left = DPIUtil.autoScaleUp(x, this);
+	rect.top  = DPIUtil.autoScaleUp(y, this);
+	rect.right = DPIUtil.autoScaleUp(x + width, this);
+	rect.bottom = DPIUtil.autoScaleUp(y + height, this);
 	OS.MapWindowPoints (hwndFrom, hwndTo, rect, 2);
-	return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top), this);
 }
 
 /*
