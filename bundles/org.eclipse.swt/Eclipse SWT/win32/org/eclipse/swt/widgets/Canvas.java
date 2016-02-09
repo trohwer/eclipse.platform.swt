@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class provide a surface for drawing
@@ -197,6 +197,12 @@ void reskinChildren (int flags) {
  */
 public void scroll (int destX, int destY, int x, int y, int width, int height, boolean all) {
 	checkWidget ();
+	destX = DPIUtil.autoScaleUp(destX, getDisplay());
+	destY = DPIUtil.autoScaleUp(destY, getDisplay());
+	x = DPIUtil.autoScaleUp(x, getDisplay());
+	y = DPIUtil.autoScaleUp(y, getDisplay());
+	width = DPIUtil.autoScaleUp(width, getDisplay());
+	height = DPIUtil.autoScaleUp(height, getDisplay());
 	forceResize ();
 	boolean isFocus = caret != null && caret.isFocusCaret ();
 	if (isFocus) caret.killFocus ();

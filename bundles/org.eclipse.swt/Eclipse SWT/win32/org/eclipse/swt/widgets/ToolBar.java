@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class support the layout of selectable
@@ -191,6 +191,8 @@ protected void checkSubclass () {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int width = 0, height = 0;
 	if ((style & SWT.VERTICAL) != 0) {
 		RECT rect = new RECT ();
@@ -246,6 +248,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
+	width = DPIUtil.autoScaleDown (width, getDisplay ());
+	height = DPIUtil.autoScaleDown (height, getDisplay ());
 	Rectangle trim = computeTrim (0, 0, width, height);
 	width = trim.width;  height = trim.height;
 	return new Point (width, height);
@@ -255,9 +259,10 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle trim = super.computeTrim (x, y, width, height);
+	trim = DPIUtil.autoScaleUp(trim, getDisplay ());
 	int bits = OS.GetWindowLong (handle, OS.GWL_STYLE);
 	if ((bits & OS.CCS_NODIVIDER) == 0) trim.height += 2;
-	return trim;
+	return DPIUtil.autoScaleDown(trim, getDisplay ());
 }
 
 @Override

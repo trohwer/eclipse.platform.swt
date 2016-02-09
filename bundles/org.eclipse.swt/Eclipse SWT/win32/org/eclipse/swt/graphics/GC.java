@@ -73,7 +73,6 @@ public final class GC extends Resource {
 
 	Drawable drawable;
 	GCData data;
-	boolean autoScaleEnabled;
 
 	static final int FOREGROUND = 1 << 0;
 	static final int BACKGROUND = 1 << 1;
@@ -170,7 +169,6 @@ public GC(Drawable drawable, int style) {
 	if (device == null) device = Device.getDevice();
 	if (device == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.device = data.device = device;
-	this.autoScaleEnabled = DPIUtil.getAutoScale ();
 	init (drawable, data, hDC);
 	init();
 }
@@ -500,7 +498,12 @@ public void copyArea(int srcX, int srcY, int width, int height, int destX, int d
  */
 public void copyArea(int srcX, int srcY, int width, int height, int destX, int destY, boolean paint) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-
+	srcX = DPIUtil.autoScaleUp(srcX, device);
+	srcY = DPIUtil.autoScaleUp(srcY, device);
+	width = DPIUtil.autoScaleUp(width, device);
+	height = DPIUtil.autoScaleUp(height, device);
+	destX = DPIUtil.autoScaleUp(destX, device);
+	destY = DPIUtil.autoScaleUp(destY, device);
 	/*
 	* Feature in WinCE.  The function WindowFromDC is not part of the
 	* WinCE SDK.  The fix is to remember the HWND.
@@ -1939,12 +1942,10 @@ public void drawPolyline(int[] pointArray) {
  */
 public void drawRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		x = DPIUtil.autoScaleUp (x, device);
-		y = DPIUtil.autoScaleUp (y, device);
-		width = DPIUtil.autoScaleUp (width, device);
-		height = DPIUtil.autoScaleUp (height, device);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -3067,12 +3068,10 @@ public void fillPolygon(int[] pointArray) {
  */
 public void fillRectangle (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (autoScaleEnabled) {
-		x = DPIUtil.autoScaleUp (x, device);
-		y = DPIUtil.autoScaleUp (y, device);
-		width = DPIUtil.autoScaleUp (width, device);
-		height = DPIUtil.autoScaleUp (height, device);
-	}
+	x = DPIUtil.autoScaleUp (x, device);
+	y = DPIUtil.autoScaleUp (y, device);
+	width = DPIUtil.autoScaleUp (width, device);
+	height = DPIUtil.autoScaleUp (height, device);
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		if (width < 0) {
@@ -3236,7 +3235,7 @@ public int getAdvanceWidth(char ch) {
 	if (OS.IsWinCE) {
 		SIZE size = new SIZE();
 		OS.GetTextExtentPoint32W(handle, new char[]{ch}, 1, size);
-		return size.cx;
+		return DPIUtil.autoScaleDown(size.cx, getDevice ());
 	}
 	int tch = ch;
 	if (ch > 0x7F) {
@@ -3245,7 +3244,7 @@ public int getAdvanceWidth(char ch) {
 	}
 	int[] width = new int[1];
 	OS.GetCharWidth(handle, tch, tch, width);
-	return width[0];
+	return DPIUtil.autoScaleDown(width[0], getDevice ());
 }
 
 /**
@@ -3388,7 +3387,7 @@ public int getCharWidth(char ch) {
 		}
 		int[] width = new int[3];
 		if (OS.GetCharABCWidths(handle, tch, tch, width)) {
-			return width[1];
+			return DPIUtil.autoScaleDown(width[1], getDevice ());
 		}
 	}
 
@@ -3397,7 +3396,7 @@ public int getCharWidth(char ch) {
 	OS.GetTextMetrics(handle, lptm);
 	SIZE size = new SIZE();
 	OS.GetTextExtentPoint32W(handle, new char[]{ch}, 1, size);
-	return size.cx - lptm.tmOverhang;
+	return DPIUtil.autoScaleDown(size.cx - lptm.tmOverhang, getDevice ());
 }
 
 /**
@@ -3420,11 +3419,11 @@ public Rectangle getClipping() {
 		Gdip.Graphics_SetPixelOffsetMode(gdipGraphics, Gdip.PixelOffsetModeNone);
 		Gdip.Graphics_GetVisibleClipBounds(gdipGraphics, rect);
 		Gdip.Graphics_SetPixelOffsetMode(gdipGraphics, Gdip.PixelOffsetModeHalf);
-		return new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+		return DPIUtil.autoScaleDown(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height), getDevice ());
 	}
 	RECT rect = new RECT();
 	OS.GetClipBox(handle, rect);
-	return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+	return DPIUtil.autoScaleDown(new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top), getDevice ());
 }
 
 /**
@@ -4341,6 +4340,10 @@ void setClipping(long /*int*/ clipRgn) {
  */
 public void setClipping (int x, int y, int width, int height) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	x = DPIUtil.autoScaleUp(x, getDevice ());
+	y = DPIUtil.autoScaleUp(y, getDevice ());
+	width = DPIUtil.autoScaleUp(width, getDevice ());
+	height = DPIUtil.autoScaleUp(height, getDevice ());
 	long /*int*/ hRgn = OS.CreateRectRgn(x, y, x + width, y + height);
 	setClipping(hRgn);
 	OS.DeleteObject(hRgn);
@@ -4399,6 +4402,7 @@ public void setClipping (Path path) {
  */
 public void setClipping (Rectangle rect) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	rect = DPIUtil.autoScaleUp(rect, getDevice ());
 	if (rect == null) {
 		setClipping(0);
 	} else {
@@ -5010,19 +5014,19 @@ public Point stringExtent(String string) {
 	if (gdipGraphics != 0) {
 		Point size = new Point(0, 0);
 		drawText(gdipGraphics, string, 0, 0, 0, size);
-		return size;
+		return DPIUtil.autoScaleDown(size, getDevice ());
 	}
 	SIZE size = new SIZE();
 	if (length == 0) {
 //		OS.GetTextExtentPoint32(handle, SPACE, SPACE.length(), size);
 		OS.GetTextExtentPoint32W(handle, new char[]{' '}, 1, size);
-		return new Point(0, size.cy);
+		return DPIUtil.autoScaleDown(new Point(0, size.cy), getDevice ());
 	} else {
 //		TCHAR buffer = new TCHAR (getCodePage(), string, false);
 		char[] buffer = new char [length];
 		string.getChars(0, length, buffer, 0);
 		OS.GetTextExtentPoint32W(handle, buffer, length, size);
-		return new Point(size.cx, size.cy);
+		return DPIUtil.autoScaleDown(new Point(size.cx, size.cy), getDevice ());
 	}
 }
 
@@ -5088,13 +5092,13 @@ public Point textExtent(String string, int flags) {
 	if (gdipGraphics != 0) {
 		Point size = new Point(0, 0);
 		drawText(gdipGraphics, string, 0, 0, flags, size);
-		return size;
+		return DPIUtil.autoScaleDown(size, getDevice ());
 	}
 	if (string.length () == 0) {
 		SIZE size = new SIZE();
 //		OS.GetTextExtentPoint32(handle, SPACE, SPACE.length(), size);
 		OS.GetTextExtentPoint32W(handle, new char [] {' '}, 1, size);
-		return new Point(0, size.cy);
+		return DPIUtil.autoScaleDown(new Point(0, size.cy), getDevice ());
 	}
 	RECT rect = new RECT();
 	TCHAR buffer = new TCHAR(getCodePage(), string, false);
@@ -5103,7 +5107,7 @@ public Point textExtent(String string, int flags) {
 	if ((flags & SWT.DRAW_TAB) != 0) uFormat |= OS.DT_EXPANDTABS;
 	if ((flags & SWT.DRAW_MNEMONIC) == 0) uFormat |= OS.DT_NOPREFIX;
 	OS.DrawText(handle, buffer, buffer.length(), rect, uFormat);
-	return new Point(rect.right, rect.bottom);
+	return DPIUtil.autoScaleDown(new Point(rect.right, rect.bottom), getDevice ());
 }
 
 /**

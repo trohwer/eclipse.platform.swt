@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class provide a selectable user interface object
@@ -3270,7 +3270,8 @@ int getItemCount (long /*int*/ hItem) {
  */
 public int getItemHeight () {
 	checkWidget ();
-	return (int)/*64*/OS.SendMessage (handle, OS.TVM_GETITEMHEIGHT, 0, 0);
+	int itemHeight = (int)/*64*/OS.SendMessage (handle, OS.TVM_GETITEMHEIGHT, 0, 0);
+	return DPIUtil.autoScaleDown(itemHeight, getDisplay ());
 }
 
 /**

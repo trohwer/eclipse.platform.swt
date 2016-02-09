@@ -230,6 +230,8 @@ Widget [] computeTabList () {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	display.runSkin ();
 	Point size;
 	if (layout != null) {
@@ -247,6 +249,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	}
 	if (wHint != SWT.DEFAULT) size.x = wHint;
 	if (hHint != SWT.DEFAULT) size.y = hHint;
+	size = DPIUtil.autoScaleDown(size, getDisplay ());
 	Rectangle trim = computeTrim (0, 0, size.x, size.y);
 	return new Point (trim.width, trim.height);
 }
@@ -1072,6 +1075,7 @@ public void setBackgroundMode (int mode) {
 
 @Override
 void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+	// AutoScaleUp taken care by super.setBounds
 	if (display.resizeCount > Display.RESIZE_LIMIT) {
 		defer = false;
 	}

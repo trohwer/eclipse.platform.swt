@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class support the layout of selectable
@@ -130,6 +130,8 @@ static int checkStyle (int style) {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int height = 0, width = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 		if (itemCount > 0) {
@@ -175,6 +177,8 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
+	width = DPIUtil.autoScaleDown(width, getDisplay ());
+	height = DPIUtil.autoScaleDown(height, getDisplay ());
 	Rectangle trim = computeTrim (0, 0, width, height);
 	return new Point (trim.width, trim.height);
 }

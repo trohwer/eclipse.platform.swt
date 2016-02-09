@@ -14,7 +14,7 @@ package org.eclipse.swt.widgets;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -218,6 +218,8 @@ static int checkStyle (int style) {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int width = 0, height = 0;
 	if (wHint == SWT.DEFAULT) {
 		if ((style & SWT.H_SCROLL) != 0) {
@@ -268,7 +270,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if ((style & SWT.H_SCROLL) != 0) {
 		height += OS.GetSystemMetrics (OS.SM_CYHSCROLL);
 	}
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 @Override
@@ -479,7 +481,7 @@ public int getItemHeight () {
 	checkWidget ();
 	int result = (int)/*64*/OS.SendMessage (handle, OS.LB_GETITEMHEIGHT, 0, 0);
 	if (result == OS.LB_ERR) error (SWT.ERROR_CANNOT_GET_ITEM_HEIGHT);
-	return result;
+	return DPIUtil.autoScaleDown(result, getDisplay ());
 }
 
 /**

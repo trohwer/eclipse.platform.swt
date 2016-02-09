@@ -2656,7 +2656,8 @@ public int getItemHeight () {
 	if (!painted && hooks (SWT.MeasureItem)) hitTestSelection (0, 0, 0);
 	long /*int*/ empty = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 0, 0);
 	long /*int*/ oneItem = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 1, 0);
-	return OS.HIWORD (oneItem) - OS.HIWORD (empty);
+	int itemHeight = OS.HIWORD (oneItem) - OS.HIWORD (empty);
+	return DPIUtil.autoScaleDown(itemHeight, getDisplay ());
 }
 
 /**

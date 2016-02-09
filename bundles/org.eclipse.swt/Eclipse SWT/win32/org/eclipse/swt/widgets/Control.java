@@ -657,6 +657,8 @@ public Point computeSize (int wHint, int hHint) {
  */
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	int width = DEFAULT_WIDTH;
 	int height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
@@ -664,7 +666,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	int border = getBorderWidth ();
 	width += border * 2;
 	height += border * 2;
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 Widget computeTabGroup () {
@@ -1226,7 +1228,7 @@ public int getBorderWidth () {
 	if ((bits1 & OS.WS_EX_CLIENTEDGE) != 0) return OS.GetSystemMetrics (OS.SM_CXEDGE);
 	if ((bits1 & OS.WS_EX_STATICEDGE) != 0) return OS.GetSystemMetrics (OS.SM_CXBORDER);
 	int bits2 = OS.GetWindowLong (borderHandle, OS.GWL_STYLE);
-	if ((bits2 & OS.WS_BORDER) != 0) return OS.GetSystemMetrics (OS.SM_CXBORDER);
+	if ((bits2 & OS.WS_BORDER) != 0) return DPIUtil.autoScaleDown(OS.GetSystemMetrics (OS.SM_CXBORDER), getDisplay ());
 	return 0;
 }
 
@@ -1252,7 +1254,7 @@ public Rectangle getBounds () {
 	OS.MapWindowPoints (0, hwndParent, rect, 2);
 	int width = rect.right - rect.left;
 	int height =  rect.bottom - rect.top;
-	return new Rectangle (rect.left, rect.top, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, width, height), getDisplay ());
 }
 
 int getCodePage () {
@@ -1424,7 +1426,7 @@ public Point getLocation () {
 	OS.GetWindowRect (topHandle (), rect);
 	long /*int*/ hwndParent = parent == null ? 0 : parent.handle;
 	OS.MapWindowPoints (0, hwndParent, rect, 2);
-	return new Point (rect.left, rect.top);
+	return DPIUtil.autoScaleDown(new Point (rect.left, rect.top), getDisplay ());
 }
 
 /**
@@ -1592,7 +1594,7 @@ public Point getSize () {
 	OS.GetWindowRect (topHandle (), rect);
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
-	return new Point (width, height);
+	return DPIUtil.autoScaleDown(new Point (width, height), getDisplay ());
 }
 
 /**
@@ -2427,6 +2429,10 @@ void redraw (boolean all) {
  */
 public void redraw (int x, int y, int width, int height, boolean all) {
 	checkWidget ();
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
 	if (width <= 0 || height <= 0) return;
 	if (!OS.IsWindowVisible (handle)) return;
 	RECT rect = new RECT ();
@@ -3166,6 +3172,10 @@ void setBounds (int x, int y, int width, int height, int flags) {
 }
 
 void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
 	if (findImageControl () != null) {
 		if (backgroundImage == null) flags |= OS.SWP_NOCOPYBITS;
 	} else {

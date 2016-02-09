@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.BidiUtil;
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class provide an etched border
@@ -155,6 +155,7 @@ protected void checkSubclass () {
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	Point size = super.computeSize (wHint, hHint, changed);
+	size = DPIUtil.autoScaleUp(size, getDisplay ());
 	int length = text.length ();
 	if (length != 0) {
 		String string = fixText (false);
@@ -176,13 +177,14 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		int offsetY = OS.COMCTL32_MAJOR >= 6 && OS.IsAppThemed () ? 0 : 1;
 		size.x = Math.max (size.x, rect.right - rect.left + CLIENT_INSET * 6 + offsetY);
 	}
-	return size;
+	return DPIUtil.autoScaleDown(size, getDisplay ());
 }
 
 @Override
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle trim = super.computeTrim (x, y, width, height);
+	trim = DPIUtil.autoScaleUp(trim, getDisplay ());
 	long /*int*/ newFont, oldFont = 0;
 	long /*int*/ hDC = OS.GetDC (handle);
 	newFont = OS.SendMessage (handle, OS.WM_GETFONT, 0, 0);
@@ -196,7 +198,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	trim.y -= tm.tmHeight + offsetY;
 	trim.width += CLIENT_INSET * 2;
 	trim.height += tm.tmHeight + CLIENT_INSET + offsetY;
-	return trim;
+	return DPIUtil.autoScaleDown(trim, getDisplay ());
 }
 
 @Override

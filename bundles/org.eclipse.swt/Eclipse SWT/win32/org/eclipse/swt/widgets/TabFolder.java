@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class implement the notebook user interface
@@ -196,6 +196,8 @@ protected void checkSubclass () {
 @Override
 public Point computeSize (int wHint, int hHint, boolean changed) {
 	checkWidget ();
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
 	Point size = super.computeSize (wHint, hHint, changed);
 	RECT insetRect = new RECT (), itemRect = new RECT ();
 	OS.SendMessage (handle, OS.TCM_ADJUSTRECT, 0, insetRect);
@@ -212,12 +214,16 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	rect.left -= border;  rect.right += border;
 	width = rect.right - rect.left;
 	size.x = Math.max (width, size.x);
-	return size;
+	return DPIUtil.autoScaleDown(size, getDisplay ());
 }
 
 @Override
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget ();
+	x = DPIUtil.autoScaleUp(x, getDisplay ());
+	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	width = DPIUtil.autoScaleUp(width, getDisplay ());
+	height = DPIUtil.autoScaleUp(height, getDisplay ());
 	RECT rect = new RECT ();
 	OS.SetRect (rect, x, y, x + width, y + height);
 	OS.SendMessage (handle, OS.TCM_ADJUSTRECT, 1, rect);
@@ -226,7 +232,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	rect.top -= border;  rect.bottom += border;
 	int newWidth = rect.right - rect.left;
 	int newHeight = rect.bottom - rect.top;
-	return new Rectangle (rect.left, rect.top, newWidth, newHeight);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, newWidth, newHeight), getDisplay ());
 }
 
 void createItem (TabItem item, int index) {
@@ -338,7 +344,7 @@ public Rectangle getClientArea () {
 	OS.SendMessage (handle, OS.TCM_ADJUSTRECT, 0, rect);
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
-	return new Rectangle (rect.left, rect.top, width, height);
+	return DPIUtil.autoScaleDown(new Rectangle (rect.left, rect.top, width, height), getDisplay ());
 }
 
 /**
