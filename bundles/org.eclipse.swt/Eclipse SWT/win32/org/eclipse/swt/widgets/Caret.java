@@ -111,7 +111,7 @@ long /*int*/ defaultFont () {
 public Rectangle getBounds () {
 	checkWidget();
 	if (image != null) {
-		Rectangle rect = image.getBounds ();
+		Rectangle rect = image.getBoundsInPixels ();
 		return new Rectangle (x, y, rect.width, rect.height);
 	} else {
 		if (!OS.IsWinCE && width == 0) {
@@ -202,7 +202,7 @@ public Canvas getParent () {
 public Point getSize () {
 	checkWidget();
 	if (image != null) {
-		Rectangle rect = image.getBounds ();
+		Rectangle rect = image.getBoundsInPixels ();
 		return new Point (rect.width, rect.height);
 	} else {
 		if (!OS.IsWinCE && width == 0) {

@@ -714,11 +714,11 @@ Image createButtonImage(Display display, int button) {
 	}
 	Color transColor = new Color(display, transparent);
 	gc.setBackground(transColor);
-	gc.fillRectangle(image.getBounds());
+	gc.fillRectangle(image.getBoundsInPixels());
 	renderer.draw(button, SWT.NONE, new Rectangle(trim.x, trim.y, size.x, size.y), gc);
 	gc.dispose ();
 	transColor.dispose();
-	ImageData imageData = image.getImageData();
+	ImageData imageData = image.getImageDataInPixels();
 	imageData.transparentPixel = imageData.palette.getPixel(transparent);
 	image.dispose();
 	image = new Image(display, imageData);

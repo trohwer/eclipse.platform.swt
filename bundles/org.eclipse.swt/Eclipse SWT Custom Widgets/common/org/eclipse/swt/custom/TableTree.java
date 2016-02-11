@@ -375,7 +375,7 @@ public Table getTable () {
 
 void createImages () {
 
-	int itemHeight = sizeImage.getBounds().height;
+	int itemHeight = sizeImage.getBoundsInPixels().height;
 	// Calculate border around image.
 	// At least 9 pixels are needed to draw the image
 	// Leave at least a 6 pixel border.
@@ -718,7 +718,7 @@ public void setBackground (Color color) {
 	if (sizeImage != null) {
 		GC gc = new GC (sizeImage);
 		gc.setBackground(getBackground());
-		Rectangle size = sizeImage.getBounds();
+		Rectangle size = sizeImage.getBoundsInPixels();
 		gc.fillRectangle(size);
 		gc.dispose();
 	}

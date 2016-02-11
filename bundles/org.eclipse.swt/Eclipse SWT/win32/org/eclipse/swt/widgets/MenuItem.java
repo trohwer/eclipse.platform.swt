@@ -1291,7 +1291,7 @@ LRESULT wmMeasureChild (long /*int*/ wParam, long /*int*/ lParam) {
 	OS.MoveMemory (struct, lParam, MEASUREITEMSTRUCT.sizeof);
 	int width = 0, height = 0;
 	if (image != null) {
-		Rectangle rect = image.getBounds ();
+		Rectangle rect = image.getBoundsInPixels ();
 		width = rect.width;
 		height = rect.height;
 	} else {
@@ -1315,7 +1315,7 @@ LRESULT wmMeasureChild (long /*int*/ wParam, long /*int*/ lParam) {
 			for (int i=0; i<items.length; i++) {
 				MenuItem item = items [i];
 				if (item.image != null) {
-					Rectangle rect = item.image.getBounds ();
+					Rectangle rect = item.image.getBoundsInPixels ();
 					width = Math.max (width, rect.width);
 				}
 			}

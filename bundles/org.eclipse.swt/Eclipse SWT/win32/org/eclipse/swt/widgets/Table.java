@@ -2932,7 +2932,7 @@ int imageIndex (Image image, int column) {
 		setSubImagesVisible (true);
 	}
 	if (imageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = imageList.indexOf (image);
 		if (index == -1) index = imageList.add (image);
@@ -2973,7 +2973,7 @@ int imageIndex (Image image, int column) {
 int imageIndexHeader (Image image) {
 	if (image == null) return OS.I_IMAGENONE;
 	if (headerImageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		headerImageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = headerImageList.indexOf (image);
 		if (index == -1) index = headerImageList.add (image);
@@ -7518,7 +7518,7 @@ LRESULT wmNotifyToolTip (NMTTCUSTOMDRAW nmcd, long /*int*/ lParam) {
 					if (pinfo.iSubItem != 0) x -= gridWidth;
 					Image image = item.getImage (pinfo.iSubItem);
 					if (image != null) {
-						Rectangle rect = image.getBounds ();
+						Rectangle rect = image.getBoundsInPixels ();
 						RECT imageRect = item.getBounds (pinfo.iItem, pinfo.iSubItem, false, true, false, false, hDC);
 						Point size = imageList == null ? new Point (rect.width, rect.height) : imageList.getImageSize ();
 						int y = imageRect.top;

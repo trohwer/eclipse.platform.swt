@@ -149,7 +149,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	boolean drawImage = (bits & OS.SS_OWNERDRAW) == OS.SS_OWNERDRAW;
 	if (drawImage) {
 		if (image != null) {
-			Rectangle rect = image.getBounds();
+			Rectangle rect = image.getBoundsInPixels();
 			width += rect.width;
 			height += rect.height;
 			if (IMAGE_AND_TEXT) {
@@ -611,7 +611,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 					result = LRESULT.ONE;
 				}
 				if (drawImage) {
-					Rectangle imageBounds = image.getBounds ();
+					Rectangle imageBounds = image.getBoundsInPixels ();
 					int x = 0;
 					if ((style & SWT.CENTER) != 0) {
 						x = Math.max (0, (clientRect.right - imageBounds.width) / 2);
@@ -672,7 +672,7 @@ LRESULT wmDrawChild (long /*int*/ wParam, long /*int*/ lParam) {
 			int margin = drawText && drawImage ? MARGIN : 0;
 			int imageWidth = 0, imageHeight = 0;
 			if (drawImage) {
-				Rectangle rect = image.getBounds ();
+				Rectangle rect = image.getBoundsInPixels ();
 				imageWidth = rect.width;
 				imageHeight = rect.height;
 			}

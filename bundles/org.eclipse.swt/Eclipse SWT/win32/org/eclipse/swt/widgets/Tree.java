@@ -525,7 +525,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 								if (images != null) image = images [index];
 							}
 							if (image != null) {
-								Rectangle bounds = image.getBounds ();
+								Rectangle bounds = image.getBoundsInPixels ();
 								if (size == null) size = getImageSize ();
 								if (!ignoreDrawForeground) {
 									GCData data = new GCData();
@@ -765,7 +765,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 					int inset = i != 0 ? INSET : 0;
 					int offset = i != 0 ? INSET : INSET + 2;
 					if (image != null) {
-						Rectangle bounds = image.getBounds ();
+						Rectangle bounds = image.getBoundsInPixels ();
 						if (size == null) size = getImageSize ();
 						if (!ignoreDrawForeground) {
 							//int y1 = rect.top + (index == 0 ? (getItemHeight () - size.y) / 2 : 0);
@@ -3706,7 +3706,7 @@ boolean hitTestSelection (long /*int*/ hItem, int x, int y) {
 int imageIndex (Image image, int index) {
 	if (image == null) return OS.I_IMAGENONE;
 	if (imageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 	}
 	int imageIndex = imageList.indexOf (image);
@@ -3730,7 +3730,7 @@ int imageIndex (Image image, int index) {
 int imageIndexHeader (Image image) {
 	if (image == null) return OS.I_IMAGENONE;
 	if (headerImageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		headerImageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = headerImageList.indexOf (image);
 		if (index == -1) index = headerImageList.add (image);
@@ -8119,7 +8119,7 @@ LRESULT wmNotifyToolTip (NMTTCUSTOMDRAW nmcd, long /*int*/ lParam) {
 								RECT imageRect = item [0].getBounds (index [0], false, true, false, false, false, hDC);
 								if (imageList == null) size.x = imageRect.right - imageRect.left;
 								if (image != null) {
-									Rectangle rect = image.getBounds ();
+									Rectangle rect = image.getBoundsInPixels ();
 									gc.drawImage (image, rect.x, rect.y, rect.width, rect.height, x, imageRect.top, size.x, size.y);
 									x += INSET + (index [0] == 0 ? 1 : 0);
 								}

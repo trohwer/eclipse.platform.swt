@@ -253,7 +253,7 @@ private Point getTotalSize(Image image, String text) {
 	Point size = new Point(0, 0);
 
 	if (image != null) {
-		Rectangle r = image.getBounds();
+		Rectangle r = image.getBoundsInPixels();
 		size.x += r.width;
 		size.y += r.height;
 	}
@@ -452,7 +452,7 @@ void onPaint(PaintEvent event) {
 	try {
 		if (backgroundImage != null) {
 			// draw a background image behind the text
-			Rectangle imageRect = backgroundImage.getBounds();
+			Rectangle imageRect = backgroundImage.getBoundsInPixels();
 			// tile image to fill space
 			gc.setBackground(getBackground());
 			gc.fillRectangle(rect);
@@ -530,7 +530,7 @@ void onPaint(PaintEvent event) {
 	int lineHeight = 0, textHeight = 0, imageHeight = 0;
 
 	if (img != null) {
-	    imageRect = img.getBounds();
+	    imageRect = img.getBoundsInPixels();
 	    imageHeight = imageRect.height;
 	}
 	if (lines != null) {

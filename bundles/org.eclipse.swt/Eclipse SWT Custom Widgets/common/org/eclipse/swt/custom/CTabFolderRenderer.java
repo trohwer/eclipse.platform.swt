@@ -306,7 +306,7 @@ public class CTabFolderRenderer {
 					if (item.isDisposed()) return new Point(0,0);
 					Image image = item.getImage();
 					if (image != null && !image.isDisposed()) {
-						Rectangle bounds = image.getBounds();
+						Rectangle bounds = image.getBoundsInPixels();
 						if ((state & SWT.SELECTED) != 0 || parent.showUnselectedImage) {
 							width += bounds.width;
 						}
@@ -664,7 +664,7 @@ public class CTabFolderRenderer {
 			// draw the background image in shape
 			gc.setBackground(defaultBackground);
 			gc.fillRectangle(x, y, width, height);
-			Rectangle imageRect = image.getBounds();
+			Rectangle imageRect = image.getBoundsInPixels();
 			gc.drawImage(image, imageRect.x, imageRect.y, imageRect.width, imageRect.height, x, y, width, height);
 		} else if (colors != null) {
 			// draw gradient
@@ -1439,7 +1439,7 @@ public class CTabFolderRenderer {
 			if (parent.single && (parent.showClose || item.showClose)) xDraw += item.closeRect.width;
 			Image image = item.getImage();
 			if (image != null && !image.isDisposed()) {
-				Rectangle imageBounds = image.getBounds();
+				Rectangle imageBounds = image.getBoundsInPixels();
 				// only draw image if it won't overlap with close button
 				int maxImageWidth = rightEdge - xDraw - (trim.width + trim.x);
 				if (!parent.single && item.closeRect.width > 0) maxImageWidth -= item.closeRect.width + INTERNAL_SPACING;
@@ -1643,7 +1643,7 @@ public class CTabFolderRenderer {
 			int xDraw = x - trim.x;
 			Image image = item.getImage();
 			if (image != null && !image.isDisposed() && parent.showUnselectedImage) {
-				Rectangle imageBounds = image.getBounds();
+				Rectangle imageBounds = image.getBoundsInPixels();
 				// only draw image if it won't overlap with close button
 				int maxImageWidth = x + width - xDraw - (trim.width + trim.x);
 				if (parent.showUnselectedClose && (parent.showClose || item.showClose)) {

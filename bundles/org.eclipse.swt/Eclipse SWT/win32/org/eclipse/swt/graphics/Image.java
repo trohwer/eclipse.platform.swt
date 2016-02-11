@@ -245,7 +245,7 @@ public Image(Device device, Image srcImage, int flag) {
 	device = this.device;
 	if (srcImage == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (srcImage.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	Rectangle rect = srcImage.getBounds();
+	Rectangle rect = srcImage.getBoundsInPixels();
 	this.type = srcImage.type;
 	switch (flag) {
 		case SWT.IMAGE_COPY: {
@@ -293,7 +293,7 @@ public Image(Device device, Image srcImage, int flag) {
 			break;
 		}
 		case SWT.IMAGE_DISABLE: {
-			ImageData data = srcImage.getImageData();
+			ImageData data = srcImage.getImageDataInPixels();
 			PaletteData palette = data.palette;
 			RGB[] rgbs = new RGB[3];
 			rgbs[0] = device.getSystemColor(SWT.COLOR_BLACK).getRGB();
@@ -352,7 +352,7 @@ public Image(Device device, Image srcImage, int flag) {
 			break;
 		}
 		case SWT.IMAGE_GRAY: {
-			ImageData data = srcImage.getImageData();
+			ImageData data = srcImage.getImageDataInPixels();
 			PaletteData palette = data.palette;
 			ImageData newData = data;
 			if (!palette.isDirect) {
@@ -1382,14 +1382,15 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	Rectangle bounds = _getBounds();
+	Rectangle bounds = getBoundsInPixels();
 	return DPIUtil.autoScaleDown (bounds, device);
 }
 
 /**
  * @return a rectangle specifying the image's bounds at current zoom.
  */
-Rectangle _getBounds() {
+public Rectangle getBoundsInPixels() {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
 	}
@@ -1437,7 +1438,7 @@ Rectangle _getBounds() {
  */
 public Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	Rectangle bounds = _getBounds();
+	Rectangle bounds = getBoundsInPixels();
 	if (bounds != null && zoom != currentDeviceZoom) {
 		bounds = DPIUtil.scale(bounds, zoom, currentDeviceZoom);
 	}
@@ -1465,10 +1466,10 @@ public ImageData getImageData() {
 }
 
 /**
- * @return an <code>ImageData</code> containing the image's data and
- *         attributes at current zoom level.
+ * @return a rectangle specifying the image's bounds at current zoom.
  */
-ImageData _getImageData() {
+public ImageData getImageDataInPixels() {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	BITMAP bm;
 	int depth, width, height;
 	switch (type) {

@@ -136,7 +136,7 @@ public static boolean getAutoScale () {
  * Returns an <code>ImageData</code> for specified zoom.
  */
 static ImageData getImageData (Image image, int source_zoom, int target_zoom) {
-	if (source_zoom == target_zoom) return image._getImageData ();
+	if (source_zoom == target_zoom) return image.getImageDataInPixels ();
 	ImageData imageData = null;
 	if (image.imageDataProvider != null) {
 		boolean[] found = new boolean[1];
@@ -154,7 +154,7 @@ static ImageData getImageData (Image image, int source_zoom, int target_zoom) {
 		}
 	} else {
 		/* Get ImageData at currentZoom and scale it to specified zoom. */
-		imageData = image._getImageData ();
+		imageData = image.getImageDataInPixels ();
 		imageData = DPIUtil.autoScaleImageData (imageData, target_zoom, source_zoom);
 	}
 	return imageData;

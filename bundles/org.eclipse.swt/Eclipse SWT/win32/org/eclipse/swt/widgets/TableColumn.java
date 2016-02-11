@@ -349,7 +349,7 @@ public void pack () {
 			headerImage = image;
 		}
 		if (headerImage != null) {
-			Rectangle bounds = headerImage.getBounds ();
+			Rectangle bounds = headerImage.getBoundsInPixels ();
 			headerWidth += bounds.width;
 		}
 		int margin = 0;

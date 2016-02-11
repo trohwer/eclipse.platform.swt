@@ -451,7 +451,7 @@ public void copyArea(Image image, int x, int y) {
 	x = DPIUtil.autoScaleUp(x, device);
 	y = DPIUtil.autoScaleUp(y, device);
  	/* Copy the bitmap area */
-	Rectangle rect = image.getBounds();
+	Rectangle rect = image.getBoundsInPixels();
 	long /*int*/ memHdc = OS.CreateCompatibleDC(handle);
 	long /*int*/ hOldBitmap = OS.SelectObject(memHdc, image.handle);
 	OS.BitBlt(memHdc, 0, 0, rect.width, rect.height, handle, x, y, OS.SRCCOPY);

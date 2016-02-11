@@ -638,7 +638,7 @@ void paint(Event event) {
 	}
 	Point size = getSizeInPixels();
 	if (image != null) {
-		Rectangle imageSize = image.getBounds();
+		Rectangle imageSize = image.getBoundsInPixels();
 		int imageY = (size.y - imageSize.height) / 2;
 		gc.drawImage(image, x, imageY);
 		x += imageSize.width;

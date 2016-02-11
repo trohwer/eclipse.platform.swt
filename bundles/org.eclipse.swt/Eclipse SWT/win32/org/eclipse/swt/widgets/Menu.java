@@ -1063,7 +1063,7 @@ void hideCurrentToolTip () {
 int imageIndex (Image image) {
 	if (hwndCB == 0 || image == null) return OS.I_IMAGENONE;
 	if (imageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = imageList.add (image);
 		long /*int*/ hImageList = imageList.getHandle ();

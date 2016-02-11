@@ -168,8 +168,8 @@ void _setImage (Image image) {
 		if (image != null) {
 			switch (image.type) {
 				case SWT.BITMAP: {
-					Rectangle rect = image.getBounds (image.getDevice().getDeviceZoom());
-					ImageData data = image.getImageData (image.getDevice().getDeviceZoom());
+					Rectangle rect = image.getBoundsInPixels ();
+					ImageData data = image.getImageDataInPixels ();
 					switch (data.getTransparencyType ()) {
 						case SWT.TRANSPARENCY_PIXEL:
 							if (rect.width <= ICON_WIDTH && rect.height <= ICON_HEIGHT) {
@@ -213,7 +213,7 @@ void _setImage (Image image) {
 			*/
 			if ((style & SWT.RIGHT_TO_LEFT) != 0) {
 				if (!OS.IsWinCE && OS.WIN32_VERSION >= OS.VERSION (4, 10)) {
-					Rectangle rect = image.getBounds ();
+					Rectangle rect = image.getBoundsInPixels ();
 					long /*int*/ hDC = OS.GetDC (handle);
 					long /*int*/ dstHdc = OS.CreateCompatibleDC (hDC);
 					long /*int*/ hBitmap = OS.CreateCompatibleBitmap (hDC, rect.width, rect.height);
@@ -378,7 +378,7 @@ int computeLeftMargin () {
 	if ((style & (SWT.PUSH | SWT.TOGGLE)) == 0) return MARGIN;
 	int margin = 0;
 	if (image != null && text.length () != 0) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		margin += bounds.width + MARGIN * 2;
 		long /*int*/ oldFont = 0;
 		long /*int*/ hDC = OS.GetDC (handle);
@@ -440,7 +440,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 			}
 			if (hasImage) {
 				if (image != null) {
-					Rectangle rect = image.getBounds ();
+					Rectangle rect = image.getBoundsInPixels ();
 					width = rect.width;
 					if (hasText && text.length () != 0) {
 						width += MARGIN * 2;

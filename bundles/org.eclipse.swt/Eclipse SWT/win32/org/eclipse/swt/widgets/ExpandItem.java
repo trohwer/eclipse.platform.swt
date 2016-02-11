@@ -483,7 +483,7 @@ public void setImage (Image image) {
 	super.setImage (image);
 	int oldImageHeight = imageHeight;
 	if (image != null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageHeight = bounds.height;
 		imageWidth = bounds.width;
 	} else {
