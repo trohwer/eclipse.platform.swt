@@ -102,6 +102,19 @@ public static int autoScaleUp (int size, Device device) {
 }
 
 /**
+ * Auto-scale up int array dimensions.
+ */
+public static int[] autoScaleUp (int size[], Device device) {
+	if (!getAutoScale () || device == null) return size;
+	float scaleFactor = getScalingFactor (device);
+	int scaledSize[] = new int[size.length];
+	for (int i = 0; i < scaledSize.length; i++) {
+		scaledSize[i] = Math.round (size[i] * scaleFactor);
+	}
+	return scaledSize;
+}
+
+/**
  * Returns a new scaled up Point.
  */
 public static Point autoScaleUp (Point point, Device device) {

@@ -517,9 +517,9 @@ public class StyledText extends Canvas {
 				} else {
 					//draw paragraph top in the current page and paragraph bottom in the next
 					int height = paragraphBottom - paintY;
-					gc.setClipping(clientArea.x, paintY, clientArea.width, height);
+					gc.setClippingInPixels(clientArea.x, paintY, clientArea.width, height);
 					printLine(paintX, paintY, gc, foreground, lineBackground, layout, printLayout, i);
-					gc.setClipping((Rectangle)null);
+					gc.setClippingInPixels((Rectangle)null);
 					printDecoration(page, false, printLayout);
 					printer.endPage();
 					page++;
@@ -528,9 +528,9 @@ public class StyledText extends Canvas {
 						printDecoration(page, true, printLayout);
 						paintY = clientArea.y - height;
 						int layoutHeight = layout.getBounds().height;
-						gc.setClipping(clientArea.x, clientArea.y, clientArea.width, layoutHeight - height);
+						gc.setClippingInPixels(clientArea.x, clientArea.y, clientArea.width, layoutHeight - height);
 						printLine(paintX, paintY, gc, foreground, lineBackground, layout, printLayout, i);
-						gc.setClipping((Rectangle)null);
+						gc.setClippingInPixels((Rectangle)null);
 						paintY += layoutHeight;
 					}
 				}
@@ -611,7 +611,7 @@ public class StyledText extends Canvas {
 		if (background != null) {
 			Rectangle rect = layout.getBounds();
 			gc.setBackground(background);
-			gc.fillRectangle(x, y, rect.width, rect.height);
+			gc.fillRectangleInPixels(x, y, rect.width, rect.height);
 
 //			int lineCount = layout.getLineCount();
 //			for (int i = 0; i < lineCount; i++) {
@@ -2084,11 +2084,11 @@ void createCaretBitmaps() {
 	leftCaretBitmap = new Image(display, caretWidth, lineHeight);
 	GC gc = new GC (leftCaretBitmap);
 	gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-	gc.fillRectangle(0, 0, caretWidth, lineHeight);
+	gc.fillRectangleInPixels(0, 0, caretWidth, lineHeight);
 	gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-	gc.drawLine(0,0,0,lineHeight);
-	gc.drawLine(0,0,caretWidth-1,0);
-	gc.drawLine(0,1,1,1);
+	gc.drawLineInPixels(0,0,0,lineHeight);
+	gc.drawLineInPixels(0,0,caretWidth-1,0);
+	gc.drawLineInPixels(0,1,1,1);
 	gc.dispose();
 
 	if (rightCaretBitmap != null) {
@@ -2100,11 +2100,11 @@ void createCaretBitmaps() {
 	rightCaretBitmap = new Image(display, caretWidth, lineHeight);
 	gc = new GC (rightCaretBitmap);
 	gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-	gc.fillRectangle(0, 0, caretWidth, lineHeight);
+	gc.fillRectangleInPixels(0, 0, caretWidth, lineHeight);
 	gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-	gc.drawLine(caretWidth-1,0,caretWidth-1,lineHeight);
-	gc.drawLine(0,0,caretWidth-1,0);
-	gc.drawLine(caretWidth-1,1,1,1);
+	gc.drawLineInPixels(caretWidth-1,0,caretWidth-1,lineHeight);
+	gc.drawLineInPixels(0,0,caretWidth-1,0);
+	gc.drawLineInPixels(caretWidth-1,1,1,1);
 	gc.dispose();
 }
 /**
@@ -6156,11 +6156,11 @@ void handlePaint(Event event) {
 	if (blockSelection && blockXLocation != -1) {
 		gc.setBackground(getSelectionBackground());
 		Rectangle rect = getBlockSelectionRectangle();
-		gc.drawRectangle(rect.x, rect.y, Math.max(1, rect.width - 1), Math.max(1, rect.height - 1));
+		gc.drawRectangleInPixels(rect.x, rect.y, Math.max(1, rect.width - 1), Math.max(1, rect.height - 1));
 		gc.setAdvanced(true);
 		if (gc.getAdvanced()) {
 			gc.setAlpha(100);
-			gc.fillRectangle(rect);
+			gc.fillRectangleInPixels(rect);
 			gc.setAdvanced(false);
 		}
 	}

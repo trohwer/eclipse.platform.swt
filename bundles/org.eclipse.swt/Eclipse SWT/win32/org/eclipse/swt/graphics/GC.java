@@ -444,12 +444,18 @@ void checkGC(int mask) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public void copyArea(Image image, int x, int y) {
+public void copyArea (Image image, int x, int y) {
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	copyAreaInPixels(image, x, y);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void copyAreaInPixels(Image image, int x, int y) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.type != SWT.BITMAP || image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	x = DPIUtil.autoScaleUp(x, device);
-	y = DPIUtil.autoScaleUp(y, device);
  	/* Copy the bitmap area */
 	Rectangle rect = image.getBoundsInPixels();
 	long /*int*/ memHdc = OS.CreateCompatibleDC(handle);
@@ -474,8 +480,14 @@ public void copyArea(Image image, int x, int y) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public void copyArea(int srcX, int srcY, int width, int height, int destX, int destY) {
-	copyArea(srcX, srcY, width, height, destX, destY, true);
+public void copyArea (int srcX, int srcY, int width, int height, int destX, int destY) {
+	copyAreaInPixels (srcX, srcY, width, height, destX, destY);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void copyAreaInPixels(int srcX, int srcY, int width, int height, int destX, int destY) {
+	copyAreaInPixels(srcX, srcY, width, height, destX, destY, true);
 }
 
 /**
@@ -496,14 +508,20 @@ public void copyArea(int srcX, int srcY, int width, int height, int destX, int d
  *
  * @since 3.1
  */
-public void copyArea(int srcX, int srcY, int width, int height, int destX, int destY, boolean paint) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+public void copyArea (int srcX, int srcY, int width, int height, int destX, int destY, boolean paint) {
 	srcX = DPIUtil.autoScaleUp(srcX, device);
 	srcY = DPIUtil.autoScaleUp(srcY, device);
 	width = DPIUtil.autoScaleUp(width, device);
 	height = DPIUtil.autoScaleUp(height, device);
 	destX = DPIUtil.autoScaleUp(destX, device);
 	destY = DPIUtil.autoScaleUp(destY, device);
+	copyAreaInPixels(srcX, srcY, width, height, destX, destY, paint);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void copyAreaInPixels(int srcX, int srcY, int width, int height, int destX, int destY, boolean paint) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	/*
 	* Feature in WinCE.  The function WindowFromDC is not part of the
 	* WinCE SDK.  The fix is to remember the HWND.
@@ -734,10 +752,18 @@ void disposeGdip() {
  * </ul>
  */
 public void drawArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	checkGC(DRAW);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
 	width = DPIUtil.autoScaleUp(width, device);
 	height = DPIUtil.autoScaleUp(height, device);
+	drawArcInPixels(x, y, width, height, startAngle, arcAngle);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawArcInPixels (int x, int y, int width, int height, int startAngle, int arcAngle) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	checkGC(DRAW);
 	if (width < 0) {
 		x = x + width;
 		width = -width;
@@ -831,15 +857,20 @@ public void drawArc (int x, int y, int width, int height, int startAngle, int ar
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangle(int, int, int, int)
+ * @see #drawRectangleInPixels(int, int, int, int)
  */
 public void drawFocus (int x, int y, int width, int height) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
-
+	drawFocusInPixels(x, y, width, height);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawFocusInPixels (int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if ((data.uiState & OS.UISF_HIDEFOCUS) != 0) return;
 	data.focusDrawn = true;
 	long /*int*/ hdc = handle;
@@ -1279,7 +1310,7 @@ void drawBitmapAlpha(Image srcImage, int srcX, int srcY, int srcWidth, int srcHe
 	}
 
 	/* Check clipping */
-	Rectangle rect = getClipping();
+	Rectangle rect = getClippingInPixels();
 	rect = rect.intersection(new Rectangle(destX, destY, destWidth, destHeight));
 	if (rect.isEmpty()) return;
 
@@ -1690,12 +1721,17 @@ void drawBitmap(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight,
  * </ul>
  */
 public void drawLine (int x1, int y1, int x2, int y2) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x1 = DPIUtil.autoScaleUp (x1, device);
 	x2 = DPIUtil.autoScaleUp (x2, device);
 	y1 = DPIUtil.autoScaleUp (y1, device);
 	y2 = DPIUtil.autoScaleUp (y2, device);
-
+	drawLineInPixels(x1, y1, x2, y2);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawLineInPixels (int x1, int y1, int x2, int y2) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -1744,12 +1780,17 @@ public void drawLine (int x1, int y1, int x2, int y2) {
  * </ul>
  */
 public void drawOval (int x, int y, int width, int height) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
-
+	drawOvalInPixels(x, y, width, height);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawOvalInPixels (int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -1817,10 +1858,15 @@ public void drawPath (Path path) {
  * @since 3.0
  */
 public void drawPoint (int x, int y) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
-
+	drawPointInPixels(x, y);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawPointInPixels (int x, int y) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (data.gdipGraphics != 0) {
 		checkGC(DRAW);
 		Gdip.Graphics_FillRectangle(data.gdipGraphics, getFgBrush(), x, y, 1, 1);
@@ -1941,11 +1987,17 @@ public void drawPolyline(int[] pointArray) {
  * </ul>
  */
 public void drawRectangle (int x, int y, int width, int height) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
+	drawRectangleInPixels(x, y, width, height);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawRectangleInPixels (int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -2021,14 +2073,19 @@ public void drawRectangle (Rectangle rect) {
  * </ul>
  */
 public void drawRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
 	arcWidth = DPIUtil.autoScaleUp (arcWidth, device);
 	arcHeight = DPIUtil.autoScaleUp (arcHeight, device);
-
+	drawRoundRectangleInPixels(x, y, width, height, arcWidth, arcHeight);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawRoundRectangleInPixels (int x, int y, int width, int height, int arcWidth, int arcHeight) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(DRAW);
 	if (data.gdipGraphics != 0) {
 		drawRoundRectangleGdip(data.gdipGraphics, data.gdipPen, x, y, width, height, arcWidth, arcHeight);
@@ -2045,7 +2102,7 @@ public void drawRoundRectangle (int x, int y, int width, int height, int arcWidt
 		*/
 		if (width == 0 || height == 0) return;
 		if (arcWidth == 0 || arcHeight == 0) {
-			drawRectangle(x, y, width, height);
+			drawRectangleInPixels(x, y, width, height);
 			return;
 		}
 		if (width < 0) {
@@ -2062,18 +2119,18 @@ public void drawRoundRectangle (int x, int y, int width, int height, int arcWidt
 		if (arcHeight > height) arcHeight = height;
 
 		if (arcWidth < width) {
-			drawLine(x+arcWidth/2, y, x+width-arcWidth/2, y);
-			drawLine(x+arcWidth/2, y+height, x+width-arcWidth/2, y+height);
+			drawLineInPixels(x+arcWidth/2, y, x+width-arcWidth/2, y);
+			drawLineInPixels(x+arcWidth/2, y+height, x+width-arcWidth/2, y+height);
 		}
 		if (arcHeight < height) {
-			drawLine(x, y+arcHeight/2, x, y+height-arcHeight/2);
-			drawLine(x+width, y+arcHeight/2, x+width, y+height-arcHeight/2);
+			drawLineInPixels(x, y+arcHeight/2, x, y+height-arcHeight/2);
+			drawLineInPixels(x+width, y+arcHeight/2, x+width, y+height-arcHeight/2);
 		}
 		if (arcWidth != 0 && arcHeight != 0) {
-			drawArc(x, y, arcWidth, arcHeight, 90, 90);
-			drawArc(x+width-arcWidth, y, arcWidth, arcHeight, 0, 90);
-			drawArc(x+width-arcWidth, y+height-arcHeight, arcWidth, arcHeight, 0, -90);
-			drawArc(x, y+height-arcHeight, arcWidth, arcHeight, 180, 90);
+			drawArcInPixels(x, y, arcWidth, arcHeight, 90, 90);
+			drawArcInPixels(x+width-arcWidth, y, arcWidth, arcHeight, 0, 90);
+			drawArcInPixels(x+width-arcWidth, y+height-arcHeight, arcWidth, arcHeight, 0, -90);
+			drawArcInPixels(x, y+height-arcHeight, arcWidth, arcHeight, 180, 90);
 		}
 	} else {
 		OS.RoundRect(handle, x,y,x+width+1,y+height+1, arcWidth, arcHeight);
@@ -2724,12 +2781,17 @@ public boolean equals (Object object) {
  * @see #drawArc
  */
 public void fillArc (int x, int y, int width, int height, int startAngle, int arcAngle) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
-
+	fillArcInPixels(x, y, width, height, startAngle, arcAngle);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillArcInPixels (int x, int y, int width, int height, int startAngle, int arcAngle) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 	if (width < 0) {
 		x = x + width;
@@ -2827,15 +2889,20 @@ public void fillArc (int x, int y, int width, int height, int startAngle, int ar
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangle(int, int, int, int)
+ * @see #drawRectangleInPixels(int, int, int, int)
  */
-public void fillGradientRectangle(int x, int y, int width, int height, boolean vertical) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+public void fillGradientRectangle (int x, int y, int width, int height, boolean vertical) {
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
-
+	fillGradientRectangleInPixels(x, y, width, height, vertical);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillGradientRectangleInPixels(int x, int y, int width, int height, boolean vertical) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width == 0 || height == 0) return;
 
 	RGB backgroundRGB, foregroundRGB;
@@ -2860,7 +2927,7 @@ public void fillGradientRectangle(int x, int y, int width, int height, boolean v
 		toRGB   = foregroundRGB;
 	}
 	if (fromRGB.equals(toRGB)) {
-		fillRectangle(x, y, width, height);
+		fillRectangleInPixels(x, y, width, height);
 		return;
 	}
 	if (data.gdipGraphics != 0) {
@@ -2961,12 +3028,17 @@ public void fillGradientRectangle(int x, int y, int width, int height, boolean v
  * @see #drawOval
  */
 public void fillOval (int x, int y, int width, int height) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
-
+	fillOvalInPixels(x, y, width, height);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillOvalInPixels (int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		Gdip.Graphics_FillEllipse(data.gdipGraphics, data.gdipBrush, x, y, width, height);
@@ -3029,7 +3101,7 @@ public void fillPath (Path path) {
  *
  * @see #drawPolygon
  */
-public void fillPolygon(int[] pointArray) {
+public void fillPolygon (int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FILL);
@@ -3064,14 +3136,20 @@ public void fillPolygon(int[] pointArray) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangle(int, int, int, int)
+ * @see #drawRectangleInPixels(int, int, int, int)
  */
 public void fillRectangle (int x, int y, int width, int height) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
+	fillRectangleInPixels(x, y, width, height);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillRectangleInPixels (int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		if (width < 0) {
@@ -3109,11 +3187,18 @@ public void fillRectangle (int x, int y, int width, int height) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangle(int, int, int, int)
+ * @see #drawRectangleInPixels(int, int, int, int)
  */
 public void fillRectangle (Rectangle rect) {
+	rect = DPIUtil.autoScaleUp(rect, getDevice());
+	fillRectangleInPixels(rect);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillRectangleInPixels (Rectangle rect) {
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	fillRectangle (rect.x, rect.y, rect.width, rect.height);
+	fillRectangleInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -3134,14 +3219,19 @@ public void fillRectangle (Rectangle rect) {
  * @see #drawRoundRectangle
  */
 public void fillRoundRectangle (int x, int y, int width, int height, int arcWidth, int arcHeight) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp (x, device);
 	y = DPIUtil.autoScaleUp (y, device);
 	width = DPIUtil.autoScaleUp (width, device);
 	height = DPIUtil.autoScaleUp (height, device);
 	arcWidth = DPIUtil.autoScaleUp (arcWidth, device);
 	arcHeight = DPIUtil.autoScaleUp (arcHeight, device);
-
+	fillRoundRectangleInPixels(x, y, width, height, arcWidth, arcHeight);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillRoundRectangleInPixels (int x, int y, int width, int height, int arcWidth, int arcHeight) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		fillRoundRectangleGdip(data.gdipGraphics, data.gdipBrush, x, y, width, height, arcWidth, arcHeight);
@@ -3235,7 +3325,7 @@ public int getAdvanceWidth(char ch) {
 	if (OS.IsWinCE) {
 		SIZE size = new SIZE();
 		OS.GetTextExtentPoint32W(handle, new char[]{ch}, 1, size);
-		return DPIUtil.autoScaleDown(size.cx, getDevice ());
+		return size.cx;
 	}
 	int tch = ch;
 	if (ch > 0x7F) {
@@ -3244,7 +3334,7 @@ public int getAdvanceWidth(char ch) {
 	}
 	int[] width = new int[1];
 	OS.GetCharWidth(handle, tch, tch, width);
-	return DPIUtil.autoScaleDown(width[0], getDevice ());
+	return width[0];
 }
 
 /**
@@ -3387,7 +3477,7 @@ public int getCharWidth(char ch) {
 		}
 		int[] width = new int[3];
 		if (OS.GetCharABCWidths(handle, tch, tch, width)) {
-			return DPIUtil.autoScaleDown(width[1], getDevice ());
+			return width[1];
 		}
 	}
 
@@ -3396,7 +3486,7 @@ public int getCharWidth(char ch) {
 	OS.GetTextMetrics(handle, lptm);
 	SIZE size = new SIZE();
 	OS.GetTextExtentPoint32W(handle, new char[]{ch}, 1, size);
-	return DPIUtil.autoScaleDown(size.cx - lptm.tmOverhang, getDevice ());
+	return size.cx - lptm.tmOverhang;
 }
 
 /**
@@ -3411,7 +3501,13 @@ public int getCharWidth(char ch) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Rectangle getClipping() {
+public Rectangle getClippingInP () {
+	return DPIUtil.autoScaleDown(getClippingInPixels(), getDevice());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getClippingInPixels() {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -3419,11 +3515,11 @@ public Rectangle getClipping() {
 		Gdip.Graphics_SetPixelOffsetMode(gdipGraphics, Gdip.PixelOffsetModeNone);
 		Gdip.Graphics_GetVisibleClipBounds(gdipGraphics, rect);
 		Gdip.Graphics_SetPixelOffsetMode(gdipGraphics, Gdip.PixelOffsetModeHalf);
-		return DPIUtil.autoScaleDown(new Rectangle(rect.X, rect.Y, rect.Width, rect.Height), getDevice ());
+		return new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
 	}
 	RECT rect = new RECT();
 	OS.GetClipBox(handle, rect);
-	return DPIUtil.autoScaleDown(new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top), getDevice ());
+	return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 }
 
 /**
@@ -3778,9 +3874,15 @@ public int getLineStyle() {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public int getLineWidth() {
+public int getLineWidth () {
+	return DPIUtil.autoScaleDown(getLineWidthInPixels(), getDevice());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getLineWidthInPixels() {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.autoScaleDown((int)data.lineWidth, device);
+	return (int)data.lineWidth;
 }
 
 /**
@@ -4339,11 +4441,17 @@ void setClipping(long /*int*/ clipRgn) {
  * </ul>
  */
 public void setClipping (int x, int y, int width, int height) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	x = DPIUtil.autoScaleUp(x, getDevice ());
 	y = DPIUtil.autoScaleUp(y, getDevice ());
 	width = DPIUtil.autoScaleUp(width, getDevice ());
 	height = DPIUtil.autoScaleUp(height, getDevice ());
+	setClippingInPixels(x, y, width, height);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setClippingInPixels (int x, int y, int width, int height) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	long /*int*/ hRgn = OS.CreateRectRgn(x, y, x + width, y + height);
 	setClipping(hRgn);
 	OS.DeleteObject(hRgn);
@@ -4401,12 +4509,18 @@ public void setClipping (Path path) {
  * </ul>
  */
 public void setClipping (Rectangle rect) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	rect = DPIUtil.autoScaleUp(rect, getDevice ());
+	setClippingInPixels(rect);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setClippingInPixels (Rectangle rect) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) {
 		setClipping(0);
 	} else {
-		setClipping(rect.x, rect.y, rect.width, rect.height);
+		setClippingInPixels(rect.x, rect.y, rect.width, rect.height);
 	}
 }
 
@@ -4856,9 +4970,14 @@ public void setLineStyle(int lineStyle) {
  * </ul>
  */
 public void setLineWidth(int lineWidth) {
-	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	lineWidth = DPIUtil.autoScaleUp (lineWidth, device);
-
+	setLineWidthInPixels(lineWidth);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLineWidthInPixels(int lineWidth) {
+	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (data.lineWidth == lineWidth) return;
 	data.lineWidth = lineWidth;
 	data.state &= ~(LINE_WIDTH | DRAW_OFFSET);
@@ -5014,19 +5133,19 @@ public Point stringExtent(String string) {
 	if (gdipGraphics != 0) {
 		Point size = new Point(0, 0);
 		drawText(gdipGraphics, string, 0, 0, 0, size);
-		return DPIUtil.autoScaleDown(size, getDevice ());
+		return size;
 	}
 	SIZE size = new SIZE();
 	if (length == 0) {
 //		OS.GetTextExtentPoint32(handle, SPACE, SPACE.length(), size);
 		OS.GetTextExtentPoint32W(handle, new char[]{' '}, 1, size);
-		return DPIUtil.autoScaleDown(new Point(0, size.cy), getDevice ());
+		return new Point(0, size.cy);
 	} else {
 //		TCHAR buffer = new TCHAR (getCodePage(), string, false);
 		char[] buffer = new char [length];
 		string.getChars(0, length, buffer, 0);
 		OS.GetTextExtentPoint32W(handle, buffer, length, size);
-		return DPIUtil.autoScaleDown(new Point(size.cx, size.cy), getDevice ());
+		return new Point(size.cx, size.cy);
 	}
 }
 
@@ -5092,13 +5211,13 @@ public Point textExtent(String string, int flags) {
 	if (gdipGraphics != 0) {
 		Point size = new Point(0, 0);
 		drawText(gdipGraphics, string, 0, 0, flags, size);
-		return DPIUtil.autoScaleDown(size, getDevice ());
+		return size;
 	}
 	if (string.length () == 0) {
 		SIZE size = new SIZE();
 //		OS.GetTextExtentPoint32(handle, SPACE, SPACE.length(), size);
 		OS.GetTextExtentPoint32W(handle, new char [] {' '}, 1, size);
-		return DPIUtil.autoScaleDown(new Point(0, size.cy), getDevice ());
+		return new Point(0, size.cy);
 	}
 	RECT rect = new RECT();
 	TCHAR buffer = new TCHAR(getCodePage(), string, false);
@@ -5107,7 +5226,7 @@ public Point textExtent(String string, int flags) {
 	if ((flags & SWT.DRAW_TAB) != 0) uFormat |= OS.DT_EXPANDTABS;
 	if ((flags & SWT.DRAW_MNEMONIC) == 0) uFormat |= OS.DT_NOPREFIX;
 	OS.DrawText(handle, buffer, buffer.length(), rect, uFormat);
-	return DPIUtil.autoScaleDown(new Point(rect.right, rect.bottom), getDevice ());
+	return new Point(rect.right, rect.bottom);
 }
 
 /**

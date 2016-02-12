@@ -170,12 +170,12 @@ public Point computeSizeInPixels(int wHint, int hHint, boolean changed) {
  */
 private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topleft, Color bottomright) {
 	gc.setForeground(bottomright);
-	gc.drawLine(x+w, y,   x+w, y+h);
-	gc.drawLine(x,   y+h, x+w, y+h);
+	gc.drawLineInPixels(x+w, y,   x+w, y+h);
+	gc.drawLineInPixels(x,   y+h, x+w, y+h);
 
 	gc.setForeground(topleft);
-	gc.drawLine(x, y, x+w-1, y);
-	gc.drawLine(x, y, x,     y+h-1);
+	gc.drawLineInPixels(x, y, x+w-1, y);
+	gc.drawLineInPixels(x, y, x,     y+h-1);
 }
 /*
  * Return the lowercase of the first non-'&' character following
@@ -455,7 +455,7 @@ void onPaint(PaintEvent event) {
 			Rectangle imageRect = backgroundImage.getBoundsInPixels();
 			// tile image to fill space
 			gc.setBackground(getBackground());
-			gc.fillRectangle(rect);
+			gc.fillRectangleInPixels(rect);
 			int xPos = 0;
 			while (xPos < rect.width) {
 				int yPos = 0;
@@ -470,7 +470,7 @@ void onPaint(PaintEvent event) {
 			final Color oldBackground = gc.getBackground();
 			if (gradientColors.length == 1) {
 				if (gradientColors[0] != null) gc.setBackground(gradientColors[0]);
-				gc.fillRectangle(0, 0, rect.width, rect.height);
+				gc.fillRectangleInPixels(0, 0, rect.width, rect.height);
 			} else {
 				final Color oldForeground = gc.getForeground();
 				Color lastColor = gradientColors[0];
@@ -483,21 +483,21 @@ void onPaint(PaintEvent event) {
 					gc.setBackground(lastColor);
 					if (gradientVertical) {
 						final int gradientHeight = (gradientPercents[i] * rect.height / 100) - pos;
-						gc.fillGradientRectangle(0, pos, rect.width, gradientHeight, true);
+						gc.fillGradientRectangleInPixels(0, pos, rect.width, gradientHeight, true);
 						pos += gradientHeight;
 					} else {
 						final int gradientWidth = (gradientPercents[i] * rect.width / 100) - pos;
-						gc.fillGradientRectangle(pos, 0, gradientWidth, rect.height, false);
+						gc.fillGradientRectangleInPixels(pos, 0, gradientWidth, rect.height, false);
 						pos += gradientWidth;
 					}
 				}
 				if (gradientVertical && pos < rect.height) {
 					gc.setBackground(getBackground());
-					gc.fillRectangle(0, pos, rect.width, rect.height - pos);
+					gc.fillRectangleInPixels(0, pos, rect.width, rect.height - pos);
 				}
 				if (!gradientVertical && pos < rect.width) {
 					gc.setBackground(getBackground());
-					gc.fillRectangle(pos, 0, rect.width - pos, rect.height);
+					gc.fillRectangleInPixels(pos, 0, rect.width - pos, rect.height);
 				}
 				gc.setForeground(oldForeground);
 			}
@@ -505,13 +505,13 @@ void onPaint(PaintEvent event) {
 		} else {
 			if ((background != null || (getStyle() & SWT.DOUBLE_BUFFERED) == 0) && background.getAlpha() > 0) {
 				gc.setBackground(getBackground());
-				gc.fillRectangle(rect);
+				gc.fillRectangleInPixels(rect);
 			}
 		}
 	} catch (SWTException e) {
 		if ((getStyle() & SWT.DOUBLE_BUFFERED) == 0) {
 			gc.setBackground(getBackground());
-			gc.fillRectangle(rect);
+			gc.fillRectangleInPixels(rect);
 		}
 	}
 
@@ -600,7 +600,7 @@ private void paintBorder(GC gc, Rectangle r) {
 	}
 
 	if (c1 != null && c2 != null) {
-		gc.setLineWidth(1);
+		gc.setLineWidthInPixels(1);
 		drawBevelRect(gc, r.x, r.y, r.width-1, r.height-1, c1, c2);
 	}
 }

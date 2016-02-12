@@ -312,7 +312,7 @@ void onPaint(GC gc) {
 	if (bottom != null) {
 		int y = bottom.getBoundsInPixels().y - BORDER_STRIPE - 1;
 		gc.setForeground(border1);
-		gc.drawLine(0, y, size.x, y);
+		gc.drawLineInPixels(0, y, size.x, y);
 	}
 	if (left == null || right == null) return;
 	int[] line1 = new int[curve.length+6];
@@ -360,12 +360,12 @@ void onPaint(GC gc) {
 		int x1 = Math.max(0, curveStart - CURVE_TAIL);
 		gc.setForeground(background);
 		gc.setBackground(border1);
-		gc.fillGradientRectangle(x1, size.y - BORDER_STRIPE, curveStart-x1+1, 1, false);
+		gc.fillGradientRectangleInPixels(x1, size.y - BORDER_STRIPE, curveStart-x1+1, 1, false);
 	} else {
 		// draw solid tail
 		int x1 = Math.max(0, curveStart - CURVE_TAIL);
 		gc.setForeground(border1);
-		gc.drawLine(x1, size.y - BORDER_STRIPE, curveStart+1, size.y - BORDER_STRIPE);
+		gc.drawLineInPixels(x1, size.y - BORDER_STRIPE, curveStart+1, size.y - BORDER_STRIPE);
 	}
 
 	// draw border

@@ -714,7 +714,7 @@ Image createButtonImage(Display display, int button) {
 	}
 	Color transColor = new Color(display, transparent);
 	gc.setBackground(transColor);
-	gc.fillRectangle(image.getBoundsInPixels());
+	gc.fillRectangleInPixels(image.getBoundsInPixels());
 	renderer.draw(button, SWT.NONE, new Rectangle(trim.x, trim.y, size.x, size.y), gc);
 	gc.dispose ();
 	transColor.dispose();
@@ -2073,11 +2073,11 @@ void onPaint(Event event) {
 		x = hoverRect.x;
 		int y = hoverRect.y;
 		gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
-		gc.fillRectangle(x + hoverRect.width - 6, y, 5, 5);
-		gc.drawRectangle(x + hoverRect.width - 6, y, 5, 5);
-		gc.drawLine(x + hoverRect.width - 6, y+2, x + hoverRect.width - 6 + 5, y + 2);
-		gc.fillRectangle(x, y, 5 , 2);
-		gc.drawRectangle(x, y, 5 , 2);
+		gc.fillRectangleInPixels(x + hoverRect.width - 6, y, 5, 5);
+		gc.drawRectangleInPixels(x + hoverRect.width - 6, y, 5, 5);
+		gc.drawLineInPixels(x + hoverRect.width - 6, y+2, x + hoverRect.width - 6 + 5, y + 2);
+		gc.fillRectangleInPixels(x, y, 5 , 2);
+		gc.drawRectangleInPixels(x, y, 5 , 2);
 	}
 	gc.setFont(gcFont);
 	gc.setForeground(gcForeground);

@@ -264,7 +264,7 @@ void onPaint(GC gc) {
 	Color border = getDisplay().getSystemColor(BORDER1_COLOR);
 	if (showBorder) {
 		gc.setForeground(border);
-		gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
+		gc.drawRectangleInPixels(0, 0, size.x - 1, size.y - 1);
 		if (highlight > 0) {
 			int x1 = 1;
 			int y1 = 1;
@@ -280,7 +280,7 @@ void onPaint(GC gc) {
 	}
 	if (separator > -1) {
 		gc.setForeground(border);
-		gc.drawLine(borderLeft + highlight, separator, size.x - borderLeft - borderRight - highlight, separator);
+		gc.drawLineInPixels(borderLeft + highlight, separator, size.x - borderLeft - borderRight - highlight, separator);
 	}
 	gc.setForeground(gcForeground);
 }

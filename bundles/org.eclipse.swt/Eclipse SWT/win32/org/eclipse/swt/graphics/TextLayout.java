@@ -630,7 +630,7 @@ public void draw (GC gc, int x, int y, int selectionStart, int selectionEnd, Col
 	int length = text.length();
 	if (length == 0 && flags == 0) return;
 	long /*int*/ hdc = gc.handle;
-	Rectangle clip = gc.getClipping();
+	Rectangle clip = gc.getClippingInPixels();
 	GCData data = gc.data;
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	int foreground = data.foreground;

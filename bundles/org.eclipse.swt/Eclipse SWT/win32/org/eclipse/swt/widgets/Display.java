@@ -2277,7 +2277,7 @@ Image getSortImage (int direction) {
 			upArrow = new Image (this, imageData);
 			GC gc = new GC (upArrow);
 			gc.setBackground (c3);
-			gc.fillRectangle (0, 0, 8, 8);
+			gc.fillRectangleInPixels (0, 0, 8, 8);
 			gc.setForeground (c1);
 			int [] line1 = new int [] {0,6, 1,6, 1,4, 2,4, 2,2, 3,2, 3,1};
 			gc.drawPolyline (line1);
@@ -2298,7 +2298,7 @@ Image getSortImage (int direction) {
 			downArrow = new Image (this, imageData);
 			GC gc = new GC (downArrow);
 			gc.setBackground (c3);
-			gc.fillRectangle (0, 0, 8, 8);
+			gc.fillRectangleInPixels (0, 0, 8, 8);
 			gc.setForeground (c1);
 			int [] line1 = new int [] {7,0, 0,0, 0,1, 1,1, 1,3, 2,3, 2,5, 3,5, 3,6};
 			gc.drawPolyline (line1);

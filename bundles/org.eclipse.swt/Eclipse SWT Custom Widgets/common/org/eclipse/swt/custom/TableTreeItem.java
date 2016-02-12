@@ -192,7 +192,7 @@ TableTreeItem(TableTree parent, TableTreeItem parentItem, int style, int index) 
 			parent.sizeImage = new Image(parent.getDisplay(), itemHeight, itemHeight);
 			GC gc = new GC (parent.sizeImage);
 			gc.setBackground(parent.getBackground());
-			gc.fillRectangle(0, 0, itemHeight, itemHeight);
+			gc.fillRectangleInPixels(0, 0, itemHeight, itemHeight);
 			gc.dispose();
 			tableItem.setImage(0, parent.sizeImage);
 		}

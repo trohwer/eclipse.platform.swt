@@ -319,7 +319,7 @@ void paint(Event event) {
 	GC gc = event.gc;
 	gc.setBackground(getBackground());
 	gc.setForeground(getForeground());
-	gc.fillRectangle(event.x, event.y, event.width, event.height);
+	gc.fillRectangleInPixels(event.x, event.y, event.width, event.height);
 	int x = 0;
 	Point size = getSizeInPixels();
 	Image image = row.getImage(columnIndex);
@@ -377,7 +377,7 @@ void paint(Event event) {
 		Display display = getDisplay();
 		gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.drawFocus(0, 0, size.x, size.y);
+		gc.drawFocusInPixels(0, 0, size.x, size.y);
 	}
 }
 

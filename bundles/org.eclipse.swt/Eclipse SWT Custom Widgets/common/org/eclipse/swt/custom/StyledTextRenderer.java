@@ -371,7 +371,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 	int height = layout.getBounds().height;
 	if (lineBackground != null) {
 		gc.setBackground(lineBackground);
-		gc.fillRectangle(client.x, paintY, client.width, height);
+		gc.fillRectangleInPixels(client.x, paintY, client.width, height);
 	} else {
 		gc.setBackground(widgetBackground);
 		styledText.drawBackground(gc, client.x, paintY, client.width, height);

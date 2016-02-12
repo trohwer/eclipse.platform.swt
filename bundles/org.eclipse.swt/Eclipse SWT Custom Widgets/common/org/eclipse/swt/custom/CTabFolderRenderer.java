@@ -663,7 +663,7 @@ public class CTabFolderRenderer {
 		if (image != null) {
 			// draw the background image in shape
 			gc.setBackground(defaultBackground);
-			gc.fillRectangle(x, y, width, height);
+			gc.fillRectangleInPixels(x, y, width, height);
 			Rectangle imageRect = image.getBoundsInPixels();
 			gc.drawImage(image, imageRect.x, imageRect.y, imageRect.width, imageRect.height, x, y, width, height);
 		} else if (colors != null) {
@@ -671,7 +671,7 @@ public class CTabFolderRenderer {
 			if (colors.length == 1) {
 				Color background = colors[0] != null ? colors[0] : defaultBackground;
 				gc.setBackground(background);
-				gc.fillRectangle(x, y, width, height);
+				gc.fillRectangleInPixels(x, y, width, height);
 			} else {
 				if (vertical) {
 					if (parent.onBottom) {
@@ -679,7 +679,7 @@ public class CTabFolderRenderer {
 						if (percents[percents.length - 1] < 100) {
 							pos = (100 - percents[percents.length - 1]) * height / 100;
 							gc.setBackground(defaultBackground);
-							gc.fillRectangle(x, y, width, pos);
+							gc.fillRectangleInPixels(x, y, width, pos);
 						}
 						Color lastColor = colors[colors.length-1];
 						if (lastColor == null) lastColor = defaultBackground;
@@ -690,7 +690,7 @@ public class CTabFolderRenderer {
 							gc.setBackground(lastColor);
 							int percentage = i > 0 ? percents[i] - percents[i-1] : percents[i];
 							int gradientHeight = percentage * height / 100;
-							gc.fillGradientRectangle(x, y+pos, width, gradientHeight, true);
+							gc.fillGradientRectangleInPixels(x, y+pos, width, gradientHeight, true);
 							pos += gradientHeight;
 						}
 					} else {
@@ -704,12 +704,12 @@ public class CTabFolderRenderer {
 							gc.setBackground(lastColor);
 							int percentage = i > 0 ? percents[i] - percents[i-1] : percents[i];
 							int gradientHeight = percentage * height / 100;
-							gc.fillGradientRectangle(x, y+pos, width, gradientHeight, true);
+							gc.fillGradientRectangleInPixels(x, y+pos, width, gradientHeight, true);
 							pos += gradientHeight;
 						}
 						if (pos < height) {
 							gc.setBackground(defaultBackground);
-							gc.fillRectangle(x, pos, width, height-pos+1);
+							gc.fillRectangleInPixels(x, pos, width, height-pos+1);
 						}
 					}
 				} else { //horizontal gradient
@@ -724,12 +724,12 @@ public class CTabFolderRenderer {
 						if (lastColor == null) lastColor = defaultBackground;
 						gc.setBackground(lastColor);
 						int gradientWidth = (percents[i] * width / 100) - pos;
-						gc.fillGradientRectangle(x+pos, y, gradientWidth, height, false);
+						gc.fillGradientRectangleInPixels(x+pos, y, gradientWidth, height, false);
 						pos += gradientWidth;
 					}
 					if (pos < width) {
 						gc.setBackground(defaultBackground);
-						gc.fillRectangle(x+pos, y, width-pos, height);
+						gc.fillRectangleInPixels(x+pos, y, width-pos, height);
 					}
 				}
 			}
@@ -737,7 +737,7 @@ public class CTabFolderRenderer {
 			// draw a solid background using default background in shape
 			if ((parent.getStyle() & SWT.NO_BACKGROUND) != 0 || !defaultBackground.equals(parent.getBackground())) {
 				gc.setBackground(defaultBackground);
-				gc.fillRectangle(x, y, width, height);
+				gc.fillRectangleInPixels(x, y, width, height);
 			}
 		}
 		if (shape != null) {
@@ -818,14 +818,14 @@ public class CTabFolderRenderer {
 				} else {
 					yClient = borderTop + tabHeight + highlight_header + marginHeight;
 				}
-				gc.fillRectangle(xClient - marginWidth, yClient - marginHeight, width, height);
+				gc.fillRectangleInPixels(xClient - marginWidth, yClient - marginHeight, width, height);
 			}
 		} else {
 			if ((parent.getStyle() & SWT.NO_BACKGROUND) != 0) {
 				int height = borderTop + tabHeight + highlight_header + borderBottom;
 				if (size.y > height) {
 					gc.setBackground(parent.getParent().getBackground());
-					gc.fillRectangle(0, height, size.x, size.y - height);
+					gc.fillRectangleInPixels(0, height, size.x, size.y - height);
 				}
 			}
 		}
@@ -837,12 +837,12 @@ public class CTabFolderRenderer {
 			int x2 = size.x - borderRight;
 			int y1 = parent.onBottom ? borderTop - 1 : borderTop + tabHeight;
 			int y2 = parent.onBottom ? size.y - tabHeight - borderBottom - 1 : size.y - borderBottom;
-			gc.drawLine(x1, y1, x1, y2); // left
-			gc.drawLine(x2, y1, x2, y2); // right
+			gc.drawLineInPixels(x1, y1, x1, y2); // left
+			gc.drawLineInPixels(x2, y1, x2, y2); // right
 			if (parent.onBottom) {
-				gc.drawLine(x1, y1, x2, y1); // top
+				gc.drawLineInPixels(x1, y1, x2, y1); // top
 			} else {
-				gc.drawLine(x1, y2, x2, y2); // bottom
+				gc.drawLineInPixels(x1, y2, x2, y2); // bottom
 			}
 		}
 	}
@@ -930,14 +930,14 @@ public class CTabFolderRenderer {
 				Color chevronBorder = parent.single ? parent.getSelectionForeground() : parent.getForeground();
 				gc.setForeground(chevronBorder);
 				gc.setFont(f);
-				gc.drawLine(x,y,     x+2,y+2);
-				gc.drawLine(x+2,y+2, x,y+4);
-				gc.drawLine(x+1,y,   x+3,y+2);
-				gc.drawLine(x+3,y+2, x+1,y+4);
-				gc.drawLine(x+4,y,   x+6,y+2);
-				gc.drawLine(x+6,y+2, x+5,y+4);
-				gc.drawLine(x+5,y,   x+7,y+2);
-				gc.drawLine(x+7,y+2, x+4,y+4);
+				gc.drawLineInPixels(x,y,     x+2,y+2);
+				gc.drawLineInPixels(x+2,y+2, x,y+4);
+				gc.drawLineInPixels(x+1,y,   x+3,y+2);
+				gc.drawLineInPixels(x+3,y+2, x+1,y+4);
+				gc.drawLineInPixels(x+4,y,   x+6,y+2);
+				gc.drawLineInPixels(x+6,y+2, x+5,y+4);
+				gc.drawLineInPixels(x+5,y,   x+7,y+2);
+				gc.drawLineInPixels(x+7,y+2, x+4,y+4);
 				gc.drawString(chevronString, x+7, y+3, true);
 				break;
 			}
@@ -945,16 +945,16 @@ public class CTabFolderRenderer {
 				gc.setForeground(display.getSystemColor(BUTTON_BORDER));
 				gc.setBackground(display.getSystemColor(BUTTON_FILL));
 				gc.setFont(f);
-				gc.fillRoundRectangle(chevronRect.x, chevronRect.y, chevronRect.width, chevronRect.height, 6, 6);
-				gc.drawRoundRectangle(chevronRect.x, chevronRect.y, chevronRect.width - 1, chevronRect.height - 1, 6, 6);
-				gc.drawLine(x,y,     x+2,y+2);
-				gc.drawLine(x+2,y+2, x,y+4);
-				gc.drawLine(x+1,y,   x+3,y+2);
-				gc.drawLine(x+3,y+2, x+1,y+4);
-				gc.drawLine(x+4,y,   x+6,y+2);
-				gc.drawLine(x+6,y+2, x+5,y+4);
-				gc.drawLine(x+5,y,   x+7,y+2);
-				gc.drawLine(x+7,y+2, x+4,y+4);
+				gc.fillRoundRectangleInPixels(chevronRect.x, chevronRect.y, chevronRect.width, chevronRect.height, 6, 6);
+				gc.drawRoundRectangleInPixels(chevronRect.x, chevronRect.y, chevronRect.width - 1, chevronRect.height - 1, 6, 6);
+				gc.drawLineInPixels(x,y,     x+2,y+2);
+				gc.drawLineInPixels(x+2,y+2, x,y+4);
+				gc.drawLineInPixels(x+1,y,   x+3,y+2);
+				gc.drawLineInPixels(x+3,y+2, x+1,y+4);
+				gc.drawLineInPixels(x+4,y,   x+6,y+2);
+				gc.drawLineInPixels(x+6,y+2, x+5,y+4);
+				gc.drawLineInPixels(x+5,y,   x+7,y+2);
+				gc.drawLineInPixels(x+7,y+2, x+4,y+4);
 				gc.drawString(chevronString, x+7, y+3, true);
 				break;
 			}
@@ -962,16 +962,16 @@ public class CTabFolderRenderer {
 				gc.setForeground(display.getSystemColor(BUTTON_BORDER));
 				gc.setBackground(display.getSystemColor(BUTTON_FILL));
 				gc.setFont(f);
-				gc.fillRoundRectangle(chevronRect.x, chevronRect.y, chevronRect.width, chevronRect.height, 6, 6);
-				gc.drawRoundRectangle(chevronRect.x, chevronRect.y, chevronRect.width - 1, chevronRect.height - 1, 6, 6);
-				gc.drawLine(x+1,y+1, x+3,y+3);
-				gc.drawLine(x+3,y+3, x+1,y+5);
-				gc.drawLine(x+2,y+1, x+4,y+3);
-				gc.drawLine(x+4,y+3, x+2,y+5);
-				gc.drawLine(x+5,y+1, x+7,y+3);
-				gc.drawLine(x+7,y+3, x+6,y+5);
-				gc.drawLine(x+6,y+1, x+8,y+3);
-				gc.drawLine(x+8,y+3, x+5,y+5);
+				gc.fillRoundRectangleInPixels(chevronRect.x, chevronRect.y, chevronRect.width, chevronRect.height, 6, 6);
+				gc.drawRoundRectangleInPixels(chevronRect.x, chevronRect.y, chevronRect.width - 1, chevronRect.height - 1, 6, 6);
+				gc.drawLineInPixels(x+1,y+1, x+3,y+3);
+				gc.drawLineInPixels(x+3,y+3, x+1,y+5);
+				gc.drawLineInPixels(x+2,y+1, x+4,y+3);
+				gc.drawLineInPixels(x+4,y+3, x+2,y+5);
+				gc.drawLineInPixels(x+5,y+1, x+7,y+3);
+				gc.drawLineInPixels(x+7,y+3, x+6,y+5);
+				gc.drawLineInPixels(x+6,y+1, x+8,y+3);
+				gc.drawLineInPixels(x+8,y+3, x+5,y+5);
 				gc.drawString(chevronString, x+8, y+4, true);
 				break;
 			}
@@ -1005,7 +1005,7 @@ public class CTabFolderRenderer {
 		gc.setForeground(gradients[0]);
 
 		//draw top horizontal line
-		gc.drawLine(
+		gc.drawLineInPixels(
 				TOP_LEFT_CORNER_HILITE[0] + x + 1, //rely on fact that first pair is top/right of curve
 				1 + y,
 				rightEdge - curveIndent,
@@ -1027,12 +1027,12 @@ public class CTabFolderRenderer {
 			lastY = rawY + y;
 			lastColorIndex = rawY - 1;
 			gc.setForeground(gradients[lastColorIndex]);
-			gc.drawPoint(lastX, lastY);
+			gc.drawPointInPixels(lastX, lastY);
 		}
 		//draw left vertical line highlight
 		for(int i = lastColorIndex; i < gradientsSize; i++) {
 			gc.setForeground(gradients[i]);
-			gc.drawPoint(lastX, 1 + lastY++);
+			gc.drawPointInPixels(lastX, 1 + lastY++);
 		}
 
 		int rightEdgeOffset = rightEdge - curveIndent;
@@ -1047,14 +1047,14 @@ public class CTabFolderRenderer {
 			if(lastColorIndex >= gradientsSize)
 				break;	//can happen if tabs are unusually short and cut off the curve
 			gc.setForeground(gradients[lastColorIndex]);
-			gc.drawPoint(lastX, lastY);
+			gc.drawPointInPixels(lastX, lastY);
 		}
 		//draw right diagonal line highlight
 		for(int i = lastColorIndex; i < lastColorIndex + d; i++) {
 			if(i >= gradientsSize)
 				break;	//can happen if tabs are unusually short and cut off the curve
 			gc.setForeground(gradients[i]);
-			gc.drawPoint(1 + lastX++, 1 + lastY++);
+			gc.drawPointInPixels(1 + lastX++, 1 + lastY++);
 		}
 
 		//draw right swoop highlight from diagonal portion to end
@@ -1067,7 +1067,7 @@ public class CTabFolderRenderer {
 			if(lastColorIndex >= gradientsSize)
 				break;	//can happen if tabs are unusually short and cut off the curve
 			gc.setForeground(gradients[lastColorIndex]);
-			gc.drawPoint(lastX, lastY);
+			gc.drawPointInPixels(lastX, lastY);
 		}
 	}
 
@@ -1127,50 +1127,50 @@ public class CTabFolderRenderer {
 		switch (maxImageState & (SWT.HOT | SWT.SELECTED)) {
 			case SWT.NONE: {
 				if (!parent.getMaximized()) {
-					gc.fillRectangle(x, y, 9, 9);
-					gc.drawRectangle(x, y, 9, 9);
-					gc.drawLine(x+1, y+2, x+8, y+2);
+					gc.fillRectangleInPixels(x, y, 9, 9);
+					gc.drawRectangleInPixels(x, y, 9, 9);
+					gc.drawLineInPixels(x+1, y+2, x+8, y+2);
 				} else {
-					gc.fillRectangle(x, y+3, 5, 4);
-					gc.fillRectangle(x+2, y, 5, 4);
-					gc.drawRectangle(x, y+3, 5, 4);
-					gc.drawRectangle(x+2, y, 5, 4);
-					gc.drawLine(x+3, y+1, x+6, y+1);
-					gc.drawLine(x+1, y+4, x+4, y+4);
+					gc.fillRectangleInPixels(x, y+3, 5, 4);
+					gc.fillRectangleInPixels(x+2, y, 5, 4);
+					gc.drawRectangleInPixels(x, y+3, 5, 4);
+					gc.drawRectangleInPixels(x+2, y, 5, 4);
+					gc.drawLineInPixels(x+3, y+1, x+6, y+1);
+					gc.drawLineInPixels(x+1, y+4, x+4, y+4);
 				}
 				break;
 			}
 			case SWT.HOT: {
-				gc.fillRoundRectangle(maxRect.x, maxRect.y, maxRect.width, maxRect.height, 6, 6);
-				gc.drawRoundRectangle(maxRect.x, maxRect.y, maxRect.width - 1, maxRect.height - 1, 6, 6);
+				gc.fillRoundRectangleInPixels(maxRect.x, maxRect.y, maxRect.width, maxRect.height, 6, 6);
+				gc.drawRoundRectangleInPixels(maxRect.x, maxRect.y, maxRect.width - 1, maxRect.height - 1, 6, 6);
 				if (!parent.getMaximized()) {
-					gc.fillRectangle(x, y, 9, 9);
-					gc.drawRectangle(x, y, 9, 9);
-					gc.drawLine(x+1, y+2, x+8, y+2);
+					gc.fillRectangleInPixels(x, y, 9, 9);
+					gc.drawRectangleInPixels(x, y, 9, 9);
+					gc.drawLineInPixels(x+1, y+2, x+8, y+2);
 				} else {
-					gc.fillRectangle(x, y+3, 5, 4);
-					gc.fillRectangle(x+2, y, 5, 4);
-					gc.drawRectangle(x, y+3, 5, 4);
-					gc.drawRectangle(x+2, y, 5, 4);
-					gc.drawLine(x+3, y+1, x+6, y+1);
-					gc.drawLine(x+1, y+4, x+4, y+4);
+					gc.fillRectangleInPixels(x, y+3, 5, 4);
+					gc.fillRectangleInPixels(x+2, y, 5, 4);
+					gc.drawRectangleInPixels(x, y+3, 5, 4);
+					gc.drawRectangleInPixels(x+2, y, 5, 4);
+					gc.drawLineInPixels(x+3, y+1, x+6, y+1);
+					gc.drawLineInPixels(x+1, y+4, x+4, y+4);
 				}
 				break;
 			}
 			case SWT.SELECTED: {
-				gc.fillRoundRectangle(maxRect.x, maxRect.y, maxRect.width, maxRect.height, 6, 6);
-				gc.drawRoundRectangle(maxRect.x, maxRect.y, maxRect.width - 1, maxRect.height - 1, 6, 6);
+				gc.fillRoundRectangleInPixels(maxRect.x, maxRect.y, maxRect.width, maxRect.height, 6, 6);
+				gc.drawRoundRectangleInPixels(maxRect.x, maxRect.y, maxRect.width - 1, maxRect.height - 1, 6, 6);
 				if (!parent.getMaximized()) {
-					gc.fillRectangle(x+1, y+1, 9, 9);
-					gc.drawRectangle(x+1, y+1, 9, 9);
-					gc.drawLine(x+2, y+3, x+9, y+3);
+					gc.fillRectangleInPixels(x+1, y+1, 9, 9);
+					gc.drawRectangleInPixels(x+1, y+1, 9, 9);
+					gc.drawLineInPixels(x+2, y+3, x+9, y+3);
 				} else {
-					gc.fillRectangle(x+1, y+4, 5, 4);
-					gc.fillRectangle(x+3, y+1, 5, 4);
-					gc.drawRectangle(x+1, y+4, 5, 4);
-					gc.drawRectangle(x+3, y+1, 5, 4);
-					gc.drawLine(x+4, y+2, x+7, y+2);
-					gc.drawLine(x+2, y+5, x+5, y+5);
+					gc.fillRectangleInPixels(x+1, y+4, 5, 4);
+					gc.fillRectangleInPixels(x+3, y+1, 5, 4);
+					gc.drawRectangleInPixels(x+1, y+4, 5, 4);
+					gc.drawRectangleInPixels(x+3, y+1, 5, 4);
+					gc.drawLineInPixels(x+4, y+2, x+7, y+2);
+					gc.drawLineInPixels(x+2, y+5, x+5, y+5);
 				}
 				break;
 			}
@@ -1189,47 +1189,47 @@ public class CTabFolderRenderer {
 		switch (minImageState & (SWT.HOT | SWT.SELECTED)) {
 			case SWT.NONE: {
 				if (!parent.getMinimized()) {
-					gc.fillRectangle(x, y, 9, 3);
-					gc.drawRectangle(x, y, 9, 3);
+					gc.fillRectangleInPixels(x, y, 9, 3);
+					gc.drawRectangleInPixels(x, y, 9, 3);
 				} else {
-					gc.fillRectangle(x, y+3, 5, 4);
-					gc.fillRectangle(x+2, y, 5, 4);
-					gc.drawRectangle(x, y+3, 5, 4);
-					gc.drawRectangle(x+2, y, 5, 4);
-					gc.drawLine(x+3, y+1, x+6, y+1);
-					gc.drawLine(x+1, y+4, x+4, y+4);
+					gc.fillRectangleInPixels(x, y+3, 5, 4);
+					gc.fillRectangleInPixels(x+2, y, 5, 4);
+					gc.drawRectangleInPixels(x, y+3, 5, 4);
+					gc.drawRectangleInPixels(x+2, y, 5, 4);
+					gc.drawLineInPixels(x+3, y+1, x+6, y+1);
+					gc.drawLineInPixels(x+1, y+4, x+4, y+4);
 				}
 				break;
 			}
 			case SWT.HOT: {
-				gc.fillRoundRectangle(minRect.x, minRect.y, minRect.width, minRect.height, 6, 6);
-				gc.drawRoundRectangle(minRect.x, minRect.y, minRect.width - 1, minRect.height - 1, 6, 6);
+				gc.fillRoundRectangleInPixels(minRect.x, minRect.y, minRect.width, minRect.height, 6, 6);
+				gc.drawRoundRectangleInPixels(minRect.x, minRect.y, minRect.width - 1, minRect.height - 1, 6, 6);
 				if (!parent.getMinimized()) {
-					gc.fillRectangle(x, y, 9, 3);
-					gc.drawRectangle(x, y, 9, 3);
+					gc.fillRectangleInPixels(x, y, 9, 3);
+					gc.drawRectangleInPixels(x, y, 9, 3);
 				} else {
-					gc.fillRectangle(x, y+3, 5, 4);
-					gc.fillRectangle(x+2, y, 5, 4);
-					gc.drawRectangle(x, y+3, 5, 4);
-					gc.drawRectangle(x+2, y, 5, 4);
-					gc.drawLine(x+3, y+1, x+6, y+1);
-					gc.drawLine(x+1, y+4, x+4, y+4);
+					gc.fillRectangleInPixels(x, y+3, 5, 4);
+					gc.fillRectangleInPixels(x+2, y, 5, 4);
+					gc.drawRectangleInPixels(x, y+3, 5, 4);
+					gc.drawRectangleInPixels(x+2, y, 5, 4);
+					gc.drawLineInPixels(x+3, y+1, x+6, y+1);
+					gc.drawLineInPixels(x+1, y+4, x+4, y+4);
 				}
 				break;
 			}
 			case SWT.SELECTED: {
-				gc.fillRoundRectangle(minRect.x, minRect.y, minRect.width, minRect.height, 6, 6);
-				gc.drawRoundRectangle(minRect.x, minRect.y, minRect.width - 1, minRect.height - 1, 6, 6);
+				gc.fillRoundRectangleInPixels(minRect.x, minRect.y, minRect.width, minRect.height, 6, 6);
+				gc.drawRoundRectangleInPixels(minRect.x, minRect.y, minRect.width - 1, minRect.height - 1, 6, 6);
 				if (!parent.getMinimized()) {
-					gc.fillRectangle(x+1, y+1, 9, 3);
-					gc.drawRectangle(x+1, y+1, 9, 3);
+					gc.fillRectangleInPixels(x+1, y+1, 9, 3);
+					gc.drawRectangleInPixels(x+1, y+1, 9, 3);
 				} else {
-					gc.fillRectangle(x+1, y+4, 5, 4);
-					gc.fillRectangle(x+3, y+1, 5, 4);
-					gc.drawRectangle(x+1, y+4, 5, 4);
-					gc.drawRectangle(x+3, y+1, 5, 4);
-					gc.drawLine(x+4, y+2, x+7, y+2);
-					gc.drawLine(x+2, y+5, x+5, y+5);
+					gc.fillRectangleInPixels(x+1, y+4, 5, 4);
+					gc.fillRectangleInPixels(x+3, y+1, 5, 4);
+					gc.drawRectangleInPixels(x+1, y+4, 5, 4);
+					gc.drawRectangleInPixels(x+3, y+1, 5, 4);
+					gc.drawLineInPixels(x+4, y+2, x+7, y+2);
+					gc.drawLineInPixels(x+2, y+5, x+5, y+5);
 				}
 				break;
 			}
@@ -1314,7 +1314,7 @@ public class CTabFolderRenderer {
 				drawBackground(gc, shape, true);
 			} else {
 				gc.setBackground(parent.selectionBackground);
-				gc.fillRectangle(xx, yy, ww, hh);
+				gc.fillRectangleInPixels(xx, yy, ww, hh);
 			}
 
 			if (parent.single) {
@@ -1327,7 +1327,7 @@ public class CTabFolderRenderer {
 					int y1 = (parent.onBottom) ? y - 1 : y + height;
 					int x2 = size.x - borderRight;
 					gc.setForeground(parent.getDisplay().getSystemColor(BORDER1_COLOR));
-					gc.drawLine(x1, y1, x2, y1);
+					gc.drawLineInPixels(x1, y1, x2, y1);
 					return;
 				}
 
@@ -1383,7 +1383,7 @@ public class CTabFolderRenderer {
 					shape[index++] = y + height + 1;
 				}
 
-				Rectangle clipping = gc.getClipping();
+				Rectangle clipping = gc.getClippingInPixels();
 				Rectangle clipBounds = item.getBounds();
 				clipBounds.height += 1;
 				if (parent.onBottom) clipBounds.y -= 1;
@@ -1477,10 +1477,10 @@ public class CTabFolderRenderer {
 					if (parent.simple || parent.single) {
 						gc.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 						gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
-						gc.drawFocus(xDraw-1, textY-1, extent.x+2, extent.y+2);
+						gc.drawFocusInPixels(xDraw-1, textY-1, extent.x+2, extent.y+2);
 					} else {
 						gc.setForeground(display.getSystemColor(BUTTON_BORDER));
-						gc.drawLine(xDraw, textY+extent.y+1, xDraw+extent.x+1, textY+extent.y+1);
+						gc.drawLineInPixels(xDraw, textY+extent.y+1, xDraw+extent.x+1, textY+extent.y+1);
 					}
 				}
 			}
@@ -1604,7 +1604,7 @@ public class CTabFolderRenderer {
 			int y1 = (parent.onBottom) ? size.y - borderBottom - tabHeight - 1 : borderTop + tabHeight;
 			int x2 = size.x - borderRight;
 			gc.setForeground(borderColor);
-			gc.drawLine(x1, y1, x2, y1);
+			gc.drawLineInPixels(x1, y1, x2, y1);
 		}
 
 		// Draw border line
@@ -1626,7 +1626,7 @@ public class CTabFolderRenderer {
 		// Do not draw partial items
 		if (!item.showing) return;
 
-		Rectangle clipping = gc.getClipping();
+		Rectangle clipping = gc.getClippingInPixels();
 		if (!clipping.intersects(bounds)) return;
 
 		if ((state & SWT.BACKGROUND) != 0) {
@@ -1691,7 +1691,7 @@ public class CTabFolderRenderer {
 		gc.getClipping(clipping);
 		region.intersect(clipping);
 		gc.setClipping(region);
-		gc.fillRectangle(region.getBounds());
+		gc.fillRectangleInPixels(region.getBounds());
 		gc.setClipping(clipping);
 		clipping.dispose();
 	}

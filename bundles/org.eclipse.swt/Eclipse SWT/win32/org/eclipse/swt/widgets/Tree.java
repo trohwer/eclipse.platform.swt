@@ -532,7 +532,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 									data.device = display;
 									GC gc = GC.win32_new (hDC, data);
 									RECT iconRect = item.getBounds (index, false, true, false, false, true, hDC);
-									gc.setClipping (iconRect.left, iconRect.top, iconRect.right - iconRect.left, iconRect.bottom - iconRect.top);
+									gc.setClippingInPixels (iconRect.left, iconRect.top, iconRect.right - iconRect.left, iconRect.bottom - iconRect.top);
 									gc.drawImage (image, 0, 0, bounds.width, bounds.height, iconRect.left, iconRect.top, size.x, size.y);
 									OS.SelectClipRgn (hDC, 0);
 									gc.dispose ();
@@ -652,7 +652,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 						event.y = cellRect.top;
 						event.width = cellRect.right - cellRect.left;
 						event.height = cellRect.bottom - cellRect.top;
-						gc.setClipping (event.x, event.y, event.width, event.height);
+						gc.setClippingInPixels (event.x, event.y, event.width, event.height);
 						sendEvent (SWT.EraseItem, event);
 						event.gc = null;
 						int newTextClr = data.foreground;
@@ -774,7 +774,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 							GCData data = new GCData();
 							data.device = display;
 							GC gc = GC.win32_new (hDC, data);
-							gc.setClipping (x1, rect.top, rect.right - x1, rect.bottom - rect.top);
+							gc.setClippingInPixels (x1, rect.top, rect.right - x1, rect.bottom - rect.top);
 							gc.drawImage (image, 0, 0, bounds.width, bounds.height, x1, y1, size.x, size.y);
 							OS.SelectClipRgn (hDC, 0);
 							gc.dispose ();
@@ -872,7 +872,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 				RECT cellRect = item.getBounds (index, true, true, true, true, true, hDC);
 				int cellWidth = cellRect.right - cellRect.left;
 				int cellHeight = cellRect.bottom - cellRect.top;
-				gc.setClipping (cellRect.left, cellRect.top, cellWidth, cellHeight);
+				gc.setClippingInPixels (cellRect.left, cellRect.top, cellWidth, cellHeight);
 				sendEvent (SWT.PaintItem, event);
 				if (data.focusDrawn) focusRect = null;
 				event.gc = null;
@@ -1059,7 +1059,7 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 			event.y = cellRect.top;
 			event.width = cellRect.right - cellRect.left;
 			event.height = cellRect.bottom - cellRect.top;
-			gc.setClipping (event.x, event.y, event.width, event.height);
+			gc.setClippingInPixels (event.x, event.y, event.width, event.height);
 			sendEvent (SWT.EraseItem, event);
 			event.gc = null;
 			int newTextClr = data.foreground;

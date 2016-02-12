@@ -184,7 +184,7 @@ void _setImage (Image image) {
 							image2 = new Image (display, rect.width, rect.height);
 							GC gc = new GC (image2);
 							gc.setBackground (getBackground ());
-							gc.fillRectangle (rect);
+							gc.fillRectangleInPixels (rect);
 							gc.drawImage (image, 0, 0);
 							gc.dispose ();
 							hImage = image2.handle;

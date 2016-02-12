@@ -126,19 +126,19 @@ public Point computeSizeInPixels(int wHint, int hHint, boolean changed) {
 }
 private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topleft, Color bottomright) {
 	gc.setForeground(topleft);
-	gc.drawLine(x, y, x+w-1, y);
-	gc.drawLine(x, y, x, y+h-1);
+	gc.drawLineInPixels(x, y, x+w-1, y);
+	gc.drawLineInPixels(x, y, x, y+h-1);
 
 	gc.setForeground(bottomright);
-	gc.drawLine(x+w, y, x+w, y+h);
-	gc.drawLine(x, y+h, x+w, y+h);
+	gc.drawLineInPixels(x+w, y, x+w, y+h);
+	gc.drawLineInPixels(x, y+h, x+w, y+h);
 }
 void paint(PaintEvent event) {
 	GC gc = event.gc;
 	Display disp= getDisplay();
 
 	Rectangle rect= getClientAreaInPixels();
-	gc.fillRectangle(rect);
+	gc.fillRectangleInPixels(rect);
 	if (showBorder) {
 		drawBevelRect(gc, rect.x, rect.y, rect.width-1, rect.height-1,
 			disp.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW),
@@ -155,11 +155,11 @@ void paintStripes(GC gc) {
 	// Subtracted border painted by paint.
 	rect = new Rectangle(rect.x+2, rect.y+2, rect.width-4, rect.height-4);
 
-	gc.setLineWidth(2);
-	gc.setClipping(rect);
+	gc.setLineWidthInPixels(2);
+	gc.setClippingInPixels(rect);
 	Color color = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 	gc.setBackground(color);
-	gc.fillRectangle(rect);
+	gc.fillRectangleInPixels(rect);
 	gc.setForeground(this.getBackground());
 	int step = 12;
 	int foregroundValue = value == 0 ? step - 2 : value - 2;
@@ -169,7 +169,7 @@ void paintStripes(GC gc) {
 		int h = rect.height + 2;
 		for (int i= 0; i < w; i+= step) {
 			int x = i + foregroundValue;
-			gc.drawLine(x, y, x, h);
+			gc.drawLineInPixels(x, y, x, h);
 		}
 	} else {
 		int x = rect.x - 1;
@@ -178,7 +178,7 @@ void paintStripes(GC gc) {
 
 		for (int i= 0; i < h; i+= step) {
 			int y = i + foregroundValue;
-			gc.drawLine(x, y, w, y);
+			gc.drawLineInPixels(x, y, w, y);
 		}
 	}
 

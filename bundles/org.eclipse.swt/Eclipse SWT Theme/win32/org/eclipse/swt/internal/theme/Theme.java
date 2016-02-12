@@ -52,7 +52,7 @@ public void drawFocus(GC gc, Rectangle bounds, DrawData data) {
 	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	gc.drawFocus(bounds.x, bounds.y, bounds.width, bounds.height);
+	gc.drawFocusInPixels(bounds.x, bounds.y, bounds.width, bounds.height);
 }
 
 public void drawImage(GC gc, Rectangle bounds, DrawData data, Image image, int flags) {

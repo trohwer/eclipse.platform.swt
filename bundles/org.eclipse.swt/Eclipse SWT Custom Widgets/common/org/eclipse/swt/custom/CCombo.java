@@ -1268,7 +1268,7 @@ void popupEvent(Event event) {
 			Rectangle listRect = list.getBoundsInPixels();
 			Color black = getDisplay().getSystemColor(SWT.COLOR_BLACK);
 			event.gc.setForeground(black);
-			event.gc.drawRectangle(0, 0, listRect.width + 1, listRect.height + 1);
+			event.gc.drawRectangleInPixels(0, 0, listRect.width + 1, listRect.height + 1);
 			break;
 		case SWT.Close:
 			event.doit = false;

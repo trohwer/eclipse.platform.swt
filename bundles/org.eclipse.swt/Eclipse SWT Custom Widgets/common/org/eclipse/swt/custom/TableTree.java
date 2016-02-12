@@ -396,12 +396,12 @@ void createImages () {
 	plusImage = new Image(getDisplay(), imageData);
 	GC gc = new GC(plusImage);
 	gc.setBackground(background);
-	gc.fillRectangle(0, 0, itemHeight, itemHeight);
+	gc.fillRectangleInPixels(0, 0, itemHeight, itemHeight);
 	gc.setForeground(plusMinus);
-	gc.drawRectangle(indent, indent, size, size);
+	gc.drawRectangleInPixels(indent, indent, size, size);
 	gc.setForeground(foreground);
-	gc.drawLine(midpoint, indent + 2, midpoint, indent + size - 2);
-	gc.drawLine(indent + 2, midpoint, indent + size - 2, midpoint);
+	gc.drawLineInPixels(midpoint, indent + 2, midpoint, indent + size - 2);
+	gc.drawLineInPixels(indent + 2, midpoint, indent + size - 2, midpoint);
 	gc.dispose();
 
 	/* Minus image */
@@ -411,11 +411,11 @@ void createImages () {
 	minusImage = new Image(getDisplay(), imageData);
 	gc = new GC(minusImage);
 	gc.setBackground(background);
-	gc.fillRectangle(0, 0, itemHeight, itemHeight);
+	gc.fillRectangleInPixels(0, 0, itemHeight, itemHeight);
 	gc.setForeground(plusMinus);
-	gc.drawRectangle(indent, indent, size, size);
+	gc.drawRectangleInPixels(indent, indent, size, size);
 	gc.setForeground(foreground);
-	gc.drawLine(indent + 2, midpoint, indent + size - 2, midpoint);
+	gc.drawLineInPixels(indent + 2, midpoint, indent + size - 2, midpoint);
 	gc.dispose();
 }
 
@@ -719,7 +719,7 @@ public void setBackground (Color color) {
 		GC gc = new GC (sizeImage);
 		gc.setBackground(getBackground());
 		Rectangle size = sizeImage.getBoundsInPixels();
-		gc.fillRectangle(size);
+		gc.fillRectangleInPixels(size);
 		gc.dispose();
 	}
 }

@@ -71,7 +71,7 @@ public class StyledTextDropTargetEffect extends DropTargetEffect {
 					Point position = text.getLocationAtOffset(currentOffset);
 					int height = text.getLineHeight(currentOffset);
 					event.gc.setBackground(event.display.getSystemColor (SWT.COLOR_BLACK));
-					event.gc.fillRectangle(position.x, position.y, CARET_WIDTH, height);
+					event.gc.fillRectangleInPixels(position.x, position.y, CARET_WIDTH, height);
 				}
 			}
 		};
