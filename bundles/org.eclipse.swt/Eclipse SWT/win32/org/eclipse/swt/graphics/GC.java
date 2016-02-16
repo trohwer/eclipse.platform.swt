@@ -2047,8 +2047,15 @@ public void drawRectangleInPixels (int x, int y, int width, int height) {
  * </ul>
  */
 public void drawRectangle (Rectangle rect) {
+	rect = DPIUtil.autoScaleUp(rect, device);
+	drawRectangleInPixels(rect);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawRectangleInPixels (Rectangle rect) {
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	drawRectangle (rect.x, rect.y, rect.width, rect.height);
+	drawRectangleInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -3501,7 +3508,7 @@ public int getCharWidth(char ch) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Rectangle getClippingInP () {
+public Rectangle getClipping () {
 	return DPIUtil.autoScaleDown(getClippingInPixels(), getDevice());
 }
 /**
