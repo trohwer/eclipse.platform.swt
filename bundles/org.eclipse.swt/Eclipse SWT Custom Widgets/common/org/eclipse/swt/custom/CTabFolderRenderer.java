@@ -938,7 +938,7 @@ public class CTabFolderRenderer {
 				gc.drawLineInPixels(x+6,y+2, x+5,y+4);
 				gc.drawLineInPixels(x+5,y,   x+7,y+2);
 				gc.drawLineInPixels(x+7,y+2, x+4,y+4);
-				gc.drawString(chevronString, x+7, y+3, true);
+				gc.drawStringInPixels(chevronString, x+7, y+3, true);
 				break;
 			}
 			case SWT.HOT: {
@@ -955,7 +955,7 @@ public class CTabFolderRenderer {
 				gc.drawLineInPixels(x+6,y+2, x+5,y+4);
 				gc.drawLineInPixels(x+5,y,   x+7,y+2);
 				gc.drawLineInPixels(x+7,y+2, x+4,y+4);
-				gc.drawString(chevronString, x+7, y+3, true);
+				gc.drawStringInPixels(chevronString, x+7, y+3, true);
 				break;
 			}
 			case SWT.SELECTED: {
@@ -972,7 +972,7 @@ public class CTabFolderRenderer {
 				gc.drawLineInPixels(x+7,y+3, x+6,y+5);
 				gc.drawLineInPixels(x+6,y+1, x+8,y+3);
 				gc.drawLineInPixels(x+8,y+3, x+5,y+5);
-				gc.drawString(chevronString, x+8, y+4, true);
+				gc.drawStringInPixels(chevronString, x+8, y+4, true);
 				break;
 			}
 		}
@@ -1468,7 +1468,7 @@ public class CTabFolderRenderer {
 				textY += parent.onBottom ? -1 : 1;
 
 				gc.setForeground(parent.selectionForeground);
-				gc.drawText(item.shortenedText, xDraw, textY, FLAGS);
+				gc.drawTextInPixels(item.shortenedText, xDraw, textY, FLAGS);
 				gc.setFont(gcFont);
 
 				// draw a Focus rectangle
@@ -1677,7 +1677,7 @@ public class CTabFolderRenderer {
 				int textY = y + (height - extent.y) / 2;
 				textY += parent.onBottom ? -1 : 1;
 				gc.setForeground(parent.getForeground());
-				gc.drawText(item.shortenedText, xDraw, textY, FLAGS);
+				gc.drawTextInPixels(item.shortenedText, xDraw, textY, FLAGS);
 				gc.setFont(gcFont);
 			}
 			// draw close

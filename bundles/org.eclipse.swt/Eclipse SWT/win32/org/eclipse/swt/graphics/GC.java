@@ -2215,7 +2215,15 @@ void drawRoundRectangleGdip (long /*int*/ gdipGraphics, long /*int*/ pen, int x,
  * </ul>
  */
 public void drawString (String string, int x, int y) {
-	drawString(string, x, y, false);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	drawStringInPixels(string, x, y);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawStringInPixels (String string, int x, int y) {
+	drawStringInPixels(string, x, y, false);
 }
 
 /**
@@ -2239,6 +2247,15 @@ public void drawString (String string, int x, int y) {
  * </ul>
  */
 public void drawString (String string, int x, int y, boolean isTransparent) {
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	drawStringInPixels(string, x, y, isTransparent);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawStringInPixels (String string, int x, int y, boolean isTransparent) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 //	TCHAR buffer = new TCHAR (getCodePage(), string, false);
@@ -2329,7 +2346,16 @@ public void drawString (String string, int x, int y, boolean isTransparent) {
  * </ul>
  */
 public void drawText (String string, int x, int y) {
-	drawText(string, x, y, SWT.DRAW_DELIMITER | SWT.DRAW_TAB);
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	drawTextInPixels(string, x, y);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawTextInPixels (String string, int x, int y) {
+	drawTextInPixels(string, x, y, SWT.DRAW_DELIMITER | SWT.DRAW_TAB);
 }
 
 /**
@@ -2353,9 +2379,17 @@ public void drawText (String string, int x, int y) {
  * </ul>
  */
 public void drawText (String string, int x, int y, boolean isTransparent) {
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	drawTextInPixels(string, x, y, isTransparent);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawTextInPixels (String string, int x, int y, boolean isTransparent) {
 	int flags = SWT.DRAW_DELIMITER | SWT.DRAW_TAB;
 	if (isTransparent) flags |= SWT.DRAW_TRANSPARENT;
-	drawText(string, x, y, flags);
+	drawTextInPixels(string, x, y, flags);
 }
 
 /**
@@ -2393,6 +2427,15 @@ public void drawText (String string, int x, int y, boolean isTransparent) {
  * </ul>
  */
 public void drawText (String string, int x, int y, int flags) {
+	x = DPIUtil.autoScaleUp(x, device);
+	y = DPIUtil.autoScaleUp(y, device);
+	drawTextInPixels(string, x, y, flags);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawTextInPixels (String string, int x, int y, int flags) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (string == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (string.length() == 0) return;

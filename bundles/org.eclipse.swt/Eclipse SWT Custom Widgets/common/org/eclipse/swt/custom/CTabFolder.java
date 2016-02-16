@@ -319,6 +319,10 @@ void init(int style) {
 	// Add all listeners
 	listener = new Listener() {
 		public void handleEvent(Event event) {
+			event.x = DPIUtil.autoScaleUp(event.x, getDisplay());
+			event.y = DPIUtil.autoScaleUp(event.y, getDisplay());
+			event.width = DPIUtil.autoScaleUp(event.width, getDisplay());
+			event.height = DPIUtil.autoScaleUp(event.height, getDisplay());
 			switch (event.type) {
 				case SWT.Dispose:          onDispose(event); break;
 				case SWT.DragDetect:       onDragDetect(event); break;

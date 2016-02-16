@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.swt.browser;
 
-import org.eclipse.swt.internal.SWTEventListener;
+import org.eclipse.swt.internal.*;
 
 /**
  * This listener interface may be implemented in order to receive
@@ -80,8 +80,8 @@ public void hide(WindowEvent event);
  * @param event the <code>WindowEvent</code> that specifies the
  * <code>Browser</code> that needs to be displayed
  *
- * @see org.eclipse.swt.widgets.Control#setLocationInPixels(org.eclipse.swt.graphics.Point)
- * @see org.eclipse.swt.widgets.Control#setSizeInPixels(org.eclipse.swt.graphics.Point)
+ * @see org.eclipse.swt.widgets.Control#setLocation(org.eclipse.swt.graphics.Point)
+ * @see org.eclipse.swt.widgets.Control#setSize(org.eclipse.swt.graphics.Point)
  * @see org.eclipse.swt.widgets.Shell#open()
  *
  * @since 3.0

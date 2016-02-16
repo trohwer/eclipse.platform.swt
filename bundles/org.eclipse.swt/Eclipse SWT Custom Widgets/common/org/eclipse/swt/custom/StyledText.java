@@ -5684,6 +5684,10 @@ void installListeners() {
 
 	listener = new Listener() {
 		public void handleEvent(Event event) {
+			event.x = DPIUtil.autoScaleUp(event.x, getDisplay());
+			event.y = DPIUtil.autoScaleUp(event.y, getDisplay());
+			event.width = DPIUtil.autoScaleUp(event.width, getDisplay());
+			event.height = DPIUtil.autoScaleUp(event.height, getDisplay());
 			switch (event.type) {
 				case SWT.Dispose: handleDispose(event); break;
 				case SWT.KeyDown: handleKeyDown(event); break;

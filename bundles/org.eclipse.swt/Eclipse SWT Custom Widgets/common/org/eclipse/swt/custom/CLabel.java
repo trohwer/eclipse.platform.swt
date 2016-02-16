@@ -575,7 +575,7 @@ void onPaint(PaintEvent event) {
 					lineX = Math.max(x, rect.x + rect.width - rightMargin - lineWidth);
 				}
 			}
-			gc.drawText(lines[i], lineX, lineY, DRAW_FLAGS);
+			gc.drawTextInPixels(lines[i], lineX, lineY, DRAW_FLAGS);
 			lineY += lineHeight;
 		}
 	}

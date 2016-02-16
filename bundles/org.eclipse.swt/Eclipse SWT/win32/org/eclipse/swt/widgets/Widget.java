@@ -1095,6 +1095,12 @@ void sendEvent (int eventType, Event event, boolean send) {
 		return;
 	}
 	if (event == null) event = new Event ();
+	else {
+		event.x = DPIUtil.autoScaleDown(event.x, getDisplay());
+		event.y = DPIUtil.autoScaleDown(event.y, getDisplay());
+		event.width = DPIUtil.autoScaleDown(event.width, getDisplay());
+		event.height = DPIUtil.autoScaleDown(event.height, getDisplay());
+	}
 	event.type = eventType;
 	event.display = display;
 	event.widget = this;

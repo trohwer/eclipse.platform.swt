@@ -236,7 +236,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 			changed |= (state & LAYOUT_CHANGED) != 0;
 			state &= ~LAYOUT_CHANGED;
-			size = layout.computeSize (this, wHint, hHint, changed);
+			size = DPIUtil.autoScaleUp(layout.computeSize (this, wHint, hHint, changed), getDisplay ());
 		} else {
 			size = new Point (wHint, hHint);
 		}

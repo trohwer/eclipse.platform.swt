@@ -684,7 +684,7 @@ void paint(Event event) {
 			}
 		}
 		int textY = (size.y - extent.y) / 2;
-		gc.drawString(text, x, textY);
+		gc.drawStringInPixels(text, x, textY);
 	}
 	if (isFocusControl()) {
 		Display display = getDisplay();
