@@ -184,8 +184,8 @@ protected void layout(Composite composite, boolean flushCache) {
 	 */
 	banner.update();
 	banner.curveRect = new Rectangle(banner.curveStart, 0, banner.curve_width, size.y);
-	if (bottomRect != null) bottom.setBounds(bottomRect);
-	if (rightRect != null) right.setBounds(rightRect);
-	if (leftRect != null) left.setBounds(leftRect);
+	if (bottomRect != null) bottom.setBoundsInPixels(bottomRect);
+	if (rightRect != null) right.setBoundsInPixels(rightRect);
+	if (leftRect != null) left.setBoundsInPixels(leftRect);
 }
 }

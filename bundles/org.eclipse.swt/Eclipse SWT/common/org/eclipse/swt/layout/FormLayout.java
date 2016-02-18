@@ -358,7 +358,7 @@ Point layout (Composite composite, boolean move, int x, int y, int width, int he
 	}
 	if (move) {
 		for (int i=0; i<children.length; i++) {
-			children [i].setBounds (bounds [i]);
+			children [i].setBoundsInPixels (bounds [i]);
 		}
 	}
 	w += marginLeft + marginWidth * 2 + marginRight;

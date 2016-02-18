@@ -104,7 +104,7 @@ protected void layout(Composite composite, boolean flushCache) {
 			if (controls[i] != sashForm.maxControl) {
 				controls[i].setBoundsInPixel(-200, -200, 0, 0);
 			} else {
-				controls[i].setBounds(area);
+				controls[i].setBoundsInPixels(area);
 			}
 		}
 		return;

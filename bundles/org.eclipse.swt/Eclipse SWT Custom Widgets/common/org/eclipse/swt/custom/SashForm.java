@@ -283,9 +283,9 @@ void onDragSash(Event event) {
 		((SashFormData)data2).weight = (((long)b2.height << 16) + area.height - 1) / area.height;
 	}
 	if (correction || (event.doit && event.detail != SWT.DRAG)) {
-		c1.setBounds(b1);
+		c1.setBoundsInPixels(b1);
 		sash.setBoundsInPixel(event.x, event.y, event.width, event.height);
-		c2.setBounds(b2);
+		c2.setBoundsInPixels(b2);
 	}
 }
 /**

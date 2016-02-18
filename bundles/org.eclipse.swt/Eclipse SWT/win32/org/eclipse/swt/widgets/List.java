@@ -476,7 +476,7 @@ public int getItemCount () {
  * </ul>
  */
 public int getItemHeight () {
-	return DPIUtil.autoScaleDown(getItemHeightInPixels(), getDisplay());
+	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
 /**

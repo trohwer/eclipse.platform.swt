@@ -196,12 +196,12 @@ void reskinChildren (int flags) {
  * </ul>
  */
 public void scroll (int destX, int destY, int x, int y, int width, int height, boolean all) {
-	destX = DPIUtil.autoScaleUp(destX, getDisplay());
-	destY = DPIUtil.autoScaleUp(destY, getDisplay());
-	x = DPIUtil.autoScaleUp(x, getDisplay());
-	y = DPIUtil.autoScaleUp(y, getDisplay());
-	width = DPIUtil.autoScaleUp(width, getDisplay());
-	height = DPIUtil.autoScaleUp(height, getDisplay());
+	destX = DPIUtil.autoScaleUp(destX);
+	destY = DPIUtil.autoScaleUp(destY);
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
 	scrollInPixels(destX, destY, x, y, width, height, all);
 }
 /**

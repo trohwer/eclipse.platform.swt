@@ -367,7 +367,7 @@ long /*int*/ EnumFontFamProc (long /*int*/ lpelfe, long /*int*/ lpntme, long /*i
  * </ul>
  */
 public Rectangle getBounds() {
-	return DPIUtil.autoScaleDown(getBoundsInPixels(), this);
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
 /**
 * @noreference This method is not intended to be referenced by clients.
@@ -436,7 +436,7 @@ public DeviceData getDeviceData () {
  * @see #getBounds
  */
 public Rectangle getClientArea () {
-	return DPIUtil.autoScaleDown(getClientAreaInPixels(), this);
+	return DPIUtil.autoScaleDown(getClientAreaInPixels());
 }
 
 /**
@@ -711,6 +711,7 @@ public boolean getWarnings () {
  * @see #create
  */
 protected void init () {
+	DPIUtil.setDeviceZoom (getDeviceZoom ());
 	if (debug) {
 		if (!OS.IsWinCE) OS.GdiSetBatchLimit(1);
 	}
@@ -1013,7 +1014,7 @@ void setEnableAutoScaling(boolean value) {
 	enableAutoScaling = value;
 }
 
-public int getDeviceZoom () {
+private int getDeviceZoom () {
 	return DPIUtil.mapDPIToZoom ( _getDPIx ());
 }
 

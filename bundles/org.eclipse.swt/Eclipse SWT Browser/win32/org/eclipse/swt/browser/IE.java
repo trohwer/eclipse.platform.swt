@@ -417,7 +417,7 @@ public void create(Composite parent, int style) {
 					break;
 				}
 				case SWT.Resize: {
-					frame.setBounds(browser.getClientAreaInPixels());
+					frame.setBoundsInPixels(browser.getClientAreaInPixels());
 					break;
 				}
 				case SWT.MouseWheel: {

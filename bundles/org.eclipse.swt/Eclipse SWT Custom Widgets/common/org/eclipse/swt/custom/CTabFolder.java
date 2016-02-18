@@ -319,10 +319,10 @@ void init(int style) {
 	// Add all listeners
 	listener = new Listener() {
 		public void handleEvent(Event event) {
-			event.x = DPIUtil.autoScaleUp(event.x, getDisplay());
-			event.y = DPIUtil.autoScaleUp(event.y, getDisplay());
-			event.width = DPIUtil.autoScaleUp(event.width, getDisplay());
-			event.height = DPIUtil.autoScaleUp(event.height, getDisplay());
+			event.x = DPIUtil.autoScaleUp(event.x);
+			event.y = DPIUtil.autoScaleUp(event.y);
+			event.width = DPIUtil.autoScaleUp(event.width);
+			event.height = DPIUtil.autoScaleUp(event.height);
 			switch (event.type) {
 				case SWT.Dispose:          onDispose(event); break;
 				case SWT.DragDetect:       onDragDetect(event); break;
@@ -1245,7 +1245,7 @@ public int getStyle() {
  *	</ul>
  */
 public int getTabHeight(){
-	return DPIUtil.autoScaleDown(getTabHeightInPixels(), getDisplay ());
+	return DPIUtil.autoScaleDown(getTabHeightInPixels());
 }
 /**
 * @noreference This method is not intended to be referenced by clients.
@@ -2582,7 +2582,7 @@ void setButtonBounds(GC gc) {
 	for (int i = 0; i < controls.length; i++) {
 		if (!controls[i].isDisposed()) {
 			if (overflow[0][i]) {
-				controls[i].setBounds(rects[i]);
+				controls[i].setBoundsInPixels(rects[i]);
 			} else {
 				controls[i].moveAbove(null);
 				controls[i].setBoundsInPixel(rects[i].x, rects[i].y, rects[i].width, headerHeight);
@@ -3152,7 +3152,7 @@ public void setSelection(int index) {
 
 	if (newControl != oldControl) {
 		if (newControl != null && !newControl.isDisposed()) {
-			newControl.setBounds(getClientAreaInPixels());
+			newControl.setBoundsInPixels(getClientAreaInPixels());
 			newControl.setVisible(true);
 		}
 		if (oldControl != null && !oldControl.isDisposed()) {
@@ -3458,7 +3458,7 @@ int getControlY(Point size, Rectangle[] rects, int borderBottom, int borderTop, 
  * </ul>
  */
 public void setTabHeight(int height) {
-	setTabHeightInPixels(DPIUtil.autoScaleUp(height, getDisplay()));
+	setTabHeightInPixels(DPIUtil.autoScaleUp(height));
 }
 /**
 * @noreference This method is not intended to be referenced by clients.

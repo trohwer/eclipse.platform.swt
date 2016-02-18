@@ -356,7 +356,7 @@ Point layoutHorizontal (Composite composite, boolean move, boolean wrap, int wid
 					}
 				}
 			}
-			children [i].setBounds (bounds [i]);
+			children [i].setBoundsInPixels (bounds [i]);
 		}
 	}
 	return new Point (maxX, y + maxHeight + marginBottom + marginHeight);
@@ -476,7 +476,7 @@ Point layoutVertical (Composite composite, boolean move, boolean wrap, int heigh
 				}
 
 			}
-			children [i].setBounds (bounds [i]);
+			children [i].setBoundsInPixels (bounds [i]);
 		}
 	}
 	return new Point (x + maxWidth + marginRight + marginWidth, maxY);

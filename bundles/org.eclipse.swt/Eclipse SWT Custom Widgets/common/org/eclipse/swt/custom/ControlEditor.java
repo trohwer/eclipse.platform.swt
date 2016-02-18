@@ -220,7 +220,7 @@ public void layout () {
 	} // this doesn't work because
 	  // resizing the column takes the focus away
 	  // before we get here
-	editor.setBounds (computeBounds ());
+	editor.setBoundsInPixels (computeBounds ());
 	if (hadFocus) {
 		if (editor == null || editor.isDisposed()) return;
 		editor.setFocus ();

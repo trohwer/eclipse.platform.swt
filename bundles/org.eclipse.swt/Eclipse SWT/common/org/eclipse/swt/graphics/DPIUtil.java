@@ -19,6 +19,7 @@ import org.eclipse.swt.*;
  * @since 3.105
  */
 public class DPIUtil {
+	public static int DEVICE_ZOOM = 100;
 
 	/* DPI Constants */
 	static final int DPI_ZOOM_200 = 192;
@@ -29,9 +30,9 @@ public class DPIUtil {
 /**
  * Auto-scale down ImageData
  */
-public static ImageData autoScaleDown (ImageData imageData, Device device) {
-	if (!getAutoScale () || imageData == null || device == null) return imageData;
-	float scaleFactor = getScalingFactor (device);
+public static ImageData autoScaleDown (ImageData imageData) {
+	if (!getAutoScale () || imageData == null) return imageData;
+	float scaleFactor = getScalingFactor ();
 	return scaleFactor == 1 ? imageData
 			: imageData.scaledTo (Math.round ((float)imageData.width / scaleFactor), Math.round ((float)imageData.height / scaleFactor));
 }
@@ -39,18 +40,18 @@ public static ImageData autoScaleDown (ImageData imageData, Device device) {
 /**
  * Auto-scale down int dimensions.
  */
-public static int autoScaleDown (int size, Device device) {
-	if (!getAutoScale () || device == null) return size;
-	float scaleFactor = getScalingFactor (device);
+public static int autoScaleDown (int size) {
+	if (!getAutoScale ()) return size;
+	float scaleFactor = getScalingFactor ();
 	return Math.round (size / scaleFactor);
 }
 
 /**
  * Returns a new scaled down Point.
  */
-public static Point autoScaleDown (Point point, Device device) {
-	if (!getAutoScale () || point == null || device == null) return point;
-	float scaleFactor = getScalingFactor (device);
+public static Point autoScaleDown (Point point) {
+	if (!getAutoScale () || point == null) return point;
+	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return point;
 	Point scaledPoint = new Point (0,0);
 	scaledPoint.x = Math.round (point.x / scaleFactor);
@@ -61,9 +62,9 @@ public static Point autoScaleDown (Point point, Device device) {
 /**
  * Returns a new scaled down Rectangle.
  */
-public static Rectangle autoScaleDown (Rectangle rect, Device device) {
-	if (!getAutoScale () || rect == null || device == null) return rect;
-	float scaleFactor = getScalingFactor (device);
+public static Rectangle autoScaleDown (Rectangle rect) {
+	if (!getAutoScale () || rect == null) return rect;
+	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return rect;
 	Rectangle scaledRect = new Rectangle (0,0,0,0);
 	scaledRect.x = Math.round (rect.x / scaleFactor);
@@ -85,9 +86,9 @@ static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int cu
 /**
  * Auto-scale up ImageData
  */
-public static ImageData autoScaleUp (ImageData imageData, Device device) {
-	if (!getAutoScale () || imageData == null || device == null) return imageData;
-	float scaleFactor = getScalingFactor (device);
+public static ImageData autoScaleUp (ImageData imageData) {
+	if (!getAutoScale () || imageData == null) return imageData;
+	float scaleFactor = getScalingFactor ();
 	return scaleFactor == 1 ? imageData
 			: imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
 }
@@ -95,18 +96,18 @@ public static ImageData autoScaleUp (ImageData imageData, Device device) {
 /**
  * Auto-scale up int dimensions.
  */
-public static int autoScaleUp (int size, Device device) {
-	if (!getAutoScale () || device == null) return size;
-	float scaleFactor = getScalingFactor (device);
+public static int autoScaleUp (int size) {
+	if (!getAutoScale ()) return size;
+	float scaleFactor = getScalingFactor ();
 	return Math.round (size * scaleFactor);
 }
 
 /**
  * Auto-scale up int array dimensions.
  */
-public static int[] autoScaleUp (int size[], Device device) {
-	if (!getAutoScale () || device == null) return size;
-	float scaleFactor = getScalingFactor (device);
+public static int[] autoScaleUp (int size[]) {
+	if (!getAutoScale ()) return size;
+	float scaleFactor = getScalingFactor ();
 	int scaledSize[] = new int[size.length];
 	for (int i = 0; i < scaledSize.length; i++) {
 		scaledSize[i] = Math.round (size[i] * scaleFactor);
@@ -117,9 +118,9 @@ public static int[] autoScaleUp (int size[], Device device) {
 /**
  * Returns a new scaled up Point.
  */
-public static Point autoScaleUp (Point point, Device device) {
-	if (!getAutoScale () || point == null || device == null) return point;
-	float scaleFactor = getScalingFactor (device);
+public static Point autoScaleUp (Point point) {
+	if (!getAutoScale () || point == null) return point;
+	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return point;
 	Point scaledPoint = new Point (0,0);
 	scaledPoint.x = Math.round (point.x * scaleFactor);
@@ -130,9 +131,9 @@ public static Point autoScaleUp (Point point, Device device) {
 /**
  * Returns a new scaled up Rectangle.
  */
-public static Rectangle autoScaleUp (Rectangle rect, Device device) {
-	if (!getAutoScale () || rect == null || device == null) return rect;
-	float scaleFactor = getScalingFactor (device);
+public static Rectangle autoScaleUp (Rectangle rect) {
+	if (!getAutoScale () || rect == null) return rect;
+	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return rect;
 	Rectangle scaledRect = new Rectangle (0,0,0,0);
 	scaledRect.x = Math.round (rect.x * scaleFactor);
@@ -173,21 +174,28 @@ static ImageData getImageData (Image image, int source_zoom, int target_zoom) {
 	return imageData;
 }
 
+public static int getDeviceZoom() {
+	return DEVICE_ZOOM;
+}
+public static void setDeviceZoom(int deviceZoom) {
+	DEVICE_ZOOM = deviceZoom;
+}
+
 /**
  * Gets scaling factor for the current Image
  */
 public static float getscalingFactor (Image image) {
-	return ((float)image.getDevice ().getDeviceZoom ()) / 100f;
+	return ((float)DEVICE_ZOOM) / 100f;
 }
 
 /**
  * Returns Scaling factor from the display
  * @return float scaling factor
  */
-public static float getScalingFactor (Device device) {
+public static float getScalingFactor () {
 	float scalingFactor = 1;
 	if (getAutoScale ()) {
-		scalingFactor = (device.getDeviceZoom ()/100f);
+		scalingFactor = ((float)DEVICE_ZOOM/100f);
 	}
 	return scalingFactor;
 }

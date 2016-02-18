@@ -709,7 +709,7 @@ public void setFont (Font font) {
 			TabItem item = items [index];
 			Control control = item.control;
 			if (control != null && !control.isDisposed ()) {
-				control.setBounds (getClientAreaInPixels ());
+				control.setBoundsInPixels (getClientAreaInPixels ());
 			}
 		}
 	}
@@ -751,7 +751,7 @@ void setSelection (int index, boolean notify) {
 		TabItem item = items [newIndex];
 		Control control = item.control;
 		if (control != null && !control.isDisposed ()) {
-			control.setBounds (getClientAreaInPixels ());
+			control.setBoundsInPixels (getClientAreaInPixels ());
 			control.setVisible (true);
 		}
 		if (notify) {
@@ -1066,7 +1066,7 @@ LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 		TabItem item = items [index];
 		Control control = item.control;
 		if (control != null && !control.isDisposed ()) {
-			control.setBounds (getClientAreaInPixels ());
+			control.setBoundsInPixels (getClientAreaInPixels ());
 		}
 	}
 	return result;
@@ -1135,7 +1135,7 @@ LRESULT wmNotifyChild (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 				Control control = item.control;
 				if (control != null && !control.isDisposed ()) {
 					if (code == OS.TCN_SELCHANGE) {
-						control.setBounds (getClientAreaInPixels ());
+						control.setBoundsInPixels (getClientAreaInPixels ());
 					}
 					control.setVisible (code == OS.TCN_SELCHANGE);
 				}

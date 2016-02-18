@@ -113,7 +113,7 @@ protected void layout(Composite composite, boolean flushCache) {
 	if (folder.selectedIndex != -1) {
 		Control control = folder.items[folder.selectedIndex].control;
 		if (control != null && !control.isDisposed()) {
-			control.setBounds(folder.getClientAreaInPixels());
+			control.setBoundsInPixels(folder.getClientAreaInPixels());
 		}
 	}
 }

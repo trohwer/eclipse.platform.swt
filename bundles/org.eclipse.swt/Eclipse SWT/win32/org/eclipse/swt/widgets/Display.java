@@ -1659,7 +1659,7 @@ public Control getCursorControl () {
  * </ul>
  */
 public Point getCursorLocation () {
-	return DPIUtil.autoScaleDown(getCursorLocationInPixels(), this);
+	return DPIUtil.autoScaleDown(getCursorLocationInPixels());
 }
 
 /**
@@ -2953,8 +2953,8 @@ boolean isValidThread () {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, Point point) {
-	point = DPIUtil.autoScaleUp(point, this);
-	return DPIUtil.autoScaleDown(mapInPixels(from, to, point), this);
+	point = DPIUtil.autoScaleUp(point);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, point));
 }
 
 /**
@@ -3003,9 +3003,9 @@ public Point mapInPixels (Control from, Control to, Point point) {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, int x, int y) {
-	x = DPIUtil.autoScaleUp(x, this);
-	y = DPIUtil.autoScaleUp(y, this);
-	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y), this);
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y));
 }
 
 /**
@@ -3062,8 +3062,8 @@ public Point mapInPixels (Control from, Control to, int x, int y) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, Rectangle rectangle) {
-	rectangle = DPIUtil.autoScaleUp(rectangle, this);
-	return DPIUtil.autoScaleDown(mapInPixels(from, to, rectangle), this);
+	rectangle = DPIUtil.autoScaleUp(rectangle);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, rectangle));
 }
 
 /**
@@ -3114,11 +3114,11 @@ public Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, int x, int y, int width, int height) {
-	x = DPIUtil.autoScaleUp(x, this);
-	y = DPIUtil.autoScaleUp(y, this);
-	width = DPIUtil.autoScaleUp(width, this);
-	height = DPIUtil.autoScaleUp(height, this);
-	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y, width, height), this);
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y, width, height));
 }
 /**
 * @noreference This method is not intended to be referenced by clients.

@@ -1168,7 +1168,7 @@ public String getLineDelimiter () {
  * </ul>
  */
 public int getLineHeight () {
-	return DPIUtil.autoScaleDown(getLineHeightInPixels (), getDisplay ());
+	return DPIUtil.autoScaleDown(getLineHeightInPixels ());
 }
 /**
 * @noreference This method is not intended to be referenced by clients.
@@ -1520,7 +1520,7 @@ public int getTopIndex () {
  * </ul>
  */
 public int getTopPixel () {
-	return DPIUtil.autoScaleDown(getTopPixelInPixels(), getDisplay());
+	return DPIUtil.autoScaleDown(getTopPixelInPixels());
 }
 
 /**

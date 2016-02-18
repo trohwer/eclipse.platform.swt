@@ -472,7 +472,7 @@ void setRowColumn(TableItem row, TableColumn column, boolean notify) {
 			table.showColumn(column);
 		}
 		int columnIndex = column == null ? 0 : table.indexOf(column);
-		setBounds(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBounds(columnIndex));
 		redraw();
 		if (notify) {
 			notifyListeners(SWT.Selection, new Event());
@@ -521,7 +521,7 @@ void _resize() {
 		setBoundsInPixel(-200, -200, 0, 0);
 	} else {
 		int columnIndex = column == null ? 0 : table.indexOf(column);
-		setBounds(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBounds(columnIndex));
 	}
 }
 /**

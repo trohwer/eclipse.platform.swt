@@ -115,7 +115,7 @@ protected void layout(Composite composite, boolean flushCache) {
 	}
 	gc.dispose ();
 
-	sc.content.setBounds (contentRect);
+	sc.content.setBoundsInPixels (contentRect);
 	inLayout = false;
 }
 }

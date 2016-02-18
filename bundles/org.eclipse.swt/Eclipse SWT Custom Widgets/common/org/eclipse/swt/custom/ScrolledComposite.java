@@ -479,7 +479,7 @@ public void setContent(Control content) {
 	checkWidget();
 	if (this.content != null && !this.content.isDisposed()) {
 		this.content.removeListener(SWT.Resize, contentListener);
-		this.content.setBounds(new Rectangle(-200, -200, 0, 0));
+		this.content.setBoundsInPixels(new Rectangle(-200, -200, 0, 0));
 	}
 
 	this.content = content;

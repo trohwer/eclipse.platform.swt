@@ -723,7 +723,7 @@ void _resize() {
 		setBoundsInPixel(-200, -200, 0, 0);
 	} else {
 		int columnIndex = column == null ? 0 : tree.indexOf(column);
-		setBounds(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBounds(columnIndex));
 	}
 }
 
@@ -814,7 +814,7 @@ void setRowColumn(TreeItem row, TreeColumn column, boolean notify) {
 			tree.showColumn(column);
 		}
 		int columnIndex = column == null ? 0 : tree.indexOf(column);
-		setBounds(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBounds(columnIndex));
 		redraw();
 		if (notify) notifyListeners(SWT.Selection, new Event());
 	}

@@ -1096,10 +1096,10 @@ void sendEvent (int eventType, Event event, boolean send) {
 	}
 	if (event == null) event = new Event ();
 	else {
-		event.x = DPIUtil.autoScaleDown(event.x, getDisplay());
-		event.y = DPIUtil.autoScaleDown(event.y, getDisplay());
-		event.width = DPIUtil.autoScaleDown(event.width, getDisplay());
-		event.height = DPIUtil.autoScaleDown(event.height, getDisplay());
+		event.x = DPIUtil.autoScaleDown(event.x);
+		event.y = DPIUtil.autoScaleDown(event.y);
+		event.width = DPIUtil.autoScaleDown(event.width);
+		event.height = DPIUtil.autoScaleDown(event.height);
 	}
 	event.type = eventType;
 	event.display = display;

@@ -3269,7 +3269,7 @@ int getItemCount (long /*int*/ hItem) {
  * </ul>
  */
 public int getItemHeight () {
-	return DPIUtil.autoScaleDown(getItemHeightInPixels(), getDisplay());
+	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
 /**

@@ -120,7 +120,7 @@ protected void layout(Composite composite, boolean flushCache) {
 	rect.width -= 2 * marginWidth;
 	rect.height -= 2 * marginHeight;
 	for (int i = 0; i < children.length; i++) {
-		children[i].setBounds(rect);
+		children[i].setBoundsInPixels(rect);
 		children[i].setVisible(children[i] == topControl);
 	}
 }

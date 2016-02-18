@@ -618,9 +618,9 @@ void checkMirrored () {
  * @see "computeTrim, getClientArea for controls that implement them"
  */
 public Point computeSize (int wHint, int hHint) {
-	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
-	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
-	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint), getDisplay ());
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint) : hHint);
+	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint));
 }
 
 /**
@@ -665,9 +665,9 @@ public Point computeSizeInPixels (int wHint, int hHint) {
  * @see "computeTrim, getClientArea for controls that implement them"
  */
 public Point computeSize (int wHint, int hHint, boolean changed){
-	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint, getDisplay ()) : wHint);
-	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint, getDisplay ()) : hHint);
-	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint, changed), getDisplay ());
+	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint) : wHint);
+	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint) : hHint);
+	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint, changed));
 }
 
 /**
@@ -1238,7 +1238,7 @@ int getBackgroundPixel () {
  * </ul>
  */
 public int getBorderWidth () {
-	return DPIUtil.autoScaleDown(getBorderWidthInPixels (), getDisplay ());
+	return DPIUtil.autoScaleDown(getBorderWidthInPixels ());
 }
 
 /**
@@ -1269,7 +1269,7 @@ public int getBorderWidthInPixels () {
  * </ul>
  */
 public Rectangle getBounds (){
-	return DPIUtil.autoScaleDown(getBoundsInPixels (), getDisplay ());
+	return DPIUtil.autoScaleDown(getBoundsInPixels ());
 }
 /**
 * @noreference This method is not intended to be referenced by clients.
@@ -1449,7 +1449,7 @@ public Object getLayoutData () {
  * </ul>
  */
 public Point getLocation () {
-	return DPIUtil.autoScaleDown(getLocationInPixels(), getDisplay ());
+	return DPIUtil.autoScaleDown(getLocationInPixels());
 }
 
 /**
@@ -1624,7 +1624,7 @@ public Shell getShell () {
  * </ul>
  */
 public Point getSize (){
-	return DPIUtil.autoScaleDown(getSizeInPixels (), getDisplay ());
+	return DPIUtil.autoScaleDown(getSizeInPixels ());
 }
 
 /**
@@ -2471,10 +2471,10 @@ void redraw (boolean all) {
  * @see SWT#DOUBLE_BUFFERED
  */
 public void redraw (int x, int y, int width, int height, boolean all) {
-	x = DPIUtil.autoScaleUp(x, getDisplay ());
-	y = DPIUtil.autoScaleUp(y, getDisplay ());
-	width = DPIUtil.autoScaleUp(width, getDisplay ());
-	height = DPIUtil.autoScaleUp(height, getDisplay ());
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
 	redrawInPixels(x, y, width, height, all);
 }
 /**
@@ -3211,10 +3211,10 @@ void setBackgroundPixel (int pixel) {
  * </ul>
  */
 public void setBounds(int x, int y, int width, int height) {
-	x = DPIUtil.autoScaleUp(x, getDisplay ());
-	y = DPIUtil.autoScaleUp(y, getDisplay ());
-	width = DPIUtil.autoScaleUp(width, getDisplay ());
-	height = DPIUtil.autoScaleUp(height, getDisplay ());
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
 	setBoundsInPixel(x, y, width, height);
 }
 
@@ -3289,9 +3289,14 @@ void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean 
  * </ul>
  */
 public void setBounds (Rectangle rect) {
+	setBoundsInPixels(DPIUtil.autoScaleUp(rect));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setBoundsInPixels (Rectangle rect) {
 	checkWidget ();
 	if (rect == null) error (SWT.ERROR_NULL_ARGUMENT);
-	rect = DPIUtil.autoScaleUp(rect, getDisplay ());
 	setBoundsInPixel (rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -3541,8 +3546,8 @@ public void setLayoutData (Object layoutData) {
  * </ul>
  */
 public void setLocation (int x, int y) {
-	x = DPIUtil.autoScaleUp(x, getDisplay ());
-	y = DPIUtil.autoScaleUp(y, getDisplay ());
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
 	setLocationInPixels(x, y);
 }
 
@@ -3577,7 +3582,7 @@ public void setLocationInPixels (int x, int y) {
  * </ul>
  */
 public void setLocation (Point location) {
-	setLocationInPixels(DPIUtil.autoScaleUp(location, getDisplay ()));
+	setLocationInPixels(DPIUtil.autoScaleUp(location));
 }
 
 /**
@@ -3780,8 +3785,8 @@ boolean setSavedFocus () {
  * </ul>
  */
 public void setSize (int width, int height) {
-	width = DPIUtil.autoScaleUp(width, getDisplay ());
-	height = DPIUtil.autoScaleUp(height, getDisplay ());
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
 	setSizeInPixels(width, height);
 }
 
@@ -3813,7 +3818,7 @@ public void setSizeInPixels (int width, int height) {
  * </ul>
  */
 public void setSize (Point size) {
-	setSizeInPixels(DPIUtil.autoScaleUp(size, getDisplay ()));
+	setSizeInPixels(DPIUtil.autoScaleUp(size));
 }
 
 /**
