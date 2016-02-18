@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class support the layout of selectable
@@ -159,7 +159,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 			height += spacing;
 			for (int i = 0; i < itemCount; i++) {
 				ExpandItem item = items [i];
-				height += item.getHeaderHeight ();
+				height += item.getHeaderHeightInPixels ();
 				if (item.expanded) height += item.height;
 				height += spacing;
 				width = Math.max (width, item.getPreferredWidth (hTheme, hDC));
@@ -394,6 +394,12 @@ public ExpandItem [] getItems () {
  * </ul>
  */
 public int getSpacing () {
+	return DPIUtil.autoScaleDown(getSpacingInPixels ());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getSpacingInPixels () {
 	checkWidget ();
 	return spacing;
 }
@@ -438,13 +444,13 @@ void layoutItems (int index, boolean setScrollbar) {
 		for (int i = 0; i < index; i++) {
 			ExpandItem item = items [i];
 			if (item.expanded) y += item.height;
-			y += item.getHeaderHeight () + spacing;
+			y += item.getHeaderHeightInPixels () + spacing;
 		}
 		for (int i = index; i < itemCount; i++) {
 			ExpandItem item = items [i];
 			item.setBounds (spacing, y, 0, 0, true, false);
 			if (item.expanded) y += item.height;
-			y += item.getHeaderHeight () + spacing;
+			y += item.getHeaderHeightInPixels () + spacing;
 		}
 	}
 	if (setScrollbar) setScrollbar ();
@@ -566,6 +572,12 @@ void setScrollbar () {
  * </ul>
  */
 public void setSpacing (int spacing) {
+	setSpacingInPixels(DPIUtil.autoScaleUp(spacing));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSpacingInPixels (int spacing) {
 	checkWidget ();
 	if (spacing < 0) return;
 	if (spacing == this.spacing) return;

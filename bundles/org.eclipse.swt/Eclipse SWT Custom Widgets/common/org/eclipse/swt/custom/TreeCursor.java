@@ -298,13 +298,13 @@ int countSubTreePages(TreeItem root) {
 
 int findIndex(TreeItem[] items, TreeItem treeItem) {
 	if (items == null || treeItem == null) return -1;
-	Rectangle rect = treeItem.getBounds();
+	Rectangle rect = treeItem.getBoundsInPixels();
 	int index = 0;
 	for (int i = 0; i < items.length; i++) {
 		TreeItem previousItem = null;
 		TreeItem currentItem = items[i];
 		if (i > 0) previousItem = items[i - 1];
-		Rectangle rect1 = currentItem.getBounds();
+		Rectangle rect1 = currentItem.getBoundsInPixels();
 		if (rect.y == rect1.y) return index;
 		if (rect.y < rect1.y) {
 			return index - 1 + findIndex(previousItem.getItems(), treeItem);
@@ -326,7 +326,7 @@ TreeItem findItem(TreeItem[] items, Point pt) {
 	int index = end / 2;
 	while (end - start > 1) {
 		TreeItem currentItem = items[index];
-		Rectangle bounds = currentItem.getBounds();
+		Rectangle bounds = currentItem.getBoundsInPixels();
 		if (pt.y < bounds.y) {
 			end = index;
 			index = (end - start) / 2;
@@ -336,7 +336,7 @@ TreeItem findItem(TreeItem[] items, Point pt) {
 		}
 	}
 
-	Rectangle endBounds = items[end].getBounds();
+	Rectangle endBounds = items[end].getBoundsInPixels();
 	if (endBounds.y < pt.y) {
 		if (endBounds.y + endBounds.height < pt.y) {
 			if (!items[end].getExpanded()) return null;
@@ -345,29 +345,29 @@ TreeItem findItem(TreeItem[] items, Point pt) {
 		int[] columnOrder = tree.getColumnOrder();
 		Rectangle bounds = null;
 		if (columnOrder.length > 0) {
-			Rectangle rect1 = items[end].getBounds(columnOrder[0]);
-			Rectangle rect2 = items[end].getBounds(columnOrder[columnOrder.length - 1]);
+			Rectangle rect1 = items[end].getBoundsInPixels(columnOrder[0]);
+			Rectangle rect2 = items[end].getBoundsInPixels(columnOrder[columnOrder.length - 1]);
 			bounds = rect1.union(rect2);
-			bounds.height += tree.getLinesVisible() ? tree.getGridLineWidth() : 0;
+			bounds.height += tree.getLinesVisible() ? tree.getGridLineWidthInPixels() : 0;
 		} else {
-			bounds = items[end].getBounds();
+			bounds = items[end].getBoundsInPixels();
 		}
 		return bounds.contains(pt) ? items[end] : null;
 	}
 
-	Rectangle startBounds = items[start].getBounds();
+	Rectangle startBounds = items[start].getBoundsInPixels();
 	if (startBounds.y + startBounds.height < pt.y) {
 		return findItem(items[start].getItems(), pt);
 	}
 	int[] columnOrder = tree.getColumnOrder();
 	Rectangle bounds = null;
 	if (columnOrder.length > 0) {
-		Rectangle rect1 = items[start].getBounds(columnOrder[0]);
-		Rectangle rect2 = items[start].getBounds(columnOrder[columnOrder.length - 1]);
+		Rectangle rect1 = items[start].getBoundsInPixels(columnOrder[0]);
+		Rectangle rect2 = items[start].getBoundsInPixels(columnOrder[columnOrder.length - 1]);
 		bounds = rect1.union(rect2);
-		bounds.height += tree.getLinesVisible() ? tree.getGridLineWidth() : 0;
+		bounds.height += tree.getLinesVisible() ? tree.getGridLineWidthInPixels() : 0;
 	} else {
-		bounds = items[start].getBounds();
+		bounds = items[start].getBoundsInPixels();
 	}
 	return bounds.contains(pt) ? items[start] : null;
 }
@@ -548,7 +548,7 @@ void keyDown(Event event) {
 		}
 		case SWT.PAGE_UP: {
 			Rectangle rect = tree.getClientAreaInPixels();
-			Rectangle itemRect = tree.getTopItem().getBounds();
+			Rectangle itemRect = tree.getTopItem().getBoundsInPixels();
 			TreeItem item = row;
 			int index = findIndex(tree.getItems(), item);
 			int itemHeight = tree.getItemHeightInPixels();
@@ -567,7 +567,7 @@ void keyDown(Event event) {
 		}
 		case SWT.PAGE_DOWN: {
 			Rectangle rect = tree.getClientAreaInPixels();
-			Rectangle itemRect = tree.getTopItem().getBounds();
+			Rectangle itemRect = tree.getTopItem().getBoundsInPixels();
 			TreeItem item = row;
 			int index = findIndex(tree.getItems(), item);
 			int height = tree.getItemHeightInPixels();
@@ -645,8 +645,8 @@ void paint(Event event) {
 	}
 	String text = row.getText(columnIndex);
 	if (text.length() > 0) {
-		Rectangle bounds = row.getBounds(columnIndex);
-		Point extent = gc.stringExtent(text);
+		Rectangle bounds = row.getBoundsInPixels(columnIndex);
+		Point extent = gc.stringExtentInPixels(text);
 		// Temporary code - need a better way to determine trim
 		if ("win32".equals(platform)) { //$NON-NLS-1$
 			if (tree.getColumnCount() == 0 || orderedIndex == 0) {
@@ -723,7 +723,7 @@ void _resize() {
 		setBoundsInPixel(-200, -200, 0, 0);
 	} else {
 		int columnIndex = column == null ? 0 : tree.indexOf(column);
-		setBoundsInPixels(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBoundsInPixels(columnIndex));
 	}
 }
 
@@ -814,7 +814,7 @@ void setRowColumn(TreeItem row, TreeColumn column, boolean notify) {
 			tree.showColumn(column);
 		}
 		int columnIndex = column == null ? 0 : tree.indexOf(column);
-		setBoundsInPixels(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBoundsInPixels(columnIndex));
 		redraw();
 		if (notify) notifyListeners(SWT.Selection, new Event());
 	}
@@ -930,11 +930,11 @@ void treeMouseDown(Event event) {
 	if (item == null) return;
 
 	TreeColumn newColumn = null;
-	int lineWidth = tree.getLinesVisible() ? tree.getGridLineWidth() : 0;
+	int lineWidth = tree.getLinesVisible() ? tree.getGridLineWidthInPixels() : 0;
 	int columnCount = tree.getColumnCount();
 	if (columnCount > 0) {
 		for (int i = 0; i < columnCount; i++) {
-			Rectangle rect = item.getBounds(i);
+			Rectangle rect = item.getBoundsInPixels(i);
 			rect.width += lineWidth;
 			rect.height += lineWidth;
 			if (rect.contains(pt)) {

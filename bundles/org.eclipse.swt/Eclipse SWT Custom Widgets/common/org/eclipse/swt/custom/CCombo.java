@@ -439,10 +439,10 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = 0, height = 0;
 	String[] items = list.getItems ();
 	GC gc = new GC (text);
-	int spacer = gc.stringExtent (" ").x; //$NON-NLS-1$
-	int textWidth = gc.stringExtent (text.getText ()).x;
+	int spacer = gc.stringExtentInPixels (" ").x; //$NON-NLS-1$
+	int textWidth = gc.stringExtentInPixels (text.getText ()).x;
 	for (int i = 0; i < items.length; i++) {
-		textWidth = Math.max (gc.stringExtent (items[i]).x, textWidth);
+		textWidth = Math.max (gc.stringExtentInPixels (items[i]).x, textWidth);
 	}
 	gc.dispose ();
 	Point textSize = text.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed);

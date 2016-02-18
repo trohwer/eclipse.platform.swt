@@ -2929,6 +2929,13 @@ TreeItem getFocusItem () {
  * @since 3.1
  */
 public int getGridLineWidth () {
+	return DPIUtil.autoScaleDown(getGridLineWidthInPixels ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getGridLineWidthInPixels () {
 	checkWidget ();
 	return GRID_WIDTH;
 }
@@ -2946,6 +2953,12 @@ public int getGridLineWidth () {
  * @since 3.1
  */
 public int getHeaderHeight () {
+	return DPIUtil.autoScaleDown(getHeaderHeightInPixels ());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeaderHeightInPixels () {
 	checkWidget ();
 	if (hwndHeader == 0) return 0;
 	RECT rect = new RECT ();
@@ -5645,9 +5658,9 @@ void updateMenuLocation (Event event) {
 	int x = clientArea.x, y = clientArea.y;
 	TreeItem focusItem = getFocusItem ();
 	if (focusItem != null) {
-		Rectangle bounds = focusItem.getBounds (0);
+		Rectangle bounds = focusItem.getBoundsInPixels (0);
 		if (focusItem.text != null && focusItem.text.length () != 0) {
-			bounds = focusItem.getBounds ();
+			bounds = focusItem.getBoundsInPixels ();
 		}
 		x = Math.max (x, bounds.x + bounds.width / 2);
 		x = Math.min (x, clientArea.x + clientArea.width);

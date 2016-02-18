@@ -352,8 +352,8 @@ void onPaint(GC gc) {
 		int blue = from.blue + 3*(to.blue - from.blue)/4;
 		Color color = new Color(getDisplay(), red, green, blue);
 		gc.setForeground(color);
-		gc.drawPolyline(line2);
-		gc.drawPolyline(line3);
+		gc.drawPolylineInPixels(line2);
+		gc.drawPolylineInPixels(line3);
 		color.dispose();
 
 		// draw tail fading to background
@@ -370,7 +370,7 @@ void onPaint(GC gc) {
 
 	// draw border
 	gc.setForeground(border1);
-	gc.drawPolyline(line1);
+	gc.drawPolylineInPixels(line1);
 }
 
 void onResize() {

@@ -259,7 +259,7 @@ public Color getBackground () {
 public Rectangle getBounds (int index) {
 	checkWidget();
 	if (tableItem != null) {
-		return tableItem.getBounds(index);
+		return tableItem.getBoundsInPixels(index);
 	} else {
 		return new Rectangle(0, 0, 0, 0);
 	}

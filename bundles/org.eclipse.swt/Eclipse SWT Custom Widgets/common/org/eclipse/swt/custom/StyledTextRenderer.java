@@ -1109,7 +1109,7 @@ void setFont(Font font, int tabs) {
 	if (styledText != null) {
 		GC gc = new GC(styledText);
 		averageCharWidth = gc.getFontMetrics().getAverageCharWidth();
-		fixedPitch = gc.stringExtent("l").x == gc.stringExtent("W").x; //$NON-NLS-1$ //$NON-NLS-2$
+		fixedPitch = gc.stringExtentInPixels("l").x == gc.stringExtentInPixels("W").x; //$NON-NLS-1$ //$NON-NLS-2$
 		gc.dispose();
 	}
 }

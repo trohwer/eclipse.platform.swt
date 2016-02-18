@@ -2460,6 +2460,12 @@ int getFocusIndex () {
  * </ul>
  */
 public int getGridLineWidth () {
+	return DPIUtil.autoScaleDown(getGridLineWidthInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getGridLineWidthInPixels () {
 	checkWidget ();
 	return GRID_WIDTH;
 }
@@ -2477,6 +2483,13 @@ public int getGridLineWidth () {
  * @since 2.0
  */
 public int getHeaderHeight () {
+	return DPIUtil.autoScaleDown(getHeaderHeightInPixels ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeaderHeightInPixels () {
 	checkWidget ();
 	long /*int*/ hwndHeader = OS.SendMessage (handle, OS.LVM_GETHEADER, 0, 0);
 	if (hwndHeader == 0) return 0;
@@ -5713,9 +5726,9 @@ void updateMenuLocation (Event event) {
 	int focusIndex = getFocusIndex ();
 	if (focusIndex != -1) {
 		TableItem focusItem = getItem (focusIndex);
-		Rectangle bounds = focusItem.getBounds (0);
+		Rectangle bounds = focusItem.getBoundsInPixels (0);
 		if (focusItem.text != null && focusItem.text.length () != 0) {
-			bounds = focusItem.getBounds ();
+			bounds = focusItem.getBoundsInPixels ();
 		}
 		x = Math.max (x, bounds.x + bounds.width / 2);
 		x = Math.min (x, clientArea.x + clientArea.width);

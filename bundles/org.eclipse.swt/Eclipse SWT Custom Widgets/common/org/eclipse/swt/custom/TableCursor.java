@@ -284,7 +284,7 @@ void keyDown(Event event) {
 				if (index == rowIndex) {
 					Rectangle rect = table.getClientAreaInPixels();
 					TableItem item = table.getItem(index);
-					Rectangle itemRect = item.getBounds(0);
+					Rectangle itemRect = item.getBoundsInPixels(0);
 					rect.height -= itemRect.y;
 					int height = table.getItemHeightInPixels();
 					int page = Math.max(1, rect.height / height);
@@ -298,7 +298,7 @@ void keyDown(Event event) {
 				int index = table.getTopIndex();
 				Rectangle rect = table.getClientAreaInPixels();
 				TableItem item = table.getItem(index);
-				Rectangle itemRect = item.getBounds(0);
+				Rectangle itemRect = item.getBoundsInPixels(0);
 				rect.height -= itemRect.y;
 				int height = table.getItemHeightInPixels();
 				int page = Math.max(1, rect.height / height);
@@ -331,8 +331,8 @@ void paint(Event event) {
 	}
 	String text = row.getText(columnIndex);
 	if (text.length() > 0) {
-		Rectangle bounds = row.getBounds(columnIndex);
-		Point extent = gc.stringExtent(text);
+		Rectangle bounds = row.getBoundsInPixels(columnIndex);
+		Point extent = gc.stringExtentInPixels(text);
 		// Temporary code - need a better way to determine table trim
 		String platform = SWT.getPlatform();
 		if ("win32".equals(platform)) { //$NON-NLS-1$
@@ -392,7 +392,7 @@ void tableFocusIn(Event event) {
 void tableMouseDown(Event event) {
 	if (isDisposed() || !isVisible()) return;
 	Point pt = new Point(event.x, event.y);
-	int lineWidth = table.getLinesVisible() ? table.getGridLineWidth() : 0;
+	int lineWidth = table.getLinesVisible() ? table.getGridLineWidthInPixels() : 0;
 	TableItem item = table.getItem(pt);
 	if ((table.getStyle() & SWT.FULL_SELECTION) != 0) {
 		if (item == null) return;
@@ -402,7 +402,7 @@ void tableMouseDown(Event event) {
 		Rectangle clientRect = table.getClientAreaInPixels();
 		for (int i = start; i < end; i++) {
 			TableItem nextItem = table.getItem(i);
-			Rectangle rect = nextItem.getBounds(0);
+			Rectangle rect = nextItem.getBoundsInPixels(0);
 			if (pt.y >= rect.y && pt.y < rect.y + rect.height + lineWidth) {
 				item = nextItem;
 				break;
@@ -415,14 +415,14 @@ void tableMouseDown(Event event) {
 	int columnCount = table.getColumnCount();
 	if (columnCount == 0) {
 		if ((table.getStyle() & SWT.FULL_SELECTION) == 0) {
-			Rectangle rect = item.getBounds(0);
+			Rectangle rect = item.getBoundsInPixels(0);
 			rect.width += lineWidth;
 			rect.height += lineWidth;
 			if (!rect.contains(pt)) return;
 		}
 	} else {
 		for (int i = 0; i < columnCount; i++) {
-			Rectangle rect = item.getBounds(i);
+			Rectangle rect = item.getBoundsInPixels(i);
 			rect.width += lineWidth;
 			rect.height += lineWidth;
 			if (rect.contains(pt)) {
@@ -472,7 +472,7 @@ void setRowColumn(TableItem row, TableColumn column, boolean notify) {
 			table.showColumn(column);
 		}
 		int columnIndex = column == null ? 0 : table.indexOf(column);
-		setBoundsInPixels(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBoundsInPixels(columnIndex));
 		redraw();
 		if (notify) {
 			notifyListeners(SWT.Selection, new Event());
@@ -521,7 +521,7 @@ void _resize() {
 		setBoundsInPixel(-200, -200, 0, 0);
 	} else {
 		int columnIndex = column == null ? 0 : table.indexOf(column);
-		setBoundsInPixels(row.getBounds(columnIndex));
+		setBoundsInPixels(row.getBoundsInPixels(columnIndex));
 	}
 }
 /**

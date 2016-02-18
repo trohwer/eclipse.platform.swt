@@ -552,7 +552,7 @@ public ToolItem getItem (Point point) {
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	ToolItem [] items = getItems ();
 	for (int i=0; i<items.length; i++) {
-		Rectangle rect = items [i].getBounds ();
+		Rectangle rect = items [i].getBoundsInPixels ();
 		if (rect.contains (point)) return items [i];
 	}
 	return null;

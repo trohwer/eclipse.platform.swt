@@ -212,7 +212,7 @@ public class CTabFolderRenderer {
 				outer[index] = shape[index++];
 			}
 			gc.setForeground(outerColor);
-			gc.drawPolyline(outer);
+			gc.drawPolylineInPixels(outer);
 		}
 		if (innerColor != null) {
 			int[] inner = new int[shape.length];
@@ -228,7 +228,7 @@ public class CTabFolderRenderer {
 				inner[index] = shape[index++];
 			}
 			gc.setForeground(innerColor);
-			gc.drawPolyline(inner);
+			gc.drawPolylineInPixels(inner);
 		}
 	}
 
@@ -281,7 +281,7 @@ public class CTabFolderRenderer {
 				} else {
 					CTabItem[] items = parent.items;
 					if (items.length == 0) {
-						height = gc.textExtent("Default", FLAGS).y + ITEM_TOP_MARGIN + ITEM_BOTTOM_MARGIN; //$NON-NLS-1$
+						height = gc.textExtentInPixels("Default", FLAGS).y + ITEM_TOP_MARGIN + ITEM_BOTTOM_MARGIN; //$NON-NLS-1$
 					} else {
 						for (int i=0; i < items.length; i++) {
 							height = Math.max(height, computeSize(i, SWT.NONE, gc, wHint, hHint).y);
@@ -332,13 +332,13 @@ public class CTabFolderRenderer {
 					if (text != null) {
 						if (width > 0) width += INTERNAL_SPACING;
 						if (item.font == null) {
-							Point size = gc.textExtent(text, FLAGS);
+							Point size = gc.textExtentInPixels(text, FLAGS);
 							width += size.x;
 							height = Math.max(height, size.y);
 						} else {
 							Font gcFont = gc.getFont();
 							gc.setFont(item.font);
-							Point size = gc.textExtent(text, FLAGS);
+							Point size = gc.textExtentInPixels(text, FLAGS);
 							width += size.x;
 							height = Math.max(height, size.y);
 							gc.setFont(gcFont);
@@ -756,7 +756,7 @@ public class CTabFolderRenderer {
 	void drawBorder(GC gc, int[] shape) {
 
 		gc.setForeground(parent.getDisplay().getSystemColor(BORDER1_COLOR));
-		gc.drawPolyline(shape);
+		gc.drawPolylineInPixels(shape);
 	}
 
 	void drawBody(GC gc, Rectangle bounds, int state) {
@@ -804,7 +804,7 @@ public class CTabFolderRenderer {
 					drawBackground(gc, shape, false);
 				} else {
 					gc.setBackground(selectedIndex == -1 ? parent.getBackground() : parent.selectionBackground);
-					gc.fillPolygon(shape);
+					gc.fillPolygonInPixels(shape);
 				}
 			}
 			//Draw client area
@@ -864,9 +864,9 @@ public class CTabFolderRenderer {
 				                         x+7,y+9, x+5,y+7, x+4,y+7, x+2,y+9, x,y+9,
 				                         x,y+7, x+2,y+5, x+2,y+4, x,y+2};
 				gc.setBackground(display.getSystemColor(BUTTON_FILL));
-				gc.fillPolygon(shape);
+				gc.fillPolygonInPixels(shape);
 				gc.setForeground(closeBorder);
-				gc.drawPolygon(shape);
+				gc.drawPolygonInPixels(shape);
 				break;
 			}
 			case SWT.HOT: {
@@ -875,9 +875,9 @@ public class CTabFolderRenderer {
 				                         x+7,y+9, x+5,y+7, x+4,y+7, x+2,y+9, x,y+9,
 				                         x,y+7, x+2,y+5, x+2,y+4, x,y+2};
 				gc.setBackground(getFillColor());
-				gc.fillPolygon(shape);
+				gc.fillPolygonInPixels(shape);
 				gc.setForeground(closeBorder);
-				gc.drawPolygon(shape);
+				gc.drawPolygonInPixels(shape);
 				break;
 			}
 			case SWT.SELECTED: {
@@ -886,9 +886,9 @@ public class CTabFolderRenderer {
 				                         x+8,y+10, x+6,y+8, x+5,y+8, x+3,y+10, x+1,y+10,
 				                         x+1,y+8, x+3,y+6, x+3,y+5, x+1,y+3};
 				gc.setBackground(getFillColor());
-				gc.fillPolygon(shape);
+				gc.fillPolygonInPixels(shape);
 				gc.setForeground(closeBorder);
-				gc.drawPolygon(shape);
+				gc.drawPolygonInPixels(shape);
 				break;
 			}
 			case SWT.BACKGROUND: {
@@ -1384,7 +1384,7 @@ public class CTabFolderRenderer {
 				}
 
 				Rectangle clipping = gc.getClippingInPixels();
-				Rectangle clipBounds = item.getBounds();
+				Rectangle clipBounds = item.getBoundsInPixels();
 				clipBounds.height += 1;
 				if (parent.onBottom) clipBounds.y -= 1;
 				boolean tabInPaint = clipping.intersects(clipBounds);
@@ -1426,7 +1426,7 @@ public class CTabFolderRenderer {
 				if (! borderColor.equals(lastBorderColor)) createAntialiasColors();
 				antialias(shape, selectedInnerColor, selectedOuterColor, gc);
 				gc.setForeground(borderColor);
-				gc.drawPolyline(shape);
+				gc.drawPolylineInPixels(shape);
 
 				if (!tabInPaint) return;
 			}
@@ -1463,7 +1463,7 @@ public class CTabFolderRenderer {
 					item.shortenedText = shortenText(gc, item.getText(), textWidth);
 					item.shortenedTextWidth = textWidth;
 				}
-				Point extent = gc.textExtent(item.shortenedText, FLAGS);
+				Point extent = gc.textExtentInPixels(item.shortenedText, FLAGS);
 				int textY = y + (height - extent.y) / 2;
 				textY += parent.onBottom ? -1 : 1;
 
@@ -1519,13 +1519,13 @@ public class CTabFolderRenderer {
 				drawBackground(gc, shape, false);
 			} else {
 				gc.setBackground(selectedIndex == -1 ? parent.getBackground() : parent.selectionBackground);
-				gc.fillPolygon(shape);
+				gc.fillPolygonInPixels(shape);
 			}
 
 			//draw 1 pixel border
 			if (borderLeft > 0) {
 				gc.setForeground(borderColor);
-				gc.drawPolyline(shape);
+				gc.drawPolylineInPixels(shape);
 			}
 			return;
 		}
@@ -1612,7 +1612,7 @@ public class CTabFolderRenderer {
 	    	if (! borderColor.equals(lastBorderColor)) createAntialiasColors();
 	    	antialias(shape, null, tabAreaColor, gc);
 			gc.setForeground(borderColor);
-			gc.drawPolyline(shape);
+			gc.drawPolylineInPixels(shape);
 		}
 	}
 
@@ -1673,7 +1673,7 @@ public class CTabFolderRenderer {
 					item.shortenedText = shortenText(gc, item.getText(), textWidth);
 					item.shortenedTextWidth = textWidth;
 				}
-				Point extent = gc.textExtent(item.shortenedText, FLAGS);
+				Point extent = gc.textExtentInPixels(item.shortenedText, FLAGS);
 				int textY = y + (height - extent.y) / 2;
 				textY += parent.onBottom ? -1 : 1;
 				gc.setForeground(parent.getForeground());
@@ -1764,15 +1764,15 @@ public class CTabFolderRenderer {
 	}
 
 	String shortenText(GC gc, String text, int width, String ellipses) {
-		if (gc.textExtent(text, FLAGS).x <= width) return text;
-		int ellipseWidth = gc.textExtent(ellipses, FLAGS).x;
+		if (gc.textExtentInPixels(text, FLAGS).x <= width) return text;
+		int ellipseWidth = gc.textExtentInPixels(ellipses, FLAGS).x;
 		int length = text.length();
 		TextLayout layout = new TextLayout(parent.getDisplay());
 		layout.setText(text);
 		int end = layout.getPreviousOffset(length, SWT.MOVEMENT_CLUSTER);
 		while (end > 0) {
 			text = text.substring(0, end);
-			int l = gc.textExtent(text, FLAGS).x;
+			int l = gc.textExtentInPixels(text, FLAGS).x;
 			if (l + ellipseWidth <= width) {
 				break;
 			}

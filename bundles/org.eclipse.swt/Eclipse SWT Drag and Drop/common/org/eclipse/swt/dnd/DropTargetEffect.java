@@ -105,7 +105,7 @@ public class DropTargetEffect extends DropTargetAdapter {
 		int itemCount = table.getItemCount();
 		for (int i=table.getTopIndex(); i<itemCount; i++) {
 			item = table.getItem(i);
-			Rectangle rect = item.getBounds();
+			Rectangle rect = item.getBoundsInPixels();
 			rect.x = area.x;
 			rect.width = area.width;
 			if (rect.contains(coordinates)) return item;
@@ -124,7 +124,7 @@ public class DropTargetEffect extends DropTargetAdapter {
 				int treeBottom = area.y + area.height;
 				item = tree.getTopItem();
 				while (item != null) {
-					Rectangle rect = item.getBounds();
+					Rectangle rect = item.getBoundsInPixels();
 					int itemBottom = rect.y + rect.height;
 					if (rect.y <= point.y && point.y < itemBottom) return item;
 					if (itemBottom > treeBottom) break;

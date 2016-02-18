@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a column in a table widget.
@@ -308,6 +308,12 @@ public String getToolTipText () {
  * </ul>
  */
 public int getWidth () {
+	return DPIUtil.autoScaleDown(getWidthInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getWidthInPixels () {
 	checkWidget ();
 	int index = parent.indexOf (this);
 	if (index == -1) return 0;
@@ -868,6 +874,12 @@ public void setToolTipText (String string) {
  * </ul>
  */
 public void setWidth (int width) {
+	setWidthInPixels(DPIUtil.autoScaleUp(width));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setWidthInPixels (int width) {
 	checkWidget ();
 	if (width < 0) return;
 	int index = parent.indexOf (this);

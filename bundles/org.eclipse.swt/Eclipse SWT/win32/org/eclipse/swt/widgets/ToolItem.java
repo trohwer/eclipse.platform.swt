@@ -234,6 +234,12 @@ void destroyWidget () {
  * </ul>
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkWidget();
 	long /*int*/ hwnd = parent.handle;
 	int index = (int)/*64*/OS.SendMessage (hwnd, OS.TB_COMMANDTOINDEX, id, 0);
@@ -389,6 +395,12 @@ public String getToolTipText () {
  * </ul>
  */
 public int getWidth () {
+	return DPIUtil.autoScaleDown(getWidthInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getWidthInPixels () {
 	checkWidget();
 	long /*int*/ hwnd = parent.handle;
 	int index = (int)/*64*/OS.SendMessage (hwnd, OS.TB_COMMANDTOINDEX, id, 0);
@@ -510,7 +522,7 @@ void resizeControl () {
 		* case can occur when the control is a
 		* combo box.
 		*/
-		Rectangle itemRect = getBounds ();
+		Rectangle itemRect = getBoundsInPixels ();
 		control.setSizeInPixels (itemRect.width, itemRect.height);
 		Rectangle rect = control.getBoundsInPixels ();
 		rect.x = itemRect.x + (itemRect.width - rect.width) / 2;
@@ -920,6 +932,12 @@ public void setToolTipText (String string) {
  * </ul>
  */
 public void setWidth (int width) {
+	setWidthInPixels(DPIUtil.autoScaleUp(width));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setWidthInPixels (int width) {
 	checkWidget();
 	if ((style & SWT.SEPARATOR) == 0) return;
 	if (width < 0) return;

@@ -275,7 +275,7 @@ void onPaint(GC gc) {
 							   x2-highlight,y2-highlight, x2-highlight,y1+highlight, x1,y1+highlight};
 			Color highlightColor = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION);
 			gc.setBackground(highlightColor);
-			gc.fillPolygon(shape);
+			gc.fillPolygonInPixels(shape);
 		}
 	}
 	if (separator > -1) {

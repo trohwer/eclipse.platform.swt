@@ -145,6 +145,12 @@ public void dispose() {
  * </ul>
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	//checkWidget();
 	parent.runUpdate();
 	return new Rectangle(x, y, width, height);

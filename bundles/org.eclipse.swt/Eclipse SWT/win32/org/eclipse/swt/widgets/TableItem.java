@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -209,6 +209,12 @@ public Color getBackground (int index) {
  * @since 3.2
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	int itemIndex = parent.indexOf (this);
@@ -231,6 +237,12 @@ public Rectangle getBounds () {
  * </ul>
  */
 public Rectangle getBounds (int index) {
+	return DPIUtil.autoScaleDown(getBoundsInPixels(index));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels (int index) {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	int itemIndex = parent.indexOf (this);
@@ -573,6 +585,12 @@ public Image getImage (int index) {
  * </ul>
  */
 public Rectangle getImageBounds (int index) {
+	return DPIUtil.autoScaleDown(getImageBoundsInPixels(index));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getImageBoundsInPixels (int index) {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	int itemIndex = parent.indexOf (this);
@@ -670,6 +688,12 @@ public String getText (int index) {
  * @since 3.3
  */
 public Rectangle getTextBounds (int index) {
+	return DPIUtil.autoScaleDown(getTextBoundsInPixels(index));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getTextBoundsInPixels (int index) {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	int itemIndex = parent.indexOf (this);

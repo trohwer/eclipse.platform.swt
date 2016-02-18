@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
+import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -296,6 +296,13 @@ public boolean getExpanded () {
  * </ul>
  */
 public int getHeaderHeight () {
+	return DPIUtil.autoScaleDown(getHeaderHeightInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeaderHeightInPixels () {
 	checkWidget ();
 	return Math.max (parent.getBandHeight (), imageHeight);
 }
@@ -311,6 +318,12 @@ public int getHeaderHeight () {
  * </ul>
  */
 public int getHeight () {
+	return DPIUtil.autoScaleDown(getHeightInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeightInPixels () {
 	checkWidget ();
 	return height;
 }
@@ -472,6 +485,12 @@ public void setExpanded (boolean expanded) {
  * </ul>
  */
 public void setHeight (int height) {
+	setHeightInPixels(DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setHeightInPixels (int height) {
 	checkWidget ();
 	if (height < 0) return;
 	setBounds (0, 0, width, height, false, true);

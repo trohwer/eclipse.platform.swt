@@ -910,7 +910,7 @@ public CTabItem getItem (Point pt) {
 	if (size.x <= trim.width) return null;
 	for (int i = 0; i < priority.length; i++) {
 		CTabItem item = items[priority[i]];
-		Rectangle rect = item.getBounds();
+		Rectangle rect = item.getBoundsInPixels();
 		if (rect.contains(pt)) return item;
 	}
 	return null;
@@ -1409,7 +1409,7 @@ void initAccessible() {
 			Point testPoint = toControl(e.x, e.y);
 			int childID = ACC.CHILDID_NONE;
 			for (int i = 0; i < items.length; i++) {
-				if (items[i].getBounds().contains(testPoint)) {
+				if (items[i].getBoundsInPixels().contains(testPoint)) {
 					childID = i;
 					break;
 				}
@@ -1435,7 +1435,7 @@ void initAccessible() {
 				pt = getParent().toDisplay(location.x, location.y);
 			} else {
 				if (childID >= 0 && childID < items.length && items[childID].showing) {
-					location = items[childID].getBounds();
+					location = items[childID].getBoundsInPixels();
 				}
 				if (location != null) {
 					pt = toDisplay(location.x, location.y);
@@ -1601,7 +1601,7 @@ void onKeyDown (Event event) {
 					index = visible [current + offset];
 				} else {
 					if (showChevron) {
-						Rectangle chevronRect = chevronItem.getBounds();
+						Rectangle chevronRect = chevronItem.getBoundsInPixels();
 						chevronRect = event.display.mapInPixels(chevronTb, this, chevronRect);
 						CTabFolderEvent e = new CTabFolderEvent(this);
 						e.widget = this;
@@ -1735,7 +1735,7 @@ void onMenuDetect(Event event) {
 	if (event.detail == SWT.MENU_KEYBOARD) {
 		if (selectedIndex != -1) {
 			CTabItem item = items[selectedIndex];
-			Rectangle rect = getDisplay().mapInPixels(this, null, item.getBounds());
+			Rectangle rect = getDisplay().mapInPixels(this, null, item.getBoundsInPixels());
 			if (!rect.contains(event.x, event.y)) {
 				/* If the mouse is not in the currently-selected tab,
 				 * then pop up the menu near the top-right corner of the current tab.
@@ -1828,14 +1828,14 @@ void onMouse(Event event) {
 			CTabItem item = null;
 			if (single) {
 				if (selectedIndex != -1) {
-					Rectangle bounds = items[selectedIndex].getBounds();
+					Rectangle bounds = items[selectedIndex].getBoundsInPixels();
 					if (bounds.contains(x, y)){
 						item = items[selectedIndex];
 					}
 				}
 			} else {
 				for (int i=0; i<items.length; i++) {
-					Rectangle bounds = items[i].getBounds();
+					Rectangle bounds = items[i].getBoundsInPixels();
 					if (bounds.contains(x, y)){
 						item = items[i];
 					}
@@ -1867,7 +1867,7 @@ void onMouse(Event event) {
 			for (int i=0; i<items.length; i++) {
 				CTabItem item = items[i];
 				close = false;
-				if (item.getBounds().contains(x, y)) {
+				if (item.getBoundsInPixels().contains(x, y)) {
 					close = true;
 					if (item.closeRect.contains(x, y)) {
 						if (item.closeImageState != SWT.SELECTED && item.closeImageState != SWT.HOT) {
@@ -1905,14 +1905,14 @@ void onMouse(Event event) {
 			CTabItem item = null;
 			if (single) {
 				if (selectedIndex != -1) {
-					Rectangle bounds = items[selectedIndex].getBounds();
+					Rectangle bounds = items[selectedIndex].getBoundsInPixels();
 					if (bounds.contains(x, y)){
 						item = items[selectedIndex];
 					}
 				}
 			} else {
 				for (int i=0; i<items.length; i++) {
-					Rectangle bounds = items[i].getBounds();
+					Rectangle bounds = items[i].getBoundsInPixels();
 					if (bounds.contains(x, y)){
 						item = items[i];
 					}
@@ -1987,7 +1987,7 @@ void onPageTraversal(Event event) {
 				index = visible [current + offset];
 			} else {
 				if (showChevron) {
-					Rectangle chevronRect = chevronItem.getBounds();
+					Rectangle chevronRect = chevronItem.getBoundsInPixels();
 					chevronRect = event.display.mapInPixels(chevronTb, this, chevronRect);
 					CTabFolderEvent e = new CTabFolderEvent(this);
 					e.widget = this;
@@ -2050,7 +2050,7 @@ void onPaint(Event event) {
 
 	if (!single) {
 		for (int i=0; i < items.length; i++) {
-			Rectangle itemBounds = items[i].getBounds();
+			Rectangle itemBounds = items[i].getBoundsInPixels();
 			if (i != selectedIndex && event.getBounds().intersects(itemBounds)) {
 				renderer.draw(i, SWT.BACKGROUND | SWT.FOREGROUND | items[i].state , itemBounds, gc);
 			}
@@ -2062,7 +2062,7 @@ void onPaint(Event event) {
 	gc.setBackground(gcBackground);
 
 	if (selectedIndex != -1) {
-		renderer.draw(selectedIndex, items[selectedIndex].state | SWT.BACKGROUND | SWT.FOREGROUND, items[selectedIndex].getBounds(), gc);
+		renderer.draw(selectedIndex, items[selectedIndex].state | SWT.BACKGROUND | SWT.FOREGROUND, items[selectedIndex].getBoundsInPixels(), gc);
 	}
 
 	gc.setFont(gcFont);
@@ -2146,7 +2146,7 @@ void onSelection(Event event) {
 			}
 		}
 	} else if (event.widget == chevronItem) {
-		Rectangle chevronRect = chevronItem.getBounds();
+		Rectangle chevronRect = chevronItem.getBoundsInPixels();
 		chevronRect = event.display.mapInPixels(chevronTb, this, chevronRect);
 		CTabFolderEvent e = new CTabFolderEvent(this);
 		e.widget = this;

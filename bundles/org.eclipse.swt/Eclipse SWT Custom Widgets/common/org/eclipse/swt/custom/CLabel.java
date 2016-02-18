@@ -260,7 +260,7 @@ private Point getTotalSize(Image image, String text) {
 
 	GC gc = new GC(this);
 	if (text != null && text.length() > 0) {
-		Point e = gc.textExtent(text, DRAW_FLAGS);
+		Point e = gc.textExtentInPixels(text, DRAW_FLAGS);
 		size.x += e.x;
 		size.y = Math.max(size.y, e.y);
 		if (image != null) size.x += GAP;
@@ -424,7 +424,7 @@ void onPaint(PaintEvent event) {
 	if (shortenText) {
 		extent.x = 0;
 	    for(int i = 0; i < lines.length; i++) {
-	    	Point e = gc.textExtent(lines[i], DRAW_FLAGS);
+	    	Point e = gc.textExtentInPixels(lines[i], DRAW_FLAGS);
 	    	if (e.x > availableWidth) {
 	    		lines[i] = shortenText(gc, lines[i], availableWidth);
 	    		extent.x = Math.max(extent.x, getTotalSize(null, lines[i]).x);
@@ -567,11 +567,11 @@ void onPaint(PaintEvent event) {
 			int lineX = x;
 			if (lines.length > 1) {
 				if (align == SWT.CENTER) {
-					int lineWidth = gc.textExtent(lines[i], DRAW_FLAGS).x;
+					int lineWidth = gc.textExtentInPixels(lines[i], DRAW_FLAGS).x;
 					lineX = x + Math.max(0, (extent.x - lineWidth) / 2);
 				}
 				if (align == SWT.RIGHT) {
-					int lineWidth = gc.textExtent(lines[i], DRAW_FLAGS).x;
+					int lineWidth = gc.textExtentInPixels(lines[i], DRAW_FLAGS).x;
 					lineX = Math.max(x, rect.x + rect.width - rightMargin - lineWidth);
 				}
 			}
@@ -954,7 +954,7 @@ public void setTopMargin(int topMargin) {
  */
 protected String shortenText(GC gc, String t, int width) {
 	if (t == null) return null;
-	int w = gc.textExtent(ELLIPSIS, DRAW_FLAGS).x;
+	int w = gc.textExtentInPixels(ELLIPSIS, DRAW_FLAGS).x;
 	if (width<=w) return t;
 	int l = t.length();
 	int max = l/2;
@@ -967,8 +967,8 @@ protected String shortenText(GC gc, String t, int width) {
 	while (min < mid && mid < max) {
 		String s1 = t.substring(0, mid);
 		String s2 = t.substring(validateOffset(layout, l-mid), l);
-		int l1 = gc.textExtent(s1, DRAW_FLAGS).x;
-		int l2 = gc.textExtent(s2, DRAW_FLAGS).x;
+		int l1 = gc.textExtentInPixels(s1, DRAW_FLAGS).x;
+		int l2 = gc.textExtentInPixels(s2, DRAW_FLAGS).x;
 		if (l1+w+l2 > width) {
 			max = mid;
 			mid = validateOffset(layout, (max+min)/2);

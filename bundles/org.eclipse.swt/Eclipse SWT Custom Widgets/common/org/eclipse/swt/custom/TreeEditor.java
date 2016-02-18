@@ -132,8 +132,8 @@ public TreeEditor (Tree tree) {
 @Override
 Rectangle computeBounds () {
 	if (item == null || column == -1 || item.isDisposed()) return new Rectangle(0, 0, 0, 0);
-	Rectangle cell = item.getBounds(column);
-	Rectangle rect = item.getImageBounds(column);
+	Rectangle cell = item.getBoundsInPixels(column);
+	Rectangle rect = item.getImageBoundsInPixels(column);
 	cell.x = rect.x + rect.width;
 	cell.width -= rect.width;
 	Rectangle area = tree.getClientAreaInPixels();

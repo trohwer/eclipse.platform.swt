@@ -110,8 +110,8 @@ public TableEditor (Table table) {
 @Override
 Rectangle computeBounds () {
 	if (item == null || column == -1 || item.isDisposed()) return new Rectangle(0, 0, 0, 0);
-	Rectangle cell = item.getBounds(column);
-	Rectangle rect = item.getImageBounds(column);
+	Rectangle cell = item.getBoundsInPixels(column);
+	Rectangle rect = item.getImageBoundsInPixels(column);
 	if (rect.width != 0) {
 		int imageGap = Math.max(rect.x - cell.x, 0);
 		cell.x = rect.x + rect.width;

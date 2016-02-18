@@ -602,7 +602,7 @@ void onMouseDown(Event event) {
 	/* If user clicked on the [+] or [-], expand or collapse the tree. */
 	TableItem[] items = table.getItems();
 	for (int i = 0; i < items.length; i++) {
-		Rectangle rect = items[i].getImageBounds(0);
+		Rectangle rect = items[i].getImageBoundsInPixels(0);
 		if (rect.contains(event.x, event.y)) {
 			TableTreeItem item = (TableTreeItem) items[i].getData(ITEMID);
 			event = new Event();

@@ -28,6 +28,7 @@ import java.net.URL;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.DPIUtil;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -738,7 +739,7 @@ public void test_getBounds_Zoom() {
 	Rectangle bounds = new Rectangle(0, 0, 10, 20);
 	Rectangle bounds2 = new Rectangle(0, 0, 20, 40);
 	Image image = new Image(display, bounds.width, bounds.height);
-	int zoom = image.getDevice ().getDeviceZoom();
+	int zoom = DPIUtil.getDeviceZoom();
 	image.dispose();
 	try {
 		image.getBounds(zoom);

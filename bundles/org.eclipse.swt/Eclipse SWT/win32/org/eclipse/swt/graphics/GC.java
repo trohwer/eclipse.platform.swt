@@ -1892,7 +1892,14 @@ public void drawPointInPixels (int x, int y) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public void drawPolygon(int[] pointArray) {
+public void drawPolygon (int[] pointArray) {
+	drawPolygonInPixels(DPIUtil.autoScaleUp(pointArray));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawPolygonInPixels(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
@@ -1937,7 +1944,13 @@ public void drawPolygon(int[] pointArray) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public void drawPolyline(int[] pointArray) {
+public void drawPolyline (int[] pointArray) {
+	drawPolylineInPixels(DPIUtil.autoScaleUp(pointArray));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawPolylineInPixels(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
@@ -3152,6 +3165,12 @@ public void fillPath (Path path) {
  * @see #drawPolygon
  */
 public void fillPolygon (int[] pointArray) {
+	fillPolygonInPixels(DPIUtil.autoScaleUp(pointArray));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void fillPolygonInPixels (int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FILL);
@@ -5174,7 +5193,13 @@ public void setTransform(Transform transform) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Point stringExtent(String string) {
+public Point stringExtent (String string) {
+	return DPIUtil.autoScaleDown(stringExtentInPixels(string));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point stringExtentInPixels (String string) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (string == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FONT);
@@ -5218,8 +5243,14 @@ public Point stringExtent(String string) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Point textExtent(String string) {
-	return textExtent(string, SWT.DRAW_DELIMITER | SWT.DRAW_TAB);
+public Point textExtent (String string) {
+	return DPIUtil.autoScaleDown(textExtentInPixels(string));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point textExtentInPixels(String string) {
+	return textExtentInPixels(string, SWT.DRAW_DELIMITER | SWT.DRAW_TAB);
 }
 
 /**
@@ -5253,7 +5284,14 @@ public Point textExtent(String string) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Point textExtent(String string, int flags) {
+public Point textExtent (String string, int flags) {
+	return DPIUtil.autoScaleDown(textExtentInPixels(string, flags));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point textExtentInPixels(String string, int flags) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (string == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FONT);
