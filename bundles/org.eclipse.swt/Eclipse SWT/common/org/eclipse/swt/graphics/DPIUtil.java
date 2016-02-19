@@ -47,6 +47,28 @@ public static int autoScaleDown (int size) {
 }
 
 /**
+ * Auto-scale down float dimensions.
+ */
+public static float autoScaleDown (float size) {
+	if (!getAutoScale ()) return size;
+	float scaleFactor = getScalingFactor ();
+	return size / scaleFactor;
+}
+
+/**
+ * Auto-scale up float array dimensions.
+ */
+public static float[] autoScaleDown (float size[]) {
+	if (!getAutoScale () || size == null) return size;
+	float scaleFactor = getScalingFactor ();
+	float scaledSize[] = new float[size.length];
+	for (int i = 0; i < scaledSize.length; i++) {
+		scaledSize[i] = size[i] / scaleFactor;
+	}
+	return scaledSize;
+}
+
+/**
  * Returns a new scaled down Point.
  */
 public static Point autoScaleDown (Point point) {
@@ -103,10 +125,19 @@ public static int autoScaleUp (int size) {
 }
 
 /**
+ * Auto-scale up float dimensions.
+ */
+public static float autoScaleUp (float size) {
+	if (!getAutoScale ()) return size;
+	float scaleFactor = getScalingFactor ();
+	return size * scaleFactor;
+}
+
+/**
  * Auto-scale up int array dimensions.
  */
 public static int[] autoScaleUp (int size[]) {
-	if (!getAutoScale ()) return size;
+	if (!getAutoScale () || size == null) return size;
 	float scaleFactor = getScalingFactor ();
 	int scaledSize[] = new int[size.length];
 	for (int i = 0; i < scaledSize.length; i++) {

@@ -567,7 +567,13 @@ long /*int*/ createGdipBrush(Color color, int alpha) {
  * </ul>
  */
 public void draw (GC gc, int x, int y) {
-	draw(gc, x, y, -1, -1, null, null);
+	drawInPixels(gc, DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawInPixels (GC gc, int x, int y) {
+	drawInPixels(gc, x, y, -1, -1, null, null);
 }
 
 /**
@@ -590,7 +596,13 @@ public void draw (GC gc, int x, int y) {
  * </ul>
  */
 public void draw (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground) {
-	draw(gc, x, y, selectionStart, selectionEnd, selectionForeground, selectionBackground, 0);
+	drawInPixels(gc, DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), selectionStart, selectionEnd, selectionForeground, selectionBackground);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawInPixels (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground) {
+	drawInPixels(gc, x, y, selectionStart, selectionEnd, selectionForeground, selectionBackground, 0);
 }
 
 /**
@@ -621,6 +633,12 @@ public void draw (GC gc, int x, int y, int selectionStart, int selectionEnd, Col
  * @since 3.3
  */
 public void draw (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground, int flags) {
+	drawInPixels(gc, DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), selectionStart, selectionEnd, selectionForeground, selectionBackground, flags);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawInPixels (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground, int flags) {
 	checkLayout();
 	computeRuns(gc);
 	if (gc == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -1580,12 +1598,18 @@ public int getAlignment () {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #getDescent()
- * @see #setDescent(int)
- * @see #setAscent(int)
+ * @see #getDescentInPixels()
+ * @see #setDescentInPixels(int)
+ * @see #setAscentInPixels(int)
  * @see #getLineMetrics(int)
  */
 public int getAscent () {
+	return DPIUtil.autoScaleDown(getAscentInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getAscentInPixels () {
 	checkLayout();
 	return ascent;
 }
@@ -1593,7 +1617,7 @@ public int getAscent () {
 /**
  * Returns the bounds of the receiver. The width returned is either the
  * width of the longest line or the width set using {@link TextLayout#setWidth(int)}.
- * To obtain the text bounds of a line use {@link TextLayout#getLineBounds(int)}.
+ * To obtain the text bounds of a line use {@link TextLayout#getLineBoundsInPixels(int)}.
  *
  * @return the bounds of the receiver
  *
@@ -1602,9 +1626,15 @@ public int getAscent () {
  * </ul>
  *
  * @see #setWidth(int)
- * @see #getLineBounds(int)
+ * @see #getLineBoundsInPixels(int)
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkLayout();
 	computeRuns(null);
 	int width = 0;
@@ -1633,6 +1663,12 @@ public Rectangle getBounds () {
  * </ul>
  */
 public Rectangle getBounds (int start, int end) {
+	return DPIUtil.autoScaleDown(getBoundsInPixels(start, end));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels (int start, int end) {
 	checkLayout();
 	computeRuns(null);
 	int length = text.length();
@@ -1727,12 +1763,18 @@ public Rectangle getBounds (int start, int end) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #getAscent()
- * @see #setAscent(int)
- * @see #setDescent(int)
+ * @see #getAscentInPixels()
+ * @see #setAscentInPixels(int)
+ * @see #setDescentInPixels(int)
  * @see #getLineMetrics(int)
  */
 public int getDescent () {
+	return DPIUtil.autoScaleDown(getDescentInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getDescentInPixels () {
 	checkLayout();
 	return descent;
 }
@@ -1764,6 +1806,12 @@ public Font getFont () {
 * @since 3.2
 */
 public int getIndent () {
+	return DPIUtil.autoScaleDown(getIndentInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getIndentInPixels () {
 	checkLayout();
 	return indent;
 }
@@ -1836,7 +1884,13 @@ public int getLevel (int offset) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Rectangle getLineBounds(int lineIndex) {
+public Rectangle getLineBounds (int lineIndex) {
+	return DPIUtil.autoScaleDown(getLineBoundsInPixels(lineIndex));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getLineBoundsInPixels(int lineIndex) {
 	checkLayout();
 	computeRuns(null);
 	if (!(0 <= lineIndex && lineIndex < runs.length)) SWT.error(SWT.ERROR_INVALID_RANGE);
@@ -2002,10 +2056,16 @@ public int[] getLineOffsets () {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #getOffset(Point, int[])
- * @see #getOffset(int, int, int[])
+ * @see #getOffsetInPixels(Point, int[])
+ * @see #getOffsetInPixels(int, int, int[])
  */
 public Point getLocation (int offset, boolean trailing) {
+	return DPIUtil.autoScaleDown(getLocationInPixels(offset, trailing));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getLocationInPixels (int offset, boolean trailing) {
 	checkLayout();
 	computeRuns(null);
 	int length = text.length();
@@ -2195,12 +2255,18 @@ int _getOffset(int offset, int movement, boolean forward) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #getLocation(int, boolean)
+ * @see #getLocationInPixels(int, boolean)
  */
 public int getOffset (Point point, int[] trailing) {
+	return getOffsetInPixels(DPIUtil.autoScaleUp(point), trailing);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getOffsetInPixels (Point point, int[] trailing) {
 	checkLayout();
 	if (point == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
-	return getOffset (point.x, point.y, trailing) ;
+	return getOffsetInPixels (point.x, point.y, trailing) ;
 }
 
 /**
@@ -2224,9 +2290,15 @@ public int getOffset (Point point, int[] trailing) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #getLocation(int, boolean)
+ * @see #getLocationInPixels(int, boolean)
  */
 public int getOffset (int x, int y, int[] trailing) {
+	return getOffsetInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), trailing);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getOffsetInPixels (int x, int y, int[] trailing) {
 	checkLayout();
 	computeRuns(null);
 	if (trailing != null && trailing.length < 1) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -2466,6 +2538,12 @@ String getSegmentsText() {
  * </ul>
  */
 public int getSpacing () {
+	return DPIUtil.autoScaleDown(getSpacingInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getSpacingInPixels () {
 	checkLayout();
 	return lineSpacing;
 }
@@ -2579,6 +2657,12 @@ public int getTextDirection () {
  * </ul>
  */
 public int getWidth () {
+	return DPIUtil.autoScaleDown(getWidthInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getWidthInPixels () {
 	checkLayout();
 	return wrapWidth;
 }
@@ -2595,6 +2679,12 @@ public int getWidth () {
 * @since 3.6
 */
 public int getWrapIndent () {
+	return DPIUtil.autoScaleDown(getWrapIndentInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getWrapIndentInPixels () {
 	checkLayout();
 	return wrapIndent;
 }
@@ -2852,10 +2942,16 @@ public void setAlignment (int alignment) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #setDescent(int)
+ * @see #setDescentInPixels(int)
  * @see #getLineMetrics(int)
  */
-public void setAscent(int ascent) {
+public void setAscent (int ascent) {
+	setAscentInPixels(DPIUtil.autoScaleUp(ascent));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setAscentInPixels(int ascent) {
 	checkLayout();
 	if (ascent < -1) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.ascent == ascent) return;
@@ -2878,10 +2974,16 @@ public void setAscent(int ascent) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #setAscent(int)
+ * @see #setAscentInPixels(int)
  * @see #getLineMetrics(int)
  */
-public void setDescent(int descent) {
+public void setDescent (int descent) {
+	setDescentInPixels(DPIUtil.autoScaleUp(descent));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setDescentInPixels(int descent) {
 	checkLayout();
 	if (descent < -1) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.descent == descent) return;
@@ -2930,6 +3032,12 @@ public void setFont (Font font) {
  * @since 3.2
  */
 public void setIndent (int indent) {
+	setIndentInPixels(DPIUtil.autoScaleUp(indent));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setIndentInPixels (int indent) {
 	checkLayout();
 	if (indent < 0) return;
 	if (this.indent == indent) return;
@@ -3064,6 +3172,12 @@ public void setSegmentsChars(char[] segmentsChars) {
  * </ul>
  */
 public void setSpacing (int spacing) {
+	setSpacingInPixels(DPIUtil.autoScaleUp(spacing));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSpacingInPixels (int spacing) {
 	checkLayout();
 	if (spacing < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.lineSpacing == spacing) return;
@@ -3285,7 +3399,7 @@ public void setWidth (int width) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #setIndent(int)
+ * @see #setIndentInPixels(int)
  *
  * @since 3.6
  */

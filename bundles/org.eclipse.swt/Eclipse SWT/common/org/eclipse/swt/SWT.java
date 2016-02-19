@@ -869,7 +869,7 @@ public class SWT {
 	 * the leading edge (0) or the trailing edge (1) (value is 2).
 	 *
 	 * @see SWT#ImeComposition
-	 * @see org.eclipse.swt.graphics.TextLayout#getOffset(int, int, int[])
+	 * @see org.eclipse.swt.graphics.TextLayout#getOffsetInPixels(int, int, int[])
 	 *
 	 * @since 3.4
 	 */

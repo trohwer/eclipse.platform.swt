@@ -11,9 +11,9 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class provide an i-beam that is typically used
@@ -109,6 +109,12 @@ long /*int*/ defaultFont () {
  * </ul>
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkWidget();
 	if (image != null) {
 		Rectangle rect = image.getBoundsInPixels ();
@@ -170,6 +176,12 @@ public Image getImage () {
  * </ul>
  */
 public Point getLocation () {
+	return DPIUtil.autoScaleDown(getLocationInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getLocationInPixels () {
 	checkWidget();
 	return new Point (x, y);
 }
@@ -200,6 +212,12 @@ public Canvas getParent () {
  * </ul>
  */
 public Point getSize () {
+	return DPIUtil.autoScaleDown(getSizeInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getSizeInPixels () {
 	checkWidget();
 	if (image != null) {
 		Rectangle rect = image.getBoundsInPixels ();
@@ -283,7 +301,7 @@ void resizeIME () {
 	long /*int*/ hIMC = OS.ImmGetContext (hwnd);
 	IME ime = parent.getIME ();
 	if (ime != null && ime.isInlineEnabled ()) {
-		Point size = getSize ();
+		Point size = getSizeInPixels ();
 		CANDIDATEFORM lpCandidate = new CANDIDATEFORM ();
 		lpCandidate.dwStyle = OS.CFS_EXCLUDE;
 		lpCandidate.ptCurrentPos = ptCurrentPos;
@@ -366,6 +384,12 @@ void restoreIMEFont () {
  * </ul>
  */
 public void setBounds (int x, int y, int width, int height) {
+	setBoundsInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setBoundsInPixels (int x, int y, int width, int height) {
 	checkWidget();
 	boolean samePosition = this.x == x && this.y == y;
 	boolean sameExtent = this.width == width && this.height == height;
@@ -397,8 +421,14 @@ public void setBounds (int x, int y, int width, int height) {
  * </ul>
  */
 public void setBounds (Rectangle rect) {
+	setBoundsInPixels(DPIUtil.autoScaleUp(rect));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setBoundsInPixels (Rectangle rect) {
 	if (rect == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setBounds (rect.x, rect.y, rect.width, rect.height);
+	setBoundsInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 void setFocus () {
@@ -500,6 +530,12 @@ void setIMEFont () {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	setLocationInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (int x, int y) {
 	checkWidget();
 	if (this.x == x && this.y == y) return;
 	this.x = x;  this.y = y;
@@ -520,9 +556,15 @@ public void setLocation (int x, int y) {
  * </ul>
  */
 public void setLocation (Point location) {
+	setLocationInPixels(DPIUtil.autoScaleUp(location));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (Point location) {
 	checkWidget();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setLocation (location.x, location.y);
+	setLocationInPixels (location.x, location.y);
 }
 
 /**
@@ -537,6 +579,12 @@ public void setLocation (Point location) {
  * </ul>
  */
 public void setSize (int width, int height) {
+	setSizeInPixels(DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSizeInPixels (int width, int height) {
 	checkWidget();
 	if (this.width == width && this.height == height) return;
 	this.width = width;  this.height = height;
@@ -558,9 +606,15 @@ public void setSize (int width, int height) {
  * </ul>
  */
 public void setSize (Point size) {
+	setSizeInPixels(DPIUtil.autoScaleUp(size));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSizeInPixels (Point size) {
 	checkWidget();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setSize (size.x, size.y);
+	setSizeInPixels (size.x, size.y);
 }
 
 /**

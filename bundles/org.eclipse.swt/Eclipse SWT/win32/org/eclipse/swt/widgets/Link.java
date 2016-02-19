@@ -206,16 +206,16 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 		if (newFont != 0) OS.SelectObject (hDC, oldFont);
 		OS.ReleaseDC (handle, hDC);
 	} else {
-		int layoutWidth = layout.getWidth ();
+		int layoutWidth = layout.getWidthInPixels ();
 		//TEMPORARY CODE
 		if (wHint == 0) {
 			layout.setWidth (1);
-			Rectangle rect = layout.getBounds ();
+			Rectangle rect = layout.getBoundsInPixels ();
 			width = 0;
 			height = rect.height;
 		} else {
 			layout.setWidth (wHint);
-			Rectangle rect = layout.getBounds ();
+			Rectangle rect = layout.getBoundsInPixels ();
 			width = rect.width;
 			height = rect.height;
 		}
@@ -272,7 +272,7 @@ void drawWidget (GC gc, RECT rect) {
 	// temporary code to disable text selection
 	selStart = selEnd = -1;
 	if (!OS.IsWindowEnabled (handle)) gc.setForeground (disabledColor);
-	layout.draw (gc, 0, 0, selStart, selEnd, null, null);
+	layout.drawInPixels (gc, 0, 0, selStart, selEnd, null, null);
 	if (hasFocus () && focusIndex != -1) {
 		Rectangle [] rects = getRectangles (focusIndex);
 		for (int i = 0; i < rects.length; i++) {
@@ -394,13 +394,13 @@ Rectangle [] getRectangles (int linkIndex) {
 	while (point.y > lineOffsets [lineEnd]) lineEnd++;
 	int index = 0;
 	if (lineStart == lineEnd) {
-		rects [index++] = layout.getBounds (point.x, point.y);
+		rects [index++] = layout.getBoundsInPixels (point.x, point.y);
 	} else {
-		rects [index++] = layout.getBounds (point.x, lineOffsets [lineStart]-1);
-		rects [index++] = layout.getBounds (lineOffsets [lineEnd-1], point.y);
+		rects [index++] = layout.getBoundsInPixels (point.x, lineOffsets [lineStart]-1);
+		rects [index++] = layout.getBoundsInPixels (lineOffsets [lineEnd-1], point.y);
 		if (lineEnd - lineStart > 1) {
 			for (int i = lineStart; i < lineEnd - 1; i++) {
-				rects [index++] = layout.getLineBounds (i);
+				rects [index++] = layout.getLineBoundsInPixels (i);
 			}
 		}
 	}
@@ -925,7 +925,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 		if (focusIndex != -1) setFocus ();
 		int x = OS.GET_X_LPARAM (lParam);
 		int y = OS.GET_Y_LPARAM (lParam);
-		int offset = layout.getOffset (x, y, null);
+		int offset = layout.getOffsetInPixels (x, y, null);
 		int oldSelectionX = selection.x;
 		int oldSelectionY = selection.y;
 		selection.x = offset;
@@ -936,7 +936,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 				oldSelectionX = oldSelectionY;
 				oldSelectionY = temp;
 			}
-			Rectangle rect = layout.getBounds (oldSelectionX, oldSelectionY);
+			Rectangle rect = layout.getBoundsInPixels (oldSelectionX, oldSelectionY);
 			redrawInPixels (rect.x, rect.y, rect.width, rect.height, false);
 		}
 		for (int j = 0; j < offsets.length; j++) {
@@ -1002,7 +1002,7 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 		int y = OS.GET_Y_LPARAM (lParam);
 		if (OS.GetKeyState (OS.VK_LBUTTON) < 0) {
 			int oldSelection = selection.y;
-			selection.y = layout.getOffset (x, y, null);
+			selection.y = layout.getOffsetInPixels (x, y, null);
 			if (selection.y != oldSelection) {
 				int newSelection = selection.y;
 				if (oldSelection > newSelection) {
@@ -1010,7 +1010,7 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 					oldSelection = newSelection;
 					newSelection = temp;
 				}
-				Rectangle rect = layout.getBounds (oldSelection, newSelection);
+				Rectangle rect = layout.getBoundsInPixels (oldSelection, newSelection);
 				redrawInPixels (rect.x, rect.y, rect.width, rect.height, false);
 			}
 		} else {

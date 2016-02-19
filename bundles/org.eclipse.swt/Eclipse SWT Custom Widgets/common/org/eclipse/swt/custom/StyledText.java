@@ -469,7 +469,7 @@ public class StyledText extends Canvas {
 				for (int i = startLine; i < Math.min(count, lineLabels.length); i++) {
 					if (lineLabels[i] != null) {
 						printLayout.setText(lineLabels[i]);
-						int lineWidth = printLayout.getBounds().width;
+						int lineWidth = printLayout.getBoundsInPixels().width;
 						numberingWidth = Math.max(numberingWidth, lineWidth);
 					}
 				}
@@ -477,7 +477,7 @@ public class StyledText extends Canvas {
 				StringBuffer buffer = new StringBuffer("0");
 				while ((count /= 10) > 0) buffer.append("0");
 				printLayout.setText(buffer.toString());
-				numberingWidth = printLayout.getBounds().width;
+				numberingWidth = printLayout.getBoundsInPixels().width;
 			}
 			numberingWidth += printMargin;
 			if (numberingWidth > width) numberingWidth = width;
@@ -491,7 +491,7 @@ public class StyledText extends Canvas {
 			}
 			TextLayout layout = printerRenderer.getTextLayout(i, orientation, width, lineSpacing);
 			Color lineBackground = printerRenderer.getLineBackground(i, background);
-			int paragraphBottom = paintY + layout.getBounds().height;
+			int paragraphBottom = paintY + layout.getBoundsInPixels().height;
 			if (paragraphBottom <= pageBottom) {
 				//normal case, the whole paragraph fits in the current page
 				printLine(paintX, paintY, gc, foreground, lineBackground, layout, printLayout, i);
@@ -500,7 +500,7 @@ public class StyledText extends Canvas {
 				int lineCount = layout.getLineCount();
 				while (paragraphBottom > pageBottom && lineCount > 0) {
 					lineCount--;
-					paragraphBottom -= layout.getLineBounds(lineCount).height + layout.getSpacing();
+					paragraphBottom -= layout.getLineBoundsInPixels(lineCount).height + layout.getSpacingInPixels();
 				}
 				if (lineCount == 0) {
 					//the whole paragraph goes to the next page
@@ -512,7 +512,7 @@ public class StyledText extends Canvas {
 						printDecoration(page, true, printLayout);
 						paintY = clientArea.y;
 						printLine(paintX, paintY, gc, foreground, lineBackground, layout, printLayout, i);
-						paintY += layout.getBounds().height;
+						paintY += layout.getBoundsInPixels().height;
 					}
 				} else {
 					//draw paragraph top in the current page and paragraph bottom in the next
@@ -527,7 +527,7 @@ public class StyledText extends Canvas {
 						printer.startPage();
 						printDecoration(page, true, printLayout);
 						paintY = clientArea.y - height;
-						int layoutHeight = layout.getBounds().height;
+						int layoutHeight = layout.getBoundsInPixels().height;
 						gc.setClippingInPixels(clientArea.x, clientArea.y, clientArea.width, layoutHeight - height);
 						printLine(paintX, paintY, gc, foreground, lineBackground, layout, printLayout, i);
 						gc.setClippingInPixels((Rectangle)null);
@@ -589,7 +589,7 @@ public class StyledText extends Canvas {
 		}
 		if (segment.length() > 0) {
 			layout.setText(segment);
-			int segmentWidth = layout.getBounds().width;
+			int segmentWidth = layout.getBoundsInPixels().width;
 			int segmentHeight = printerRenderer.getLineHeight();
 			int drawX = 0, drawY;
 			if (alignment == LEFT) {
@@ -604,12 +604,12 @@ public class StyledText extends Canvas {
 			} else {
 				drawY = clientArea.y + clientArea.height + segmentHeight;
 			}
-			layout.draw(gc, drawX, drawY);
+			layout.drawInPixels(gc, drawX, drawY);
 		}
 	}
 	void printLine(int x, int y, GC gc, Color foreground, Color background, TextLayout layout, TextLayout printLayout, int index) {
 		if (background != null) {
-			Rectangle rect = layout.getBounds();
+			Rectangle rect = layout.getBoundsInPixels();
 			gc.setBackground(background);
 			gc.fillRectangleInPixels(x, y, rect.width, rect.height);
 
@@ -624,8 +624,8 @@ public class StyledText extends Canvas {
 		}
 		if (printOptions.printLineNumbers) {
 			FontMetrics metrics = layout.getLineMetrics(0);
-			printLayout.setAscent(metrics.getAscent() + metrics.getLeading());
-			printLayout.setDescent(metrics.getDescent());
+			printLayout.setAscentInPixels(metrics.getAscent() + metrics.getLeading());
+			printLayout.setDescentInPixels(metrics.getDescent());
 			String[] lineLabels = printOptions.lineLabels;
 			if (lineLabels != null) {
 				if (0 <= index && index < lineLabels.length && lineLabels[index] != null) {
@@ -636,13 +636,13 @@ public class StyledText extends Canvas {
 			} else {
 				printLayout.setText(String.valueOf(index));
 			}
-			int paintX = x - printMargin - printLayout.getBounds().width;
-			printLayout.draw(gc, paintX, y);
-			printLayout.setAscent(-1);
-			printLayout.setDescent(-1);
+			int paintX = x - printMargin - printLayout.getBoundsInPixels().width;
+			printLayout.drawInPixels(gc, paintX, y);
+			printLayout.setAscentInPixels(-1);
+			printLayout.setDescentInPixels(-1);
 		}
 		gc.setForeground(foreground);
-		layout.draw(gc, x, y);
+		layout.drawInPixels(gc, x, y);
 	}
 	/**
 	 * Starts a print job and prints the pages specified in the constructor.
@@ -1729,9 +1729,9 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 		int maxHeight = display.getClientAreaInPixels().height;
 		for (int lineIndex = 0; lineIndex < lineCount; lineIndex++) {
 			TextLayout layout = renderer.getTextLayout(lineIndex);
-			int wrapWidth = layout.getWidth();
+			int wrapWidth = layout.getWidthInPixels();
 			if (wordWrap) layout.setWidth(wHint == 0 ? 1 : wHint == SWT.DEFAULT ? SWT.DEFAULT : Math.max(1, wHint - leftMargin - rightMargin));
-			Rectangle rect = layout.getBounds();
+			Rectangle rect = layout.getBoundsInPixels();
 			height += rect.height;
 			width = Math.max(width, rect.width);
 			layout.setWidth(wrapWidth);
@@ -2634,7 +2634,7 @@ void doLineDown(boolean select) {
 			lastLine = caretLine == lineCount - 1;
 			caretLine++;
 		} else {
-			y = layout.getLineBounds(lineIndex + 1).y;
+			y = layout.getLineBoundsInPixels(lineIndex + 1).y;
 			y++; // bug 485722: workaround for fractional line heights
 		}
 		renderer.disposeTextLayout(layout);
@@ -2721,7 +2721,7 @@ void doLineUp(boolean select) {
 				y--; // bug 485722: workaround for fractional line heights
 			}
 		} else {
-			y = layout.getLineBounds(lineIndex - 1).y;
+			y = layout.getLineBoundsInPixels(lineIndex - 1).y;
 			y++; // bug 485722: workaround for fractional line heights
 		}
 		renderer.disposeTextLayout(layout);
@@ -2979,7 +2979,7 @@ void doPageDown(boolean select, int height) {
 					TextLayout layout = renderer.getTextLayout(lineIndex);
 					int y = clientAreaHeight - topY;
 					for (int i = 0; i < layout.getLineCount(); i++) {
-						Rectangle bounds = layout.getLineBounds(i);
+						Rectangle bounds = layout.getLineBoundsInPixels(i);
 						if (bounds.contains(bounds.x, y)) {
 							height += bounds.y;
 							break;
@@ -2995,7 +2995,7 @@ void doPageDown(boolean select, int height) {
 				TextLayout layout = renderer.getTextLayout(lineIndex);
 				int y = height - topLineY;
 				for (int i = 0; i < layout.getLineCount(); i++) {
-					Rectangle bounds = layout.getLineBounds(i);
+					Rectangle bounds = layout.getLineBoundsInPixels(i);
 					if (bounds.contains(bounds.x, y)) {
 						height = topLineY + bounds.y + bounds.height;
 						break;
@@ -3011,7 +3011,7 @@ void doPageDown(boolean select, int height) {
 			TextLayout layout = renderer.getTextLayout(caretLine);
 			int offsetInLine = caretOffset - content.getOffsetAtLine(caretLine);
 			lineIndex = getVisualLineIndex(layout, offsetInLine);
-			caretHeight += layout.getLineBounds(lineIndex).y;
+			caretHeight += layout.getLineBoundsInPixels(lineIndex).y;
 			renderer.disposeTextLayout(layout);
 		}
 		lineIndex = caretLine;
@@ -3047,7 +3047,7 @@ void doPageEnd() {
 			int y = (clientAreaHeight - bottomMargin) - getLinePixel(lineIndex);
 			int index = layout.getLineCount() - 1;
 			while (index >= 0) {
-				Rectangle bounds = layout.getLineBounds(index);
+				Rectangle bounds = layout.getLineBoundsInPixels(index);
 				if (y >= bounds.y + bounds.height) break;
 				index--;
 			}
@@ -3085,7 +3085,7 @@ void doPageStart() {
 		int index = 0;
 		int lineCount = layout.getLineCount();
 		while (index < lineCount) {
-			Rectangle bounds = layout.getLineBounds(index);
+			Rectangle bounds = layout.getLineBoundsInPixels(index);
 			if (y <= bounds.y) break;
 			index++;
 		}
@@ -3156,7 +3156,7 @@ void doPageUp(boolean select, int height) {
 				if (wordWrap || visualWrap) {
 					TextLayout layout = renderer.getTextLayout(lineIndex);
 					for (int i = 0; i < layout.getLineCount(); i++) {
-						Rectangle bounds = layout.getLineBounds(i);
+						Rectangle bounds = layout.getLineBoundsInPixels(i);
 						if (bounds.contains(bounds.x, y)) {
 							height += lineHeight - (bounds.y + bounds.height);
 							break;
@@ -3172,7 +3172,7 @@ void doPageUp(boolean select, int height) {
 				TextLayout layout = renderer.getTextLayout(lineIndex);
 				int y = topLineY;
 				for (int i = 0; i < layout.getLineCount(); i++) {
-					Rectangle bounds = layout.getLineBounds(i);
+					Rectangle bounds = layout.getLineBoundsInPixels(i);
 					if (bounds.contains(bounds.x, y)) {
 						height = clientAreaHeight - (topLineY + bounds.y);
 						break;
@@ -3188,7 +3188,7 @@ void doPageUp(boolean select, int height) {
 			TextLayout layout = renderer.getTextLayout(caretLine);
 			int offsetInLine = caretOffset - content.getOffsetAtLine(caretLine);
 			lineIndex = getVisualLineIndex(layout, offsetInLine);
-			caretHeight += layout.getBounds().height - layout.getLineBounds(lineIndex).y;
+			caretHeight += layout.getBoundsInPixels().height - layout.getLineBoundsInPixels(lineIndex).y;
 			renderer.disposeTextLayout(layout);
 		}
 		lineIndex = caretLine;
@@ -3674,10 +3674,10 @@ Rectangle getBoundsAtOffset(int offset) {
 		TextLayout layout = renderer.getTextLayout(lineIndex);
 		if (caretAlignment == PREVIOUS_OFFSET_TRAILING && offsetInLine != 0) {
 			offsetInLine = layout.getPreviousOffset(offsetInLine, SWT.MOVEMENT_CLUSTER);
-			Point point = layout.getLocation(offsetInLine, true);
+			Point point = layout.getLocationInPixels(offsetInLine, true);
 			bounds = new Rectangle (point.x, point.y, 0, renderer.getLineHeight());
 		} else {
-			bounds = layout.getBounds(offsetInLine, offsetInLine);
+			bounds = layout.getBoundsInPixels(offsetInLine, offsetInLine);
 		}
 		renderer.disposeTextLayout(layout);
 	} else {
@@ -3714,7 +3714,7 @@ public int getCaretOffset() {
 int getCaretWidth() {
 	Caret caret = getCaret();
 	if (caret == null) return 0;
-	return caret.getSize().x;
+	return caret.getSizeInPixels().x;
 }
 Object getClipboardContent(int clipboardType) {
 	TextTransfer plainTextTransfer = TextTransfer.getInstance();
@@ -4124,7 +4124,7 @@ public int getLineHeight(int offset) {
 	int lineOffset = content.getOffsetAtLine(lineIndex);
 	TextLayout layout = renderer.getTextLayout(lineIndex);
 	int lineInParagraph = layout.getLineIndex(Math.min(offset - lineOffset, layout.getText().length()));
-	int height = layout.getLineBounds(lineInParagraph).height;
+	int height = layout.getLineBoundsInPixels(lineInParagraph).height;
 	renderer.disposeTextLayout(layout);
 	return height;
 }
@@ -4452,7 +4452,7 @@ int getOffsetAtPoint(int x, int y, int lineIndex, int[] alignment) {
 	TextLayout layout = renderer.getTextLayout(lineIndex);
 	x += horizontalScrollOffset - leftMargin;
 	int[] trailing = new int[1];
-	int offsetInLine = layout.getOffset(x, y, trailing);
+	int offsetInLine = layout.getOffsetInPixels(x, y, trailing);
 	if (alignment != null) alignment[0] = OFFSET_LEADING;
 	if (trailing[0] != 0) {
 		int lineInParagraph = layout.getLineIndex(offsetInLine + trailing[0]);
@@ -4500,8 +4500,8 @@ int getOffsetAtPoint(int x, int y, int[] trailing, boolean inTextOnly) {
 	TextLayout layout = renderer.getTextLayout(lineIndex);
 	x += horizontalScrollOffset - leftMargin;
 	y -= getLinePixel(lineIndex);
-	int offset = layout.getOffset(x, y, trailing);
-	Rectangle rect = layout.getLineBounds(layout.getLineIndex(offset));
+	int offset = layout.getOffsetInPixels(x, y, trailing);
+	Rectangle rect = layout.getLineBoundsInPixels(layout.getLineIndex(offset));
 	renderer.disposeTextLayout(layout);
 	if (inTextOnly && !(rect.x  <= x && x <=  rect.x + rect.width)) {
 		return -1;
@@ -5186,15 +5186,15 @@ public Rectangle getTextBounds(int start, int end) {
 		if (length > 0) {
 			if (i == lineStart) {
 				if (i == lineEnd) {
-					rect = layout.getBounds(start - lineOffset, end - lineOffset);
+					rect = layout.getBoundsInPixels(start - lineOffset, end - lineOffset);
 				} else {
-					rect = layout.getBounds(start - lineOffset, length);
+					rect = layout.getBoundsInPixels(start - lineOffset, length);
 				}
 				y += rect.y;
 			} else if (i == lineEnd) {
-				rect = layout.getBounds(0, end - lineOffset);
+				rect = layout.getBoundsInPixels(0, end - lineOffset);
 			} else {
-				rect = layout.getBounds();
+				rect = layout.getBoundsInPixels();
 			}
 			left = Math.min(left, rect.x);
 			right = Math.max(right, rect.x + rect.width);
@@ -5323,8 +5323,8 @@ int getVisualLineIndex(TextLayout layout, int offsetInLine) {
 	int[] offsets = layout.getLineOffsets();
 	Caret caret = getCaret();
 	if (caret != null && lineIndex != 0 && offsetInLine == offsets[lineIndex]) {
-		int lineY = layout.getLineBounds(lineIndex).y;
-		int caretY = caret.getLocation().y - getLinePixel(getCaretLine());
+		int lineY = layout.getLineBoundsInPixels(lineIndex).y;
+		int caretY = caret.getLocationInPixels().y - getLinePixel(getCaretLine());
 		if (lineY > caretY) lineIndex--;
 		caretAlignment = OFFSET_LEADING;
  	}
@@ -5474,25 +5474,25 @@ Point getPointAtOffset(int offset) {
 	if (lineLength != 0  && offsetInLine <= lineLength) {
 		if (offsetInLine == lineLength) {
 			offsetInLine = layout.getPreviousOffset(offsetInLine, SWT.MOVEMENT_CLUSTER);
-			point = layout.getLocation(offsetInLine, true);
+			point = layout.getLocationInPixels(offsetInLine, true);
 		} else {
 			switch (caretAlignment) {
 				case OFFSET_LEADING:
-					point = layout.getLocation(offsetInLine, false);
+					point = layout.getLocationInPixels(offsetInLine, false);
 					break;
 				case PREVIOUS_OFFSET_TRAILING:
 				default:
 					if (offsetInLine == 0) {
-						point = layout.getLocation(offsetInLine, false);
+						point = layout.getLocationInPixels(offsetInLine, false);
 					} else {
 						offsetInLine = layout.getPreviousOffset(offsetInLine, SWT.MOVEMENT_CLUSTER);
-						point = layout.getLocation(offsetInLine, true);
+						point = layout.getLocationInPixels(offsetInLine, true);
 					}
 					break;
 			}
 		}
 	} else {
-		point = new Point(layout.getIndent(), 0);
+		point = new Point(layout.getIndentInPixels(), 0);
 	}
 	renderer.disposeTextLayout(layout);
 	point.x += leftMargin - horizontalScrollOffset;
@@ -5684,10 +5684,10 @@ void installListeners() {
 
 	listener = new Listener() {
 		public void handleEvent(Event event) {
-			event.x = DPIUtil.autoScaleUp(event.x);
-			event.y = DPIUtil.autoScaleUp(event.y);
-			event.width = DPIUtil.autoScaleUp(event.width);
-			event.height = DPIUtil.autoScaleUp(event.height);
+//			event.x = DPIUtil.autoScaleUp(event.x);
+//			event.y = DPIUtil.autoScaleUp(event.y);
+//			event.width = DPIUtil.autoScaleUp(event.width);
+//			event.height = DPIUtil.autoScaleUp(event.height);
 			switch (event.type) {
 				case SWT.Dispose: handleDispose(event); break;
 				case SWT.KeyDown: handleKeyDown(event); break;
@@ -5766,7 +5766,7 @@ void internalRedrawRange(int start, int length) {
 
 	/* Redraw end of line before start line if wrapped and start offset is first char */
 	if ((wordWrap || visualWrap) && startIndex > 0 && offsets[startIndex] == start) {
-		Rectangle rect = layout.getLineBounds(startIndex - 1);
+		Rectangle rect = layout.getLineBoundsInPixels(startIndex - 1);
 		rect.x = rect.width;
 		rect.width = clientAreaWidth - rightMargin - rect.x;
 		rect.x += lineX;
@@ -5778,7 +5778,7 @@ void internalRedrawRange(int start, int length) {
 		int endIndex = layout.getLineIndex(Math.min(end, layout.getText().length()));
 		if (startIndex == endIndex) {
 			/* Redraw rect between start and end offset if start and end offsets are in same wrapped line */
-			Rectangle rect = layout.getBounds(start, end - 1);
+			Rectangle rect = layout.getBoundsInPixels(start, end - 1);
 			rect.x += lineX;
 			rect.y += startLineY;
 			super.redrawInPixels(rect.x, rect.y, rect.width, rect.height, false);
@@ -5788,9 +5788,9 @@ void internalRedrawRange(int start, int length) {
 	}
 
 	/* Redraw start line from the start offset to the end of client area */
-	Rectangle startRect = layout.getBounds(start, offsets[startIndex + 1] - 1);
+	Rectangle startRect = layout.getBoundsInPixels(start, offsets[startIndex + 1] - 1);
 	if (startRect.height == 0) {
-		Rectangle bounds = layout.getLineBounds(startIndex);
+		Rectangle bounds = layout.getLineBoundsInPixels(startIndex);
 		startRect.x = bounds.width;
 		startRect.y = bounds.y;
 		startRect.height = bounds.height;
@@ -5807,9 +5807,9 @@ void internalRedrawRange(int start, int length) {
 		offsets = layout.getLineOffsets();
 	}
 	int endIndex = layout.getLineIndex(Math.min(end, layout.getText().length()));
-	Rectangle endRect = layout.getBounds(offsets[endIndex], end - 1);
+	Rectangle endRect = layout.getBoundsInPixels(offsets[endIndex], end - 1);
 	if (endRect.height == 0) {
-		Rectangle bounds = layout.getLineBounds(endIndex);
+		Rectangle bounds = layout.getLineBoundsInPixels(endIndex);
 		endRect.y = bounds.y;
 		endRect.height = bounds.height;
 	}
@@ -5866,7 +5866,7 @@ void handleCompositionChanged(Event event) {
 			int lineIndex = getCaretLine();
 			int lineOffset = content.getOffsetAtLine(lineIndex);
 			TextLayout layout = renderer.getTextLayout(lineIndex);
-			caretWidth = layout.getBounds(start - lineOffset, start + length - 1 - lineOffset).width;
+			caretWidth = layout.getBoundsInPixels(start - lineOffset, start + length - 1 - lineOffset).width;
 			renderer.disposeTextLayout(layout);
 			alignment = OFFSET_LEADING;
 		}
@@ -6542,7 +6542,7 @@ void initializeAccessible() {
 					rect.width = st.getPointAtOffset(end).x - rect.x;
 				} else {
 					TextLayout layout = st.renderer.getTextLayout(lineIndex);
-					rect.width = layout.getBounds().width - rect.x;
+					rect.width = layout.getBoundsInPixels().width - rect.x;
 					st.renderer.disposeTextLayout(layout);
 				}
 				rects [index++] = rect = display.mapInPixels(st, null, rect);
@@ -8219,7 +8219,7 @@ int sendTextEvent(int left, int right, int lineIndex, String text, boolean fillW
 			start = end = lineOffset + lineLegth;
 			if (fillWithSpaces) {
 				TextLayout layout = renderer.getTextLayout(lineIndex);
-				lineWidth = layout.getBounds().width;
+				lineWidth = layout.getBoundsInPixels().width;
 				renderer.disposeTextLayout(layout);
 			}
 		} else {
@@ -8576,12 +8576,12 @@ void setCaretLocation(Point location, int direction) {
 			}
 		}
 		if (isDefaultCaret && imageDirection == SWT.RIGHT) {
-			location.x -= (caret.getSize().x - 1);
+			location.x -= (caret.getSizeInPixels().x - 1);
 		}
 		if (isDefaultCaret) {
-			caret.setBounds(location.x, location.y, caretWidth, caretHeight);
+			caret.setBoundsInPixels(location.x, location.y, caretWidth, caretHeight);
 		} else {
-			caret.setLocation(location);
+			caret.setLocationInPixels(location);
 		}
 		if (direction != caretDirection) {
 			caretDirection = direction;
@@ -10388,8 +10388,8 @@ void updateCaretVisibility() {
 		if (blockSelection && blockXLocation != -1) {
 			caret.setVisible(false);
 		} else {
-			Point location = caret.getLocation();
-			Point size = caret.getSize();
+			Point location = caret.getLocationInPixels();
+			Point size = caret.getSizeInPixels();
 			boolean visible =
 				topMargin <= location.y + size.y && location.y <= clientAreaHeight - bottomMargin &&
 				leftMargin <= location.x + size.x && location.x <= clientAreaWidth - rightMargin;

@@ -1839,7 +1839,7 @@ public void setRegion (Region region) {
 	checkWidget ();
 	if ((style & SWT.NO_TRIM) == 0) return;
 	if (region != null) {
-		Rectangle bounds = region.getBounds ();
+		Rectangle bounds = region.getBoundsInPixels ();
 		setSizeInPixels (bounds.x + bounds.width, bounds.y + bounds.height);
 	}
 	super.setRegion (region);

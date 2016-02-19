@@ -209,7 +209,7 @@ void calculate(int startLine, int lineCount) {
 	for (int i = startLine; i < endLine; i++) {
 		if (lineWidth[i] == -1 || lineHeight[i] == -1) {
 			TextLayout layout = getTextLayout(i);
-			Rectangle rect = layout.getBounds();
+			Rectangle rect = layout.getBoundsInPixels();
 			lineWidth[i] = rect.width + hTrim;
 			lineHeight[i] = rect.height;
 			disposeTextLayout(layout);
@@ -343,14 +343,14 @@ void drawBullet(Bullet bullet, GC gc, int paintX, int paintY, int index, int lin
 	Display display = styledText.getDisplay();
 	TextLayout layout = new TextLayout(display);
 	layout.setText(string);
-	layout.setAscent(lineAscent);
-	layout.setDescent(lineDescent);
+	layout.setAscentInPixels(lineAscent);
+	layout.setDescentInPixels(lineDescent);
 	style = (StyleRange)style.clone();
 	style.metrics = null;
 	if (style.font == null) style.font = getFont(style.fontStyle);
 	layout.setStyle(style, 0, string.length());
-	int x = paintX + Math.max(0, metrics.width - layout.getBounds().width - BULLET_MARGIN);
-	layout.draw(gc, x, paintY);
+	int x = paintX + Math.max(0, metrics.width - layout.getBoundsInPixels().width - BULLET_MARGIN);
+	layout.drawInPixels(gc, x, paintY);
 	layout.dispose();
 }
 int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackground, Color widgetForeground) {
@@ -368,7 +368,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 	Color lineBackground = getLineBackground(lineIndex, null);
 	StyledTextEvent event = styledText.getLineBackgroundData(lineOffset, line);
 	if (event != null && event.lineBackground != null) lineBackground = event.lineBackground;
-	int height = layout.getBounds().height;
+	int height = layout.getBoundsInPixels().height;
 	if (lineBackground != null) {
 		gc.setBackground(lineBackground);
 		gc.fillRectangleInPixels(client.x, paintY, client.width, height);
@@ -378,7 +378,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 	}
 	gc.setForeground(widgetForeground);
 	if (selectionStart == selectionEnd || (selectionEnd <= 0 && selectionStart > lineLength - 1)) {
-		layout.draw(gc, paintX, paintY);
+		layout.drawInPixels(gc, paintX, paintY);
 	} else {
 		int start = Math.max(0, selectionStart);
 		int end = Math.min(lineLength, selectionEnd);
@@ -393,7 +393,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 		if (selectionStart <= lineLength && lineLength < selectionEnd ) {
 			flags |= SWT.LAST_LINE_SELECTION;
 		}
-		layout.draw(gc, paintX, paintY, start, end - 1, selectionFg, selectionBg, flags);
+		layout.drawInPixels(gc, paintX, paintY, start, end - 1, selectionFg, selectionBg, flags);
 	}
 
 	// draw objects
@@ -431,7 +431,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 			if (ranges == null) ranges = layout.getRanges();
 			int start = ranges[i << 1];
 			int length = ranges[(i << 1) + 1] - start + 1;
-			Point point = layout.getLocation(start, false);
+			Point point = layout.getLocationInPixels(start, false);
 			FontMetrics metrics = layout.getLineMetrics(layout.getLineIndex(start));
 			StyleRange style = (StyleRange)((StyleRange)styles[i]).clone();
 			style.start = start + lineOffset;
@@ -868,16 +868,16 @@ TextLayout getTextLayout(int lineIndex, int orientation, int width, int lineSpac
 		indent += metrics.width;
 	}
 	layout.setFont(regularFont);
-	layout.setAscent(ascent);
-	layout.setDescent(descent);
+	layout.setAscentInPixels(ascent);
+	layout.setDescentInPixels(descent);
 	layout.setText(line);
 	layout.setOrientation(orientation);
 	layout.setSegments(segments);
 	layout.setSegmentsChars(segmentChars);
 	layout.setWidth(width);
-	layout.setSpacing(lineSpacing);
+	layout.setSpacingInPixels(lineSpacing);
 	layout.setTabs(tabs);
-	layout.setIndent(indent);
+	layout.setIndentInPixels(indent);
 	layout.setWrapIndent(wrapIndent);
 	layout.setAlignment(alignment);
 	layout.setJustify(justify);
@@ -982,7 +982,7 @@ TextLayout getTextLayout(int lineIndex, int orientation, int width, int lineSpac
 		int lineCount = layout.getLineCount();
 		int height = getLineHeight();
 		for (int i = 0; i < lineCount; i++) {
-			int lineHeight = layout.getLineBounds(i).height;
+			int lineHeight = layout.getLineBoundsInPixels(i).height;
 			if (lineHeight > height) {
 				height = lineHeight;
 				index = i;
@@ -995,8 +995,8 @@ TextLayout getTextLayout(int lineIndex, int orientation, int width, int lineSpac
 			if (layouts != null) {
 				for (int i = 0; i < layouts.length; i++) {
 					if (layouts[i] != null && layouts[i] != layout) {
-						layouts[i].setAscent(ascent);
-						layouts[i].setDescent(descent);
+						layouts[i].setAscentInPixels(ascent);
+						layouts[i].setDescentInPixels(descent);
 					}
 				}
 			}
@@ -1104,7 +1104,7 @@ void setFont(Font font, int tabs) {
 		tabBuffer.append(' ');
 	}
 	layout.setText(tabBuffer.toString());
-	tabWidth = layout.getBounds().width;
+	tabWidth = layout.getBoundsInPixels().width;
 	layout.dispose();
 	if (styledText != null) {
 		GC gc = new GC(styledText);
