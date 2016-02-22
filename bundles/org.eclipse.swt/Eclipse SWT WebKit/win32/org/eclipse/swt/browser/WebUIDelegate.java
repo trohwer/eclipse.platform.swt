@@ -57,7 +57,7 @@ int contextMenuItemsForElement (long /*int*/ sender, long /*int*/ element, long 
 		Menu menu = browser.getMenu ();
 		if (menu != null && !menu.isDisposed ()) {
 			if (event.x != pt.x || event.y != pt.y) {
-				menu.setLocation (event.x, event.y);
+				menu.setLocationInPixels (event.x, event.y);
 			}
 			menu.setVisible (true);
 		} else {

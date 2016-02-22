@@ -91,7 +91,7 @@ public final class GridData {
 	 *
 	 * The default value is SWT.DEFAULT.
 	 *
-	 * @see Control#computeSizeInPixels(int, int, boolean)
+	 * @see Control#computeSize(int, int, boolean)
 	 */
 	public int widthHint = SWT.DEFAULT;
 
@@ -102,7 +102,7 @@ public final class GridData {
 	 *
 	 * The default value is SWT.DEFAULT.
 	 *
-	 * @see Control#computeSizeInPixels(int, int, boolean)
+	 * @see Control#computeSize(int, int, boolean)
 	 */
 	public int heightHint = SWT.DEFAULT;
 
@@ -212,7 +212,7 @@ public final class GridData {
 	 * The default value is 0.
 	 *
 	 * @since 3.1
-	 * @see Control#computeSizeInPixels(int, int, boolean)
+	 * @see Control#computeSize(int, int, boolean)
 	 * @see GridData#widthHint
 	 */
 	public int minimumWidth = 0;
@@ -227,7 +227,7 @@ public final class GridData {
 	 * The default value is 0.
 	 *
 	 * @since 3.1
-	 * @see Control#computeSizeInPixels(int, int, boolean)
+	 * @see Control#computeSize(int, int, boolean)
 	 * @see GridData#heightHint
 	 */
 	public int minimumHeight = 0;

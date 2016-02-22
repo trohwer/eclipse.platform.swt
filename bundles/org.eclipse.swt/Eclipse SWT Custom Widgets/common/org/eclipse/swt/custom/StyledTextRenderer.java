@@ -374,7 +374,7 @@ int drawLine(int lineIndex, int paintX, int paintY, GC gc, Color widgetBackgroun
 		gc.fillRectangleInPixels(client.x, paintY, client.width, height);
 	} else {
 		gc.setBackground(widgetBackground);
-		styledText.drawBackground(gc, client.x, paintY, client.width, height);
+		styledText.drawBackgroundInPixels(gc, client.x, paintY, client.width, height);
 	}
 	gc.setForeground(widgetForeground);
 	if (selectionStart == selectionEnd || (selectionEnd <= 0 && selectionStart > lineLength - 1)) {

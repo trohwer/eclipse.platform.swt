@@ -97,7 +97,7 @@ public class DropTargetEffect extends DropTargetAdapter {
 
 	Widget getItem(Table table, int x, int y) {
 		Point coordinates = new Point(x, y);
-		coordinates = table.toControl(coordinates);
+		coordinates = table.toControlInPixels(coordinates);
 		TableItem item = table.getItem(coordinates);
 		if (item != null) return item;
 		Rectangle area = table.getClientAreaInPixels();
@@ -116,7 +116,7 @@ public class DropTargetEffect extends DropTargetAdapter {
 
 	Widget getItem(Tree tree, int x, int y) {
 		Point point = new Point(x, y);
-		point = tree.toControl(point);
+		point = tree.toControlInPixels(point);
 		TreeItem item = tree.getItem(point);
 		if (item == null) {
 			Rectangle area = tree.getClientAreaInPixels();

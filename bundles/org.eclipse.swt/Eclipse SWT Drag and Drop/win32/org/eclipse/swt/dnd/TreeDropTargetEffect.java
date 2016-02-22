@@ -162,7 +162,7 @@ public class TreeDropTargetEffect extends DropTargetEffect {
 		int effect = checkEffect(event.feedback);
 		long /*int*/ handle = tree.handle;
 		Point coordinates = new Point(event.x, event.y);
-		coordinates = tree.toControl(coordinates);
+		coordinates = tree.toControlInPixels(coordinates);
 		TVHITTESTINFO lpht = new TVHITTESTINFO ();
 		lpht.x = coordinates.x;
 		lpht.y = coordinates.y;

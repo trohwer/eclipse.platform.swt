@@ -13,6 +13,7 @@ package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -110,7 +111,18 @@ void clearArea (int x, int y, int width, int height) {
  * @since 3.2
  */
 public void drawBackground (GC gc, int x, int y, int width, int height) {
-	drawBackground(gc, x, y, width, height, 0, 0);
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
+	drawBackgroundInPixels(gc, x, y, width, height);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawBackgroundInPixels (GC gc, int x, int y, int width, int height) {
+	drawBackgroundInPixels(gc, x, y, width, height, 0, 0);
 }
 
 /**

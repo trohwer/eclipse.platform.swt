@@ -6154,7 +6154,7 @@ void handlePaint(Event event) {
 		}
 		if (y < endY) {
 			gc.setBackground(background);
-			drawBackground(gc, 0, y, clientAreaWidth, endY - y);
+			drawBackgroundInPixels(gc, 0, y, clientAreaWidth, endY - y);
 		}
 	}
 	if (blockSelection && blockXLocation != -1) {
@@ -6172,16 +6172,16 @@ void handlePaint(Event event) {
 	// fill the margin background
 	gc.setBackground(marginColor != null ? marginColor : background);
 	if (topMargin > 0) {
-		drawBackground(gc, 0, 0, clientAreaWidth, topMargin);
+		drawBackgroundInPixels(gc, 0, 0, clientAreaWidth, topMargin);
 	}
 	if (bottomMargin > 0) {
-		drawBackground(gc, 0, clientAreaHeight - bottomMargin, clientAreaWidth, bottomMargin);
+		drawBackgroundInPixels(gc, 0, clientAreaHeight - bottomMargin, clientAreaWidth, bottomMargin);
 	}
 	if (leftMargin - alignmentMargin > 0) {
-		drawBackground(gc, 0, 0, leftMargin - alignmentMargin, clientAreaHeight);
+		drawBackgroundInPixels(gc, 0, 0, leftMargin - alignmentMargin, clientAreaHeight);
 	}
 	if (rightMargin > 0) {
-		drawBackground(gc, clientAreaWidth - rightMargin, 0, rightMargin, clientAreaHeight);
+		drawBackgroundInPixels(gc, clientAreaWidth - rightMargin, 0, rightMargin, clientAreaHeight);
 	}
 }
 /**

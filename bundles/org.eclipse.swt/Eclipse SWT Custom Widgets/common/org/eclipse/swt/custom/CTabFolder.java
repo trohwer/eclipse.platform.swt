@@ -14,6 +14,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -1406,7 +1407,7 @@ void initAccessible() {
 	accessible.addAccessibleControlListener(new AccessibleControlAdapter() {
 		@Override
 		public void getChildAtPoint(AccessibleControlEvent e) {
-			Point testPoint = toControl(e.x, e.y);
+			Point testPoint = toControlInPixels(e.x, e.y);
 			int childID = ACC.CHILDID_NONE;
 			for (int i = 0; i < items.length; i++) {
 				if (items[i].getBoundsInPixels().contains(testPoint)) {
@@ -1432,13 +1433,13 @@ void initAccessible() {
 			int childID = e.childID;
 			if (childID == ACC.CHILDID_SELF) {
 				location = getBoundsInPixels();
-				pt = getParent().toDisplay(location.x, location.y);
+				pt = getParent().toDisplayInPixels(location.x, location.y);
 			} else {
 				if (childID >= 0 && childID < items.length && items[childID].showing) {
 					location = items[childID].getBoundsInPixels();
 				}
 				if (location != null) {
-					pt = toDisplay(location.x, location.y);
+					pt = toDisplayInPixels(location.x, location.y);
 				}
 			}
 			if (location != null && pt != null) {
@@ -3671,7 +3672,7 @@ void showList (Rectangle rect) {
 	int x = rect.x;
 	int y = rect.y + rect.height;
 	Point location = getDisplay().mapInPixels(this, null, x, y);
-	showMenu.setLocation(location.x, location.y);
+	showMenu.setLocationInPixels(location.x, location.y);
 	showMenu.setVisible(true);
 }
 /**
@@ -3777,7 +3778,7 @@ boolean updateItems (int showIndex) {
 	changed |= showChevron != oldShowChevron;
 	if (changed && getToolTipText() != null) {
 		Point pt = getDisplay().getCursorLocationInPixels();
-		pt = toControl(pt);
+		pt = toControlInPixels(pt);
 		_setToolTipText(pt.x, pt.y);
 	}
 	gc.dispose();

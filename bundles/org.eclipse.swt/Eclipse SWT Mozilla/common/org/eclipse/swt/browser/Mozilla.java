@@ -4702,7 +4702,7 @@ int OnShowContextMenu (int aContextFlags, long /*int*/ aEvent, long /*int*/ aNod
 	Menu menu = browser.getMenu ();
 	if (menu != null && !menu.isDisposed ()) {
 		if (aScreenX[0] != event.x || aScreenY[0] != event.y) {
-			menu.setLocation (event.x, event.y);
+			menu.setLocationInPixels (event.x, event.y);
 		}
 		menu.setVisible (true);
 	}

@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.swt.graphics;
+package org.eclipse.swt.internal;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
 
 /**
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
@@ -180,18 +181,18 @@ public static boolean getAutoScale () {
 /**
  * Returns an <code>ImageData</code> for specified zoom.
  */
-static ImageData getImageData (Image image, int source_zoom, int target_zoom) {
+public static ImageData getImageData (Image image, int source_zoom, int target_zoom) {
 	if (source_zoom == target_zoom) return image.getImageDataInPixels ();
 	ImageData imageData = null;
-	if (image.imageDataProvider != null) {
+	if (image.getImageDataProvider() != null) {
 		boolean[] found = new boolean[1];
-		imageData = DPIUtil.validateAndGetImageDataAtZoom (image.imageDataProvider, target_zoom, found);
+		imageData = DPIUtil.validateAndGetImageDataAtZoom (image.getImageDataProvider(), target_zoom, found);
 		if (!found[0]) {
 			imageData = DPIUtil.autoScaleImageData (imageData, target_zoom, 100);
 		}
-	} else if (image.imageFileNameProvider != null) {
+	} else if (image.getImageFileNameProvider() != null) {
 		boolean[] found = new boolean[1];
-		String filename = DPIUtil.validateAndGetImagePathAtZoom (image.imageFileNameProvider, target_zoom, found);
+		String filename = DPIUtil.validateAndGetImagePathAtZoom (image.getImageFileNameProvider(), target_zoom, found);
 		if (!found[0]) {
 			imageData = DPIUtil.autoScaleImageData (new ImageData(filename), target_zoom, 100);
 		} else {
@@ -236,7 +237,7 @@ public static float getScalingFactor () {
  *
  * @return zoom
  */
-static int mapDPIToZoom (int dpi) {
+public static int mapDPIToZoom (int dpi) {
 	int zoom;
 	if (dpi >= DPI_ZOOM_200) {
 		zoom = 200;
@@ -250,7 +251,7 @@ static int mapDPIToZoom (int dpi) {
 /**
  * Returns a new rectangle as per the scaleFactor.
  */
-static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
+public static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
 	if (rect == null || targetZoom == currentZoom) return rect;
 	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
 	Rectangle returnRect = new Rectangle (0,0,0,0);
@@ -266,7 +267,7 @@ static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
  * fall-back to 100% image. If provider or fall-back image is not available,
  * throw error.
  */
-static ImageData validateAndGetImageDataAtZoom (ImageDataProvider provider, int zoom, boolean[] found) {
+public static ImageData validateAndGetImageDataAtZoom (ImageDataProvider provider, int zoom, boolean[] found) {
 	if (provider == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 	ImageData data = provider.getImageData (zoom);
 	found [0] = (data != null);
@@ -281,7 +282,7 @@ static ImageData validateAndGetImageDataAtZoom (ImageDataProvider provider, int 
  * fall-back to 100% image. If provider or fall-back image is not available,
  * throw error.
  */
-static String validateAndGetImagePathAtZoom (ImageFileNameProvider provider, int zoom, boolean[] found) {
+public static String validateAndGetImagePathAtZoom (ImageFileNameProvider provider, int zoom, boolean[] found) {
 	if (provider == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 	String filename = provider.getImagePath (zoom);
 	found [0] = (filename != null);

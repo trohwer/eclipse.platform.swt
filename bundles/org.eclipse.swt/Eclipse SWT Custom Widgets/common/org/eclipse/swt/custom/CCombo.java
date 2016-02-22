@@ -1037,7 +1037,7 @@ void initAccessible() {
 	getAccessible().addAccessibleControlListener (new AccessibleControlAdapter() {
 		@Override
 		public void getChildAtPoint (AccessibleControlEvent e) {
-			Point testPoint = toControl (e.x, e.y);
+			Point testPoint = toControlInPixels (e.x, e.y);
 			if (getBoundsInPixels ().contains (testPoint)) {
 				e.childID = ACC.CHILDID_SELF;
 			}
@@ -1046,7 +1046,7 @@ void initAccessible() {
 		@Override
 		public void getLocation (AccessibleControlEvent e) {
 			Rectangle location = getBoundsInPixels ();
-			Point pt = getParent().toDisplay (location.x, location.y);
+			Point pt = getParent().toDisplayInPixels (location.x, location.y);
 			e.x = pt.x;
 			e.y = pt.y;
 			e.width = location.width;
@@ -1143,7 +1143,7 @@ void listEvent (Event event) {
 			 * show it again. To prevent the popup from showing again, we will detect
 			 * this case and let the selection event of the arrow button hide the popup.
 			 */
-			Point point = arrow.toControl(getDisplay().getCursorLocationInPixels());
+			Point point = arrow.toControlInPixels(getDisplay().getCursorLocationInPixels());
 			Point size = arrow.getSizeInPixels();
 			Rectangle rect = new Rectangle(0, 0, size.x, size.y);
 			if (rect.contains(point)) {

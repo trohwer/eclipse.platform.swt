@@ -151,7 +151,7 @@ public class TableDropTargetEffect extends DropTargetEffect {
 		int effect = checkEffect(event.feedback);
 		long /*int*/ handle = table.handle;
 		Point coordinates = new Point(event.x, event.y);
-		coordinates = table.toControl(coordinates);
+		coordinates = table.toControlInPixels(coordinates);
 		LVHITTESTINFO pinfo = new LVHITTESTINFO();
 		pinfo.x = coordinates.x;
 		pinfo.y = coordinates.y;

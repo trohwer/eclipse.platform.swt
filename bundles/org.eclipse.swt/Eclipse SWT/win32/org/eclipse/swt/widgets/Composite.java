@@ -365,7 +365,19 @@ int applyThemeBackground () {
  *
  * @since 3.6
  */
-public void drawBackground(GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
+public void drawBackground (GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
+	offsetX = DPIUtil.autoScaleUp(offsetX);
+	offsetY = DPIUtil.autoScaleUp(offsetY);
+	drawBackgroundInPixels(gc, x, y, width, height, offsetX, offsetY);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawBackgroundInPixels(GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
 	checkWidget ();
 	if (gc == null) error (SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);

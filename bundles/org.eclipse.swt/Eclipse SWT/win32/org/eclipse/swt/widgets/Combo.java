@@ -947,6 +947,12 @@ boolean dragDetect (long /*int*/ hwnd, int x, int y, boolean filter, boolean [] 
  * @since 3.8
  */
 public Point getCaretLocation () {
+	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getCaretLocationInPixels () {
 	checkWidget ();
 	/*
 	* Bug in Windows.  For some reason, Windows is unable
@@ -1390,6 +1396,12 @@ public String getText () {
  * </ul>
  */
 public int getTextHeight () {
+	return DPIUtil.autoScaleDown(getTextHeightInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getTextHeightInPixels () {
 	checkWidget ();
 	COMBOBOXINFO pcbi = new COMBOBOXINFO ();
 	pcbi.cbSize = COMBOBOXINFO.sizeof;
@@ -2005,7 +2017,7 @@ void setBoundsInPixels (int x, int y, int width, int height, int flags) {
 	*/
 	if ((style & SWT.DROP_DOWN) != 0) {
 		int visibleCount = getItemCount() == 0 ? VISIBLE_COUNT : this.visibleCount;
-		height = getTextHeight () + (getItemHeightInPixels () * visibleCount) + 2;
+		height = getTextHeightInPixels () + (getItemHeightInPixels () * visibleCount) + 2;
 		/*
 		* Feature in Windows.  When a drop down combo box is resized,
 		* the combo box resizes the height of the text field and uses
@@ -2271,6 +2283,12 @@ void setScrollWidth (int newWidth, boolean grow) {
  * </ul>
  */
 public void setSelection (Point selection) {
+	setSelectionInPixels(DPIUtil.autoScaleUp(selection));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setSelectionInPixels (Point selection) {
 	checkWidget ();
 	if (selection == null) error (SWT.ERROR_NULL_ARGUMENT);
 	int start = translateOffset (selection.x), end = translateOffset (selection.y);
@@ -2491,7 +2509,7 @@ void updateDropDownHeight () {
 		RECT rect = new RECT ();
 		OS.SendMessage (handle, OS.CB_GETDROPPEDCONTROLRECT, 0, rect);
 		int visibleCount = getItemCount() == 0 ? VISIBLE_COUNT : this.visibleCount;
-		int height = getTextHeight () + (getItemHeightInPixels () * visibleCount) + 2;
+		int height = getTextHeightInPixels () + (getItemHeightInPixels () * visibleCount) + 2;
 		if (height != (rect.bottom - rect.top)) {
 			forceResize ();
 			OS.GetWindowRect (handle, rect);

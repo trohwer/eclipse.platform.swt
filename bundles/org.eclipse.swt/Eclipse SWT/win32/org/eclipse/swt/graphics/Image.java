@@ -14,6 +14,7 @@ package org.eclipse.swt.graphics;
 import java.io.*;
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gdip.*;
 import org.eclipse.swt.internal.win32.*;
 
@@ -126,12 +127,12 @@ public final class Image extends Resource implements Drawable {
 	/**
 	 * ImageFileNameProvider to provide file names at various Zoom levels
 	 */
-	ImageFileNameProvider imageFileNameProvider;
+	private ImageFileNameProvider imageFileNameProvider;
 
 	/**
 	 * ImageDataProvider to provide ImageData at various Zoom levels
 	 */
-	ImageDataProvider imageDataProvider;
+	private ImageDataProvider imageDataProvider;
 
 	/**
 	 * Attribute to cache current device zoom level
@@ -1826,6 +1827,22 @@ public ImageData getImageDataInPixels() {
 public ImageData getImageData (int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return DPIUtil.getImageData (this, currentDeviceZoom, zoom);
+}
+
+/**
+* @return the imageDataProvider
+* @since 3.105
+*/
+public ImageDataProvider getImageDataProvider() {
+	return imageDataProvider;
+}
+
+/**
+* @return the imageFileNameProvider
+* @since 3.105
+*/
+public ImageFileNameProvider getImageFileNameProvider() {
+	return imageFileNameProvider;
 }
 
 /**

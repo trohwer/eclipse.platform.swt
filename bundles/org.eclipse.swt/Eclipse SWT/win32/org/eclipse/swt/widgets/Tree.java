@@ -5667,7 +5667,7 @@ void updateMenuLocation (Event event) {
 		y = Math.max (y, bounds.y + bounds.height);
 		y = Math.min (y, clientArea.y + clientArea.height);
 	}
-	Point pt = toDisplay (x, y);
+	Point pt = toDisplayInPixels (x, y);
 	event.x = pt.x;
 	event.y = pt.y;
 }

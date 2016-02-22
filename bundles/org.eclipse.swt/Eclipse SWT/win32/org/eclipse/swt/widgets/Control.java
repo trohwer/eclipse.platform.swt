@@ -16,6 +16,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gdip.*;
 import org.eclipse.swt.internal.win32.*;
 
@@ -2977,7 +2978,7 @@ boolean sendGestureEvent (GESTUREINFO gi) {
 	Event event = new Event ();
 	int type = 0;
 	Point globalPt = new Point(gi.x, gi.y);
-	Point point = toControl(globalPt);
+	Point point = toControlInPixels(globalPt);
 	event.x = point.x;
 	event.y = point.y;
 	switch (gi.dwID) {
@@ -4032,6 +4033,12 @@ void subclass () {
  * @since 2.1
  */
 public Point toControl (int x, int y) {
+	return DPIUtil.autoScaleDown(toControlInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y)));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point toControlInPixels (int x, int y) {
 	checkWidget ();
 	POINT pt = new POINT ();
 	pt.x = x;  pt.y = y;
@@ -4060,9 +4067,15 @@ public Point toControl (int x, int y) {
  * </ul>
  */
 public Point toControl (Point point) {
+	return DPIUtil.autoScaleDown(toControlInPixels(DPIUtil.autoScaleUp(point)));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point toControlInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return toControl (point.x, point.y);
+	return toControlInPixels (point.x, point.y);
 }
 
 /**
@@ -4086,6 +4099,12 @@ public Point toControl (Point point) {
  * @since 2.1
  */
 public Point toDisplay (int x, int y) {
+	return DPIUtil.autoScaleDown(toDisplayInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y)));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point toDisplayInPixels (int x, int y) {
 	checkWidget ();
 	POINT pt = new POINT ();
 	pt.x = x;  pt.y = y;
@@ -4114,9 +4133,15 @@ public Point toDisplay (int x, int y) {
  * </ul>
  */
 public Point toDisplay (Point point) {
+	return DPIUtil.autoScaleDown(toDisplayInPixels(DPIUtil.autoScaleUp(point)));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point toDisplayInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return toDisplay (point.x, point.y);
+	return toDisplayInPixels (point.x, point.y);
 }
 
 long /*int*/ topHandle () {
