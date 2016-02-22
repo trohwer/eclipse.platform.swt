@@ -209,17 +209,17 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 		int layoutWidth = layout.getWidthInPixels ();
 		//TEMPORARY CODE
 		if (wHint == 0) {
-			layout.setWidth (1);
+			layout.setWidthInPixels (1);
 			Rectangle rect = layout.getBoundsInPixels ();
 			width = 0;
 			height = rect.height;
 		} else {
-			layout.setWidth (wHint);
+			layout.setWidthInPixels (wHint);
 			Rectangle rect = layout.getBoundsInPixels ();
 			width = rect.width;
 			height = rect.height;
 		}
-		layout.setWidth (layoutWidth);
+		layout.setWidthInPixels (layoutWidth);
 	}
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
@@ -1093,7 +1093,7 @@ LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 	if (OS.COMCTL32_MAJOR < 6) {
 		RECT rect = new RECT ();
 		OS.GetClientRect (handle, rect);
-		layout.setWidth (rect.right > 0 ? rect.right : -1);
+		layout.setWidthInPixels (rect.right > 0 ? rect.right : -1);
 		redraw ();
 	}
 	return result;

@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  *  Instances of this class implement rubber banding rectangles that are
@@ -410,6 +410,17 @@ void drawRectangles (Rectangle [] rects, boolean stippled) {
  * </ul>
  */
 public Rectangle [] getRectangles () {
+	Rectangle [] result = getRectanglesInPixels();
+	for (int i = 0; i < result.length; i++) {
+		result[i] = DPIUtil.autoScaleDown(result[i]);
+	}
+	return result;
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle [] getRectanglesInPixels () {
 	checkWidget();
 	Rectangle [] result = new Rectangle [rectangles.length];
 	for (int i = 0; i < rectangles.length; i++) {
@@ -848,6 +859,15 @@ public void setCursor(Cursor newCursor) {
  * </ul>
  */
 public void setRectangles (Rectangle [] rectangles) {
+	for (int i = 0; i < rectangles.length; i++) {
+		rectangles [i] = DPIUtil.autoScaleUp (rectangles [i]);
+	}
+	setRectanglesInPixels (rectangles);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setRectanglesInPixels (Rectangle [] rectangles) {
 	checkWidget ();
 	if (rectangles == null) error (SWT.ERROR_NULL_ARGUMENT);
 	this.rectangles = new Rectangle [rectangles.length];

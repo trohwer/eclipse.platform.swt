@@ -609,7 +609,7 @@ void dropDown (boolean drop) {
 	 * Fix is to reduce height of list and shell in that case, bug 388126.
 	 */
 	ScrollBar hBar = list.getHorizontalBar();
-	int emptyHBarSpace = hBar.isVisible () ? 0 : hBar.getSize ().y;
+	int emptyHBarSpace = hBar.isVisible () ? 0 : hBar.getSizeInPixels ().y;
 	list.setSizeInPixels (listRect.width, listRect.height - emptyHBarSpace);
 	popup.setBoundsInPixel (x, y, width, height - emptyHBarSpace);
 	popup.setVisible (true);
@@ -1813,7 +1813,7 @@ void textEvent (Event event) {
 			e.x = event.x;
 			e.y = event.y;
 			if (event.detail == SWT.MENU_KEYBOARD) {
-				Point pt = getDisplay().mapInPixels(text, null, text.getCaretLocation());
+				Point pt = getDisplay().mapInPixels(text, null, text.getCaretLocationInPixels());
 				e.x = pt.x;
 				e.y = pt.y;
 			}

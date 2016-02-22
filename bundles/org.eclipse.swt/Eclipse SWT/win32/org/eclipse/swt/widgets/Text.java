@@ -940,6 +940,12 @@ public int getCaretLineNumber () {
  * </ul>
  */
 public Point getCaretLocation () {
+	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getCaretLocationInPixels () {
 	checkWidget ();
 	/*
 	* Bug in Windows.  For some reason, Windows is unable
@@ -2499,7 +2505,7 @@ int untranslateOffset (int offset) {
 
 @Override
 void updateMenuLocation (Event event) {
-	Point point = display.mapInPixels (this, null, getCaretLocation ());
+	Point point = display.mapInPixels (this, null, getCaretLocationInPixels ());
 	event.x = point.x;
 	event.y = point.y + getLineHeightInPixels ();
 }

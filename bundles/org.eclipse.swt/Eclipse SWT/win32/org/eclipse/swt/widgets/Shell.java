@@ -1065,6 +1065,13 @@ public boolean getMaximized () {
  * @since 3.1
  */
 public Point getMinimumSize () {
+	return DPIUtil.autoScaleDown(getMinimumSizeInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getMinimumSizeInPixels () {
 	checkWidget ();
 	int width = Math.max (0, minWidth);
 	int trim = SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX;
@@ -1731,6 +1738,12 @@ public void setImeInputMode (int mode) {
  * @since 3.1
  */
 public void setMinimumSize (int width, int height) {
+	setMinimumSizeInPixels(DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setMinimumSizeInPixels (int width, int height) {
 	checkWidget ();
 	int widthLimit = 0, heightLimit = 0;
 	int trim = SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX;
@@ -1774,9 +1787,15 @@ public void setMinimumSize (int width, int height) {
  * @since 3.1
  */
 public void setMinimumSize (Point size) {
+	setMinimumSizeInPixels(DPIUtil.autoScaleUp(size));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setMinimumSizeInPixels (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setMinimumSize (size.x, size.y);
+	setMinimumSizeInPixels (size.x, size.y);
 }
 
 /**

@@ -55,12 +55,12 @@ protected void layout(Composite composite, boolean flushCache) {
 	ScrollBar hBar = sc.getHorizontalBar();
 	ScrollBar vBar = sc.getVerticalBar();
 	if (hBar != null) {
-		if (hBar.getSize().y >= sc.getSizeInPixels().y) {
+		if (hBar.getSizeInPixels().y >= sc.getSizeInPixels().y) {
 			return;
 		}
 	}
 	if (vBar != null) {
-		if (vBar.getSize().x >= sc.getSizeInPixels().x) {
+		if (vBar.getSizeInPixels().x >= sc.getSizeInPixels().x) {
 			return;
 		}
 	}

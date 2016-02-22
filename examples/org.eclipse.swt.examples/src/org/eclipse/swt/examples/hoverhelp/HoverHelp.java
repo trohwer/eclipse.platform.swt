@@ -372,7 +372,7 @@ public class HoverHelp {
 		 * @return the top-left location for a hovering box
 		 */
 		private void setHoverLocation(Shell shell, Point position) {
-			Rectangle displayBounds = shell.getDisplay().getBoundsInPixels();
+			Rectangle displayBounds = shell.getDisplay().getBounds ();
 			Rectangle shellBounds = shell.getBounds();
 			shellBounds.x = Math.max(Math.min(position.x, displayBounds.width - shellBounds.width), 0);
 			shellBounds.y = Math.max(Math.min(position.y + 16, displayBounds.height - shellBounds.height), 0);

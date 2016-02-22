@@ -341,7 +341,7 @@ boolean needHScroll(Rectangle contentRect, boolean vVisible) {
 	int border = getBorderWidthInPixels();
 	hostRect.width -= 2*border;
 	ScrollBar vBar = getVerticalBar();
-	if (vVisible && vBar != null) hostRect.width -= vBar.getSize().x;
+	if (vVisible && vBar != null) hostRect.width -= vBar.getSizeInPixels().x;
 
 	if (!expandHorizontal && contentRect.width > hostRect.width) return true;
 	if (expandHorizontal && minWidth > hostRect.width) return true;
@@ -356,7 +356,7 @@ boolean needVScroll(Rectangle contentRect, boolean hVisible) {
 	int border = getBorderWidthInPixels();
 	hostRect.height -= 2*border;
 	ScrollBar hBar = getHorizontalBar();
-	if (hVisible && hBar != null) hostRect.height -= hBar.getSize().y;
+	if (hVisible && hBar != null) hostRect.height -= hBar.getSizeInPixels().y;
 
 	if (!expandVertical && contentRect.height > hostRect.height) return true;
 	if (expandVertical && minHeight > hostRect.height) return true;

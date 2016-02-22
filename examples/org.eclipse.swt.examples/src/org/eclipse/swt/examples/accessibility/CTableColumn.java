@@ -523,7 +523,7 @@ void paint (GC gc) {
 	if (displayText.length () > 0) {
 		gc.setForeground (getParent ().display.getSystemColor (SWT.COLOR_BLACK));
 		int fontHeight = parent.fontHeight;
-		gc.drawTextInPixels (displayText, startX, (headerHeight - fontHeight) / 2, SWT.DRAW_MNEMONIC);
+		gc.drawText (displayText, startX, (headerHeight - fontHeight) / 2, SWT.DRAW_MNEMONIC);
 		startX += gc.textExtent (displayText, SWT.DRAW_MNEMONIC).x + CTable.MARGIN_IMAGE;
 	}
 	if (sort != SWT.NONE) {

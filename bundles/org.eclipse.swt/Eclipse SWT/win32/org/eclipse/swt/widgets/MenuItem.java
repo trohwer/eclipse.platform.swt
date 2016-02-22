@@ -1226,7 +1226,7 @@ public void setToolTipText (String toolTip) {
 
 void showTooltip (int x, int y) {
 	if (itemToolTip == null) return;
-	itemToolTip.setLocation (x, y);
+	itemToolTip.setLocationInPixels (x, y);
 	itemToolTip.setVisible (true);
 }
 

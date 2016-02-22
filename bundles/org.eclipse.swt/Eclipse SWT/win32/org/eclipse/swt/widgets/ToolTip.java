@@ -366,6 +366,12 @@ public void setAutoHide (boolean autoHide) {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	setLocationInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (int x, int y) {
 	checkWidget ();
 	this.x = x;
 	this.y = y;
@@ -396,9 +402,15 @@ public void setLocation (int x, int y) {
  * </ul>
  */
 public void setLocation (Point location) {
+	setLocationInPixels(DPIUtil.autoScaleUp(location));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setLocation (location.x, location.y);
+	setLocationInPixels (location.x, location.y);
 }
 
 /**

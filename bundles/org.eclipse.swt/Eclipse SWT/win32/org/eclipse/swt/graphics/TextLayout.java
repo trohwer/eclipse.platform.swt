@@ -1609,6 +1609,7 @@ public int getAscent () {
 /**
 * @noreference This method is not intended to be referenced by clients.
 */
+
 public int getAscentInPixels () {
 	checkLayout();
 	return ascent;
@@ -1626,7 +1627,7 @@ public int getAscentInPixels () {
  * </ul>
  *
  * @see #setWidth(int)
- * @see #getLineBoundsInPixels(int)
+ * @see #getLineBounds(int)
  */
 public Rectangle getBounds () {
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
@@ -3382,6 +3383,13 @@ public void setTextDirection (int textDirection) {
  * @see #setAlignment(int)
  */
 public void setWidth (int width) {
+	setWidthInPixels(width != SWT.DEFAULT ? DPIUtil.autoScaleUp(width) : width);
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setWidthInPixels (int width) {
 	checkLayout();
 	if (width < -1 || width == 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.wrapWidth == width) return;
@@ -3404,6 +3412,13 @@ public void setWidth (int width) {
  * @since 3.6
  */
 public void setWrapIndent (int wrapIndent) {
+	setWrapIndentInPixels(DPIUtil.autoScaleUp(wrapIndent));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setWrapIndentInPixels (int wrapIndent) {
 	checkLayout();
 	if (wrapIndent < 0) return;
 	if (this.wrapIndent == wrapIndent) return;

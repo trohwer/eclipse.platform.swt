@@ -592,7 +592,7 @@ public class PaintExample {
 	 * in which case set it to 9/10 of display size.
 	 */
 	private static void setShellSize (Display display, Shell shell) {
-		Rectangle bounds = display.getBoundsInPixels();
+		Rectangle bounds = display.getBounds();
 		Point size = shell.computeSize (SWT.DEFAULT, SWT.DEFAULT);
 		if (size.x > bounds.width) size.x = bounds.width * 9 / 10;
 		if (size.y > bounds.height) size.y = bounds.height * 9 / 10;
