@@ -1045,14 +1045,9 @@ private int getDeviceZoom() {
 			byte[] buffer = new byte [len];
 			OS.memmove (buffer, keyArray, len);
 			String type = new String(Converter.mbcsToWcs(null, buffer));
-			if (i == monitor) {
-				int index = type.indexOf(",");
-				String height = type.substring((index + 1), (type.length() - 1));
-				fontHeight = Integer.valueOf(height.trim());
-				OS.g_free(keyArray);
-				OS.g_variant_unref(iterValue);
-				break;
-			}
+			int index = type.indexOf(",");
+			String height = type.substring((index + 1), (type.length() - 1));
+			fontHeight = Math.max(fontHeight, Integer.valueOf(height.trim()));
 			OS.g_free(keyArray);
 			OS.g_variant_unref(iterValue);
 		}
