@@ -14,7 +14,7 @@ package org.eclipse.swt.widgets;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -665,7 +665,7 @@ public void clearSelection () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int height = 0, width = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
@@ -709,14 +709,14 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	Rectangle trim = computeTrim (0, 0, width, height);
+	Rectangle trim = computeTrimInPixels (0, 0, width, height);
 	return new Point (trim.width, trim.height);
 }
 
 @Override
-public Rectangle computeTrim (int x, int y, int width, int height) {
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
-	Rectangle rect = super.computeTrim (x, y, width, height);
+	Rectangle rect = super.computeTrimInPixels (x, y, width, height);
 	/*
 	* The preferred height of a single-line text widget
 	* has been hand-crafted to be the same height as
@@ -896,7 +896,7 @@ void fixAlignment () {
 }
 
 @Override
-public int getBorderWidth () {
+public int getBorderWidthInPixels () {
 	checkWidget ();
 	/*
 	* Feature in Windows 2000 and XP.  Despite the fact that WS_BORDER
@@ -907,7 +907,7 @@ public int getBorderWidth () {
 //	if ((style & SWT.BORDER) != 0 && (style & SWT.FLAT) != 0) {
 //		return OS.GetSystemMetrics (OS.SM_CXBORDER);
 //	}
-	return super.getBorderWidth ();
+	return super.getBorderWidthInPixels ();
 }
 
 /**
@@ -940,6 +940,12 @@ public int getCaretLineNumber () {
  * </ul>
  */
 public Point getCaretLocation () {
+	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getCaretLocationInPixels () {
 	checkWidget ();
 	/*
 	* Bug in Windows.  For some reason, Windows is unable
@@ -1168,6 +1174,12 @@ public String getLineDelimiter () {
  * </ul>
  */
 public int getLineHeight () {
+	return DPIUtil.autoScaleDown(getLineHeightInPixels ());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getLineHeightInPixels () {
 	checkWidget ();
 	long /*int*/ newFont, oldFont = 0;
 	long /*int*/ hDC = OS.GetDC (handle);
@@ -1514,6 +1526,13 @@ public int getTopIndex () {
  * </ul>
  */
 public int getTopPixel () {
+	return DPIUtil.autoScaleDown(getTopPixelInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getTopPixelInPixels () {
 	checkWidget ();
 	/*
 	* Note, EM_GETSCROLLPOS is implemented in Rich Edit 3.0
@@ -1523,7 +1542,7 @@ public int getTopPixel () {
 	int [] buffer = new int [2];
 	long /*int*/ code = OS.SendMessage (handle, OS.EM_GETSCROLLPOS, 0, buffer);
 	if (code == 1) return buffer [1];
-	return getTopIndex () * getLineHeight ();
+	return getTopIndex () * getLineHeightInPixels ();
 }
 
 /**
@@ -1891,7 +1910,7 @@ boolean sendKeyEvent (int type, int msg, long /*int*/ wParam, long /*int*/ lPara
 }
 
 @Override
-void setBounds (int x, int y, int width, int height, int flags) {
+void setBoundsInPixels (int x, int y, int width, int height, int flags) {
 	/*
 	* Feature in Windows.  When the caret is moved,
 	* the text widget scrolls to show the new location.
@@ -1923,7 +1942,7 @@ void setBounds (int x, int y, int width, int height, int flags) {
 			}
 		}
 	}
-	super.setBounds (x, y, width, height, flags);
+	super.setBoundsInPixels (x, y, width, height, flags);
 
 	/*
 	* Bug in Windows. If the client area height is smaller than
@@ -2486,9 +2505,9 @@ int untranslateOffset (int offset) {
 
 @Override
 void updateMenuLocation (Event event) {
-	Point point = display.map (this, null, getCaretLocation ());
+	Point point = display.mapInPixels (this, null, getCaretLocationInPixels ());
 	event.x = point.x;
-	event.y = point.y + getLineHeight ();
+	event.y = point.y + getLineHeightInPixels ();
 }
 
 @Override

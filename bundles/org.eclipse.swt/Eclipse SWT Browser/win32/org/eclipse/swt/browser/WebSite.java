@@ -329,7 +329,7 @@ int ShowContextMenu(int dwID, long /*int*/ ppt, long /*int*/ pcmdtReserved, long
 	Menu menu = browser.getMenu();
 	if (menu != null && !menu.isDisposed ()) {
 		if (pt.x != event.x || pt.y != event.y) {
-			menu.setLocation (event.x, event.y);
+			menu.setLocationInPixels (event.x, event.y);
 		}
 		menu.setVisible (true);
 		return COM.S_OK;

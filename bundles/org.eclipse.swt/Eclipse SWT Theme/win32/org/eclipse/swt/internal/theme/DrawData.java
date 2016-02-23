@@ -102,8 +102,8 @@ void drawImage(Theme theme, Image image, GC gc, Rectangle bounds) {
 //		OS.DrawThemeIcon(hTheme, gc.handle, part[0], part[1], rect, imageList.getHandle(), imageIndex);
 //		imageList.dispose();
 //		OS.CloseThemeData(hTheme);
-		Rectangle rect = image.getBounds();
-		gc.drawImage(image, 0, 0, rect.width, rect.height, bounds.x, bounds.y, bounds.width, bounds.height);
+		Rectangle rect = image.getBoundsInPixels();
+		gc.drawImageInPixels(image, 0, 0, rect.width, rect.height, bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 }
 

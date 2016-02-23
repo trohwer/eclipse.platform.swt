@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.widgets;
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -189,9 +190,9 @@ void drawItem (GC gc, long /*int*/ hTheme, RECT clipRect, boolean drawFocus) {
 	if (image != null) {
 		rect.left += ExpandItem.TEXT_INSET;
 		if (imageHeight > headerHeight) {
-			gc.drawImage (image, rect.left, rect.top + headerHeight - imageHeight);
+			gc.drawImageInPixels (image, rect.left, rect.top + headerHeight - imageHeight);
 		} else {
-			gc.drawImage (image, rect.left, rect.top + (headerHeight - imageHeight) / 2);
+			gc.drawImageInPixels (image, rect.left, rect.top + (headerHeight - imageHeight) / 2);
 		}
 		rect.left += imageWidth;
 	}
@@ -296,6 +297,13 @@ public boolean getExpanded () {
  * </ul>
  */
 public int getHeaderHeight () {
+	return DPIUtil.autoScaleDown(getHeaderHeightInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeaderHeightInPixels () {
 	checkWidget ();
 	return Math.max (parent.getBandHeight (), imageHeight);
 }
@@ -311,6 +319,12 @@ public int getHeaderHeight () {
  * </ul>
  */
 public int getHeight () {
+	return DPIUtil.autoScaleDown(getHeightInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeightInPixels () {
 	checkWidget ();
 	return height;
 }
@@ -404,9 +418,9 @@ void setBounds (int x, int y, int width, int height, boolean move, boolean size)
 			width = Math.max (0, width - BORDER * 2);
 			height = Math.max (0, height - BORDER);
 		}
-		if (move && size) control.setBounds (x, y + headerHeight, width, height);
-		if (move && !size) control.setLocation (x, y + headerHeight);
-		if (!move && size) control.setSize (width, height);
+		if (move && size) control.setBoundsInPixel (x, y + headerHeight, width, height);
+		if (move && !size) control.setLocationInPixels (x, y + headerHeight);
+		if (!move && size) control.setSizeInPixels (width, height);
 	}
 }
 
@@ -437,9 +451,9 @@ public void setControl (Control control) {
 		if (!parent.isAppThemed ()) {
 			int width = Math.max (0, this.width - BORDER * 2);
 			int height = Math.max (0, this.height - BORDER);
-			control.setBounds (x + BORDER, y + headerHeight, width, height);
+			control.setBoundsInPixel (x + BORDER, y + headerHeight, width, height);
 		} else {
-			control.setBounds (x, y + headerHeight, width, height);
+			control.setBoundsInPixel (x, y + headerHeight, width, height);
 		}
 	}
 }
@@ -472,6 +486,12 @@ public void setExpanded (boolean expanded) {
  * </ul>
  */
 public void setHeight (int height) {
+	setHeightInPixels(DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setHeightInPixels (int height) {
 	checkWidget ();
 	if (height < 0) return;
 	setBounds (0, 0, width, height, false, true);
@@ -483,7 +503,7 @@ public void setImage (Image image) {
 	super.setImage (image);
 	int oldImageHeight = imageHeight;
 	if (image != null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageHeight = bounds.height;
 		imageWidth = bounds.width;
 	} else {

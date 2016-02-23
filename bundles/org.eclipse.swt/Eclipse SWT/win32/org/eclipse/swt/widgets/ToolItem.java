@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -234,6 +234,12 @@ void destroyWidget () {
  * </ul>
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkWidget();
 	long /*int*/ hwnd = parent.handle;
 	int index = (int)/*64*/OS.SendMessage (hwnd, OS.TB_COMMANDTOINDEX, id, 0);
@@ -389,6 +395,12 @@ public String getToolTipText () {
  * </ul>
  */
 public int getWidth () {
+	return DPIUtil.autoScaleDown(getWidthInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getWidthInPixels () {
 	checkWidget();
 	long /*int*/ hwnd = parent.handle;
 	int index = (int)/*64*/OS.SendMessage (hwnd, OS.TB_COMMANDTOINDEX, id, 0);
@@ -510,12 +522,12 @@ void resizeControl () {
 		* case can occur when the control is a
 		* combo box.
 		*/
-		Rectangle itemRect = getBounds ();
-		control.setSize (itemRect.width, itemRect.height);
-		Rectangle rect = control.getBounds ();
+		Rectangle itemRect = getBoundsInPixels ();
+		control.setSizeInPixels (itemRect.width, itemRect.height);
+		Rectangle rect = control.getBoundsInPixels ();
 		rect.x = itemRect.x + (itemRect.width - rect.width) / 2;
 		rect.y = itemRect.y + (itemRect.height - rect.height) / 2;
-		control.setLocation (rect.x, rect.y);
+		control.setLocationInPixels (rect.x, rect.y);
 	}
 }
 
@@ -920,6 +932,12 @@ public void setToolTipText (String string) {
  * </ul>
  */
 public void setWidth (int width) {
+	setWidthInPixels(DPIUtil.autoScaleUp(width));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setWidthInPixels (int width) {
 	checkWidget();
 	if ((style & SWT.SEPARATOR) == 0) return;
 	if (width < 0) return;
@@ -944,7 +962,7 @@ void updateImages (boolean enabled) {
 	ImageList hotImageList = parent.getHotImageList ();
 	ImageList disabledImageList = parent.getDisabledImageList();
 	if (info.iImage == OS.I_IMAGENONE) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		int listStyle = parent.style & SWT.RIGHT_TO_LEFT;
 		if (imageList == null) {
 			imageList = display.getImageListToolBar (listStyle, bounds.width, bounds.height);

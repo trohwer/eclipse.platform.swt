@@ -163,9 +163,9 @@ public class TreeDragSourceEffect extends DragSourceEffect {
 		long /*int*/ treeImageList = OS.SendMessage (tree.handle, OS.TVM_GETIMAGELIST, OS.TVSIL_NORMAL, 0);
 		if (treeImageList != 0) {
 			int count = Math.min(selection.length, 10);
-			Rectangle bounds = selection[0].getBounds(0);
+			Rectangle bounds = selection[0].getBoundsInPixels(0);
 			for (int i = 1; i < count; i++) {
-				bounds = bounds.union(selection[i].getBounds(0));
+				bounds = bounds.union(selection[i].getBoundsInPixels(0));
 			}
 			long /*int*/ hDC = OS.GetDC(tree.handle);
 			long /*int*/ hDC1 = OS.CreateCompatibleDC(hDC);
@@ -178,7 +178,7 @@ public class TreeDragSourceEffect extends DragSourceEffect {
 			OS.FillRect(hDC1, rect, hBrush);
 			for (int i = 0; i < count; i++) {
 				TreeItem selected = selection[i];
-				Rectangle cell = selected.getBounds(0);
+				Rectangle cell = selected.getBoundsInPixels(0);
 				long /*int*/ imageList = OS.SendMessage(tree.handle, OS.TVM_CREATEDRAGIMAGE, 0, selected.handle);
 				OS.ImageList_Draw(imageList, 0, hDC1, cell.x - bounds.x, cell.y - bounds.y, OS.ILD_SELECTED);
 				OS.ImageList_Destroy(imageList);

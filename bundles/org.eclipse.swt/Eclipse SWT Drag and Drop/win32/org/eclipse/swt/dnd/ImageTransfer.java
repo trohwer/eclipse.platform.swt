@@ -181,7 +181,7 @@ public Object nativeToJava(TransferData transferData) {
 				}
 			}
 			Image image = Image.win32_new(null, SWT.BITMAP, memDib);
-			ImageData data = image.getImageData();
+			ImageData data = image.getImageDataInPixels();
 			OS.DeleteObject(memDib);
 			image.dispose();
 			return data;

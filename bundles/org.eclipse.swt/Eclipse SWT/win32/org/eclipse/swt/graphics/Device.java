@@ -68,6 +68,9 @@ public abstract class Device implements Drawable {
 
 	boolean disposed;
 
+	/* Auto-Scaling*/
+	boolean enableAutoScaling = true;
+
 	/*
 	* TEMPORARY CODE. When a graphics object is
 	* created and the device parameter is null,
@@ -363,7 +366,13 @@ long /*int*/ EnumFontFamProc (long /*int*/ lpelfe, long /*int*/ lpntme, long /*i
  *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  */
-public Rectangle getBounds () {
+public Rectangle getBounds() {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkDevice ();
 	long /*int*/ hDC = internal_new_GC (null);
 	int width = OS.GetDeviceCaps (hDC, OS.HORZRES);
@@ -427,7 +436,14 @@ public DeviceData getDeviceData () {
  * @see #getBounds
  */
 public Rectangle getClientArea () {
-	return getBounds ();
+	return DPIUtil.autoScaleDown(getClientAreaInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getClientAreaInPixels () {
+	return getBoundsInPixels ();
 }
 
 /**
@@ -695,6 +711,7 @@ public boolean getWarnings () {
  * @see #create
  */
 protected void init () {
+	DPIUtil.setDeviceZoom (getDeviceZoom ());
 	if (debug) {
 		if (!OS.IsWinCE) OS.GdiSetBatchLimit(1);
 	}
@@ -989,6 +1006,18 @@ protected void release () {
  */
 public void setWarnings (boolean warnings) {
 	checkDevice ();
+}
+
+boolean getEnableAutoScaling() {
+	return enableAutoScaling;
+}
+
+void setEnableAutoScaling(boolean value) {
+	enableAutoScaling = value;
+}
+
+private int getDeviceZoom () {
+	return DPIUtil.mapDPIToZoom ( _getDPIx ());
 }
 
 }

@@ -1226,7 +1226,7 @@ public void setToolTipText (String toolTip) {
 
 void showTooltip (int x, int y) {
 	if (itemToolTip == null) return;
-	itemToolTip.setLocation (x, y);
+	itemToolTip.setLocationInPixels (x, y);
 	itemToolTip.setVisible (true);
 }
 
@@ -1278,7 +1278,7 @@ LRESULT wmDrawChild (long /*int*/ wParam, long /*int*/ lParam) {
 		*/
 		int x = (parent.style & SWT.BAR) != 0 ? MARGIN_WIDTH * 2 : struct.left;
 		Image image = getEnabled () ? this.image : new Image (display, this.image, SWT.IMAGE_DISABLE);
-		gc.drawImage (image, x, struct.top + MARGIN_HEIGHT);
+		gc.drawImageInPixels (image, x, struct.top + MARGIN_HEIGHT);
 		if (this.image != image) image.dispose ();
 		gc.dispose ();
 	}
@@ -1291,7 +1291,7 @@ LRESULT wmMeasureChild (long /*int*/ wParam, long /*int*/ lParam) {
 	OS.MoveMemory (struct, lParam, MEASUREITEMSTRUCT.sizeof);
 	int width = 0, height = 0;
 	if (image != null) {
-		Rectangle rect = image.getBounds ();
+		Rectangle rect = image.getBoundsInPixels ();
 		width = rect.width;
 		height = rect.height;
 	} else {
@@ -1315,7 +1315,7 @@ LRESULT wmMeasureChild (long /*int*/ wParam, long /*int*/ lParam) {
 			for (int i=0; i<items.length; i++) {
 				MenuItem item = items [i];
 				if (item.image != null) {
-					Rectangle rect = item.image.getBounds ();
+					Rectangle rect = item.image.getBoundsInPixels ();
 					width = Math.max (width, rect.width);
 				}
 			}

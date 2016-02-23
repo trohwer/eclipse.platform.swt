@@ -11,9 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * This class is the abstract superclass of all classes which
@@ -115,6 +116,17 @@ long /*int*/ callWindowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, lo
  * @see #getClientArea
  */
 public Rectangle computeTrim (int x, int y, int width, int height) {
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
+	return DPIUtil.autoScaleDown(computeTrimInPixels(x, y, width, height));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	long /*int*/ scrolledHandle = scrolledHandle ();
 	RECT rect = new RECT ();
@@ -193,6 +205,13 @@ void destroyScrollBar (int type) {
  * @see #computeTrim
  */
 public Rectangle getClientArea () {
+	return DPIUtil.autoScaleDown(getClientAreaInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();

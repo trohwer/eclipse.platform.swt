@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class implement the notebook user interface
@@ -194,9 +194,9 @@ protected void checkSubclass () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
-	Point size = super.computeSize (wHint, hHint, changed);
+	Point size = super.computeSizeInPixels (wHint, hHint, changed);
 	RECT insetRect = new RECT (), itemRect = new RECT ();
 	OS.SendMessage (handle, OS.TCM_ADJUSTRECT, 0, insetRect);
 	int width = insetRect.left - insetRect.right;
@@ -208,7 +208,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	RECT rect = new RECT ();
 	OS.SetRect (rect, 0, 0, width, size.y);
 	OS.SendMessage (handle, OS.TCM_ADJUSTRECT, 1, rect);
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	rect.left -= border;  rect.right += border;
 	width = rect.right - rect.left;
 	size.x = Math.max (width, size.x);
@@ -216,12 +216,12 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 }
 
 @Override
-public Rectangle computeTrim (int x, int y, int width, int height) {
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	RECT rect = new RECT ();
 	OS.SetRect (rect, x, y, x + width, y + height);
 	OS.SendMessage (handle, OS.TCM_ADJUSTRECT, 1, rect);
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	rect.left -= border;  rect.right += border;
 	rect.top -= border;  rect.bottom += border;
 	int newWidth = rect.right - rect.left;
@@ -330,7 +330,7 @@ Control findThemeControl () {
 }
 
 @Override
-public Rectangle getClientArea () {
+public Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();
@@ -473,7 +473,7 @@ public int getSelectionIndex () {
 int imageIndex (Image image) {
 	if (image == null) return OS.I_IMAGENONE;
 	if (imageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = imageList.add (image);
 		long /*int*/ hImageList = imageList.getHandle ();
@@ -529,11 +529,11 @@ Point minimumSize (int wHint, int hHint, boolean flushCache) {
 			index++;
 		}
 		if (index == count) {
-			Rectangle rect = child.getBounds ();
+			Rectangle rect = child.getBoundsInPixels ();
 			width = Math.max (width, rect.x + rect.width);
 			height = Math.max (height, rect.y + rect.height);
 		} else {
-			Point size = child.computeSize (wHint, hHint, flushCache);
+			Point size = child.computeSizeInPixels (wHint, hHint, flushCache);
 			width = Math.max (width, size.x);
 			height = Math.max (height, size.y);
 		}
@@ -699,9 +699,9 @@ public void setSelection (TabItem [] items) {
 @Override
 public void setFont (Font font) {
 	checkWidget ();
-	Rectangle oldRect = getClientArea ();
+	Rectangle oldRect = getClientAreaInPixels ();
 	super.setFont (font);
-	Rectangle newRect = getClientArea ();
+	Rectangle newRect = getClientAreaInPixels ();
 	if (!oldRect.equals (newRect)) {
 		sendResize ();
 		int index = (int)/*64*/OS.SendMessage (handle, OS.TCM_GETCURSEL, 0, 0);
@@ -709,7 +709,7 @@ public void setFont (Font font) {
 			TabItem item = items [index];
 			Control control = item.control;
 			if (control != null && !control.isDisposed ()) {
-				control.setBounds (getClientArea ());
+				control.setBoundsInPixels (getClientAreaInPixels ());
 			}
 		}
 	}
@@ -751,7 +751,7 @@ void setSelection (int index, boolean notify) {
 		TabItem item = items [newIndex];
 		Control control = item.control;
 		if (control != null && !control.isDisposed ()) {
-			control.setBounds (getClientArea ());
+			control.setBoundsInPixels (getClientAreaInPixels ());
 			control.setVisible (true);
 		}
 		if (notify) {
@@ -1066,7 +1066,7 @@ LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 		TabItem item = items [index];
 		Control control = item.control;
 		if (control != null && !control.isDisposed ()) {
-			control.setBounds (getClientArea ());
+			control.setBoundsInPixels (getClientAreaInPixels ());
 		}
 	}
 	return result;
@@ -1135,7 +1135,7 @@ LRESULT wmNotifyChild (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 				Control control = item.control;
 				if (control != null && !control.isDisposed ()) {
 					if (code == OS.TCN_SELCHANGE) {
-						control.setBounds (getClientArea ());
+						control.setBoundsInPixels (getClientAreaInPixels ());
 					}
 					control.setVisible (code == OS.TCN_SELCHANGE);
 				}

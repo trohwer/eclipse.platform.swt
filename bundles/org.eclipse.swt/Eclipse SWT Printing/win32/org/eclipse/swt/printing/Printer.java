@@ -481,7 +481,7 @@ public Point getDPI() {
  * @see #computeTrim
  */
 @Override
-public Rectangle getBounds() {
+public Rectangle getBoundsInPixels() {
 	checkDevice();
 	int width = OS.GetDeviceCaps(handle, OS.PHYSICALWIDTH);
 	int height = OS.GetDeviceCaps(handle, OS.PHYSICALHEIGHT);
@@ -506,7 +506,7 @@ public Rectangle getBounds() {
  * @see #computeTrim
  */
 @Override
-public Rectangle getClientArea() {
+public Rectangle getClientAreaInPixels() {
 	checkDevice();
 	int width = OS.GetDeviceCaps(handle, OS.HORZRES);
 	int height = OS.GetDeviceCaps(handle, OS.VERTRES);

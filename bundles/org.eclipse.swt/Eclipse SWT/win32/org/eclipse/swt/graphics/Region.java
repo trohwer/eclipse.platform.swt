@@ -12,6 +12,7 @@ package org.eclipse.swt.graphics;
 
 
 import org.eclipse.swt.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -110,9 +111,15 @@ Region(Device device, int handle) {
  * </ul>
  *
  * @since 3.0
-*
+ *
  */
 public void add (int[] pointArray) {
+	addInPixels(DPIUtil.autoScaleUp(pointArray));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void addInPixels (int[] pointArray) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (OS.IsWinCE) SWT.error(SWT.ERROR_NOT_IMPLEMENTED);
@@ -136,9 +143,15 @@ public void add (int[] pointArray) {
  * </ul>
  */
 public void add (Rectangle rect) {
+	addInPixels(DPIUtil.autoScaleUp(rect));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void addInPixels (Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	add (rect.x, rect.y, rect.width, rect.height);
+	addInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -160,6 +173,13 @@ public void add (Rectangle rect) {
  * @since 3.1
  */
 public void add (int x, int y, int width, int height) {
+	addInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void addInPixels (int x, int y, int width, int height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	long /*int*/ rectRgn = OS.CreateRectRgn (x, y, x + width, y + height);
@@ -203,6 +223,12 @@ public void add (Region region) {
  * </ul>
  */
 public boolean contains (int x, int y) {
+	return containsInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public boolean containsInPixels (int x, int y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return OS.PtInRegion (handle, x, y);
 }
@@ -223,9 +249,16 @@ public boolean contains (int x, int y) {
  * </ul>
  */
 public boolean contains (Point pt) {
+	return containsInPixels(DPIUtil.autoScaleUp(pt));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public boolean containsInPixels (Point pt) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	return contains(pt.x, pt.y);
+	return containsInPixels(pt.x, pt.y);
 }
 
 @Override
@@ -265,7 +298,13 @@ public boolean equals (Object object) {
  *
  * @see Rectangle#union
  */
-public Rectangle getBounds() {
+public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	RECT rect = new RECT();
 	OS.GetRgnBox(handle, rect);
@@ -304,9 +343,15 @@ public int hashCode () {
  * @since 3.0
  */
 public void intersect (Rectangle rect) {
+	intersectInPixels(DPIUtil.autoScaleUp(rect));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void intersectInPixels (Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	intersect (rect.x, rect.y, rect.width, rect.height);
+	intersectInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -328,6 +373,12 @@ public void intersect (Rectangle rect) {
  * @since 3.1
  */
 public void intersect (int x, int y, int width, int height) {
+	intersectInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void intersectInPixels (int x, int y, int width, int height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	long /*int*/ rectRgn = OS.CreateRectRgn (x, y, x + width, y + height);
@@ -377,6 +428,13 @@ public void intersect (Region region) {
  * @see Rectangle#intersects(Rectangle)
  */
 public boolean intersects (int x, int y, int width, int height) {
+	return 	intersectsInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public boolean intersectsInPixels (int x, int y, int width, int height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	RECT r = new RECT ();
 	OS.SetRect (r, x, y, x + width, y + height);
@@ -401,9 +459,15 @@ public boolean intersects (int x, int y, int width, int height) {
  * @see Rectangle#intersects(Rectangle)
  */
 public boolean intersects (Rectangle rect) {
+	return intersectsInPixels(DPIUtil.autoScaleUp(rect));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public boolean intersectsInPixels (Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	return intersects(rect.x, rect.y, rect.width, rect.height);
+	return intersectsInPixels(rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -456,6 +520,12 @@ public boolean isEmpty () {
  * @since 3.0
  */
 public void subtract (int[] pointArray) {
+	subtractInPixels(DPIUtil.autoScaleUp(pointArray));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void subtractInPixels (int[] pointArray) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (OS.IsWinCE) SWT.error(SWT.ERROR_NOT_IMPLEMENTED);
@@ -481,9 +551,15 @@ public void subtract (int[] pointArray) {
  * @since 3.0
  */
 public void subtract (Rectangle rect) {
+	subtractInPixels(DPIUtil.autoScaleUp(rect));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void subtractInPixels (Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	subtract (rect.x, rect.y, rect.width, rect.height);
+	subtractInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -505,6 +581,12 @@ public void subtract (Rectangle rect) {
  * @since 3.1
  */
 public void subtract (int x, int y, int width, int height) {
+	subtractInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void subtractInPixels (int x, int y, int width, int height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	long /*int*/ rectRgn = OS.CreateRectRgn (x, y, x + width, y + height);
@@ -550,6 +632,12 @@ public void subtract (Region region) {
  * @since 3.1
  */
 public void translate (int x, int y) {
+	translateInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void translateInPixels (int x, int y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	OS.OffsetRgn (handle, x, y);
 }
@@ -570,9 +658,16 @@ public void translate (int x, int y) {
  * @since 3.1
  */
 public void translate (Point pt) {
+	translateInPixels(DPIUtil.autoScaleUp(pt));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void translateInPixels (Point pt) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	translate (pt.x, pt.y);
+	translateInPixels (pt.x, pt.y);
 }
 
 /**

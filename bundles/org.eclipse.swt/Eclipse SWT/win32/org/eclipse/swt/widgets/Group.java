@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.BidiUtil;
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class provide an etched border
@@ -152,9 +152,9 @@ protected void checkSubclass () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
-	Point size = super.computeSize (wHint, hHint, changed);
+	Point size = super.computeSizeInPixels (wHint, hHint, changed);
 	int length = text.length ();
 	if (length != 0) {
 		String string = fixText (false);
@@ -180,9 +180,9 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 }
 
 @Override
-public Rectangle computeTrim (int x, int y, int width, int height) {
+public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
-	Rectangle trim = super.computeTrim (x, y, width, height);
+	Rectangle trim = super.computeTrimInPixels (x, y, width, height);
 	long /*int*/ newFont, oldFont = 0;
 	long /*int*/ hDC = OS.GetDC (handle);
 	newFont = OS.SendMessage (handle, OS.WM_GETFONT, 0, 0);
@@ -252,7 +252,7 @@ String fixText (boolean enabled) {
 }
 
 @Override
-public Rectangle getClientArea () {
+public Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();
@@ -345,10 +345,10 @@ void printWidget (long /*int*/ hwnd, long /*int*/ hdc, GC gc) {
 		OS.SendMessage (hwnd, OS.WM_PRINT, hdc, flags);
 		int nSavedDC = OS.SaveDC (hdc);
 		Control [] children = _getChildren ();
-		Rectangle rect = getBounds ();
+		Rectangle rect = getBoundsInPixels ();
 		OS.IntersectClipRect (hdc, 0, 0, rect.width, rect.height);
 		for (int i=children.length - 1; i>=0; --i) {
-			Point location = children [i].getLocation ();
+			Point location = children [i].getLocationInPixels ();
 			int graphicsMode = OS.GetGraphicsMode(hdc);
 			if (graphicsMode == OS.GM_ADVANCED) {
 				float [] lpXform = {1, 0, 0, 1, location.x, location.y};
@@ -384,9 +384,9 @@ int resolveTextDirection () {
 @Override
 public void setFont (Font font) {
 	checkWidget ();
-	Rectangle oldRect = getClientArea ();
+	Rectangle oldRect = getClientAreaInPixels ();
 	super.setFont (font);
-	Rectangle newRect = getClientArea ();
+	Rectangle newRect = getClientAreaInPixels ();
 	if (!oldRect.equals (newRect)) sendResize ();
 }
 

@@ -11,10 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class are selectable user interface
@@ -365,6 +366,12 @@ public int getSelection () {
  * </ul>
  */
 public Point getSize () {
+	return DPIUtil.autoScaleDown(getSizeInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getSizeInPixels () {
 	checkWidget();
 	parent.forceResize ();
 	RECT rect = new RECT ();
@@ -418,6 +425,12 @@ public int getThumb () {
  * @since 3.6
  */
 public Rectangle getThumbBounds () {
+	return DPIUtil.autoScaleDown(getThumbBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getThumbBoundsInPixels () {
 	checkWidget();
 	parent.forceResize ();
 	SCROLLBARINFO info = new SCROLLBARINFO();
@@ -460,6 +473,12 @@ public Rectangle getThumbBounds () {
  * @since 3.6
  */
 public Rectangle getThumbTrackBounds () {
+	return DPIUtil.autoScaleDown(getThumbTrackBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getThumbTrackBoundsInPixels () {
 	checkWidget();
 	parent.forceResize ();
 	SCROLLBARINFO info = new SCROLLBARINFO();

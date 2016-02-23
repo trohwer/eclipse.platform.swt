@@ -1095,6 +1095,12 @@ void sendEvent (int eventType, Event event, boolean send) {
 		return;
 	}
 	if (event == null) event = new Event ();
+	else {
+		event.x = DPIUtil.autoScaleDown(event.x);
+		event.y = DPIUtil.autoScaleDown(event.y);
+		event.width = DPIUtil.autoScaleDown(event.width);
+		event.height = DPIUtil.autoScaleDown(event.height);
+	}
 	event.type = eventType;
 	event.display = display;
 	event.widget = this;
@@ -1504,7 +1510,7 @@ boolean showMenu (int x, int y, int detail) {
 	Menu menu = getMenu ();
 	if (menu != null && !menu.isDisposed ()) {
 		if (x != event.x || y != event.y) {
-			menu.setLocation (event.x, event.y);
+			menu.setLocationInPixels (event.x, event.y);
 		}
 		menu.setVisible (true);
 		return true;

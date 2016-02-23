@@ -11,11 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.events.*;
 
 /**
  * Instances of this class provide a selectable user interface object
@@ -525,15 +525,15 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 								if (images != null) image = images [index];
 							}
 							if (image != null) {
-								Rectangle bounds = image.getBounds ();
+								Rectangle bounds = image.getBoundsInPixels ();
 								if (size == null) size = getImageSize ();
 								if (!ignoreDrawForeground) {
 									GCData data = new GCData();
 									data.device = display;
 									GC gc = GC.win32_new (hDC, data);
 									RECT iconRect = item.getBounds (index, false, true, false, false, true, hDC);
-									gc.setClipping (iconRect.left, iconRect.top, iconRect.right - iconRect.left, iconRect.bottom - iconRect.top);
-									gc.drawImage (image, 0, 0, bounds.width, bounds.height, iconRect.left, iconRect.top, size.x, size.y);
+									gc.setClippingInPixels (iconRect.left, iconRect.top, iconRect.right - iconRect.left, iconRect.bottom - iconRect.top);
+									gc.drawImageInPixels (image, 0, 0, bounds.width, bounds.height, iconRect.left, iconRect.top, size.x, size.y);
 									OS.SelectClipRgn (hDC, 0);
 									gc.dispose ();
 								}
@@ -652,7 +652,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 						event.y = cellRect.top;
 						event.width = cellRect.right - cellRect.left;
 						event.height = cellRect.bottom - cellRect.top;
-						gc.setClipping (event.x, event.y, event.width, event.height);
+						gc.setClippingInPixels (event.x, event.y, event.width, event.height);
 						sendEvent (SWT.EraseItem, event);
 						event.gc = null;
 						int newTextClr = data.foreground;
@@ -765,7 +765,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 					int inset = i != 0 ? INSET : 0;
 					int offset = i != 0 ? INSET : INSET + 2;
 					if (image != null) {
-						Rectangle bounds = image.getBounds ();
+						Rectangle bounds = image.getBoundsInPixels ();
 						if (size == null) size = getImageSize ();
 						if (!ignoreDrawForeground) {
 							//int y1 = rect.top + (index == 0 ? (getItemHeight () - size.y) / 2 : 0);
@@ -774,8 +774,8 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 							GCData data = new GCData();
 							data.device = display;
 							GC gc = GC.win32_new (hDC, data);
-							gc.setClipping (x1, rect.top, rect.right - x1, rect.bottom - rect.top);
-							gc.drawImage (image, 0, 0, bounds.width, bounds.height, x1, y1, size.x, size.y);
+							gc.setClippingInPixels (x1, rect.top, rect.right - x1, rect.bottom - rect.top);
+							gc.drawImageInPixels (image, 0, 0, bounds.width, bounds.height, x1, y1, size.x, size.y);
 							OS.SelectClipRgn (hDC, 0);
 							gc.dispose ();
 						}
@@ -872,7 +872,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 				RECT cellRect = item.getBounds (index, true, true, true, true, true, hDC);
 				int cellWidth = cellRect.right - cellRect.left;
 				int cellHeight = cellRect.bottom - cellRect.top;
-				gc.setClipping (cellRect.left, cellRect.top, cellWidth, cellHeight);
+				gc.setClippingInPixels (cellRect.left, cellRect.top, cellWidth, cellHeight);
 				sendEvent (SWT.PaintItem, event);
 				if (data.focusDrawn) focusRect = null;
 				event.gc = null;
@@ -1059,7 +1059,7 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 			event.y = cellRect.top;
 			event.width = cellRect.right - cellRect.left;
 			event.height = cellRect.bottom - cellRect.top;
-			gc.setClipping (event.x, event.y, event.width, event.height);
+			gc.setClippingInPixels (event.x, event.y, event.width, event.height);
 			sendEvent (SWT.EraseItem, event);
 			event.gc = null;
 			int newTextClr = data.foreground;
@@ -1812,7 +1812,7 @@ long /*int*/ CompareFunc (long /*int*/ lParam1, long /*int*/ lParam2, long /*int
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0;
 	if (hwndHeader != 0) {
@@ -1848,7 +1848,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	width += border * 2;
 	height += border * 2;
 	if ((style & SWT.V_SCROLL) != 0) {
@@ -2929,6 +2929,13 @@ TreeItem getFocusItem () {
  * @since 3.1
  */
 public int getGridLineWidth () {
+	return DPIUtil.autoScaleDown(getGridLineWidthInPixels ());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getGridLineWidthInPixels () {
 	checkWidget ();
 	return GRID_WIDTH;
 }
@@ -2946,6 +2953,12 @@ public int getGridLineWidth () {
  * @since 3.1
  */
 public int getHeaderHeight () {
+	return DPIUtil.autoScaleDown(getHeaderHeightInPixels ());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getHeaderHeightInPixels () {
 	checkWidget ();
 	if (hwndHeader == 0) return 0;
 	RECT rect = new RECT ();
@@ -2981,7 +2994,7 @@ public boolean getHeaderVisible () {
 
 Point getImageSize () {
 	if (imageList != null) return imageList.getImageSize ();
-	return new Point (0, getItemHeight ());
+	return new Point (0, getItemHeightInPixels ());
 }
 
 long /*int*/ getBottomItem () {
@@ -3269,6 +3282,13 @@ int getItemCount (long /*int*/ hItem) {
  * </ul>
  */
 public int getItemHeight () {
+	return DPIUtil.autoScaleDown(getItemHeightInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public int getItemHeightInPixels () {
 	checkWidget ();
 	return (int)/*64*/OS.SendMessage (handle, OS.TVM_GETITEMHEIGHT, 0, 0);
 }
@@ -3699,7 +3719,7 @@ boolean hitTestSelection (long /*int*/ hItem, int x, int y) {
 int imageIndex (Image image, int index) {
 	if (image == null) return OS.I_IMAGENONE;
 	if (imageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 	}
 	int imageIndex = imageList.indexOf (image);
@@ -3723,7 +3743,7 @@ int imageIndex (Image image, int index) {
 int imageIndexHeader (Image image) {
 	if (image == null) return OS.I_IMAGENONE;
 	if (headerImageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		headerImageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = headerImageList.indexOf (image);
 		if (index == -1) index = headerImageList.add (image);
@@ -4474,7 +4494,7 @@ Event sendMeasureItemEvent (TreeItem item, int index, long /*int*/ hDC, int deta
 			}
 		}
 	}
-	if (event.height > getItemHeight ()) setItemHeight (event.height);
+	if (event.height > getItemHeightInPixels ()) setItemHeight (event.height);
 	return event;
 }
 
@@ -5634,20 +5654,20 @@ void updateImages () {
 
 @Override
 void updateMenuLocation (Event event) {
-	Rectangle clientArea = getClientArea ();
+	Rectangle clientArea = getClientAreaInPixels ();
 	int x = clientArea.x, y = clientArea.y;
 	TreeItem focusItem = getFocusItem ();
 	if (focusItem != null) {
-		Rectangle bounds = focusItem.getBounds (0);
+		Rectangle bounds = focusItem.getBoundsInPixels (0);
 		if (focusItem.text != null && focusItem.text.length () != 0) {
-			bounds = focusItem.getBounds ();
+			bounds = focusItem.getBoundsInPixels ();
 		}
 		x = Math.max (x, bounds.x + bounds.width / 2);
 		x = Math.min (x, clientArea.x + clientArea.width);
 		y = Math.max (y, bounds.y + bounds.height);
 		y = Math.min (y, clientArea.y + clientArea.height);
 	}
-	Point pt = toDisplay (x, y);
+	Point pt = toDisplayInPixels (x, y);
 	event.x = pt.x;
 	event.y = pt.y;
 }
@@ -8112,8 +8132,8 @@ LRESULT wmNotifyToolTip (NMTTCUSTOMDRAW nmcd, long /*int*/ lParam) {
 								RECT imageRect = item [0].getBounds (index [0], false, true, false, false, false, hDC);
 								if (imageList == null) size.x = imageRect.right - imageRect.left;
 								if (image != null) {
-									Rectangle rect = image.getBounds ();
-									gc.drawImage (image, rect.x, rect.y, rect.width, rect.height, x, imageRect.top, size.x, size.y);
+									Rectangle rect = image.getBoundsInPixels ();
+									gc.drawImageInPixels (image, rect.x, rect.y, rect.width, rect.height, x, imageRect.top, size.x, size.y);
 									x += INSET + (index [0] == 0 ? 1 : 0);
 								}
 								x += size.x;

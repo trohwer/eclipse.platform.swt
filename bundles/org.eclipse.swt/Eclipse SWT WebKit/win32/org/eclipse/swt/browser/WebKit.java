@@ -658,7 +658,7 @@ public void create (Composite parent, int style) {
 					break;
 				}
 				case SWT.Resize: {
-					Rectangle bounds = browser.getClientArea ();
+					Rectangle bounds = browser.getClientAreaInPixels ();
 					OS.SetWindowPos (webViewWindowHandle, 0, bounds.x, bounds.y, bounds.width, bounds.height, OS.SWP_DRAWFRAME);
 					break;
 				}
@@ -951,7 +951,7 @@ boolean handleEvent (Object[] arguments) {
 	 * level page.  Convert screen-relative coordinates to be browser-relative.
 	 */
 	Point position = new Point (((Double)arguments[1]).intValue (), ((Double)arguments[2]).intValue ());
-	position = browser.getDisplay ().map (null, browser, position);
+	position = browser.getDisplay ().mapInPixels (null, browser, position);
 
 	Event mouseEvent = new Event ();
 	mouseEvent.widget = browser;

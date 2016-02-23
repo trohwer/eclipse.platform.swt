@@ -11,9 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -185,7 +186,14 @@ public Control getControl () {
  *
  * @since 3.4
  */
-public Rectangle getBounds() {
+public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels() {
 	checkWidget();
 	int index = parent.indexOf(this);
 	if (index == -1) return new Rectangle (0, 0, 0, 0);
@@ -284,7 +292,7 @@ public void setControl (Control control) {
 		}
 	}
 	if (newControl != null) {
-		newControl.setBounds (parent.getClientArea ());
+		newControl.setBounds (parent.getClientAreaInPixels ());
 		newControl.setVisible (true);
 	}
 	if (oldControl != null && newControl != null && oldControl != newControl)

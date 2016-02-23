@@ -248,7 +248,7 @@ protected void checkSubclass () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
@@ -317,7 +317,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	if (height == 0) height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
 	if (hHint != SWT.DEFAULT) height = hHint;
-	int border = getBorderWidth ();
+	int border = getBorderWidthInPixels ();
 	width += border * 2;
 	height += border * 2;
 	return new Point (width, height);

@@ -580,7 +580,7 @@ boolean showCertificateDialog (long /*int*/ webView, final String failingUrlStri
 	GridData data = new GridData ();
 	Monitor monitor = browser.getMonitor ();
 	int maxWidth = monitor.getBounds ().width * 2 / 3;
-	int width = label.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	int width = label.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	data.widthHint = Math.min (width, maxWidth);
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;
@@ -621,11 +621,11 @@ boolean showCertificateDialog (long /*int*/ webView, final String failingUrlStri
 	shell.setDefaultButton (buttons[0]);
 	shell.pack ();
 
-	Rectangle parentSize = parent.getBounds ();
-	Rectangle shellSize = shell.getBounds ();
-	int x = parent.getLocation ().x + (parentSize.width - shellSize.width) / 2;
-	int y = parent.getLocation ().y + (parentSize.height - shellSize.height) / 2;
-	shell.setLocation (x, y);
+	Rectangle parentSize = parent.getBoundsInPixels ();
+	Rectangle shellSize = shell.getBoundsInPixels ();
+	int x = parent.getLocationInPixels ().x + (parentSize.width - shellSize.width) / 2;
+	int y = parent.getLocationInPixels ().y + (parentSize.height - shellSize.height) / 2;
+	shell.setLocationInPixels (x, y);
 	shell.open ();
 	Display display = browser.getDisplay ();
 	while (!shell.isDisposed ()) {
@@ -749,11 +749,11 @@ void showCertificate (Shell parent, long /*int*/ certificate) {
 
 	dialog.setDefaultButton (ok);
 	dialog.pack ();
-	Rectangle parentSize = parent.getBounds ();
-	Rectangle dialogSize = dialog.getBounds ();
-	int x = parent.getLocation ().x + (parentSize.width - dialogSize.width) / 2;
-	int y = parent.getLocation ().y + (parentSize.height - dialogSize.height) / 2;
-	dialog.setLocation (x, y);
+	Rectangle parentSize = parent.getBoundsInPixels ();
+	Rectangle dialogSize = dialog.getBoundsInPixels ();
+	int x = parent.getLocationInPixels ().x + (parentSize.width - dialogSize.width) / 2;
+	int y = parent.getLocationInPixels ().y + (parentSize.height - dialogSize.height) / 2;
+	dialog.setLocationInPixels (x, y);
 	dialog.open ();
 	Display display = browser.getDisplay ();
 	while (!dialog.isDisposed ()) {

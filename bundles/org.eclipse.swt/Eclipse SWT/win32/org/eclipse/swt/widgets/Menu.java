@@ -1063,7 +1063,7 @@ void hideCurrentToolTip () {
 int imageIndex (Image image) {
 	if (hwndCB == 0 || image == null) return OS.I_IMAGENONE;
 	if (imageList == null) {
-		Rectangle bounds = image.getBounds ();
+		Rectangle bounds = image.getBoundsInPixels ();
 		imageList = display.getImageList (style & SWT.RIGHT_TO_LEFT, bounds.width, bounds.height);
 		int index = imageList.add (image);
 		long /*int*/ hImageList = imageList.getHandle ();
@@ -1445,6 +1445,12 @@ public void setEnabled (boolean enabled) {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	setLocationInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (int x, int y) {
 	checkWidget ();
 	if ((style & (SWT.BAR | SWT.DROP_DOWN)) != 0) return;
 	this.x = x;
@@ -1477,9 +1483,16 @@ public void setLocation (int x, int y) {
  * @since 2.1
  */
 public void setLocation (Point location) {
+	setLocationInPixels(DPIUtil.autoScaleUp(location));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void setLocationInPixels (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setLocation (location.x, location.y);
+	setLocationInPixels (location.x, location.y);
 }
 
 /**

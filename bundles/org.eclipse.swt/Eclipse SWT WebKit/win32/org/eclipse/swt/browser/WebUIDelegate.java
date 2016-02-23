@@ -48,7 +48,7 @@ int canTakeFocus (long /*int*/ sender, int forward, long /*int*/ result) {
 }
 
 int contextMenuItemsForElement (long /*int*/ sender, long /*int*/ element, long /*int*/ defaultItemsHMenu, long /*int*/ resultHMenu) {
-	Point pt = browser.getDisplay ().getCursorLocation ();
+	Point pt = browser.getDisplay ().getCursorLocationInPixels ();
 	Event event = new Event ();
 	event.x = pt.x;
 	event.y = pt.y;
@@ -57,7 +57,7 @@ int contextMenuItemsForElement (long /*int*/ sender, long /*int*/ element, long 
 		Menu menu = browser.getMenu ();
 		if (menu != null && !menu.isDisposed ()) {
 			if (event.x != pt.x || event.y != pt.y) {
-				menu.setLocation (event.x, event.y);
+				menu.setLocationInPixels (event.x, event.y);
 			}
 			menu.setVisible (true);
 		} else {
@@ -456,7 +456,7 @@ int setFrame (long /*int*/ sender, long /*int*/ frame) {
 	RECT rect = new RECT ();
 	COM.MoveMemory (rect, frame, RECT.sizeof);
 	/* convert to SWT system coordinates */
-	location = browser.getDisplay ().map (browser, null, rect.left, rect.top);
+	location = browser.getDisplay ().mapInPixels (browser, null, rect.left, rect.top);
 	int x = rect.right - rect.left;
 	int y = rect.bottom - rect.top;
 	if (y < 0 || x < 0 || (x == 0 && y == 0)) return COM.S_OK;
@@ -514,14 +514,14 @@ void showAlertMessage (String title, String message) {
 	label.setText (message);
 	Monitor monitor = parent.getMonitor ();
 	int maxWidth = monitor.getBounds().width * 2 / 3;
-	int width = label.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	int width = label.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	GridData data = new GridData (SWT.FILL, SWT.CENTER, true, false);
 	data.widthHint = Math.min (width, maxWidth);
 	label.setLayoutData (data);
 
 	Button ok = new Button (dialog, SWT.PUSH);
 	ok.setText (SWT.getMessage ("SWT_OK")); //$NON-NLS-1$
-	width = ok.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	width = ok.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	GridData layoutData = new GridData ();
 	layoutData.horizontalAlignment = SWT.CENTER;
 	layoutData.verticalAlignment = SWT.CENTER;
@@ -538,11 +538,11 @@ void showAlertMessage (String title, String message) {
 
 	dialog.setDefaultButton (ok);
 	dialog.pack ();
-	Rectangle parentSize = parent.getBounds ();
-	Rectangle dialogSize = dialog.getBounds ();
-	int x = parent.getLocation ().x + (parentSize.width - dialogSize.width) / 2;
-	int y = parent.getLocation ().y + (parentSize.height - dialogSize.height) / 2;
-	dialog.setLocation (x, y);
+	Rectangle parentSize = parent.getBoundsInPixels ();
+	Rectangle dialogSize = dialog.getBoundsInPixels ();
+	int x = parent.getLocationInPixels ().x + (parentSize.width - dialogSize.width) / 2;
+	int y = parent.getLocationInPixels ().y + (parentSize.height - dialogSize.height) / 2;
+	dialog.setLocationInPixels (x, y);
 	dialog.open ();
 	Display display = browser.getDisplay ();
 	while (!dialog.isDisposed ()) {
@@ -569,7 +569,7 @@ int showConfirmPanel (String title, String message) {
 	label.setText (message);
 	Monitor monitor = parent.getMonitor ();
 	int maxWidth = monitor.getBounds ().width * 2 / 3;
-	int width = label.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	int width = label.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	GridData data = new GridData (SWT.FILL, SWT.CENTER, true, false);
 	data.widthHint = Math.min (width, maxWidth);
 	label.setLayoutData (data);
@@ -589,7 +589,7 @@ int showConfirmPanel (String title, String message) {
 	Button cancel = new Button (buttons, SWT.PUSH);
 	cancel.setText (SWT.getMessage ("SWT_Cancel")); //$NON-NLS-1$
 	cancel.setLayoutData (layoutData);
-	width = cancel.computeSize (SWT.DEFAULT, SWT.DEFAULT).x;
+	width = cancel.computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT).x;
 	layoutData.widthHint = Math.max (width, 75);
 
 	final int[] result = new int[1];
@@ -610,11 +610,11 @@ int showConfirmPanel (String title, String message) {
 
 	dialog.setDefaultButton (ok);
 	dialog.pack ();
-	Rectangle parentSize = parent.getBounds ();
-	Rectangle dialogSize = dialog.getBounds ();
-	int x = parent.getLocation ().x + (parentSize.width - dialogSize.width) / 2;
-	int y = parent.getLocation ().y + (parentSize.height - dialogSize.height) / 2;
-	dialog.setLocation (x, y);
+	Rectangle parentSize = parent.getBoundsInPixels ();
+	Rectangle dialogSize = dialog.getBoundsInPixels ();
+	int x = parent.getLocationInPixels ().x + (parentSize.width - dialogSize.width) / 2;
+	int y = parent.getLocationInPixels ().y + (parentSize.height - dialogSize.height) / 2;
+	dialog.setLocationInPixels (x, y);
 	dialog.open ();
 	Display display = browser.getDisplay ();
 	while (!dialog.isDisposed ()) {
@@ -666,11 +666,11 @@ String showTextPrompter (String title, String message, String defaultText) {
 
 	dialog.setDefaultButton (ok);
 	dialog.pack ();
-	Rectangle parentSize = parent.getBounds ();
-	Rectangle dialogSize = dialog.getBounds ();
-	int x = parent.getLocation ().x + (parentSize.width - dialogSize.width) / 2;
-	int y = parent.getLocation ().y + (parentSize.height - dialogSize.height) / 2;
-	dialog.setLocation (x, y);
+	Rectangle parentSize = parent.getBoundsInPixels ();
+	Rectangle dialogSize = dialog.getBoundsInPixels ();
+	int x = parent.getLocationInPixels ().x + (parentSize.width - dialogSize.width) / 2;
+	int y = parent.getLocationInPixels ().y + (parentSize.height - dialogSize.height) / 2;
+	dialog.setLocationInPixels (x, y);
 	dialog.open ();
 	Display display = browser.getDisplay ();
 	while (!dialog.isDisposed ()) {

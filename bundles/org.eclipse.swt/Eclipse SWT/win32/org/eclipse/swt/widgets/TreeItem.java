@@ -11,9 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class represent a selectable user interface object
@@ -393,6 +394,12 @@ public Color getBackground (int index) {
  * </ul>
  */
 public Rectangle getBounds () {
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels () {
 	checkWidget ();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (0, true, false, false);
@@ -415,6 +422,12 @@ public Rectangle getBounds () {
  * @since 3.1
  */
 public Rectangle getBounds (int index) {
+	return DPIUtil.autoScaleDown(getBoundsInPixels(index));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getBoundsInPixels (int index) {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (index, true, true, true);
@@ -838,6 +851,13 @@ public Image getImage (int index) {
  * @since 3.1
  */
 public Rectangle getImageBounds (int index) {
+	return DPIUtil.autoScaleDown(getImageBoundsInPixels(index));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getImageBoundsInPixels (int index) {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (index, false, true, false);
@@ -929,6 +949,13 @@ public String getText (int index) {
  * @since 3.3
  */
 public Rectangle getTextBounds (int index) {
+	return DPIUtil.autoScaleDown(getTextBoundsInPixels(index));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle getTextBoundsInPixels (int index) {
 	checkWidget();
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (index, true, false, true);

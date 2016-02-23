@@ -858,7 +858,7 @@ static long /*int*/ create32bitDIB (Image image) {
 			hMask = info.hbmMask;
 			break;
 		case SWT.BITMAP:
-			ImageData data = image.getImageData ();
+			ImageData data = image.getImageDataInPixels ();
 			hBitmap = image.handle;
 			alpha = data.alpha;
 			alphaData = data.alphaData;
@@ -1087,7 +1087,7 @@ static long /*int*/ create32bitDIB (long /*int*/ hBitmap, int alpha, byte [] alp
 
 static Image createIcon (Image image) {
 	Device device = image.getDevice ();
-	ImageData data = image.getImageData ();
+	ImageData data = image.getImageDataInPixels ();
 	if (data.alpha == -1 && data.alphaData == null) {
 		ImageData mask = data.getTransparencyMask ();
 		return new Image (device, data, mask);
@@ -1512,7 +1512,7 @@ public Menu getMenuBar () {
  * </ul>
  */
 @Override
-public Rectangle getBounds () {
+public Rectangle getBoundsInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		int width = OS.GetSystemMetrics (OS.SM_CXSCREEN);
@@ -1580,7 +1580,7 @@ int getClickCount (int type, int button, long /*int*/ hwnd, long /*int*/ lParam)
  * @see #getBounds
  */
 @Override
-public Rectangle getClientArea () {
+public Rectangle getClientAreaInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		RECT rect = new RECT ();
@@ -1660,6 +1660,13 @@ public Control getCursorControl () {
  * </ul>
  */
 public Point getCursorLocation () {
+	return DPIUtil.autoScaleDown(getCursorLocationInPixels());
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point getCursorLocationInPixels () {
 	checkDevice ();
 	POINT pt = new POINT ();
 	OS.GetCursorPos (pt);
@@ -2271,13 +2278,13 @@ Image getSortImage (int direction) {
 			upArrow = new Image (this, imageData);
 			GC gc = new GC (upArrow);
 			gc.setBackground (c3);
-			gc.fillRectangle (0, 0, 8, 8);
+			gc.fillRectangleInPixels (0, 0, 8, 8);
 			gc.setForeground (c1);
 			int [] line1 = new int [] {0,6, 1,6, 1,4, 2,4, 2,2, 3,2, 3,1};
-			gc.drawPolyline (line1);
+			gc.drawPolylineInPixels (line1);
 			gc.setForeground (c2);
 			int [] line2 = new int [] {0,7, 7,7, 7,6, 6,6, 6,4, 5,4, 5,2, 4,2, 4,1};
-			gc.drawPolyline (line2);
+			gc.drawPolylineInPixels (line2);
 			gc.dispose ();
 			return upArrow;
 		}
@@ -2292,13 +2299,13 @@ Image getSortImage (int direction) {
 			downArrow = new Image (this, imageData);
 			GC gc = new GC (downArrow);
 			gc.setBackground (c3);
-			gc.fillRectangle (0, 0, 8, 8);
+			gc.fillRectangleInPixels (0, 0, 8, 8);
 			gc.setForeground (c1);
 			int [] line1 = new int [] {7,0, 0,0, 0,1, 1,1, 1,3, 2,3, 2,5, 3,5, 3,6};
-			gc.drawPolyline (line1);
+			gc.drawPolylineInPixels (line1);
 			gc.setForeground (c2);
 			int [] line2 = new int [] {4,6, 4,5, 5,5, 5,3, 6,3, 6,1, 7,1};
-			gc.drawPolyline (line2);
+			gc.drawPolylineInPixels (line2);
 			gc.dispose ();
 			return downArrow;
 		}
@@ -2947,9 +2954,17 @@ boolean isValidThread () {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, Point point) {
+	point = DPIUtil.autoScaleUp(point);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, point));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point mapInPixels (Control from, Control to, Point point) {
 	checkDevice ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return map (from, to, point.x, point.y);
+	return mapInPixels (from, to, point.x, point.y);
 }
 
 /**
@@ -2989,6 +3004,15 @@ public Point map (Control from, Control to, Point point) {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, int x, int y) {
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Point mapInPixels (Control from, Control to, int x, int y) {
 	checkDevice ();
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
@@ -3039,9 +3063,17 @@ public Point map (Control from, Control to, int x, int y) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, Rectangle rectangle) {
+	rectangle = DPIUtil.autoScaleUp(rectangle);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, rectangle));
+}
+
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
 	checkDevice ();
 	if (rectangle == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return map (from, to, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+	return mapInPixels (from, to, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 }
 
 /**
@@ -3083,6 +3115,16 @@ public Rectangle map (Control from, Control to, Rectangle rectangle) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, int x, int y, int width, int height) {
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
+	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y, width, height));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public Rectangle mapInPixels (Control from, Control to, int x, int y, int width, int height) {
 	checkDevice ();
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);

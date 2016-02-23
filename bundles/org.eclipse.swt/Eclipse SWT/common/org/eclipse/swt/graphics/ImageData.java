@@ -208,6 +208,12 @@ public final class ImageData implements Cloneable {
 	public int delayTime;
 
 	/**
+	 * Variable to let the client know whether the image is already scaled
+	 * @since 3.105
+	 */
+	public boolean scaled = false;
+
+	/**
 	 * Arbitrary channel width data to 8-bit conversion table.
 	 */
 	static final byte[][] ANY_TO_EIGHT = new byte[9][];
@@ -3654,19 +3660,19 @@ static void fillGradientRectangle(GC gc, Device device,
 		fromRGB, toRGB, redBits, greenBits, blueBits);
 	Image image = new Image(device, band);
 	if ((band.width == 1) || (band.height == 1)) {
-		gc.drawImage(image, 0, 0, band.width, band.height, x, y, width, height);
+		gc.drawImageInPixels(image, 0, 0, band.width, band.height, x, y, width, height);
 	} else {
 		if (vertical) {
 			for (int dx = 0; dx < width; dx += band.width) {
 				int blitWidth = width - dx;
 				if (blitWidth > band.width) blitWidth = band.width;
-				gc.drawImage(image, 0, 0, blitWidth, band.height, dx + x, y, blitWidth, band.height);
+				gc.drawImageInPixels(image, 0, 0, blitWidth, band.height, dx + x, y, blitWidth, band.height);
 			}
 		} else {
 			for (int dy = 0; dy < height; dy += band.height) {
 				int blitHeight = height - dy;
 				if (blitHeight > band.height) blitHeight = band.height;
-				gc.drawImage(image, 0, 0, band.width, blitHeight, x, dy + y, band.width, blitHeight);
+				gc.drawImageInPixels(image, 0, 0, band.width, blitHeight, x, dy + y, band.width, blitHeight);
 			}
 		}
 	}

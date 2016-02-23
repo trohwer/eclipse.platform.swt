@@ -40,7 +40,7 @@ public static ImageData autoScaleDown (ImageData imageData) {
 }
 
 public static int[] autoScaleUp(int[] pointArray) {
-	if (!getAutoScale ()) return pointArray;
+	if (!getAutoScale () || pointArray == null) return pointArray;
 	float scaleFactor = getScalingFactor ();
 	int [] returnArray = new int[pointArray.length];
 	for (int i = 0; i < pointArray.length; i++) {
@@ -49,13 +49,26 @@ public static int[] autoScaleUp(int[] pointArray) {
 	return returnArray;
 }
 public static int[] autoScaleDown(int[] pointArray) {
-	if (!getAutoScale ()) return pointArray;
+	if (!getAutoScale () || pointArray == null) return pointArray;
 	float scaleFactor = getScalingFactor ();
 	int [] returnArray = new int[pointArray.length];
 	for (int i = 0; i < pointArray.length; i++) {
 		returnArray [i] =  Math.round (pointArray [i] / scaleFactor);
 	}
 	return returnArray;
+}
+
+/**
+ * Auto-scale up float array dimensions.
+ */
+public static float[] autoScaleDown (float size[]) {
+	if (!getAutoScale () || size == null) return size;
+	float scaleFactor = getScalingFactor ();
+	float scaledSize[] = new float[size.length];
+	for (int i = 0; i < scaledSize.length; i++) {
+		scaledSize[i] = size[i] / scaleFactor;
+	}
+	return scaledSize;
 }
 /**
  * Auto-scale down int dimensions.
@@ -200,7 +213,7 @@ public static int mapDPIToZoom (int dpi) {
 /**
  * Returns a new rectangle as per the scaleFactor.
  */
-static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
+public static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
 	if (rect == null || targetZoom == currentZoom) return rect;
 	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
 	Rectangle returnRect = new Rectangle (0,0,0,0);

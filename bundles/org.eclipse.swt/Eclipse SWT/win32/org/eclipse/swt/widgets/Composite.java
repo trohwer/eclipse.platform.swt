@@ -228,7 +228,7 @@ Widget [] computeTabList () {
 }
 
 @Override
-public Point computeSize (int wHint, int hHint, boolean changed) {
+public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	display.runSkin ();
 	Point size;
@@ -236,7 +236,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 			changed |= (state & LAYOUT_CHANGED) != 0;
 			state &= ~LAYOUT_CHANGED;
-			size = layout.computeSize (this, wHint, hHint, changed);
+			size = DPIUtil.autoScaleUp(layout.computeSize (this, wHint, hHint, changed));
 		} else {
 			size = new Point (wHint, hHint);
 		}
@@ -247,7 +247,7 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	}
 	if (wHint != SWT.DEFAULT) size.x = wHint;
 	if (hHint != SWT.DEFAULT) size.y = hHint;
-	Rectangle trim = computeTrim (0, 0, size.x, size.y);
+	Rectangle trim = computeTrimInPixels (0, 0, size.x, size.y);
 	return new Point (trim.width, trim.height);
 }
 
@@ -365,7 +365,19 @@ int applyThemeBackground () {
  *
  * @since 3.6
  */
-public void drawBackground(GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
+public void drawBackground (GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
+	x = DPIUtil.autoScaleUp(x);
+	y = DPIUtil.autoScaleUp(y);
+	width = DPIUtil.autoScaleUp(width);
+	height = DPIUtil.autoScaleUp(height);
+	offsetX = DPIUtil.autoScaleUp(offsetX);
+	offsetY = DPIUtil.autoScaleUp(offsetY);
+	drawBackgroundInPixels(gc, x, y, width, height, offsetX, offsetY);
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public void drawBackgroundInPixels(GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
 	checkWidget ();
 	if (gc == null) error (SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
@@ -882,10 +894,10 @@ void markLayout (boolean changed, boolean all) {
 
 Point minimumSize (int wHint, int hHint, boolean changed) {
 	Control [] children = _getChildren ();
-	Rectangle clientArea = getClientArea ();
+	Rectangle clientArea = getClientAreaInPixels ();
 	int width = 0, height = 0;
 	for (int i=0; i<children.length; i++) {
-		Rectangle rect = children [i].getBounds ();
+		Rectangle rect = children [i].getBoundsInPixels ();
 		width = Math.max (width, rect.x - clientArea.x + rect.width);
 		height = Math.max (height, rect.y - clientArea.y + rect.height);
 	}
@@ -1071,7 +1083,7 @@ public void setBackgroundMode (int mode) {
 }
 
 @Override
-void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
+void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean defer) {
 	if (display.resizeCount > Display.RESIZE_LIMIT) {
 		defer = false;
 	}
@@ -1079,7 +1091,7 @@ void setBounds (int x, int y, int width, int height, int flags, boolean defer) {
 		state &= ~(RESIZE_OCCURRED | MOVE_OCCURRED);
 		state |= RESIZE_DEFERRED | MOVE_DEFERRED;
 	}
-	super.setBounds (x, y, width, height, flags, defer);
+	super.setBoundsInPixels (x, y, width, height, flags, defer);
 	if (!defer && (state & CANVAS) != 0) {
 		boolean wasMoved = (state & MOVE_OCCURRED) != 0;
 		boolean wasResized = (state & RESIZE_OCCURRED) != 0;
@@ -1684,7 +1696,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 						if (gcData.focusDrawn && !isDisposed ()) updateUIState ();
 					}
 					gc.dispose();
-					if (!isDisposed ()) paintGC.drawImage (image, ps.left, ps.top);
+					if (!isDisposed ()) paintGC.drawImageInPixels (image, ps.left, ps.top);
 					image.dispose ();
 					gc = paintGC;
 				}
