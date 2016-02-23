@@ -1526,6 +1526,33 @@ public TableItem getItem (int index) {
  */
 public TableItem getItem (Point point) {
 	checkWidget();
+	return getItemInPixels(DPIUtil.autoScaleUp(point));
+}
+/**
+ * Returns the item at the given point in the receiver
+ * or null if no such item exists. The point is in the
+ * coordinate system of the receiver.
+ * <p>
+ * The item that is returned represents an item that could be selected by the user.
+ * For example, if selection only occurs in items in the first column, then null is
+ * returned if the point is outside of the item.
+ * Note that the SWT.FULL_SELECTION style hint, which specifies the selection policy,
+ * determines the extent of the selection.
+ * </p>
+ *
+ * @param point the point used to locate the item
+ * @return the item at the given point, or null if the point is not in a selectable item
+ *
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
+ * </ul>
+ * @exception SWTException <ul>
+ *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+ * </ul>
+ */
+TableItem getItemInPixels (Point point) {
+	checkWidget();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	long /*int*/ [] path = new long /*int*/ [1];
 	OS.gtk_widget_realize (handle);
