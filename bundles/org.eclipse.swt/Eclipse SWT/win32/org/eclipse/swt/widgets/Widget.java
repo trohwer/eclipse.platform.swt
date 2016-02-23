@@ -1510,7 +1510,7 @@ boolean showMenu (int x, int y, int detail) {
 	Menu menu = getMenu ();
 	if (menu != null && !menu.isDisposed ()) {
 		if (x != event.x || y != event.y) {
-			menu.setLocationInPixels (event.x, event.y);
+			menu.setLocation (event.x, event.y);
 		}
 		menu.setVisible (true);
 		return true;

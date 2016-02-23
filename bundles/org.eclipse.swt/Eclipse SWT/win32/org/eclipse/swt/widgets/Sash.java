@@ -11,10 +11,11 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of the receiver represent a selectable user interface object
@@ -390,8 +391,8 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 	sendSelectionEvent (SWT.Selection, event, true);
 	if (isDisposed ()) return LRESULT.ZERO;
 	if (event.doit) {
-		lastX = event.x;
-		lastY = event.y;
+		lastX = DPIUtil.autoScaleUp(event.x);
+		lastY = DPIUtil.autoScaleUp(event.y);
 	}
 	if (OS.IsWinCE) {
 		OS.UpdateWindow (hwndTrack);

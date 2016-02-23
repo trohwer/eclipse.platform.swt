@@ -4487,14 +4487,15 @@ Event sendMeasureItemEvent (TreeItem item, int index, long /*int*/ hDC, int deta
 	gc.dispose ();
 	OS.RestoreDC (hDC, nSavedDC);
 	if (isDisposed () || item.isDisposed ()) return null;
+	Rectangle rect = DPIUtil.autoScaleUp(event.getBounds());
 	if (hwndHeader != 0) {
 		if (columnCount == 0) {
-			if (event.x + event.width > scrollWidth) {
-				setScrollWidth (scrollWidth = event.x + event.width);
+			if (rect.x + rect.width > scrollWidth) {
+				setScrollWidth (scrollWidth = rect.x + rect.width);
 			}
 		}
 	}
-	if (event.height > getItemHeightInPixels ()) setItemHeight (event.height);
+	if (rect.height > getItemHeightInPixels ()) setItemHeight (rect.height);
 	return event;
 }
 
