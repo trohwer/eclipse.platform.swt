@@ -530,7 +530,7 @@ public TableTreeItem getItem (int index) {
  */
 public TableTreeItem getItem(Point point) {
 	checkWidget();
-	TableItem item = table.getItem(point);
+	TableItem item = table.getItemInPixels(point);
 	if (item == null) return null;
 	return getItem(item);
 

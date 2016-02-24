@@ -12,6 +12,7 @@ package org.eclipse.swt.widgets;
 
 
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
 
 /**
  * Instances of this class provide a description of a particular
@@ -265,6 +266,22 @@ public class Event {
 	 */
 	public double rotation;
 
+	/**
+	 * flag indicating whether the x, y, width and height fields are in pixels
+	 * or in points.
+	 */
+	public boolean isCoordinateInPixels = true;
+
+/**
+ * Gets the bounds in Pixels
+ *
+ * @return a rectangle that is the bounds in Pixels
+ *
+ * @since 3.105
+ */
+Rectangle getBoundsInPixels () {
+	return isCoordinateInPixels ? getBounds() : DPIUtil.autoScaleUp(getBounds());
+}
 
 /**
  * Gets the bounds.

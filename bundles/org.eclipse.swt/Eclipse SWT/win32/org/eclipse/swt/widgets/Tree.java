@@ -1000,8 +1000,10 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 		}
 		//TODO - BUG - measure and erase sent when first column is clipped
 		Event measureEvent = null;
+		Rectangle boundsInPixels = null;
 		if (hooks (SWT.MeasureItem)) {
 			measureEvent = sendMeasureItemEvent (item, index, hDC, selected ? SWT.SELECTED : 0);
+			boundsInPixels = measureEvent.getBoundsInPixels ();
 			if (isDisposed () || item.isDisposed ()) return null;
 		}
 		selectionForeground = -1;
@@ -1086,7 +1088,7 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 						} else {
 							RECT textRect = item.getBounds (index, true, false, false, false, true, hDC);
 							if (measureEvent != null) {
-								textRect.right = Math.min (cellRect.right, measureEvent.x + measureEvent.width);
+								textRect.right = Math.min (cellRect.right, boundsInPixels.x + boundsInPixels.width);
 							}
 							fillBackground (hDC, clrTextBk, textRect);
 						}
@@ -1105,7 +1107,7 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 						RECT pRect = item.getBounds (index, true, true, false, false, false, hDC);
 						RECT pClipRect = item.getBounds (index, true, true, true, false, true, hDC);
 						if (measureEvent != null) {
-							pRect.right = Math.min (pClipRect.right, measureEvent.x + measureEvent.width);
+							pRect.right = Math.min (pClipRect.right, boundsInPixels.x + boundsInPixels.width);
 						} else {
 							pRect.right += EXPLORER_EXTRA;
 							pClipRect.right += EXPLORER_EXTRA;
@@ -1135,7 +1137,7 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 					} else {
 						RECT textRect = item.getBounds (index, true, false, false, false, true, hDC);
 						if (measureEvent != null) {
-							textRect.right = Math.min (cellRect.right, measureEvent.x + measureEvent.width);
+							textRect.right = Math.min (cellRect.right, boundsInPixels.x + boundsInPixels.width);
 						}
 						fillBackground (hDC, OS.GetBkColor (hDC), textRect);
 					}
@@ -1166,7 +1168,7 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 			if (focused && !ignoreDrawFocus && (style & SWT.FULL_SELECTION) == 0) {
 				RECT textRect = item.getBounds (index, true, explorerTheme, false, false, true, hDC);
 				if (measureEvent != null) {
-					textRect.right = Math.min (cellRect.right, measureEvent.x + measureEvent.width);
+					textRect.right = Math.min (cellRect.right, boundsInPixels.x + boundsInPixels.width);
 				}
 				nmcd.uItemState &= ~OS.CDIS_FOCUS;
 				OS.MoveMemory (lParam, nmcd, NMTVCUSTOMDRAW.sizeof);
@@ -2775,11 +2777,12 @@ boolean findCell (int x, int y, TreeItem [] item, int [] index, RECT [] cellRect
 						int detail = (state & OS.TVIS_SELECTED) != 0 ? SWT.SELECTED : 0;
 						Event event = sendMeasureItemEvent (item [0], order [index [0]], hDC, detail);
 						if (isDisposed () || item [0].isDisposed ()) break;
+						Rectangle boundsInPixels = event.getBoundsInPixels();
 						itemRect [0] = new RECT ();
-						itemRect [0].left = event.x;
-						itemRect [0].right = event.x + event.width;
-						itemRect [0].top = event.y;
-						itemRect [0].bottom = event.y + event.height;
+						itemRect [0].left = boundsInPixels.x;
+						itemRect [0].right = boundsInPixels.x + boundsInPixels.width;
+						itemRect [0].top = boundsInPixels.y;
+						itemRect [0].bottom = boundsInPixels.y + boundsInPixels.height;
 					} else {
 						itemRect [0] = item [0].getBounds (order [index [0]], true, false, false, false, false, hDC);
 					}
@@ -3211,6 +3214,12 @@ TreeItem getItem (NMTVCUSTOMDRAW nmcd) {
  * </ul>
  */
 public TreeItem getItem (Point point) {
+	return getItemInPixels(DPIUtil.autoScaleUp(point));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public TreeItem getItemInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	TVHITTESTINFO lpht = new TVHITTESTINFO ();
@@ -3709,7 +3718,7 @@ boolean hitTestSelection (long /*int*/ hItem, int x, int y) {
 	int state = (int)/*64*/OS.SendMessage (handle, OS.TVM_GETITEMSTATE, hItem, OS.TVIS_SELECTED);
 	int detail = (state & OS.TVIS_SELECTED) != 0 ? SWT.SELECTED : 0;
 	Event event = sendMeasureItemEvent (item, order [index [0]], hDC, detail);
-	if (event.getBounds ().contains (x, y)) result = true;
+	if (event.getBoundsInPixels ().contains (x, y)) result = true;
 	if (newFont != 0) OS.SelectObject (hDC, oldFont);
 	OS.ReleaseDC (handle, hDC);
 //	if (isDisposed () || item.isDisposed ()) return false;
@@ -4487,7 +4496,7 @@ Event sendMeasureItemEvent (TreeItem item, int index, long /*int*/ hDC, int deta
 	gc.dispose ();
 	OS.RestoreDC (hDC, nSavedDC);
 	if (isDisposed () || item.isDisposed ()) return null;
-	Rectangle rect = DPIUtil.autoScaleUp(event.getBounds());
+	Rectangle rect = event.getBoundsInPixels ();
 	if (hwndHeader != 0) {
 		if (columnCount == 0) {
 			if (rect.x + rect.width > scrollWidth) {

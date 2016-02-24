@@ -398,7 +398,7 @@ void tableMouseDown(Event event) {
 	if (isDisposed() || !isVisible()) return;
 	Point pt = new Point(event.x, event.y);
 	int lineWidth = table.getLinesVisible() ? table.getGridLineWidth() : 0;
-	TableItem item = table.getItem(pt);
+	TableItem item = table.getItemInPixels(pt);
 	if ((table.getStyle() & SWT.FULL_SELECTION) != 0) {
 		if (item == null) return;
 	} else {

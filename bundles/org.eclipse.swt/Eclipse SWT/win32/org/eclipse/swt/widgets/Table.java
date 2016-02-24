@@ -2567,6 +2567,12 @@ public TableItem getItem (int index) {
  * </ul>
  */
 public TableItem getItem (Point point) {
+	return getItemInPixels (DPIUtil.autoScaleUp(point));
+}
+/**
+* @noreference This method is not intended to be referenced by clients.
+*/
+public TableItem getItemInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	int count = (int)/*64*/OS.SendMessage (handle, OS.LVM_GETITEMCOUNT, 0, 0);
@@ -2928,7 +2934,7 @@ boolean hitTestSelection (int index, int x, int y) {
 		long /*int*/ hFont = item.fontHandle (0);
 		if (hFont != -1) hFont = OS.SelectObject (hDC, hFont);
 		Event event = sendMeasureItemEvent (item, index, 0, hDC);
-		if (event.getBounds ().contains (x, y)) result = true;
+		if (event.getBoundsInPixels ().contains (x, y)) result = true;
 		if (hFont != -1) hFont = OS.SelectObject (hDC, hFont);
 		if (newFont != 0) OS.SelectObject (hDC, oldFont);
 		OS.ReleaseDC (handle, hDC);
@@ -3705,7 +3711,8 @@ void sendEraseItemEvent (TableItem item, NMLVCUSTOMDRAW nmcd, long /*int*/ lPara
 		RECT textRect = item.getBounds ((int)/*64*/nmcd.dwItemSpec, nmcd.iSubItem, true, false, fullText, false, hDC);
 		if ((style & SWT.FULL_SELECTION) == 0) {
 			if (measureEvent != null) {
-				textRect.right = Math.min (cellRect.right, measureEvent.x + measureEvent.width);
+				Rectangle boundInPixels = measureEvent.getBoundsInPixels();
+				textRect.right = Math.min (cellRect.right, boundInPixels.x + boundInPixels.width);
 			}
 			if (!ignoreDrawFocus) {
 				nmcd.uItemState &= ~OS.CDIS_FOCUS;
@@ -3825,9 +3832,10 @@ Event sendMeasureItemEvent (TableItem item, int row, int column, long /*int*/ hD
 	gc.dispose ();
 	OS.RestoreDC (hDC, nSavedDC);
 	if (!isDisposed () && !item.isDisposed ()) {
+		Rectangle boundsInPixels = event.getBoundsInPixels();
 		if (columnCount == 0) {
 			int width = (int)/*64*/OS.SendMessage (handle, OS.LVM_GETCOLUMNWIDTH, 0, 0);
-			if (event.x + event.width > width) setScrollWidth (event.x + event.width);
+			if (boundsInPixels.x + boundsInPixels.width > width) setScrollWidth (boundsInPixels.x + boundsInPixels.width);
 		}
 		long /*int*/ empty = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 0, 0);
 		long /*int*/ oneItem = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 1, 0);
@@ -3837,9 +3845,9 @@ Event sendMeasureItemEvent (TableItem item, int row, int column, long /*int*/ hD
 		 * SWT.MeasureItem event processing with a non-zero table-row
 		 * selection. Refer bug 400174 and 458786
 		 */
-		if (!settingItemHeight && event.height > itemHeight) {
+		if (!settingItemHeight && boundsInPixels.height > itemHeight) {
 			settingItemHeight = true;
-			setItemHeight (event.height);
+			setItemHeight (boundsInPixels.height);
 			settingItemHeight = false;
 		}
 	}
@@ -7407,7 +7415,8 @@ LRESULT wmNotifyToolTip (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 					Event event = sendMeasureItemEvent (item, pinfo.iItem, pinfo.iSubItem, hDC);
 					if (!isDisposed () && !item.isDisposed ()) {
 						RECT itemRect = new RECT ();
-						OS.SetRect (itemRect, event.x, event.y, event.x + event.width, event.y + event.height);
+						Rectangle boundsInPixels = event.getBoundsInPixels();
+						OS.SetRect (itemRect, boundsInPixels.x, boundsInPixels.y, boundsInPixels.x + boundsInPixels.width, boundsInPixels.y + boundsInPixels.height);
 						if (hdr.code == OS.TTN_SHOW) {
 							RECT toolRect = toolTipRect (itemRect);
 							OS.MapWindowPoints (handle, 0, toolRect, 2);

@@ -1096,10 +1096,9 @@ void sendEvent (int eventType, Event event, boolean send) {
 	}
 	if (event == null) event = new Event ();
 	else {
-		event.x = DPIUtil.autoScaleDown(event.x);
-		event.y = DPIUtil.autoScaleDown(event.y);
-		event.width = DPIUtil.autoScaleDown(event.width);
-		event.height = DPIUtil.autoScaleDown(event.height);
+		Rectangle boundsInPoints =  new Rectangle(DPIUtil.autoScaleDown(event.x), DPIUtil.autoScaleDown(event.y), DPIUtil.autoScaleDown(event.width), DPIUtil.autoScaleDown(event.height));
+		event.setBounds(boundsInPoints);
+		event.isCoordinateInPixels = false;
 	}
 	event.type = eventType;
 	event.display = display;

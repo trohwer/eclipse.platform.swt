@@ -14,7 +14,6 @@ package org.eclipse.swt.widgets;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -254,7 +253,7 @@ LRESULT WM_KEYDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 			if (isDisposed ()) return LRESULT.ZERO;
 			if (event.doit) {
 				if ((style & SWT.SMOOTH) != 0) {
-					setBoundsInPixel (event.x, event.y, width, height);
+					setBoundsInPixels (event.getBoundsInPixels());
 				}
 			}
 			return result;
@@ -300,10 +299,11 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 	if (isDisposed ()) return LRESULT.ZERO;
 
 	/* Draw the banding rectangle */
+	Rectangle bounds = event.getBoundsInPixels();
 	if (event.doit) {
 		dragging = true;
-		lastX = event.x;
-		lastY = event.y;
+		lastX = bounds.x;
+		lastY = bounds.y;
 		menuShell ().bringToTop ();
 		if (isDisposed ()) return LRESULT.ZERO;
 		if (OS.IsWinCE) {
@@ -312,9 +312,9 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 			int flags = OS.RDW_UPDATENOW | OS.RDW_ALLCHILDREN;
 			OS.RedrawWindow (hwndTrack, null, 0, flags);
 		}
-		drawBand (event.x, event.y, width, height);
+		drawBand (bounds.x, bounds.y, width, height);
 		if ((style & SWT.SMOOTH) != 0) {
-			setBoundsInPixel (event.x, event.y, width, height);
+			setBoundsInPixel (bounds.x, bounds.y, width, height);
 			// widget could be disposed at this point
 		}
 	}
@@ -343,9 +343,10 @@ LRESULT WM_LBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 	drawBand (event.x, event.y, width, height);
 	sendSelectionEvent (SWT.Selection, event, true);
 	if (isDisposed ()) return result;
+	Rectangle bounds = event.getBoundsInPixels();
 	if (event.doit) {
 		if ((style & SWT.SMOOTH) != 0) {
-			setBoundsInPixel (event.x, event.y, width, height);
+			setBoundsInPixel (bounds.x, bounds.y, width, height);
 			// widget could be disposed at this point
 		}
 	}
@@ -391,8 +392,9 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 	sendSelectionEvent (SWT.Selection, event, true);
 	if (isDisposed ()) return LRESULT.ZERO;
 	if (event.doit) {
-		lastX = DPIUtil.autoScaleUp(event.x);
-		lastY = DPIUtil.autoScaleUp(event.y);
+		Rectangle boundsInPixels = event.getBoundsInPixels();
+		lastX = boundsInPixels.x;
+		lastY = boundsInPixels.y;
 	}
 	if (OS.IsWinCE) {
 		OS.UpdateWindow (hwndTrack);
