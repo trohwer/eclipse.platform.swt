@@ -918,7 +918,7 @@ void treeFocusIn(Event event) {
 void treeMouseDown(Event event) {
 	if (tree.getItemCount() == 0) return;
 	Point pt = new Point(event.x, event.y);
-	TreeItem item = tree.getItemInPixels(pt);
+	TreeItem item = tree.getItem(pt);
 	if (item == null && (tree.getStyle() & SWT.FULL_SELECTION) == 0) {
 		TreeItem currentItem = tree.getTopItem();
 		TreeItem parentItem = currentItem.getParentItem();

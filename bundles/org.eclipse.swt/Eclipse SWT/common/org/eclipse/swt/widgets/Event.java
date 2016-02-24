@@ -266,23 +266,6 @@ public class Event {
 	 */
 	public double rotation;
 
-	/**
-	 * flag indicating whether the x, y, width and height fields are in pixels
-	 * or in points.
-	 */
-	public boolean isCoordinateInPixels = true;
-
-/**
- * Gets the bounds in Pixels
- *
- * @return a rectangle that is the bounds in Pixels
- *
- * @since 3.105
- */
-Rectangle getBoundsInPixels () {
-	return isCoordinateInPixels ? getBounds() : DPIUtil.autoScaleUp(getBounds());
-}
-
 /**
  * Gets the bounds.
  *
@@ -290,6 +273,9 @@ Rectangle getBoundsInPixels () {
  */
 public Rectangle getBounds () {
 	return new Rectangle (x, y, width, height);
+}
+Rectangle getBoundsInPixels () {
+	return DPIUtil.autoScaleUp(getBounds());
 }
 
 /**
@@ -302,6 +288,9 @@ public void setBounds (Rectangle rect) {
 	this.y = rect.y;
 	this.width = rect.width;
 	this.height = rect.height;
+}
+public void setBoundsInPixels (Rectangle rect) {
+	setBounds(DPIUtil.autoScaleDown(rect));
 }
 
 /**

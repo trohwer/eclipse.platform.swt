@@ -1098,7 +1098,6 @@ void sendEvent (int eventType, Event event, boolean send) {
 	else {
 		Rectangle boundsInPoints =  new Rectangle(DPIUtil.autoScaleDown(event.x), DPIUtil.autoScaleDown(event.y), DPIUtil.autoScaleDown(event.width), DPIUtil.autoScaleDown(event.height));
 		event.setBounds(boundsInPoints);
-		event.isCoordinateInPixels = false;
 	}
 	event.type = eventType;
 	event.display = display;

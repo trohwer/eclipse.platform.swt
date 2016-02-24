@@ -11,10 +11,10 @@
 package org.eclipse.swt.custom;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A TableCursor provides a way for the user to navigate around a Table
@@ -398,7 +398,7 @@ void tableMouseDown(Event event) {
 	if (isDisposed() || !isVisible()) return;
 	Point pt = new Point(event.x, event.y);
 	int lineWidth = table.getLinesVisible() ? table.getGridLineWidth() : 0;
-	TableItem item = table.getItemInPixels(pt);
+	TableItem item = table.getItem(pt);
 	if ((table.getStyle() & SWT.FULL_SELECTION) != 0) {
 		if (item == null) return;
 	} else {
