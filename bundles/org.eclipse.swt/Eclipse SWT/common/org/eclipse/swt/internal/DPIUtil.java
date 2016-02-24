@@ -74,7 +74,7 @@ public static float[] autoScaleDown (float size[]) {
  * Auto-scale down int dimensions.
  */
 public static int autoScaleDown (int size) {
-	if (!getAutoScale ()) return size;
+	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return Math.round (size / scaleFactor);
 }
@@ -82,7 +82,7 @@ public static int autoScaleDown (int size) {
  * Auto-scale down float dimensions.
  */
 public static float autoScaleDown (float size) {
-	if (!getAutoScale ()) return size;
+	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return (size / scaleFactor);
 }

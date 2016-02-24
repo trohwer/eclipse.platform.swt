@@ -1530,6 +1530,11 @@ public TreeItem getItem (int index) {
  * </ul>
  */
 public TreeItem getItem (Point point) {
+	checkWidget();
+	return getItemInPixels(DPIUtil.autoScaleUp(point));
+}
+
+TreeItem getItemInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	long /*int*/ [] path = new long /*int*/ [1];
