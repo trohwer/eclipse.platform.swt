@@ -3870,7 +3870,13 @@ public int getInterpolation() {
  *
  * @since 3.3
  */
-public LineAttributes getLineAttributes() {
+public LineAttributes getLineAttributes () {
+	LineAttributes attributes = getLineAttributesInPixels();
+	attributes.width = DPIUtil.autoScaleDown(attributes.width);
+	return attributes;
+}
+
+LineAttributes getLineAttributesInPixels () {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	float[] dashes = null;
 	if (data.lineDashes != null) {
@@ -4813,7 +4819,12 @@ public void setInterpolation(int interpolation) {
  *
  * @since 3.3
  */
-public void setLineAttributes(LineAttributes attributes) {
+public void setLineAttributes (LineAttributes attributes) {
+	attributes.width = DPIUtil.autoScaleUp(attributes.width);
+	setLineAttributesInPixels(attributes);
+}
+
+void setLineAttributesInPixels (LineAttributes attributes) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (attributes == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	int mask = 0;

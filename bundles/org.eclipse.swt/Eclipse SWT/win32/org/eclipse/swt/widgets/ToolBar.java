@@ -11,10 +11,10 @@
 package org.eclipse.swt.widgets;
 
 
-import org.eclipse.swt.internal.*;
-import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class support the layout of selectable
@@ -548,6 +548,10 @@ public ToolItem getItem (int index) {
  * </ul>
  */
 public ToolItem getItem (Point point) {
+	return getItemInPixels(DPIUtil.autoScaleUp(point));
+}
+
+public ToolItem getItemInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	ToolItem [] items = getItems ();

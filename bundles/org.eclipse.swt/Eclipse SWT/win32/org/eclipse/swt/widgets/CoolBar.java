@@ -13,6 +13,7 @@ package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -560,6 +561,15 @@ public CoolItem [] getItems () {
  * </ul>
  */
 public Point [] getItemSizes () {
+	Point [] sizes = getItemSizesInPixels();
+	if (sizes != null) {
+		for (int i = 0; i < sizes.length; i++) {
+			sizes[i] = DPIUtil.autoScaleDown(sizes[i]);
+		}
+	}
+	return sizes;
+}
+public Point [] getItemSizesInPixels () {
 	checkWidget ();
 	int count = (int)/*64*/OS.SendMessage (handle, OS.RB_GETBANDCOUNT, 0, 0);
 	Point [] sizes = new Point [count];
@@ -819,6 +829,14 @@ void setItemColors (int foreColor, int backColor) {
  * </ul>
  */
 public void setItemLayout (int [] itemOrder, int [] wrapIndices, Point [] sizes) {
+	if (sizes != null) {
+		for (int i = 0; i < sizes.length; i++) {
+			sizes[i] = DPIUtil.autoScaleUp(sizes[i]);
+		}
+	}
+	setItemLayoutInPixels (itemOrder, wrapIndices, sizes);
+}
+public void setItemLayoutInPixels (int [] itemOrder, int [] wrapIndices, Point [] sizes) {
 	checkWidget ();
 	setRedraw (false);
 	setItemOrder (itemOrder);
@@ -912,7 +930,7 @@ void setItemSizes (Point [] sizes) {
 	rbBand.fMask = OS.RBBIM_ID;
 	for (int i=0; i<count; i++) {
 		OS.SendMessage (handle, OS.RB_GETBANDINFO, i, rbBand);
-		items [rbBand.wID].setSize (sizes [i].x, sizes [i].y);
+		items [rbBand.wID].setSizeInPixels (sizes [i].x, sizes [i].y);
 	}
 }
 

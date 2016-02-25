@@ -2283,12 +2283,6 @@ void setScrollWidth (int newWidth, boolean grow) {
  * </ul>
  */
 public void setSelection (Point selection) {
-	setSelectionInPixels(DPIUtil.autoScaleUp(selection));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setSelectionInPixels (Point selection) {
 	checkWidget ();
 	if (selection == null) error (SWT.ERROR_NULL_ARGUMENT);
 	int start = translateOffset (selection.x), end = translateOffset (selection.y);
