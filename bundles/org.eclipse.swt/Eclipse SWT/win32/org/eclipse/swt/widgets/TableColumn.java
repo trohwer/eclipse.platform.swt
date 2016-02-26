@@ -387,7 +387,8 @@ public void pack () {
 				Event event = parent.sendMeasureItemEvent (item, i, index, hDC);
 				if (hFont != -1) hFont = OS.SelectObject (hDC, hFont);
 				if (isDisposed () || parent.isDisposed ()) break;
-				columnWidth = Math.max (columnWidth, event.x + event.width - headerRect.left);
+				Rectangle bounds = event.getBoundsInPixels();
+				columnWidth = Math.max (columnWidth, bounds.x + bounds.width - headerRect.left);
 			}
 		}
 		if (newFont != 0) OS.SelectObject (hDC, oldFont);
