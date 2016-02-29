@@ -2194,14 +2194,14 @@ public Monitor getPrimaryMonitor () {
 		Monitor monitor = new Monitor();
 		int width = OS.GetSystemMetrics (OS.SM_CXSCREEN);
 		int height = OS.GetSystemMetrics (OS.SM_CYSCREEN);
-		monitor.width = width;
-		monitor.height = height;
+		Rectangle bounds = new Rectangle (0, 0, width, height);
+		bounds = DPIUtil.autoScaleDown (bounds);
+		monitor.setBounds (bounds);
 		RECT rect = new RECT ();
 		OS.SystemParametersInfo (OS.SPI_GETWORKAREA, 0, rect, 0);
-		monitor.clientX = rect.left;
-		monitor.clientY = rect.top;
-		monitor.clientWidth = rect.right - rect.left;
-		monitor.clientHeight = rect.bottom - rect.top;
+		Rectangle clientArea = new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+		clientArea = DPIUtil.autoScaleDown (clientArea);
+		monitor.setClientArea( clientArea);
 		return monitor;
 	}
 	monitors = new Monitor [4];
@@ -2217,6 +2217,11 @@ public Monitor getPrimaryMonitor () {
 		Monitor monitor = monitors [i];
 		OS.GetMonitorInfo (monitors [i].handle, lpmi);
 		if ((lpmi.dwFlags & OS.MONITORINFOF_PRIMARY) != 0) {
+			// Convert Monitor's bounds/client-area to Points.
+			Rectangle bounds = DPIUtil.autoScaleDown (monitor.getBounds ());
+			monitor.setBounds (bounds);
+			Rectangle clientArea = DPIUtil.autoScaleDown (monitor.getClientArea ());
+			monitor.setClientArea (clientArea);
 			result = monitor;
 			break;
 		}
@@ -3492,14 +3497,10 @@ long /*int*/ monitorEnumProc (long /*int*/ hmonitor, long /*int*/ hdc, long /*in
 	OS.GetMonitorInfo (hmonitor, lpmi);
 	Monitor monitor = new Monitor ();
 	monitor.handle = hmonitor;
-	monitor.x = lpmi.rcMonitor_left;
-	monitor.y = lpmi.rcMonitor_top;
-	monitor.width = lpmi.rcMonitor_right - lpmi.rcMonitor_left;
-	monitor.height = lpmi.rcMonitor_bottom - lpmi.rcMonitor_top;
-	monitor.clientX = lpmi.rcWork_left;
-	monitor.clientY = lpmi.rcWork_top;
-	monitor.clientWidth = lpmi.rcWork_right - lpmi.rcWork_left;
-	monitor.clientHeight = lpmi.rcWork_bottom - lpmi.rcWork_top;
+	Rectangle boundsInPixels = new Rectangle (lpmi.rcMonitor_left, lpmi.rcMonitor_top, lpmi.rcMonitor_right - lpmi.rcMonitor_left,lpmi.rcMonitor_bottom - lpmi.rcMonitor_top);
+	monitor.setBounds (boundsInPixels);
+	Rectangle clientAreaInPixels = new Rectangle (lpmi.rcWork_left, lpmi.rcWork_top, lpmi.rcWork_right - lpmi.rcWork_left, lpmi.rcWork_bottom - lpmi.rcWork_top);
+	monitor.setClientArea (clientAreaInPixels);
 	monitors [monitorCount++] = monitor;
 	return 1;
 }

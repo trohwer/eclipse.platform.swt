@@ -1510,14 +1510,12 @@ public Monitor getMonitor () {
 	OS.GetMonitorInfo (hmonitor, lpmi);
 	Monitor monitor = new Monitor ();
 	monitor.handle = hmonitor;
-	monitor.x = lpmi.rcMonitor_left;
-	monitor.y = lpmi.rcMonitor_top;
-	monitor.width = lpmi.rcMonitor_right - lpmi.rcMonitor_left;
-	monitor.height = lpmi.rcMonitor_bottom - lpmi.rcMonitor_top;
-	monitor.clientX = lpmi.rcWork_left;
-	monitor.clientY = lpmi.rcWork_top;
-	monitor.clientWidth = lpmi.rcWork_right - lpmi.rcWork_left;
-	monitor.clientHeight = lpmi.rcWork_bottom - lpmi.rcWork_top;
+	Rectangle bounds = new Rectangle (lpmi.rcMonitor_left, lpmi.rcMonitor_top, lpmi.rcMonitor_right - lpmi.rcMonitor_left, lpmi.rcMonitor_bottom - lpmi.rcMonitor_top);
+	bounds = DPIUtil.autoScaleDown (bounds);
+	monitor.setBounds (bounds);
+	Rectangle clientArea = new Rectangle (lpmi.rcWork_left, lpmi.rcWork_top, lpmi.rcWork_right - lpmi.rcWork_left, lpmi.rcWork_bottom - lpmi.rcWork_top);
+	clientArea = DPIUtil.autoScaleDown (clientArea);
+	monitor.setClientArea (clientArea);
 	return monitor;
 }
 
