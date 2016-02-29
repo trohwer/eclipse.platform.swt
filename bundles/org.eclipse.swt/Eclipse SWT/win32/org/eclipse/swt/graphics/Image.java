@@ -295,7 +295,7 @@ public Image(Device device, Image srcImage, int flag) {
 			break;
 		}
 		case SWT.IMAGE_DISABLE: {
-			ImageData data = srcImage.getImageDataInPixels();
+			ImageData data = srcImage.getImageDataAtCurrentZoom();
 			PaletteData palette = data.palette;
 			RGB[] rgbs = new RGB[3];
 			rgbs[0] = device.getSystemColor(SWT.COLOR_BLACK).getRGB();
@@ -354,7 +354,7 @@ public Image(Device device, Image srcImage, int flag) {
 			break;
 		}
 		case SWT.IMAGE_GRAY: {
-			ImageData data = srcImage.getImageDataInPixels();
+			ImageData data = srcImage.getImageDataAtCurrentZoom();
 			PaletteData palette = data.palette;
 			ImageData newData = data;
 			if (!palette.isDirect) {
@@ -1389,7 +1389,17 @@ public Rectangle getBounds() {
 }
 
 /**
- * @return a rectangle specifying the image's bounds at current zoom.
+ * Returns the bounds of the receiver. The rectangle will always
+ * have x and y values of 0, and the width and height of the
+ * image in Pixels.
+ *
+ * @return a rectangle specifying the image's bounds in pixels.
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ * @since 3.105
  */
 public Rectangle getBoundsInPixels() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
@@ -1440,7 +1450,7 @@ public Rectangle getBoundsInPixels() {
  *
  * @since 3.105
  */
-public Rectangle getBounds(int zoom) {
+Rectangle getBounds(int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Rectangle bounds = getBoundsInPixels();
 	if (bounds != null && zoom != currentDeviceZoom) {
@@ -1470,9 +1480,22 @@ public ImageData getImageData() {
 }
 
 /**
- * @return a rectangle specifying the image's bounds at current zoom.
+ * Returns an <code>ImageData</code> based on the receiver
+ * Modifications made to this <code>ImageData</code> will not
+ * affect the Image.
+ *
+ * @return an <code>ImageData</code> containing the image's data
+ * and attributes at the current zoom level.
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
+ * @since 3.105
  */
-public ImageData getImageDataInPixels() {
+public ImageData getImageDataAtCurrentZoom() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	BITMAP bm;
 	int depth, width, height;
@@ -1827,9 +1850,9 @@ public ImageData getImageDataInPixels() {
  *
  * @since 3.105
  */
-public ImageData getImageData (int zoom) {
+ImageData getImageData (int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.autoScaleImageData(this.getImageDataInPixels(), zoom, currentDeviceZoom);
+	return DPIUtil.autoScaleImageData(this.getImageDataAtCurrentZoom(), zoom, currentDeviceZoom);
 }
 
 /**

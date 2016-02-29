@@ -169,7 +169,7 @@ void _setImage (Image image) {
 			switch (image.type) {
 				case SWT.BITMAP: {
 					Rectangle rect = image.getBoundsInPixels ();
-					ImageData data = image.getImageDataInPixels ();
+					ImageData data = image.getImageDataAtCurrentZoom ();
 					switch (data.getTransparencyType ()) {
 						case SWT.TRANSPARENCY_PIXEL:
 							if (rect.width <= ICON_WIDTH && rect.height <= ICON_HEIGHT) {

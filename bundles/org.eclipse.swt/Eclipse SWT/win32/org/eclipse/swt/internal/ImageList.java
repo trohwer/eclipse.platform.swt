@@ -402,7 +402,7 @@ void set (int index, Image image, int count) {
 			* Note that the image size has to match the image list icon size.
 			*/
 			long /*int*/ hBitmap = 0, hMask = 0;
-			ImageData data = image.getImageDataInPixels ();
+			ImageData data = image.getImageDataAtCurrentZoom ();
 			switch (data.getTransparencyType ()) {
 				case SWT.TRANSPARENCY_ALPHA:
 					/*

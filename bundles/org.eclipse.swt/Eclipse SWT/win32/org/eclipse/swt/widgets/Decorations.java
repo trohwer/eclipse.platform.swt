@@ -1014,7 +1014,7 @@ void setImages (Image image, Image [] images) {
 				System.arraycopy (images, 0, bestImages, 0, images.length);
 				datas = new ImageData [images.length];
 				for (int i=0; i<datas.length; i++) {
-					datas [i] = images [i].getImageDataInPixels ();
+					datas [i] = images [i].getImageDataAtCurrentZoom ();
 				}
 				images = bestImages;
 				sort (images, datas, OS.GetSystemMetrics (OS.SM_CXSMICON), OS.GetSystemMetrics (OS.SM_CYSMICON), depth);

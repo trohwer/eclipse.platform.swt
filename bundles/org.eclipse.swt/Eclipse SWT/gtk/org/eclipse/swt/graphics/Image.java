@@ -1075,7 +1075,7 @@ void createMask() {
 		return;
 	}
 	if (mask != 0) return;
-	mask = createMask(getImageDataInPixels(), false);
+	mask = createMask(getImageDataAtCurrentZoom(), false);
 	if (mask == 0) SWT.error(SWT.ERROR_NO_HANDLES);
 }
 
@@ -1314,7 +1314,7 @@ public Rectangle getBounds() {
 /**
  * Returns the bounds of the receiver. The rectangle will always
  * have x and y values of 0, and the width and height of the
- * image.
+ * image in Pixels.
  *
  * @return a rectangle specifying the image's bounds in pixels
  *
@@ -1374,7 +1374,7 @@ public ImageData getImageData () {
  * @see ImageData
  * @since 3.105
  */
-public ImageData getImageDataInPixels () {
+public ImageData getImageDataAtCurrentZoom () {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 
 	if (OS.USE_CAIRO) {
@@ -1509,7 +1509,7 @@ public ImageData getImageDataInPixels () {
  */
 ImageData getImageData (int zoom) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.autoScaleImageData (getImageDataInPixels (), zoom, currentDeviceZoom);
+	return DPIUtil.autoScaleImageData (getImageDataAtCurrentZoom (), zoom, currentDeviceZoom);
 }
 
 /**

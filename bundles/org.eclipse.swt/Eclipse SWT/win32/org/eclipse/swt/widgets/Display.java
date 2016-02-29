@@ -858,7 +858,7 @@ static long /*int*/ create32bitDIB (Image image) {
 			hMask = info.hbmMask;
 			break;
 		case SWT.BITMAP:
-			ImageData data = image.getImageDataInPixels ();
+			ImageData data = image.getImageDataAtCurrentZoom ();
 			hBitmap = image.handle;
 			alpha = data.alpha;
 			alphaData = data.alphaData;
@@ -1087,7 +1087,7 @@ static long /*int*/ create32bitDIB (long /*int*/ hBitmap, int alpha, byte [] alp
 
 static Image createIcon (Image image) {
 	Device device = image.getDevice ();
-	ImageData data = image.getImageDataInPixels ();
+	ImageData data = image.getImageDataAtCurrentZoom ();
 	if (data.alpha == -1 && data.alphaData == null) {
 		ImageData mask = data.getTransparencyMask ();
 		return new Image (device, data, mask);
