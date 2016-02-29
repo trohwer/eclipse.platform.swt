@@ -159,6 +159,7 @@ public final class Image extends Resource implements Drawable {
  */
 Image (Device device) {
 	super(device);
+	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
 }
 
 /**
