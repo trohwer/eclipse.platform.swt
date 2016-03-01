@@ -274,4 +274,19 @@ public static void setDeviceZoom(int deviceZoom) {
 	DPIUtil.deviceZoom = deviceZoom;
 }
 
+/**
+ * Default ImageDataProvider.
+ */
+public static final class DefaultImageDataProvider implements ImageDataProvider {
+	ImageData imageData;
+	int currentZoom;
+	public DefaultImageDataProvider(ImageData data, int zoom){
+		this.imageData = data;
+		this.currentZoom = zoom;
+	}
+	@Override
+	public ImageData getImageData(int zoom) {
+		return DPIUtil.autoScaleImageData(imageData, zoom, currentZoom);
+	}
+}
 }
