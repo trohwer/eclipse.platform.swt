@@ -4956,4 +4956,19 @@ long /*int*/ gdk_device_get_window_at_position (int[] win_x, int[] win_y) {
 	}
 }
 
+@Override
+protected long /*int*/ gsettingsProc (long /*int*/ gobject, long /*int*/ arg1, long /*int*/ user_data) {
+	switch((int)/*64*/user_data) {
+		case CHANGE_SCALEFACTOR:
+			this.scaleFactor = getDeviceZoom ();
+			DPIUtil.setDeviceZoom (scaleFactor);
+			Shell[] shells = getShells();
+			for (int i = 0; i < shells.length; i++) {
+				shells[i].layout(true, true);
+			}
+	}
+	return 0;
+}
+
+
 }

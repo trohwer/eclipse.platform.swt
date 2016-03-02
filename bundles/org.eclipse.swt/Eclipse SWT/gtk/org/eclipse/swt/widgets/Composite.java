@@ -249,7 +249,7 @@ long /*int*/ childStyle () {
 	}
 	if (wHint != SWT.DEFAULT) size.x = wHint;
 	if (hHint != SWT.DEFAULT) size.y = hHint;
-	Rectangle trim = computeTrimInPixels (0, 0, size.x, size.y);
+	Rectangle trim = DPIUtil.autoScaleUp (computeTrim (0, 0, DPIUtil.autoScaleDown(size.x), DPIUtil.autoScaleDown(size.y)));
 	return new Point (trim.width, trim.height);
 }
 

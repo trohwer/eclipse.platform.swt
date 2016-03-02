@@ -25,6 +25,16 @@ import org.eclipse.swt.internal.gtk.*;
  */
 public abstract class Device implements Drawable {
 	/**
+	 * @since 3.105
+	 */
+	protected static final int CHANGE_SCALEFACTOR = 1;
+	/* Settings callbacks */
+	long /*int*/ gsettingsProc;
+	Callback gsettingsCallback;
+	boolean isConnected = false;
+	long /*int*/ displaySettings; //gsettings Dictionary
+
+	/**
 	 * the handle to the X Display
 	 * (Warning: This field is platform dependent)
 	 * <p>
@@ -83,7 +93,10 @@ public abstract class Device implements Drawable {
 	Point dpi;
 
 	/*Device Scale Factor in percentage*/
-	int scaleFactor;
+	/**
+	 * @since 3.105
+	 */
+	protected int scaleFactor;
 
 	long /*int*/ emptyTab;
 
@@ -933,6 +946,11 @@ protected void release () {
 		handler_ids = null;  log_domains = null;
 		logProc = 0;
 	}
+	/* Dispose the settings callback */
+	gsettingsCallback.dispose(); gsettingsCallback = null;
+	gsettingsProc = 0;
+
+
 }
 
 /**
@@ -1021,20 +1039,32 @@ int _getDPIx () {
  * @return zoom in percentage. scaling factor 1 corresponds to 100%
  * @since 3.105
  */
-private int getDeviceZoom() {
-	final String schemaId = "com.ubuntu.user-interface";
-	final String key = "scale-factor";
-	int fontHeight = 0;
+protected int getDeviceZoom() {
 	long /*int*/ screen = OS.gdk_screen_get_default();
 	int monitor = OS.gdk_screen_get_monitor_at_point(screen, 0, 0);
 
+	final String schemaId = "com.ubuntu.user-interface";
+	final String key = "scale-factor";
+	int fontHeight = 0;
 	byte[] schema_id = Converter.wcsToMbcs (null, schemaId, true);
 	long /*int*/ schemaSource = OS.g_settings_schema_source_get_default ();
 	if (OS.g_settings_schema_source_lookup(schemaSource, schema_id, false) != 0) {
-		long /*int*/ displaySettings = OS.g_settings_new (schema_id);
+		displaySettings = OS.g_settings_new (schema_id);
 		byte[] keyString = Converter.wcsToMbcs (null, key, true);
 		long /*int*/ settingsDict = OS.g_settings_get_value (displaySettings, keyString);
 		long /*int*/ keyArray = 0;
+		if (!isConnected) {
+			gsettingsCallback = new Callback (this, "gsettingsProc", 3); //$NON-NLS-1$
+			gsettingsProc = gsettingsCallback.getAddress ();
+			if (gsettingsProc == 0) {
+				SWT.error (SWT.ERROR_NO_MORE_CALLBACKS);
+			}
+			int retVal = OS.g_signal_connect (displaySettings, OS.changed, gsettingsProc, CHANGE_SCALEFACTOR);
+			if (retVal > 0) {
+				isConnected = true;
+			}
+		}
+
 
 		long /*int*/ iter = OS.g_variant_iter_new (settingsDict);
 		int size = OS.g_variant_iter_init(iter, settingsDict);
@@ -1061,4 +1091,16 @@ private int getDeviceZoom() {
 		return (DPIUtil.mapDPIToZoom(Compatibility.round (254 * dest.width, widthMM * 10)));
 	}
 }
+/**
+ * @since 3.105
+ */
+protected long /*int*/ gsettingsProc (long /*int*/ gobject, long /*int*/ arg1, long /*int*/ user_data) {
+	switch((int)/*64*/user_data) {
+		case CHANGE_SCALEFACTOR:
+			this.scaleFactor = getDeviceZoom ();
+			DPIUtil.setDeviceZoom (scaleFactor);
+	}
+	return 0;
+}
+
 }

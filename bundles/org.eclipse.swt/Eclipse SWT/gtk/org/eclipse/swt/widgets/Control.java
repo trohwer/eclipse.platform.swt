@@ -1686,7 +1686,7 @@ public void pack () {
  * @see #computeSize(int, int, boolean)
  */
 public void pack (boolean changed) {
-	setSizeInPixels (computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed));
+	setSize (computeSize (SWT.DEFAULT, SWT.DEFAULT, changed));
 }
 
 /**

@@ -890,6 +890,17 @@ boolean refreshImageForZoom () {
 			}
 			currentDeviceZoom = deviceZoomLevel;
 		}
+	} else {
+		int deviceZoomLevel = deviceZoom;
+		if (deviceZoomLevel != currentDeviceZoom) {
+			ImageData data = getImageDataAtCurrentZoom();
+			destroy ();
+			ImageData resizedData = DPIUtil.autoScaleImageData(data, deviceZoomLevel, currentDeviceZoom);
+			init(resizedData);
+			init();
+			refreshed = true;
+			currentDeviceZoom = deviceZoomLevel;
+		}
 	}
 	return refreshed;
 }
@@ -1308,7 +1319,20 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.autoScaleDown (getBoundsInPixels());
+	Rectangle bounds = getBoundsInPixels();
+	Rectangle returnRect;
+
+	if (currentDeviceZoom != DPIUtil.getDeviceZoom()) {
+		float scalingfactor = currentDeviceZoom /(float) DPIUtil.getDeviceZoom();
+		int x = Math.round(bounds.x/scalingfactor);
+		int y = Math.round(bounds.y/scalingfactor);
+		int width = Math.round(bounds.width/scalingfactor);
+		int height = Math.round(bounds.height/scalingfactor);
+		returnRect = new Rectangle(x, y, width, height);
+	} else {
+		returnRect = DPIUtil.autoScaleDown (bounds);
+	}
+	return returnRect;
 }
 
 /**

@@ -1013,44 +1013,6 @@ void drawImageInPixels(Image image, int x, int y) {
  * </ul>
  */
 public void drawImage(Image image, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight) {
-	Rectangle srcRect = DPIUtil.autoScaleUp(new Rectangle(srcX, srcY, srcWidth, srcHeight));
-	Rectangle destRect = DPIUtil.autoScaleUp(new Rectangle(destX, destY, destWidth, destHeight));
-	drawImageInPixels(image, srcRect.x, srcRect.y, srcRect.width, srcRect.height, destRect.x, destRect.y, destRect.width, destRect.height);
-}
-/**
- * Copies a rectangular area from the source image into a (potentially
- * different sized) rectangular area in the receiver. If the source
- * and destination areas are of differing sizes, then the source
- * area will be stretched or shrunk to fit the destination area
- * as it is copied. The copy fails if any part of the source rectangle
- * lies outside the bounds of the source image, or if any of the width
- * or height arguments are negative.
- *
- * @param image the source image
- * @param srcX the x coordinate in the source image to copy from
- * @param srcY the y coordinate in the source image to copy from
- * @param srcWidth the width in pixels to copy from the source
- * @param srcHeight the height in pixels to copy from the source
- * @param destX the x coordinate in the destination to copy to
- * @param destY the y coordinate in the destination to copy to
- * @param destWidth the width in pixels of the destination rectangle
- * @param destHeight the height in pixels of the destination rectangle
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the image is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the image has been disposed</li>
- *    <li>ERROR_INVALID_ARGUMENT - if any of the width or height arguments are negative.
- *    <li>ERROR_INVALID_ARGUMENT - if the source rectangle is not contained within the bounds of the source image</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- * @exception SWTError <ul>
- *    <li>ERROR_NO_HANDLES - if no handles are available to perform the operation</li>
- * </ul>
- * @since 3.105
- */
-void drawImageInPixels(Image image, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (srcWidth == 0 || srcHeight == 0 || destWidth == 0 || destHeight == 0) return;
 	if (srcX < 0 || srcY < 0 || srcWidth < 0 || srcHeight < 0 || destWidth < 0 || destHeight < 0) {
@@ -1058,9 +1020,10 @@ void drawImageInPixels(Image image, int srcX, int srcY, int srcWidth, int srcHei
 	}
 	if (image == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (image.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	drawImage(image, srcX, srcY, srcWidth, srcHeight, destX, destY, destWidth, destHeight, false);
+	Rectangle srcRect = DPIUtil.autoScaleUp(new Rectangle(srcX, srcY, srcWidth, srcHeight));
+	Rectangle destRect = DPIUtil.autoScaleUp(new Rectangle(destX, destY, destWidth, destHeight));
+	drawImage(image, srcRect.x, srcRect.y, srcRect.width, srcRect.height, destRect.x, destRect.y, destRect.width, destRect.height, false);
 }
-
 void drawImage(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destWidth, int destHeight, boolean simple) {
 	/* Refresh Image as per zoom level, if required. */
 	srcImage.refreshImageForZoom ();
