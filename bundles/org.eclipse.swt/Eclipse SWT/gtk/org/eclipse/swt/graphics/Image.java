@@ -769,7 +769,7 @@ public Image(Device device, String filename) {
  */
 public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 	super(device);
-	this.setImageFileNameProvider(imageFileNameProvider);
+	this.imageFileNameProvider = imageFileNameProvider;
 	currentDeviceZoom = DPIUtil.getDeviceZoom();
 	boolean[] found = new boolean[1];
 	String filename = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, currentDeviceZoom, found);
@@ -818,7 +818,7 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
  */
 public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
-	this.setImageDataProvider(imageDataProvider);
+	this.imageDataProvider = imageDataProvider;
 	currentDeviceZoom = DPIUtil.getDeviceZoom();
 	boolean[] found = new boolean[1];
 	ImageData data =  DPIUtil.validateAndGetImageDataAtZoom(imageDataProvider, currentDeviceZoom, found);
@@ -839,11 +839,11 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 boolean refreshImageForZoom () {
 	boolean refreshed = false;
 	int deviceZoom = DPIUtil.getDeviceZoom();
-	if (getImageFileNameProvider() != null) {
+	if (imageFileNameProvider != null) {
 		int deviceZoomLevel = deviceZoom;
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
-			String filename = DPIUtil.validateAndGetImagePathAtZoom (getImageFileNameProvider(), deviceZoomLevel, found);
+			String filename = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, deviceZoomLevel, found);
 			/* Avoid re-creating the fall-back image, when current zoom is already 100% */
 			if (found[0] || currentDeviceZoom != 100) {
 				/* Release current native resources */
@@ -867,11 +867,11 @@ boolean refreshImageForZoom () {
 			}
 			currentDeviceZoom = deviceZoomLevel;
 		}
-	} else if (getImageDataProvider() != null) {
+	} else if (imageDataProvider != null) {
 		int deviceZoomLevel = deviceZoom;
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
-			ImageData data = DPIUtil.validateAndGetImageDataAtZoom (getImageDataProvider(), deviceZoomLevel, found);
+			ImageData data = DPIUtil.validateAndGetImageDataAtZoom (imageDataProvider, deviceZoomLevel, found);
 			/* Avoid re-creating the fall-back image, when current zoom is already 100% */
 			if (found[0] || currentDeviceZoom != 100) {
 				/* Release current native resources */
@@ -1259,10 +1259,10 @@ public boolean equals (Object object) {
 	if (!(object instanceof Image)) return false;
 	Image image = (Image)object;
 	if (device != image.device || transparentPixel != image.transparentPixel) return false;
-	if (getImageDataProvider() != null && image.getImageDataProvider() != null) {
-		return getImageDataProvider().equals (image.getImageDataProvider());
-	} else if (getImageFileNameProvider() != null && image.getImageFileNameProvider() != null) {
-		return getImageFileNameProvider().equals (image.getImageFileNameProvider());
+	if (imageDataProvider != null && image.imageDataProvider != null) {
+		return imageDataProvider.equals (image.imageDataProvider);
+	} else if (imageFileNameProvider != null && image.imageFileNameProvider != null) {
+		return imageFileNameProvider.equals (image.imageFileNameProvider);
 	} else if (OS.USE_CAIRO) {
 		return surface == image.surface;
 	} else {
@@ -1577,10 +1577,10 @@ public static Image gtk_new_from_pixbuf(Device device, int type, long /*int*/ pi
  */
 @Override
 public int hashCode () {
-	if (getImageDataProvider() != null) {
-		return getImageDataProvider().hashCode();
-	} else if (getImageFileNameProvider() != null) {
-		 return getImageFileNameProvider().hashCode();
+	if (imageDataProvider != null) {
+		return imageDataProvider.hashCode();
+	} else if (imageFileNameProvider != null) {
+		 return imageFileNameProvider.hashCode();
 	} else if (OS.USE_CAIRO) {
 		return (int)/*64*/surface;
 	} else {
@@ -1997,36 +1997,6 @@ public String toString () {
 	} else {
 		return "Image {" + pixmap + "}";
 	}
-}
-
-/**
- * @return the imageDataProvider
- * @since 3.105
- */
-public ImageDataProvider getImageDataProvider() {
-	return imageDataProvider;
-}
-
-/**
- * @param imageDataProvider the imageDataProvider to set
- */
-void setImageDataProvider(ImageDataProvider imageDataProvider) {
-	this.imageDataProvider = imageDataProvider;
-}
-
-/**
- * @return the imageFileNameProvider
- * @since 3.105
- */
-public ImageFileNameProvider getImageFileNameProvider() {
-	return imageFileNameProvider;
-}
-
-/**
- * @param imageFileNameProvider the imageFileNameProvider to set
- */
-void setImageFileNameProvider(ImageFileNameProvider imageFileNameProvider) {
-	this.imageFileNameProvider = imageFileNameProvider;
 }
 
 }
