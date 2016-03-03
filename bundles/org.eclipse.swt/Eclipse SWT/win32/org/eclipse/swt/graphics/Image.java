@@ -1856,22 +1856,6 @@ ImageData getImageData (int zoom) {
 }
 
 /**
-* @return the imageDataProvider
-* @since 3.105
-*/
-public ImageDataProvider getImageDataProvider() {
-	return imageDataProvider;
-}
-
-/**
-* @return the imageFileNameProvider
-* @since 3.105
-*/
-public ImageFileNameProvider getImageFileNameProvider() {
-	return imageFileNameProvider;
-}
-
-/**
  * Returns an integer hash code for the receiver. Any two
  * objects that return <code>true</code> when passed to
 =======

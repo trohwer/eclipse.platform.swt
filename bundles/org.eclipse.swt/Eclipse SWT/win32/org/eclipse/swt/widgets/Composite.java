@@ -247,7 +247,11 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	}
 	if (wHint != SWT.DEFAULT) size.x = wHint;
 	if (hHint != SWT.DEFAULT) size.y = hHint;
-	Rectangle trim = computeTrimInPixels (0, 0, size.x, size.y);
+	/*
+	 * Since computeTrim is overridden by Custom classes like CTabFolder
+	 * etc... hence we cannot call computeTrimInPixels directly.
+	 */
+	Rectangle trim = DPIUtil.autoScaleUp(computeTrim (0, 0, DPIUtil.autoScaleDown(size.x), DPIUtil.autoScaleDown(size.y)));
 	return new Point (trim.width, trim.height);
 }
 

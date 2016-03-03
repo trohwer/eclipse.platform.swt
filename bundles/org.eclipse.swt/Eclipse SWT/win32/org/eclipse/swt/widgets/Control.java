@@ -2190,7 +2190,11 @@ public void pack () {
  */
 public void pack (boolean changed) {
 	checkWidget ();
-	setSizeInPixels (computeSizeInPixels (SWT.DEFAULT, SWT.DEFAULT, changed));
+	/*
+	 * Since computeSize is overridden by Custom classes like CCombo
+	 * etc... hence we cannot call computeSizeInPixels directly.
+	 */
+	setSize (computeSize (SWT.DEFAULT, SWT.DEFAULT, changed));
 }
 
 /**
