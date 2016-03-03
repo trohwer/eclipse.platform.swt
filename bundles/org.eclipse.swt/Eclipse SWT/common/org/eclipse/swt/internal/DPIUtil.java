@@ -213,7 +213,7 @@ public static int mapDPIToZoom (int dpi) {
 /**
  * Returns a new rectangle as per the scaleFactor.
  */
-public static Rectangle scale (Rectangle rect, int targetZoom, int currentZoom) {
+public static Rectangle autoScaleImageData (Rectangle rect, int targetZoom, int currentZoom) {
 	if (rect == null || targetZoom == currentZoom) return rect;
 	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
 	Rectangle returnRect = new Rectangle (0,0,0,0);
@@ -275,12 +275,12 @@ public static void setDeviceZoom(int deviceZoom) {
 }
 
 /**
- * Default ImageDataProvider.
+ * AutoScale ImageDataProvider.
  */
-public static final class DefaultImageDataProvider implements ImageDataProvider {
+public static final class AutoScaleImageDataProvider implements ImageDataProvider {
 	ImageData imageData;
 	int currentZoom;
-	public DefaultImageDataProvider(ImageData data, int zoom){
+	public AutoScaleImageDataProvider(ImageData data, int zoom){
 		this.imageData = data;
 		this.currentZoom = zoom;
 	}

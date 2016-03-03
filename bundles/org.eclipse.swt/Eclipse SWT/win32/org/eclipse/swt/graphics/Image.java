@@ -742,8 +742,8 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
  */
 boolean refreshImageForZoom () {
 	boolean refreshed = false;
+	int deviceZoomLevel = DPIUtil.getDeviceZoom();
 	if (imageFileNameProvider != null) {
-		int deviceZoomLevel = DPIUtil.getDeviceZoom();
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
 			String filename = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, deviceZoomLevel, found);
@@ -767,7 +767,6 @@ boolean refreshImageForZoom () {
 			currentDeviceZoom = deviceZoomLevel;
 		}
 	} else if (imageDataProvider != null) {
-		int deviceZoomLevel = DPIUtil.getDeviceZoom();
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
 			ImageData data = DPIUtil.validateAndGetImageDataAtZoom (imageDataProvider, deviceZoomLevel, found);
@@ -787,6 +786,16 @@ boolean refreshImageForZoom () {
 				init();
 				refreshed = true;
 			}
+			currentDeviceZoom = deviceZoomLevel;
+		}
+	} else {
+		if (deviceZoomLevel != currentDeviceZoom) {
+			ImageData data = getImageDataAtCurrentZoom();
+			destroy ();
+			ImageData resizedData = DPIUtil.autoScaleImageData(data, deviceZoomLevel, currentDeviceZoom);
+			init(resizedData);
+			init();
+			refreshed = true;
 			currentDeviceZoom = deviceZoomLevel;
 		}
 	}
@@ -1384,8 +1393,15 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	return getBounds (100);
+}
+
+Rectangle getBounds(int zoom) {
 	Rectangle bounds = getBoundsInPixels();
-	return DPIUtil.autoScaleDown (bounds);
+	if (bounds != null && zoom != currentDeviceZoom) {
+		bounds = DPIUtil.autoScaleImageData(bounds, zoom, currentDeviceZoom);
+	}
+	return bounds;
 }
 
 /**
@@ -1433,33 +1449,6 @@ public Rectangle getBoundsInPixels() {
 }
 
 /**
- * Returns the bounds of the receiver at specified zoom level.
- * The rectangle will always have x and y values of 0,
- * and the width and height of the image at zoom level.
- *
- * @param zoom
- *            The zoom level in % of the standard resolution (which is 1
- *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
- *            150, or 200.
- * @return a rectangle specifying the image's bounds at zoom
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
- * </ul>
- *
- * @since 3.105
- */
-Rectangle getBounds(int zoom) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	Rectangle bounds = getBoundsInPixels();
-	if (bounds != null && zoom != currentDeviceZoom) {
-		bounds = DPIUtil.scale(bounds, zoom, currentDeviceZoom);
-	}
-	return bounds;
-}
-
-/**
  * Returns an <code>ImageData</code> based on the receiver
  * Modifications made to this <code>ImageData</code> will not
  * affect the Image.
@@ -1477,6 +1466,10 @@ Rectangle getBounds(int zoom) {
 public ImageData getImageData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return getImageData(100);
+}
+
+ImageData getImageData (int zoom) {
+	return DPIUtil.autoScaleImageData(this.getImageDataAtCurrentZoom(), zoom, currentDeviceZoom);
 }
 
 /**
@@ -1826,33 +1819,6 @@ public ImageData getImageDataAtCurrentZoom() {
 			SWT.error(SWT.ERROR_INVALID_IMAGE);
 			return null;
 	}
-}
-
-/**
-<<<<<<< HEAD
- * Returns an <code>ImageData</code> for specified zoom, based on the receiver
- * Modifications made to this <code>ImageData</code> will not affect the
- * Image.
- *
- * @param zoom
- *            The zoom level in % of the standard resolution (which is 1
- *            physical monitor pixel == 1 SWT logical pixel). Typically 100,
- *            150, or 200.
- * @return an <code>ImageData</code> containing the image's data and
- *         attributes at specified zoom if present else null is returned.
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
- * </ul>
- *
- * @see ImageData
- *
- * @since 3.105
- */
-ImageData getImageData (int zoom) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.autoScaleImageData(this.getImageDataAtCurrentZoom(), zoom, currentDeviceZoom);
 }
 
 /**
