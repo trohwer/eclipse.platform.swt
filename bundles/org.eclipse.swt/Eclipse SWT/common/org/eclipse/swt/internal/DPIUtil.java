@@ -213,7 +213,7 @@ public static int mapDPIToZoom (int dpi) {
 /**
  * Returns a new rectangle as per the scaleFactor.
  */
-public static Rectangle autoScaleImageData (Rectangle rect, int targetZoom, int currentZoom) {
+public static Rectangle autoScaleBounds (Rectangle rect, int targetZoom, int currentZoom) {
 	if (rect == null || targetZoom == currentZoom) return rect;
 	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
 	Rectangle returnRect = new Rectangle (0,0,0,0);

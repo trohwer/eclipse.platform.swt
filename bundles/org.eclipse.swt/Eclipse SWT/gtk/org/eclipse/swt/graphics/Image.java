@@ -1319,20 +1319,7 @@ public Color getBackground() {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	Rectangle bounds = getBoundsInPixels();
-	Rectangle returnRect;
-
-	if (currentDeviceZoom != DPIUtil.getDeviceZoom()) {
-		float scalingfactor = currentDeviceZoom /(float) DPIUtil.getDeviceZoom();
-		int x = Math.round(bounds.x/scalingfactor);
-		int y = Math.round(bounds.y/scalingfactor);
-		int width = Math.round(bounds.width/scalingfactor);
-		int height = Math.round(bounds.height/scalingfactor);
-		returnRect = new Rectangle(x, y, width, height);
-	} else {
-		returnRect = DPIUtil.autoScaleDown (bounds);
-	}
-	return returnRect;
+	return DPIUtil.autoScaleBounds(getBoundsInPixels(), 100, currentDeviceZoom);
 }
 
 /**
