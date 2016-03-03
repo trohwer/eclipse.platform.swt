@@ -1399,7 +1399,7 @@ public Rectangle getBounds() {
 Rectangle getBounds(int zoom) {
 	Rectangle bounds = getBoundsInPixels();
 	if (bounds != null && zoom != currentDeviceZoom) {
-		bounds = DPIUtil.autoScaleImageData(bounds, zoom, currentDeviceZoom);
+		bounds = DPIUtil.autoScaleBounds(bounds, zoom, currentDeviceZoom);
 	}
 	return bounds;
 }
