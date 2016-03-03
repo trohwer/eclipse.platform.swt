@@ -1232,7 +1232,18 @@ void drawBitmap(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight,
 		srcHeight = destHeight = imgHeight;
 	} else {
 		if (srcX + srcWidth > imgWidth || srcY + srcHeight > imgHeight) {
-			SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+			/*
+			 * This is a HACK ! Due to auto-scale of dimensions at high DPI
+			 * display(specifically 150% zoom), rounding error of 1 pixel
+			 * gets introduced in srcX . Below check detects this particular
+			 * scenario and adjusts the dimension for 1 pixel grace value.
+			 */
+			if (DPIUtil.getAutoScale() && DPIUtil.getDeviceZoom() > 100 && ((srcX + srcWidth - imgWidth) == 1)) {
+				srcX--;
+			}
+			else {
+				SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+			}
 		}
 		simple = srcX == 0 && srcY == 0 &&
 			srcWidth == destWidth && destWidth == imgWidth &&
