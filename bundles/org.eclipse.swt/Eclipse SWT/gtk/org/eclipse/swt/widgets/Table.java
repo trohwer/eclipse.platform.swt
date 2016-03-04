@@ -2860,6 +2860,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 				event.item = item;
 				event.index = columnIndex;
 				event.gc = gc;
+				event.detail = drawState;
 				Rectangle eventRect = new Rectangle (rect.x, rect.y, rect.width, rect.height);
 				event.setBounds (DPIUtil.autoScaleDown (eventRect));
 				sendEvent (SWT.EraseItem, event);
