@@ -145,7 +145,8 @@ void drawBackground (Control control, long /*int*/ window, long /*int*/ cr, long
 			Cairo.cairo_pattern_destroy (pattern);
 		} else {
 			GdkColor color = control.getBackgroundColor ();
-			Cairo.cairo_set_source_rgba (cairo, (color.red & 0xFFFF) / (float)0xFFFF, (color.green & 0xFFFF) / (float)0xFFFF, (color.blue & 0xFFFF) / (float)0xFFFF, 1);
+			GdkRGBA rgba = display.toGdkRGBA (color);
+			Cairo.cairo_set_source_rgba (cairo, rgba.red, rgba.green, rgba.blue, rgba.alpha);
 		}
 		Cairo.cairo_rectangle (cairo, x, y, width, height);
 		Cairo.cairo_fill (cairo);
@@ -3024,31 +3025,25 @@ GdkColor getContextBackground () {
 		}
 	} else {
 		long /*int*/ context = OS.gtk_widget_get_style_context (fontHandle);
-		int styleState = OS.gtk_widget_get_state_flags(handle);
 		GdkRGBA rgba = new GdkRGBA ();
-		OS.gtk_style_context_get_background_color (context, styleState, rgba);
+		OS.gtk_style_context_get_background_color (context, OS.GTK_STATE_FLAG_NORMAL, rgba);
 		if (rgba.alpha == 0) {
 			return display.COLOR_WIDGET_BACKGROUND;
 		}
-		GdkColor color = new GdkColor ();
-		color.red = (short)(rgba.red * 0xFFFF);
-		color.green = (short)(rgba.green * 0xFFFF);
-		color.blue = (short)(rgba.blue * 0xFFFF);
-		return color;
+		return display.toGdkColor (rgba);
 	}
 }
 
 GdkColor getContextColor () {
 	long /*int*/ fontHandle = fontHandle ();
 	long /*int*/ context = OS.gtk_widget_get_style_context (fontHandle);
-	int styleState = OS.gtk_widget_get_state_flags(handle);
 	GdkRGBA rgba = new GdkRGBA ();
-	rgba = display.styleContextGetColor (context, styleState, rgba);
-	GdkColor color = new GdkColor ();
-	color.red = (short)(rgba.red * 0xFFFF);
-	color.green = (short)(rgba.green * 0xFFFF);
-	color.blue = (short)(rgba.blue * 0xFFFF);
-	return color;
+	if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+		rgba = display.styleContextGetColor (context, OS.GTK_STATE_FLAG_NORMAL, rgba);
+	} else {
+		rgba = display.styleContextGetColor (context, OS.gtk_widget_get_state_flags(handle), rgba);
+	}
+	return display.toGdkColor (rgba);
 }
 
 GdkColor getBgColor () {
@@ -3193,8 +3188,11 @@ long /*int*/ getFontDescription () {
 	long /*int*/ fontHandle = fontHandle ();
 	if (OS.GTK3) {
 		long /*int*/ context = OS.gtk_widget_get_style_context (fontHandle);
-		int styleState = OS.gtk_widget_get_state_flags(fontHandle);
-		return OS.gtk_style_context_get_font(context, styleState);
+		if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+			return OS.gtk_style_context_get_font(context, OS.GTK_STATE_FLAG_NORMAL);
+		} else {
+			return OS.gtk_style_context_get_font(context, OS.gtk_widget_get_state_flags(fontHandle));
+		}
 	}
 	OS.gtk_widget_realize (fontHandle);
 	return OS.gtk_style_get_font_desc (OS.gtk_widget_get_style (fontHandle));
@@ -3454,13 +3452,21 @@ Point getThickness (long /*int*/ widget) {
 		int xthickness = 0, ythickness = 0;
 		GtkBorder tmp = new GtkBorder();
 		long /*int*/ context = OS.gtk_widget_get_style_context (widget);
-		int styleState = OS.gtk_widget_get_state_flags(widget);
+
+		if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+			OS.gtk_style_context_get_padding (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+		} else {
+			OS.gtk_style_context_get_padding (context, OS.gtk_widget_get_state_flags(widget), tmp);
+		}
 		OS.gtk_style_context_save (context);
 		OS.gtk_style_context_add_class (context, OS.GTK_STYLE_CLASS_FRAME);
-		OS.gtk_style_context_get_padding (context, styleState, tmp);
 		xthickness += tmp.left;
 		ythickness += tmp.top;
-		OS.gtk_style_context_get_border (context, styleState, tmp);
+		if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+			OS.gtk_style_context_get_border (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+		} else {
+			OS.gtk_style_context_get_border (context, OS.gtk_widget_get_state_flags(widget), tmp);
+		}
 		xthickness += tmp.left;
 		ythickness += tmp.top;
 		OS.gtk_style_context_restore (context);
@@ -4607,11 +4613,7 @@ String gtk_rgba_to_css_string (GdkRGBA rgba) {
 	} else {
 		// If we have a null RGBA, set it to the default COLOR_WIDGET_BACKGROUND.
 		GdkColor defaultGdkColor = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND).handle;
-		toConvert = new GdkRGBA ();
-		toConvert.alpha = 1.0;
-		toConvert.red = (defaultGdkColor.red & 0xFFFF) / (float)0xFFFF;
-		toConvert.green = (defaultGdkColor.green & 0xFFFF) / (float)0xFFFF;
-		toConvert.blue = (defaultGdkColor.blue & 0xFFFF) / (float)0xFFFF;
+		toConvert = display.toGdkRGBA (defaultGdkColor);
 	}
 	long /*int*/ str = OS.gdk_rgba_to_string (toConvert);
 	int length = OS.strlen (str);
@@ -4623,7 +4625,6 @@ String gtk_rgba_to_css_string (GdkRGBA rgba) {
 GdkColor gtk_css_parse_background (long /*int*/ provider) {
 	String shortOutput;
 	int startIndex;
-	GdkColor color = new GdkColor ();
 	GdkRGBA rgba = new GdkRGBA ();
 	// Fetch the CSS in char/string format from the GtkCssProvider.
 	long /*int*/ str = OS.gtk_css_provider_to_string (provider);
@@ -4642,7 +4643,7 @@ GdkColor gtk_css_parse_background (long /*int*/ provider) {
 		shortOutput = cssOutput.substring (startIndex + 18);
 		// Double check to make sure with have a valid rgb/rgba property
 		if (shortOutput.contains ("rgba") || shortOutput.contains ("rgb")) {
-			rgba = gtk_css_property_to_rgba (shortOutput);
+			rgba = display.gtk_css_property_to_rgba (shortOutput);
 		} else {
 			return display.COLOR_WIDGET_BACKGROUND;
 		}
@@ -4651,28 +4652,12 @@ GdkColor gtk_css_parse_background (long /*int*/ provider) {
 		shortOutput = cssOutput.substring (startIndex + 13);
 		// Double check to make sure with have a valid rgb/rgba property
 		if (shortOutput.contains ("rgba") || shortOutput.contains ("rgb")) {
-			rgba = gtk_css_property_to_rgba (shortOutput);
+			rgba = display.gtk_css_property_to_rgba (shortOutput);
 		} else {
 			return display.COLOR_WIDGET_BACKGROUND;
 		}
 	}
-	color.red = (short)(rgba.red * 0xFFFF);
-	color.green = (short)(rgba.green * 0xFFFF);
-	color.blue = (short)(rgba.blue * 0xFFFF);
-	return color;
-}
-
-GdkRGBA gtk_css_property_to_rgba(String property) {
-	/* Here we convert rgb(...) or rgba(...) properties
-	 * into GdkRGBA objects using gdk_rgba_parse(). Note
-	 * that we still need to remove the ";" character from the
-	 * input string.
-	 */
-	GdkRGBA rgba = new GdkRGBA ();
-	String [] propertyParsed = new String [1];
-	propertyParsed = property.split (";");
-	OS.gdk_rgba_parse (rgba, Converter.wcsToMbcs (null, propertyParsed[0], true));
-	return rgba;
+	return display.toGdkColor (rgba);
 }
 
 void setBackgroundColor (long /*int*/ handle, GdkColor color) {
@@ -4691,11 +4676,8 @@ void setBackgroundColor (long /*int*/ handle, GdkColor color) {
 			alpha = backgroundAlpha;
 		}
 		if (color != null) {
-			rgba = new GdkRGBA ();
+			rgba = display.toGdkRGBA (color);
 			rgba.alpha = alpha / (float)255;
-			rgba.red = (color.red & 0xFFFF) / (float)0xFFFF;
-			rgba.green = (color.green & 0xFFFF) / (float)0xFFFF;
-			rgba.blue = (color.blue & 0xFFFF) / (float)0xFFFF;
 		}
 		long /*int*/ context = OS.gtk_widget_get_style_context (handle);
 		setBackgroundColor (context, handle, rgba);
@@ -6168,8 +6150,11 @@ long /*int*/ windowProc (long /*int*/ handle, long /*int*/ arg0, long /*int*/ us
 				if (OS.GTK3 && !draw && (state & CANVAS) != 0) {
 					GdkRGBA rgba = new GdkRGBA();
 					long /*int*/ context = OS.gtk_widget_get_style_context (handle);
-					int styleState = OS.gtk_widget_get_state_flags(handle);
-					OS.gtk_style_context_get_background_color (context, styleState, rgba);
+					if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+						OS.gtk_style_context_get_background_color (context, OS.GTK_STATE_FLAG_NORMAL, rgba);
+					} else {
+						OS.gtk_style_context_get_background_color (context, OS.gtk_widget_get_state_flags(handle), rgba);
+					}
 					draw = rgba.alpha == 0;
 				}
 				if (draw) {

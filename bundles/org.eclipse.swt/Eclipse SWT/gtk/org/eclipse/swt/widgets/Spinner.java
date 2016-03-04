@@ -257,10 +257,17 @@ protected void checkSubclass () {
 	if (OS.GTK3) {
 		GtkBorder tmp = new GtkBorder();
 		long /*int*/ context = OS.gtk_widget_get_style_context (handle);
-		int styleState = OS.gtk_widget_get_state_flags(handle);
-		OS.gtk_style_context_get_padding (context, styleState, tmp);
+		if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+			OS.gtk_style_context_get_padding (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+		} else {
+			OS.gtk_style_context_get_padding (context, OS.gtk_widget_get_state_flags(handle), tmp);
+		}
 		if ((style & SWT.BORDER) != 0) {
-			OS.gtk_style_context_get_border (context, styleState, tmp);
+			if (OS.GTK_VERSION < OS.VERSION(3, 18, 0)) {
+				OS.gtk_style_context_get_border (context, OS.GTK_STATE_FLAG_NORMAL, tmp);
+			} else {
+				OS.gtk_style_context_get_border (context, OS.gtk_widget_get_state_flags(handle), tmp);
+			}
 			trim.x -= tmp.left;
 			trim.y -= tmp.top;
 			trim.width += tmp.left + tmp.right;
@@ -921,11 +928,7 @@ void removeVerifyListener (VerifyListener listener) {
 GdkColor getContextBackground () {
 	if (OS.GTK_VERSION >= OS.VERSION(3, 16, 0)) {
 		if (background != null) {
-			GdkColor color = new GdkColor ();
-			color.red = (short)(background.red * 0xFFFF);
-			color.green = (short)(background.green * 0xFFFF);
-			color.blue = (short)(background.blue * 0xFFFF);
-			return color;
+			return display.toGdkColor (background);
 		} else {
 			return display.COLOR_WIDGET_BACKGROUND;
 		}
