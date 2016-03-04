@@ -298,6 +298,11 @@ public ToolItem getItem (int index) {
  */
 public ToolItem getItem (Point point) {
 	checkWidget();
+	return getItemInPixels(DPIUtil.autoScaleUp(point));
+}
+
+
+ToolItem getItemInPixels (Point point) {
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	ToolItem[] items = getItems();
 	for (int i=0; i<items.length; i++) {
