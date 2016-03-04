@@ -334,7 +334,7 @@ long /*int*/ gtk_button_press_event (long /*int*/ widget, long /*int*/ event) {
 				oldSelectionX = oldSelectionY;
 				oldSelectionY = temp;
 			}
-			Rectangle rect = layout.getBounds (oldSelectionX, oldSelectionY);
+			Rectangle rect = DPIUtil.autoScaleUp(layout.getBounds (oldSelectionX, oldSelectionY));
 			redrawInPixels (rect.x, rect.y, rect.width, rect.height, false);
 		}
 		for (int j = 0; j < offsets.length; j++) {
