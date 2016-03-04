@@ -122,8 +122,7 @@ static int checkStyle (int style) {
 	return checkBits (style, SWT.HORIZONTAL, SWT.VERTICAL, 0, 0, 0, 0);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int border = getBorderWidthInPixels ();
 	int width = border * 2, height = border * 2;

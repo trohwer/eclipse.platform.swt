@@ -297,14 +297,11 @@ public boolean getExpanded () {
  * </ul>
  */
 public int getHeaderHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getHeaderHeightInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getHeaderHeightInPixels () {
-	checkWidget ();
+int getHeaderHeightInPixels () {
 	return Math.max (parent.getBandHeight (), imageHeight);
 }
 
@@ -319,13 +316,11 @@ public int getHeaderHeightInPixels () {
  * </ul>
  */
 public int getHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getHeightInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getHeightInPixels () {
-	checkWidget ();
+
+int getHeightInPixels () {
 	return height;
 }
 
@@ -418,7 +413,7 @@ void setBounds (int x, int y, int width, int height, boolean move, boolean size)
 			width = Math.max (0, width - BORDER * 2);
 			height = Math.max (0, height - BORDER);
 		}
-		if (move && size) control.setBoundsInPixel (x, y + headerHeight, width, height);
+		if (move && size) control.setBoundsInPixels (x, y + headerHeight, width, height);
 		if (move && !size) control.setLocationInPixels (x, y + headerHeight);
 		if (!move && size) control.setSizeInPixels (width, height);
 	}
@@ -451,9 +446,9 @@ public void setControl (Control control) {
 		if (!parent.isAppThemed ()) {
 			int width = Math.max (0, this.width - BORDER * 2);
 			int height = Math.max (0, this.height - BORDER);
-			control.setBoundsInPixel (x + BORDER, y + headerHeight, width, height);
+			control.setBoundsInPixels (x + BORDER, y + headerHeight, width, height);
 		} else {
-			control.setBoundsInPixel (x, y + headerHeight, width, height);
+			control.setBoundsInPixels (x, y + headerHeight, width, height);
 		}
 	}
 }
@@ -486,13 +481,11 @@ public void setExpanded (boolean expanded) {
  * </ul>
  */
 public void setHeight (int height) {
+	checkWidget ();
 	setHeightInPixels(DPIUtil.autoScaleUp(height));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setHeightInPixels (int height) {
-	checkWidget ();
+
+void setHeightInPixels (int height) {
 	if (height < 0) return;
 	setBounds (0, 0, width, height, false, true);
 	if (expanded) parent.layoutItems (parent.indexOf (this) + 1, true);

@@ -116,6 +116,7 @@ long /*int*/ callWindowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, lo
  * @see #getClientArea
  */
 public Rectangle computeTrim (int x, int y, int width, int height) {
+	checkWidget ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	width = DPIUtil.autoScaleUp(width);
@@ -123,11 +124,7 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	return DPIUtil.autoScaleDown(computeTrimInPixels(x, y, width, height));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
-	checkWidget ();
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	long /*int*/ scrolledHandle = scrolledHandle ();
 	RECT rect = new RECT ();
 	OS.SetRect (rect, x, y, x + width, y + height);
@@ -205,14 +202,11 @@ void destroyScrollBar (int type) {
  * @see #computeTrim
  */
 public Rectangle getClientArea () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getClientAreaInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getClientAreaInPixels () {
-	checkWidget ();
+Rectangle getClientAreaInPixels () {
 	forceResize ();
 	RECT rect = new RECT ();
 	long /*int*/ scrolledHandle = scrolledHandle ();

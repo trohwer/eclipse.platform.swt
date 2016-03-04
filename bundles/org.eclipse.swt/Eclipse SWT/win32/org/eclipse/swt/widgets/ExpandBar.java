@@ -128,9 +128,7 @@ static int checkStyle (int style) {
 	return style | SWT.NO_BACKGROUND;
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int height = 0, width = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 		if (itemCount > 0) {
@@ -395,13 +393,11 @@ public ExpandItem [] getItems () {
  * </ul>
  */
 public int getSpacing () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getSpacingInPixels ());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getSpacingInPixels () {
-	checkWidget ();
+
+int getSpacingInPixels () {
 	return spacing;
 }
 
@@ -573,13 +569,11 @@ void setScrollbar () {
  * </ul>
  */
 public void setSpacing (int spacing) {
+	checkWidget ();
 	setSpacingInPixels(DPIUtil.autoScaleUp(spacing));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setSpacingInPixels (int spacing) {
-	checkWidget ();
+
+void setSpacingInPixels (int spacing) {
 	if (spacing < 0) return;
 	if (spacing == this.spacing) return;
 	this.spacing = spacing;

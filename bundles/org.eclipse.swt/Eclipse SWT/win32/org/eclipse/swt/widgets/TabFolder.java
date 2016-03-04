@@ -193,8 +193,7 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	Point size = super.computeSizeInPixels (wHint, hHint, changed);
 	RECT insetRect = new RECT (), itemRect = new RECT ();
@@ -215,8 +214,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	return size;
 }
 
-@Override
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	RECT rect = new RECT ();
 	OS.SetRect (rect, x, y, x + width, y + height);
@@ -329,8 +327,7 @@ Control findThemeControl () {
 	return this;
 }
 
-@Override
-public Rectangle getClientAreaInPixels () {
+@Override Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();

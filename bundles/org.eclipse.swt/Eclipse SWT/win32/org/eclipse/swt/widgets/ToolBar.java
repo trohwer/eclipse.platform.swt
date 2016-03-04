@@ -188,9 +188,7 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = 0, height = 0;
 	if ((style & SWT.VERTICAL) != 0) {
 		RECT rect = new RECT ();
@@ -251,9 +249,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	return new Point (width, height);
 }
 
-@Override
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
-	checkWidget ();
+@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	Rectangle trim = super.computeTrimInPixels (x, y, width, height);
 	int bits = OS.GetWindowLong (handle, OS.GWL_STYLE);
 	if ((bits & OS.CCS_NODIVIDER) == 0) trim.height += 2;
@@ -548,12 +544,12 @@ public ToolItem getItem (int index) {
  * </ul>
  */
 public ToolItem getItem (Point point) {
+	checkWidget ();
+	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	return getItemInPixels(DPIUtil.autoScaleUp(point));
 }
 
-public ToolItem getItemInPixels (Point point) {
-	checkWidget ();
-	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
+ToolItem getItemInPixels (Point point) {
 	ToolItem [] items = getItems ();
 	for (int i=0; i<items.length; i++) {
 		Rectangle rect = items [i].getBoundsInPixels ();

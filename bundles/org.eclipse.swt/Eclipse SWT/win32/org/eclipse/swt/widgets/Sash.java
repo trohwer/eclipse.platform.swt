@@ -126,8 +126,7 @@ static int checkStyle (int style) {
 	return checkBits (style, SWT.HORIZONTAL, SWT.VERTICAL, 0, 0, 0, 0);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int border = getBorderWidthInPixels ();
 	int width = border * 2, height = border * 2;
@@ -314,7 +313,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 		}
 		drawBand (bounds.x, bounds.y, width, height);
 		if ((style & SWT.SMOOTH) != 0) {
-			setBoundsInPixel (bounds.x, bounds.y, width, height);
+			setBoundsInPixels (bounds.x, bounds.y, width, height);
 			// widget could be disposed at this point
 		}
 	}
@@ -346,7 +345,7 @@ LRESULT WM_LBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 	Rectangle bounds = event.getBoundsInPixels();
 	if (event.doit) {
 		if ((style & SWT.SMOOTH) != 0) {
-			setBoundsInPixel (bounds.x, bounds.y, width, height);
+			setBoundsInPixels (bounds.x, bounds.y, width, height);
 			// widget could be disposed at this point
 		}
 	}
@@ -404,7 +403,7 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 	}
 	drawBand (lastX, lastY, width, height);
 	if ((style & SWT.SMOOTH) != 0) {
-		setBoundsInPixel (lastX, lastY, width, height);
+		setBoundsInPixels (lastX, lastY, width, height);
 		// widget could be disposed at this point
 	}
 	return result;

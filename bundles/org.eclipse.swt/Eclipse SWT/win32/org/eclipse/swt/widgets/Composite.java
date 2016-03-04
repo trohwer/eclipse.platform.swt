@@ -227,9 +227,7 @@ Widget [] computeTabList () {
 	return result;
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	display.runSkin ();
 	Point size;
 	if (layout != null) {
@@ -370,6 +368,7 @@ int applyThemeBackground () {
  * @since 3.6
  */
 public void drawBackground (GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
+	checkWidget ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	width = DPIUtil.autoScaleUp(width);
@@ -378,11 +377,8 @@ public void drawBackground (GC gc, int x, int y, int width, int height, int offs
 	offsetY = DPIUtil.autoScaleUp(offsetY);
 	drawBackgroundInPixels(gc, x, y, width, height, offsetX, offsetY);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void drawBackgroundInPixels(GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
-	checkWidget ();
+
+void drawBackgroundInPixels(GC gc, int x, int y, int width, int height, int offsetX, int offsetY) {
 	if (gc == null) error (SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed ()) error (SWT.ERROR_INVALID_ARGUMENT);
 	RECT rect = new RECT ();

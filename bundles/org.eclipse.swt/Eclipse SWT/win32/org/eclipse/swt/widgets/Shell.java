@@ -931,9 +931,7 @@ public int getAlpha () {
 	return 0xFF;
 }
 
-@Override
-public Rectangle getBoundsInPixels () {
-	checkWidget ();
+@Override Rectangle getBoundsInPixels () {
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) return super.getBoundsInPixels ();
 	}
@@ -1031,9 +1029,7 @@ public int getImeInputMode () {
 	return result | SWT.ALPHA;
 }
 
-@Override
-public Point getLocationInPixels () {
-	checkWidget ();
+@Override Point getLocationInPixels () {
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
 			return super.getLocationInPixels ();
@@ -1066,14 +1062,11 @@ public boolean getMaximized () {
  * @since 3.1
  */
 public Point getMinimumSize () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getMinimumSizeInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getMinimumSizeInPixels () {
-	checkWidget ();
+Point getMinimumSizeInPixels () {
 	int width = Math.max (0, minWidth);
 	int trim = SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX;
 	if ((style & SWT.NO_TRIM) == 0 && (style & trim) != 0) {
@@ -1138,9 +1131,7 @@ public Shell getShell () {
 	return this;
 }
 
-@Override
-public Point getSizeInPixels () {
-	checkWidget ();
+@Override Point getSizeInPixels () {
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) return super.getSizeInPixels ();
 	}
@@ -1739,13 +1730,11 @@ public void setImeInputMode (int mode) {
  * @since 3.1
  */
 public void setMinimumSize (int width, int height) {
+	checkWidget ();
 	setMinimumSizeInPixels(DPIUtil.autoScaleUp(width), DPIUtil.autoScaleUp(height));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setMinimumSizeInPixels (int width, int height) {
-	checkWidget ();
+
+void setMinimumSizeInPixels (int width, int height) {
 	int widthLimit = 0, heightLimit = 0;
 	int trim = SWT.TITLE | SWT.CLOSE | SWT.MIN | SWT.MAX;
 	if ((style & SWT.NO_TRIM) == 0 && (style & trim) != 0) {
@@ -1788,14 +1777,12 @@ public void setMinimumSizeInPixels (int width, int height) {
  * @since 3.1
  */
 public void setMinimumSize (Point size) {
-	setMinimumSizeInPixels(DPIUtil.autoScaleUp(size));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setMinimumSizeInPixels (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
+	setMinimumSizeInPixels(DPIUtil.autoScaleUp(size));
+}
+
+void setMinimumSizeInPixels (Point size) {
 	setMinimumSizeInPixels (size.x, size.y);
 }
 

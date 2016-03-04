@@ -289,8 +289,7 @@ long /*int*/ borderHandle () {
 	return hwndText;
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
@@ -338,8 +337,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	return new Point (trim.width, trim.height);
 }
 
-@Override
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 
 	/* Get the trim of the text control */

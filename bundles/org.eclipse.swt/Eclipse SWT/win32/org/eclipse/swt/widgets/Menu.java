@@ -1445,13 +1445,13 @@ public void setEnabled (boolean enabled) {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	checkWidget ();
 	setLocationInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
 }
 /**
 * @noreference This method is not intended to be referenced by clients.
 */
 public void setLocationInPixels (int x, int y) {
-	checkWidget ();
 	if ((style & (SWT.BAR | SWT.DROP_DOWN)) != 0) return;
 	this.x = x;
 	this.y = y;
@@ -1483,16 +1483,10 @@ public void setLocationInPixels (int x, int y) {
  * @since 2.1
  */
 public void setLocation (Point location) {
-	setLocationInPixels(DPIUtil.autoScaleUp(location));
-}
-
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setLocationInPixels (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setLocationInPixels (location.x, location.y);
+	location = DPIUtil.autoScaleUp(location);
+	setLocationInPixels(location.x, location.y);
 }
 
 /**

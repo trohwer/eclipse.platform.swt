@@ -410,6 +410,7 @@ void drawRectangles (Rectangle [] rects, boolean stippled) {
  * </ul>
  */
 public Rectangle [] getRectangles () {
+	checkWidget();
 	Rectangle [] result = getRectanglesInPixels();
 	for (int i = 0; i < result.length; i++) {
 		result[i] = DPIUtil.autoScaleDown(result[i]);
@@ -417,11 +418,7 @@ public Rectangle [] getRectangles () {
 	return result;
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle [] getRectanglesInPixels () {
-	checkWidget();
+Rectangle [] getRectanglesInPixels () {
 	Rectangle [] result = new Rectangle [rectangles.length];
 	for (int i = 0; i < rectangles.length; i++) {
 		Rectangle current = rectangles [i];
@@ -859,17 +856,15 @@ public void setCursor(Cursor newCursor) {
  * </ul>
  */
 public void setRectangles (Rectangle [] rectangles) {
+	checkWidget ();
+	if (rectangles == null) error (SWT.ERROR_NULL_ARGUMENT);
 	for (int i = 0; i < rectangles.length; i++) {
 		rectangles [i] = DPIUtil.autoScaleUp (rectangles [i]);
 	}
 	setRectanglesInPixels (rectangles);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setRectanglesInPixels (Rectangle [] rectangles) {
-	checkWidget ();
-	if (rectangles == null) error (SWT.ERROR_NULL_ARGUMENT);
+
+void setRectanglesInPixels (Rectangle [] rectangles) {
 	this.rectangles = new Rectangle [rectangles.length];
 	for (int i = 0; i < rectangles.length; i++) {
 		Rectangle current = rectangles [i];

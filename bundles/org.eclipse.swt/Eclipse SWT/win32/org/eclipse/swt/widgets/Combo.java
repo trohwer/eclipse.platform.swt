@@ -622,8 +622,7 @@ public void clearSelection () {
 	OS.SendMessage (handle, OS.CB_SETEDITSEL, 0, -1);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0;
 	if (wHint == SWT.DEFAULT) {
