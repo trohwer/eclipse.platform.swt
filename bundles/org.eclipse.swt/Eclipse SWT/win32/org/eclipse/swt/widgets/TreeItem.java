@@ -394,13 +394,11 @@ public Color getBackground (int index) {
  * </ul>
  */
 public Rectangle getBounds () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels () {
-	checkWidget ();
+
+Rectangle getBoundsInPixels () {
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (0, true, false, false);
 	int width = rect.right - rect.left, height = rect.bottom - rect.top;
@@ -422,13 +420,11 @@ public Rectangle getBoundsInPixels () {
  * @since 3.1
  */
 public Rectangle getBounds (int index) {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getBoundsInPixels(index));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels (int index) {
-	checkWidget();
+
+Rectangle getBoundsInPixels (int index) {
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (index, true, true, true);
 	int width = rect.right - rect.left, height = rect.bottom - rect.top;
@@ -851,14 +847,11 @@ public Image getImage (int index) {
  * @since 3.1
  */
 public Rectangle getImageBounds (int index) {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getImageBoundsInPixels(index));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getImageBoundsInPixels (int index) {
-	checkWidget();
+Rectangle getImageBoundsInPixels (int index) {
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (index, false, true, false);
 	int width = rect.right - rect.left, height = rect.bottom - rect.top;
@@ -949,14 +942,11 @@ public String getText (int index) {
  * @since 3.3
  */
 public Rectangle getTextBounds (int index) {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getTextBoundsInPixels(index));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getTextBoundsInPixels (int index) {
-	checkWidget();
+Rectangle getTextBoundsInPixels (int index) {
 	if (!parent.checkData (this, true)) error (SWT.ERROR_WIDGET_DISPOSED);
 	RECT rect = getBounds (index, true, false, true);
 	if (index == 0) rect.left += Tree.INSET - 1;

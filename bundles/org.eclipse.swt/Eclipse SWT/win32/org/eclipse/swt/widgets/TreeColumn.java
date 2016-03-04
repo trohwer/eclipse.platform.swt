@@ -311,14 +311,11 @@ public String getToolTipText () {
  * </ul>
  */
 public int getWidth () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getWidthInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getWidthInPixels () {
-	checkWidget ();
+int getWidthInPixels () {
 	int index = parent.indexOf (this);
 	if (index == -1) return 0;
 	long /*int*/ hwndHeader = parent.hwndHeader;
@@ -734,13 +731,11 @@ public void setToolTipText (String string) {
  * </ul>
  */
 public void setWidth (int width) {
+	checkWidget ();
 	setWidthInPixels(DPIUtil.autoScaleUp(width));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setWidthInPixels (int width) {
-	checkWidget ();
+
+void setWidthInPixels (int width) {
 	if (width < 0) return;
 	int index = parent.indexOf (this);
 	if (index == -1) return;

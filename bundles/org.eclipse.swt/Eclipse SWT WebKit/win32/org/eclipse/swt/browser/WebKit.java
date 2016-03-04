@@ -658,7 +658,7 @@ public void create (Composite parent, int style) {
 					break;
 				}
 				case SWT.Resize: {
-					Rectangle bounds = browser.getClientAreaInPixels ();
+					Rectangle bounds = DPIUtil.autoScaleUp(browser.getClientArea ()); // To Pixels
 					OS.SetWindowPos (webViewWindowHandle, 0, bounds.x, bounds.y, bounds.width, bounds.height, OS.SWP_DRAWFRAME);
 					break;
 				}

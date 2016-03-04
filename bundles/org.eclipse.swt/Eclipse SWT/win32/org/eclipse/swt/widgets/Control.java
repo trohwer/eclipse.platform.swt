@@ -619,15 +619,13 @@ void checkMirrored () {
  * @see "computeTrim, getClientArea for controls that implement them"
  */
 public Point computeSize (int wHint, int hHint) {
+	checkWidget ();
 	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint) : wHint);
 	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint) : hHint);
 	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point computeSizeInPixels (int wHint, int hHint) {
+Point computeSizeInPixels (int wHint, int hHint) {
 	return computeSizeInPixels (wHint, hHint, true);
 }
 
@@ -666,16 +664,13 @@ public Point computeSizeInPixels (int wHint, int hHint) {
  * @see "computeTrim, getClientArea for controls that implement them"
  */
 public Point computeSize (int wHint, int hHint, boolean changed){
+	checkWidget ();
 	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint) : wHint);
 	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint) : hHint);
 	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint, changed));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = DEFAULT_WIDTH;
 	int height = DEFAULT_HEIGHT;
 	if (wHint != SWT.DEFAULT) width = wHint;
@@ -1239,14 +1234,11 @@ int getBackgroundPixel () {
  * </ul>
  */
 public int getBorderWidth () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getBorderWidthInPixels ());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getBorderWidthInPixels () {
-	checkWidget ();
+int getBorderWidthInPixels () {
 	long /*int*/ borderHandle = borderHandle ();
 	int bits1 = OS.GetWindowLong (borderHandle, OS.GWL_EXSTYLE);
 	if ((bits1 & OS.WS_EX_CLIENTEDGE) != 0) return OS.GetSystemMetrics (OS.SM_CXEDGE);
@@ -1270,13 +1262,11 @@ public int getBorderWidthInPixels () {
  * </ul>
  */
 public Rectangle getBounds (){
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getBoundsInPixels ());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels () {
-	checkWidget ();
+
+Rectangle getBoundsInPixels () {
 	forceResize ();
 	RECT rect = new RECT ();
 	OS.GetWindowRect (topHandle (), rect);
@@ -1450,14 +1440,11 @@ public Object getLayoutData () {
  * </ul>
  */
 public Point getLocation () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getLocationInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getLocationInPixels () {
-	checkWidget ();
+Point getLocationInPixels () {
 	forceResize ();
 	RECT rect = new RECT ();
 	OS.GetWindowRect (topHandle (), rect);
@@ -1623,14 +1610,11 @@ public Shell getShell () {
  * </ul>
  */
 public Point getSize (){
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getSizeInPixels ());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getSizeInPixels () {
-	checkWidget ();
+Point getSizeInPixels () {
 	forceResize ();
 	RECT rect = new RECT ();
 	OS.GetWindowRect (topHandle (), rect);
@@ -2476,17 +2460,15 @@ void redraw (boolean all) {
  * @see SWT#DOUBLE_BUFFERED
  */
 public void redraw (int x, int y, int width, int height, boolean all) {
+	checkWidget ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	width = DPIUtil.autoScaleUp(width);
 	height = DPIUtil.autoScaleUp(height);
 	redrawInPixels(x, y, width, height, all);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void redrawInPixels (int x, int y, int width, int height, boolean all) {
-	checkWidget ();
+
+void redrawInPixels (int x, int y, int width, int height, boolean all) {
 	if (width <= 0 || height <= 0) return;
 	if (!OS.IsWindowVisible (handle)) return;
 	RECT rect = new RECT ();
@@ -3216,18 +3198,15 @@ void setBackgroundPixel (int pixel) {
  * </ul>
  */
 public void setBounds(int x, int y, int width, int height) {
+	checkWidget ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	width = DPIUtil.autoScaleUp(width);
 	height = DPIUtil.autoScaleUp(height);
-	setBoundsInPixel(x, y, width, height);
+	setBoundsInPixels(x, y, width, height);
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setBoundsInPixel (int x, int y, int width, int height) {
-	checkWidget ();
+void setBoundsInPixels (int x, int y, int width, int height) {
 	int flags = OS.SWP_NOZORDER | OS.SWP_DRAWFRAME | OS.SWP_NOACTIVATE;
 	setBoundsInPixels (x, y, Math.max (0, width), Math.max (0, height), flags);
 }
@@ -3294,15 +3273,13 @@ void setBoundsInPixels (int x, int y, int width, int height, int flags, boolean 
  * </ul>
  */
 public void setBounds (Rectangle rect) {
-	setBoundsInPixels(DPIUtil.autoScaleUp(rect));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setBoundsInPixels (Rectangle rect) {
 	checkWidget ();
 	if (rect == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setBoundsInPixel (rect.x, rect.y, rect.width, rect.height);
+	setBoundsInPixels(DPIUtil.autoScaleUp(rect));
+}
+
+void setBoundsInPixels (Rectangle rect) {
+	setBoundsInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -3551,16 +3528,13 @@ public void setLayoutData (Object layoutData) {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	checkWidget ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	setLocationInPixels(x, y);
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setLocationInPixels (int x, int y) {
-	checkWidget ();
+void setLocationInPixels (int x, int y) {
 	int flags = OS.SWP_NOSIZE | OS.SWP_NOZORDER | OS.SWP_NOACTIVATE;
 	/*
 	* Feature in WinCE.  The SWP_DRAWFRAME flag for SetWindowPos()
@@ -3587,15 +3561,12 @@ public void setLocationInPixels (int x, int y) {
  * </ul>
  */
 public void setLocation (Point location) {
+	checkWidget ();
+	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
 	setLocationInPixels(DPIUtil.autoScaleUp(location));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setLocationInPixels (Point location) {
-	checkWidget ();
-	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
+void setLocationInPixels (Point location) {
 	setLocationInPixels (location.x, location.y);
 }
 
@@ -3790,16 +3761,13 @@ boolean setSavedFocus () {
  * </ul>
  */
 public void setSize (int width, int height) {
+	checkWidget ();
 	width = DPIUtil.autoScaleUp(width);
 	height = DPIUtil.autoScaleUp(height);
 	setSizeInPixels(width, height);
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setSizeInPixels (int width, int height) {
-	checkWidget ();
+void setSizeInPixels (int width, int height) {
 	int flags = OS.SWP_NOMOVE | OS.SWP_NOZORDER | OS.SWP_DRAWFRAME | OS.SWP_NOACTIVATE;
 	setBoundsInPixels (0, 0, Math.max (0, width), Math.max (0, height), flags);
 }
@@ -3823,15 +3791,12 @@ public void setSizeInPixels (int width, int height) {
  * </ul>
  */
 public void setSize (Point size) {
+	checkWidget ();
+	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
 	setSizeInPixels(DPIUtil.autoScaleUp(size));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setSizeInPixels (Point size) {
-	checkWidget ();
-	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
+void setSizeInPixels (Point size) {
 	setSizeInPixels (size.x, size.y);
 }
 
@@ -4037,13 +4002,11 @@ void subclass () {
  * @since 2.1
  */
 public Point toControl (int x, int y) {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(toControlInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y)));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point toControlInPixels (int x, int y) {
-	checkWidget ();
+
+Point toControlInPixels (int x, int y) {
 	POINT pt = new POINT ();
 	pt.x = x;  pt.y = y;
 	OS.ScreenToClient (handle, pt);
@@ -4071,14 +4034,12 @@ public Point toControlInPixels (int x, int y) {
  * </ul>
  */
 public Point toControl (Point point) {
-	return DPIUtil.autoScaleDown(toControlInPixels(DPIUtil.autoScaleUp(point)));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point toControlInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
+	return DPIUtil.autoScaleDown(toControlInPixels(DPIUtil.autoScaleUp(point)));
+}
+
+Point toControlInPixels (Point point) {
 	return toControlInPixels (point.x, point.y);
 }
 
@@ -4103,13 +4064,11 @@ public Point toControlInPixels (Point point) {
  * @since 2.1
  */
 public Point toDisplay (int x, int y) {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(toDisplayInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y)));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point toDisplayInPixels (int x, int y) {
-	checkWidget ();
+
+Point toDisplayInPixels (int x, int y) {
 	POINT pt = new POINT ();
 	pt.x = x;  pt.y = y;
 	OS.ClientToScreen (handle, pt);
@@ -4137,14 +4096,12 @@ public Point toDisplayInPixels (int x, int y) {
  * </ul>
  */
 public Point toDisplay (Point point) {
-	return DPIUtil.autoScaleDown(toDisplayInPixels(DPIUtil.autoScaleUp(point)));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point toDisplayInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
+	return DPIUtil.autoScaleDown(toDisplayInPixels(DPIUtil.autoScaleUp(point)));
+}
+
+Point toDisplayInPixels (Point point) {
 	return toDisplayInPixels (point.x, point.y);
 }
 

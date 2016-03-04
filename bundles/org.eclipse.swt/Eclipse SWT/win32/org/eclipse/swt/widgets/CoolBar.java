@@ -141,9 +141,7 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = 0, height = 0;
 	int border = getBorderWidthInPixels ();
 	int newWidth = wHint == SWT.DEFAULT ? 0x3FFF : wHint + (border * 2);
@@ -561,6 +559,7 @@ public CoolItem [] getItems () {
  * </ul>
  */
 public Point [] getItemSizes () {
+	checkWidget ();
 	Point [] sizes = getItemSizesInPixels();
 	if (sizes != null) {
 		for (int i = 0; i < sizes.length; i++) {
@@ -569,8 +568,8 @@ public Point [] getItemSizes () {
 	}
 	return sizes;
 }
-public Point [] getItemSizesInPixels () {
-	checkWidget ();
+
+Point [] getItemSizesInPixels () {
 	int count = (int)/*64*/OS.SendMessage (handle, OS.RB_GETBANDCOUNT, 0, 0);
 	Point [] sizes = new Point [count];
 	REBARBANDINFO rbBand = new REBARBANDINFO ();
@@ -829,6 +828,7 @@ void setItemColors (int foreColor, int backColor) {
  * </ul>
  */
 public void setItemLayout (int [] itemOrder, int [] wrapIndices, Point [] sizes) {
+	checkWidget ();
 	if (sizes != null) {
 		for (int i = 0; i < sizes.length; i++) {
 			sizes[i] = DPIUtil.autoScaleUp(sizes[i]);
@@ -836,8 +836,8 @@ public void setItemLayout (int [] itemOrder, int [] wrapIndices, Point [] sizes)
 	}
 	setItemLayoutInPixels (itemOrder, wrapIndices, sizes);
 }
-public void setItemLayoutInPixels (int [] itemOrder, int [] wrapIndices, Point [] sizes) {
-	checkWidget ();
+
+void setItemLayoutInPixels (int [] itemOrder, int [] wrapIndices, Point [] sizes) {
 	setRedraw (false);
 	setItemOrder (itemOrder);
 	setWrapIndices (wrapIndices);
@@ -1180,7 +1180,7 @@ LRESULT wmNotifyChild (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 				if (control != null) {
 					int width = lprbcs.rcChild_right - lprbcs.rcChild_left;
 					int height = lprbcs.rcChild_bottom - lprbcs.rcChild_top;
-					control.setBoundsInPixel (lprbcs.rcChild_left, lprbcs.rcChild_top, width, height);
+					control.setBoundsInPixels (lprbcs.rcChild_left, lprbcs.rcChild_top, width, height);
 				}
 			}
 			break;

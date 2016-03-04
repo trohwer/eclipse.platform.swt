@@ -234,13 +234,11 @@ void destroyWidget () {
  * </ul>
  */
 public Rectangle getBounds () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels () {
-	checkWidget();
+
+Rectangle getBoundsInPixels () {
 	long /*int*/ hwnd = parent.handle;
 	int index = (int)/*64*/OS.SendMessage (hwnd, OS.TB_COMMANDTOINDEX, id, 0);
 	RECT rect = new RECT ();
@@ -395,13 +393,11 @@ public String getToolTipText () {
  * </ul>
  */
 public int getWidth () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getWidthInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getWidthInPixels () {
-	checkWidget();
+
+int getWidthInPixels () {
 	long /*int*/ hwnd = parent.handle;
 	int index = (int)/*64*/OS.SendMessage (hwnd, OS.TB_COMMANDTOINDEX, id, 0);
 	RECT rect = new RECT ();
@@ -932,13 +928,11 @@ public void setToolTipText (String string) {
  * </ul>
  */
 public void setWidth (int width) {
+	checkWidget();
 	setWidthInPixels(DPIUtil.autoScaleUp(width));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setWidthInPixels (int width) {
-	checkWidget();
+
+void setWidthInPixels (int width) {
 	if ((style & SWT.SEPARATOR) == 0) return;
 	if (width < 0) return;
 	long /*int*/ hwnd = parent.handle;

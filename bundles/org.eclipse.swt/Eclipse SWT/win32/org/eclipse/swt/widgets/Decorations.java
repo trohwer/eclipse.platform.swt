@@ -348,8 +348,7 @@ Control computeTabRoot () {
 	return this;
 }
 
-@Override
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 
 	/* Get the size of the trimmings */
@@ -491,8 +490,7 @@ void fixDecorations (Decorations newDecorations, Control control, Menu [] menus)
 	}
 }
 
-@Override
-public Rectangle getBoundsInPixels () {
+@Override Rectangle getBoundsInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
@@ -512,8 +510,7 @@ public Rectangle getBoundsInPixels () {
 	return super.getBoundsInPixels ();
 }
 
-@Override
-public Rectangle getClientAreaInPixels () {
+@Override Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	/*
 	* Note: The CommandBar is part of the client area,
@@ -646,8 +643,7 @@ public Image [] getImages () {
 	return result;
 }
 
-@Override
-public Point getLocationInPixels () {
+@Override Point getLocationInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {
@@ -726,8 +722,7 @@ String getNameText () {
 	return getText ();
 }
 
-@Override
-public Point getSizeInPixels () {
+@Override Point getSizeInPixels () {
 	checkWidget ();
 	if (!OS.IsWinCE) {
 		if (OS.IsIconic (handle)) {

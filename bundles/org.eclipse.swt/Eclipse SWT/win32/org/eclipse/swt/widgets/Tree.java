@@ -1813,9 +1813,7 @@ long /*int*/ CompareFunc (long /*int*/ lParam1, long /*int*/ lParam2, long /*int
 	return sortDirection == SWT.UP ? text1.compareTo (text2) : text2.compareTo (text1);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = 0, height = 0;
 	if (hwndHeader != 0) {
 		HDITEM hdItem = new HDITEM ();
@@ -2932,14 +2930,11 @@ TreeItem getFocusItem () {
  * @since 3.1
  */
 public int getGridLineWidth () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getGridLineWidthInPixels ());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getGridLineWidthInPixels () {
-	checkWidget ();
+int getGridLineWidthInPixels () {
 	return GRID_WIDTH;
 }
 
@@ -2956,13 +2951,11 @@ public int getGridLineWidthInPixels () {
  * @since 3.1
  */
 public int getHeaderHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getHeaderHeightInPixels ());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getHeaderHeightInPixels () {
-	checkWidget ();
+
+int getHeaderHeightInPixels () {
 	if (hwndHeader == 0) return 0;
 	RECT rect = new RECT ();
 	OS.GetWindowRect (hwndHeader, rect);
@@ -3214,14 +3207,12 @@ TreeItem getItem (NMTVCUSTOMDRAW nmcd) {
  * </ul>
  */
 public TreeItem getItem (Point point) {
-	return getItemInPixels(DPIUtil.autoScaleUp(point));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public TreeItem getItemInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
+	return getItemInPixels(DPIUtil.autoScaleUp(point));
+}
+
+TreeItem getItemInPixels (Point point) {
 	TVHITTESTINFO lpht = new TVHITTESTINFO ();
 	lpht.x = point.x;
 	lpht.y = point.y;
@@ -3291,14 +3282,11 @@ int getItemCount (long /*int*/ hItem) {
  * </ul>
  */
 public int getItemHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getItemHeightInPixels () {
-	checkWidget ();
+int getItemHeightInPixels () {
 	return (int)/*64*/OS.SendMessage (handle, OS.TVM_GETITEMHEIGHT, 0, 0);
 }
 

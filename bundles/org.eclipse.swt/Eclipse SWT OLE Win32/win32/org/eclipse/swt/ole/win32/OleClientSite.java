@@ -826,7 +826,7 @@ protected int GetWindow(long /*int*/ phwnd) {
 	return COM.S_OK;
 }
 RECT getRect() {
-	Rectangle area = getClientAreaInPixels();
+	Rectangle area = DPIUtil.autoScaleUp(getClientArea()); // To Pixels
 	RECT rect = new RECT();
 	rect.left   = area.x;
 	rect.top    = area.y;
@@ -1003,14 +1003,14 @@ private int OnInPlaceDeactivate() {
 	return COM.S_OK;
 }
 private int OnPosRectChange(long /*int*/ lprcPosRect) {
-	Point size = getSizeInPixels();
+	Point size = DPIUtil.autoScaleUp(getSize()); // To Pixels
 	setExtent(size.x, size.y);
 	return COM.S_OK;
 }
 private void onPaint(Event e) {
 	if (state == STATE_RUNNING || state == STATE_INPLACEACTIVE) {
 		SIZE size = getExtent();
-		Rectangle area = getClientAreaInPixels();
+		Rectangle area = DPIUtil.autoScaleUp(getClientArea()); // To Pixels
 		RECT rect = new RECT();
 		if (getProgramID().startsWith("Excel.Sheet")) { //$NON-NLS-1$
 			rect.left = area.x; rect.right = area.x + (area.height * size.cx / size.cy);
@@ -1400,11 +1400,11 @@ void setBorderSpace(RECT newBorderwidth) {
 	setBounds();
 }
 void setBounds() {
-	Rectangle area = frame.getClientAreaInPixels();
-	setBoundsInPixel(borderWidths.left,
-		      borderWidths.top,
-			  area.width - borderWidths.left - borderWidths.right,
-			  area.height - borderWidths.top - borderWidths.bottom);
+	Rectangle area = DPIUtil.autoScaleUp(frame.getClientArea()); // To Pixels
+	setBounds(DPIUtil.autoScaleDown(borderWidths.left),
+		      DPIUtil.autoScaleDown(borderWidths.top),
+			  DPIUtil.autoScaleDown(area.width - borderWidths.left - borderWidths.right),
+			  DPIUtil.autoScaleDown(area.height - borderWidths.top - borderWidths.bottom));
 	setObjectRects();
 }
 private void setExtent(int width, int height){

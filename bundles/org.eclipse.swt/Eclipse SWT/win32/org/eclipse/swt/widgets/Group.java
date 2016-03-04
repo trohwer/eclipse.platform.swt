@@ -151,8 +151,7 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	Point size = super.computeSizeInPixels (wHint, hHint, changed);
 	int length = text.length ();
@@ -179,8 +178,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	return size;
 }
 
-@Override
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle trim = super.computeTrimInPixels (x, y, width, height);
 	long /*int*/ newFont, oldFont = 0;
@@ -251,8 +249,7 @@ String fixText (boolean enabled) {
 	return null;
 }
 
-@Override
-public Rectangle getClientAreaInPixels () {
+@Override Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
 	RECT rect = new RECT ();

@@ -367,13 +367,13 @@ long /*int*/ EnumFontFamProc (long /*int*/ lpelfe, long /*int*/ lpntme, long /*i
  * </ul>
  */
 public Rectangle getBounds() {
+	checkDevice ();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
 /**
 * @noreference This method is not intended to be referenced by clients.
 */
-public Rectangle getBoundsInPixels () {
-	checkDevice ();
+protected Rectangle getBoundsInPixels () {
 	long /*int*/ hDC = internal_new_GC (null);
 	int width = OS.GetDeviceCaps (hDC, OS.HORZRES);
 	int height = OS.GetDeviceCaps (hDC, OS.VERTRES);
@@ -436,13 +436,14 @@ public DeviceData getDeviceData () {
  * @see #getBounds
  */
 public Rectangle getClientArea () {
+	checkDevice ();
 	return DPIUtil.autoScaleDown(getClientAreaInPixels());
 }
 
 /**
 * @noreference This method is not intended to be referenced by clients.
 */
-public Rectangle getClientAreaInPixels () {
+protected Rectangle getClientAreaInPixels () {
 	return getBoundsInPixels ();
 }
 

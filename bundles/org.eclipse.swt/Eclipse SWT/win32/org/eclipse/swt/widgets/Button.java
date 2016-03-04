@@ -397,8 +397,7 @@ int computeLeftMargin () {
 	return margin;
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0, border = getBorderWidthInPixels ();
 	if ((style & SWT.ARROW) != 0) {

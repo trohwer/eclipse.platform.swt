@@ -1463,9 +1463,7 @@ public void clearAll () {
 	}
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
-	checkWidget ();
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	if (fixScrollWidth) setScrollWidth (null, true);
 	//This code is intentionally commented
 //	if (itemHeight == -1 && hooks (SWT.MeasureItem)) {
@@ -2460,13 +2458,11 @@ int getFocusIndex () {
  * </ul>
  */
 public int getGridLineWidth () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getGridLineWidthInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getGridLineWidthInPixels () {
-	checkWidget ();
+
+int getGridLineWidthInPixels () {
 	return GRID_WIDTH;
 }
 
@@ -2483,14 +2479,11 @@ public int getGridLineWidthInPixels () {
  * @since 2.0
  */
 public int getHeaderHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getHeaderHeightInPixels ());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getHeaderHeightInPixels () {
-	checkWidget ();
+int getHeaderHeightInPixels () {
 	long /*int*/ hwndHeader = OS.SendMessage (handle, OS.LVM_GETHEADER, 0, 0);
 	if (hwndHeader == 0) return 0;
 	RECT rect = new RECT ();
@@ -2567,14 +2560,12 @@ public TableItem getItem (int index) {
  * </ul>
  */
 public TableItem getItem (Point point) {
-	return getItemInPixels (DPIUtil.autoScaleUp(point));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public TableItem getItemInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
+	return getItemInPixels (DPIUtil.autoScaleUp(point));
+}
+
+TableItem getItemInPixels (Point point) {
 	int count = (int)/*64*/OS.SendMessage (handle, OS.LVM_GETITEMCOUNT, 0, 0);
 	if (count == 0) return null;
 	LVHITTESTINFO pinfo = new LVHITTESTINFO ();
@@ -2671,14 +2662,11 @@ public int getItemCount () {
  * </ul>
  */
 public int getItemHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getItemHeightInPixels () {
-	checkWidget ();
+int getItemHeightInPixels () {
 	if (!painted && hooks (SWT.MeasureItem)) hitTestSelection (0, 0, 0);
 	long /*int*/ empty = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 0, 0);
 	long /*int*/ oneItem = OS.SendMessage (handle, OS.LVM_APPROXIMATEVIEWRECT, 1, 0);

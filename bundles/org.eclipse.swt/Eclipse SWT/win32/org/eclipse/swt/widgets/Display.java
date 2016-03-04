@@ -1512,7 +1512,7 @@ public Menu getMenuBar () {
  * </ul>
  */
 @Override
-public Rectangle getBoundsInPixels () {
+protected Rectangle getBoundsInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		int width = OS.GetSystemMetrics (OS.SM_CXSCREEN);
@@ -1580,7 +1580,7 @@ int getClickCount (int type, int button, long /*int*/ hwnd, long /*int*/ lParam)
  * @see #getBounds
  */
 @Override
-public Rectangle getClientAreaInPixels () {
+protected Rectangle getClientAreaInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		RECT rect = new RECT ();
@@ -1660,6 +1660,7 @@ public Control getCursorControl () {
  * </ul>
  */
 public Point getCursorLocation () {
+	checkDevice ();
 	return DPIUtil.autoScaleDown(getCursorLocationInPixels());
 }
 
@@ -1667,7 +1668,6 @@ public Point getCursorLocation () {
 * @noreference This method is not intended to be referenced by clients.
 */
 public Point getCursorLocationInPixels () {
-	checkDevice ();
 	POINT pt = new POINT ();
 	OS.GetCursorPos (pt);
 	return new Point (pt.x, pt.y);
@@ -2959,6 +2959,8 @@ boolean isValidThread () {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, Point point) {
+	checkDevice ();
+	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	point = DPIUtil.autoScaleUp(point);
 	return DPIUtil.autoScaleDown(mapInPixels(from, to, point));
 }
@@ -2967,8 +2969,6 @@ public Point map (Control from, Control to, Point point) {
 * @noreference This method is not intended to be referenced by clients.
 */
 public Point mapInPixels (Control from, Control to, Point point) {
-	checkDevice ();
-	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
 	return mapInPixels (from, to, point.x, point.y);
 }
 
@@ -3009,16 +3009,13 @@ public Point mapInPixels (Control from, Control to, Point point) {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, int x, int y) {
+	checkDevice ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point mapInPixels (Control from, Control to, int x, int y) {
-	checkDevice ();
+Point mapInPixels (Control from, Control to, int x, int y) {
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (from == to) return new Point (x, y);
@@ -3068,16 +3065,13 @@ public Point mapInPixels (Control from, Control to, int x, int y) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, Rectangle rectangle) {
+	checkDevice ();
+	if (rectangle == null) error (SWT.ERROR_NULL_ARGUMENT);
 	rectangle = DPIUtil.autoScaleUp(rectangle);
 	return DPIUtil.autoScaleDown(mapInPixels(from, to, rectangle));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
-	checkDevice ();
-	if (rectangle == null) error (SWT.ERROR_NULL_ARGUMENT);
+Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
 	return mapInPixels (from, to, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 }
 
@@ -3120,17 +3114,15 @@ public Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, int x, int y, int width, int height) {
+	checkDevice ();
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
 	width = DPIUtil.autoScaleUp(width);
 	height = DPIUtil.autoScaleUp(height);
 	return DPIUtil.autoScaleDown(mapInPixels(from, to, x, y, width, height));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle mapInPixels (Control from, Control to, int x, int y, int width, int height) {
-	checkDevice ();
+
+Rectangle mapInPixels (Control from, Control to, int x, int y, int width, int height) {
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (to != null && to.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
 	if (from == to) return new Rectangle (x, y, width, height);

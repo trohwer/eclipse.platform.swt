@@ -664,8 +664,7 @@ public void clearSelection () {
 	}
 }
 
-@Override
-public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int height = 0, width = 0;
 	if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
@@ -713,8 +712,7 @@ public Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	return new Point (trim.width, trim.height);
 }
 
-@Override
-public Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle rect = super.computeTrimInPixels (x, y, width, height);
 	/*
@@ -895,8 +893,7 @@ void fixAlignment () {
 	OS.SetWindowLong (handle, OS.GWL_STYLE, bits2);
 }
 
-@Override
-public int getBorderWidthInPixels () {
+@Override int getBorderWidthInPixels () {
 	checkWidget ();
 	/*
 	* Feature in Windows 2000 and XP.  Despite the fact that WS_BORDER

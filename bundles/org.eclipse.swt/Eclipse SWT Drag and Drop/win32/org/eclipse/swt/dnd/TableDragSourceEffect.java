@@ -12,6 +12,7 @@ package org.eclipse.swt.dnd;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.widgets.*;
 
@@ -163,9 +164,9 @@ public class TableDragSourceEffect extends DragSourceEffect {
 		long /*int*/ tableImageList = OS.SendMessage (table.handle, OS.LVM_GETIMAGELIST, OS.LVSIL_SMALL, 0);
 		if (tableImageList != 0) {
 			int count = Math.min(selection.length, 10);
-			Rectangle bounds = selection[0].getBoundsInPixels(0);
+			Rectangle bounds = DPIUtil.autoScaleUp(selection[0].getBounds(0));
 			for (int i = 1; i < count; i++) {
-				bounds = bounds.union(selection[i].getBoundsInPixels(0));
+				bounds = bounds.union(DPIUtil.autoScaleUp(selection[i].getBounds(0)));
 			}
 			long /*int*/ hDC = OS.GetDC(0);
 			long /*int*/ hDC1 = OS.CreateCompatibleDC(hDC);
@@ -183,7 +184,7 @@ public class TableDragSourceEffect extends DragSourceEffect {
 			OS.FillRect(hDC1, rect, hBrush);
 			for (int i = 0; i < count; i++) {
 				TableItem selected = selection[i];
-				Rectangle cell = selected.getBoundsInPixels(0);
+				Rectangle cell = DPIUtil.autoScaleUp(selected.getBounds(0));
 				POINT pt = new POINT();
 				long /*int*/ imageList = OS.SendMessage (table.handle, OS.LVM_CREATEDRAGIMAGE, table.indexOf(selected), pt);
 				OS.ImageList_Draw(imageList, 0, hDC1, cell.x - bounds.x, cell.y - bounds.y, OS.ILD_SELECTED);
