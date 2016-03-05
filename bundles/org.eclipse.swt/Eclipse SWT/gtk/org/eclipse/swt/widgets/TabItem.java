@@ -153,21 +153,10 @@ void destroyWidget () {
  * @since 3.4
  */
 public Rectangle getBounds () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getBoundsInPixels ());
 }
-/**
- * Returns a rectangle describing the receiver's size and location
- * relative to its parent.
- *
- * @return the receiver's bounding rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
+
 Rectangle getBoundsInPixels () {
 	checkWidget();
 	GtkAllocation allocation = new GtkAllocation ();

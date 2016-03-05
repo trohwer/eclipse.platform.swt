@@ -536,7 +536,8 @@ void clearAll (boolean all, long /*int*/ parentIter) {
 	OS.g_free (iter);
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
@@ -1144,7 +1145,8 @@ GdkColor getBackgroundColor () {
 	return getBaseColor ();
 }
 
-@Override Rectangle getClientAreaInPixels () {
+@Override
+Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
 	OS.gtk_widget_realize (handle);
@@ -1387,6 +1389,7 @@ GdkColor getForegroundColor () {
  * @since 3.1
  */
 public int getGridLineWidth () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getGridLineWidthInPixels ());
 }
 /**
@@ -1419,21 +1422,10 @@ protected int getGridLineWidthInPixels () {
  * @since 3.1
  */
 public int getHeaderHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getHeaderHeightInPixels ());
 }
 
-/**
- * Returns the height of the receiver's header
- *
- * @return the height of the header or zero if the header is not visible
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 int getHeaderHeightInPixels () {
 	checkWidget ();
 	if (!OS.gtk_tree_view_get_headers_visible (handle)) return 0;
@@ -1602,21 +1594,10 @@ public int getItemCount () {
  * </ul>
  */
 public int getItemHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getItemHeightInPixels ());
 }
 
-/**
- * Returns the height of the area which would be used to
- * display <em>one</em> of the items in the tree.
- *
- * @return the height of one item
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 int getItemHeightInPixels () {
 	checkWidget ();
 	int itemCount = OS.gtk_tree_model_iter_n_children (modelHandle, 0);

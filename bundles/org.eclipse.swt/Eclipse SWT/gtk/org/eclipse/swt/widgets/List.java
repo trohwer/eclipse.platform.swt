@@ -251,7 +251,8 @@ int applyThemeBackground () {
 	return -1; /* No Change */
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
@@ -529,18 +530,6 @@ public int getItemHeight () {
 	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
-/**
- * Returns the height of the area which would be used to
- * display <em>one</em> of the items in the list.
- *
- * @return the height of one item
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 int getItemHeightInPixels () {
 	checkWidget();
 	int itemCount = OS.gtk_tree_model_iter_n_children (modelHandle, 0);

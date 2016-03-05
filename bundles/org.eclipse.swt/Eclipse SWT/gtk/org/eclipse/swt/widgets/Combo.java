@@ -393,7 +393,8 @@ void clearText () {
 	OS.g_signal_handlers_unblock_matched (handle, OS.G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, CHANGED);
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if ((style & SWT.READ_ONLY) != 0 || OS.GTK3) {
 		return computeNativeSize (handle, wHint, hHint, changed);
@@ -851,19 +852,8 @@ public Point getCaretLocation () {
 	checkWidget ();
 	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
 }
-/**
- * Returns a point describing the location of the caret relative
- * to the receiver.
- *
- * @return a point, the location of the caret
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
+
+
 Point getCaretLocationInPixels () {
 	checkWidget ();
 	if ((style & SWT.READ_ONLY) != 0) {
@@ -1152,17 +1142,7 @@ public int getTextHeight () {
 	return DPIUtil.autoScaleDown(getTextHeightInPixels());
 }
 
-/**
- * Returns the height of the receivers's text field.
- *
- * @return the text height
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
+
 int getTextHeightInPixels () {
 	checkWidget();
 	GtkRequisition requisition = new GtkRequisition ();
@@ -2173,26 +2153,10 @@ public void setOrientation (int orientation) {
  * </ul>
  */
 public void setSelection (Point selection) {
+	checkWidget();
 	selection = DPIUtil.autoScaleUp(selection);
 }
 
-/**
- * Sets the selection in the receiver's text field to the
- * range specified by the argument whose x coordinate is the
- * start of the selection and whose y coordinate is the end
- * of the selection.
- *
- * @param selection a point representing the new selection start and end
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setSelectionInPixels (Point selection) {
 	checkWidget();
 	if (selection == null) error (SWT.ERROR_NULL_ARGUMENT);

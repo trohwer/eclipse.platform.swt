@@ -422,23 +422,10 @@ public Color getBackground (int index) {
  * @since 3.1
  */
 public Rectangle getBounds (int index) {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getBoundsInPixels (index));
 }
 
-/**
- * Returns a rectangle describing the receiver's size and location
- * relative to its parent at a column in the tree.
- *
- * @param index the index that specifies the column
- * @return the receiver's bounding column rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 Rectangle getBoundsInPixels (int index) {
 	// TODO fully test on early and later versions of GTK
 	checkWidget();
@@ -485,20 +472,10 @@ Rectangle getBoundsInPixels (int index) {
  * </ul>
  */
 public Rectangle getBounds () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getBoundsInPixels ());
 }
-/**
- * Returns a rectangle describing the size and location of the receiver's
- * text relative to its parent.
- *
- * @return the bounding rectangle of the receiver's text
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
+
 Rectangle getBoundsInPixels () {
 	// TODO fully test on early and later versions of GTK
 	// shifted a bit too far right on later versions of GTK - however, old Tree also had this problem
@@ -734,23 +711,10 @@ public Image getImage (int index) {
  * @since 3.1
  */
 public Rectangle getImageBounds (int index) {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getImageBoundsInPixels(index));
 }
-/**
- * Returns a rectangle describing the size and location
- * relative to its parent of an image at a column in the
- * tree.
- *
- * @param index the index that specifies the column
- * @return the receiver's bounding image rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
+
 Rectangle getImageBoundsInPixels (int index) {
 	// TODO fully test on early and later versions of GTK
 	checkWidget ();
@@ -965,24 +929,10 @@ public String getText (int index) {
  * @since 3.3
  */
 public Rectangle getTextBounds (int index) {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getTextBoundsInPixels(index));
 }
 
-/**
- * Returns a rectangle describing the size and location
- * relative to its parent of the text at a column in the
- * tree.
- *
- * @param index the index that specifies the column
- * @return the receiver's bounding text rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 Rectangle getTextBoundsInPixels (int index) {
 	checkWidget ();
 	if (!parent.checkData (this)) error (SWT.ERROR_WIDGET_DISPOSED);

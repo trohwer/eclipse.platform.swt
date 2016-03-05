@@ -102,13 +102,15 @@ long /*int*/ clientHandle () {
 	return clientHandle;
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	Point size = super.computeSizeInPixels(wHint, hHint, changed);
 	int width = computeNativeSize (handle, SWT.DEFAULT, SWT.DEFAULT, false).x;
 	size.x = Math.max (size.x, width);
 	return size;
 }
-@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget();
 	forceResize ();
 	GtkAllocation allocation = new GtkAllocation();
@@ -122,7 +124,8 @@ long /*int*/ clientHandle () {
 	return new Rectangle (x, y, width, height);
 }
 
-@Override Rectangle getClientAreaInPixels () {
+@Override
+Rectangle getClientAreaInPixels () {
 	Rectangle clientRectangle = super.getClientAreaInPixels ();
 	/*
 	* Bug 453827 Child position fix.

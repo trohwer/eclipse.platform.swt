@@ -320,20 +320,10 @@ public String getToolTipText () {
  * </ul>
  */
 public int getWidth () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getWidthInPixels());
 }
 
-/**
- * Gets the width of the receiver.
- *
- * @return the width
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 int getWidthInPixels () {
 	checkWidget();
 	if (!OS.gtk_tree_view_column_get_visible (handle)) {
@@ -704,20 +694,10 @@ void setToolTipText (Shell shell, String newString) {
  * </ul>
  */
 public void setWidth (int width) {
+	checkWidget ();
 	setWidthInPixels (DPIUtil.autoScaleUp (width));
 }
 
-/**
- * Sets the width of the receiver.
- *
- * @param width the new width
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setWidthInPixels (int width) {
 	checkWidget();
 	if (width < 0) return;

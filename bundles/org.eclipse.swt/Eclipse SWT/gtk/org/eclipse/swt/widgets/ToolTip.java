@@ -710,27 +710,10 @@ public void setAutoHide (boolean autoHide) {
  * </ul>
  */
 public void setLocation (int x, int y) {
+	checkWidget ();
 	setLocation (new Point (x, y));
 }
 
-/**
- * Sets the location of the receiver, which must be a tooltip,
- * to the point specified by the arguments which are relative
- * to the display.
- * <p>
- * Note that this is different from most widgets where the
- * location of the widget is relative to the parent.
- * </p>
- *
- * @param x the new x coordinate for the receiver
- * @param y the new y coordinate for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setLocationInPixels (int x, int y) {
 	checkWidget ();
 	this.x = x;
@@ -762,32 +745,10 @@ void setLocationInPixels (int x, int y) {
  * </ul>
  */
 public void setLocation (Point location) {
+	checkWidget ();
 	setLocationInPixels(DPIUtil.autoScaleUp(location));
 }
 
-/**
- * Sets the location of the receiver, which must be a tooltip,
- * to the point specified by the argument which is relative
- * to the display.
- * <p>
- * Note that this is different from most widgets where the
- * location of the widget is relative to the parent.
- * </p><p>
- * Note that the platform window manager ultimately has control
- * over the location of tooltips.
- * </p>
- *
- * @param location the new location for the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setLocationInPixels (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);

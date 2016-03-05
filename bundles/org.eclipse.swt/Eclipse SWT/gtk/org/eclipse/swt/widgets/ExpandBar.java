@@ -115,7 +115,8 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
 	Point size = computeNativeSize (handle, wHint, hHint, changed);
@@ -305,17 +306,6 @@ public int getSpacing () {
 	return DPIUtil.autoScaleDown(spacing);
 }
 
-/**
- * Returns the receiver's spacing.
- *
- * @return the spacing
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 int getSpacingInPixels () {
 	checkWidget ();
 	return spacing;
@@ -533,20 +523,10 @@ void setScrollbar () {
  * </ul>
  */
 public void setSpacing (int spacing) {
+	checkWidget ();
 	setSpacingInPixels(DPIUtil.autoScaleUp(spacing));
 }
-/**
- * Sets the receiver's spacing. Spacing specifies the number of pixels allocated around
- * each item.
- *
- * @param spacing the spacing around each item
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
+
 void setSpacingInPixels (int spacing) {
 	checkWidget ();
 	if (spacing < 0) return;

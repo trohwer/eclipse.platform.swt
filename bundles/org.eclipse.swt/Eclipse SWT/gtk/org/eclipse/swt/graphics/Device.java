@@ -331,21 +331,13 @@ protected void destroy () {
  * </ul>
  */
 public Rectangle getBounds () {
+	checkDevice ();
 	return DPIUtil.autoScaleDown (getBoundsInPixels ());
 }
-
 /**
- * Returns a rectangle describing the receiver's size and location.
- *
- * @return the bounding rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
  * @since 3.105
  */
 protected Rectangle getBoundsInPixels () {
-	checkDevice ();
 	return new Rectangle(0, 0, 0, 0);
 }
 
@@ -404,23 +396,13 @@ public DeviceData getDeviceData () {
  * @see #getBounds
  */
 public Rectangle getClientArea () {
+	checkDevice ();
 	return DPIUtil.autoScaleDown (getClientAreaInPixels ());
 }
 /**
- * Returns a rectangle which describes the area of the
- * receiver which is capable of displaying data.
- *
- * @return the client area
- *
- * @exception SWTException <ul>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @see #getBounds
  * @since 3.105
  */
 protected Rectangle getClientAreaInPixels () {
-	checkDevice ();
 	return getBoundsInPixels ();
 }
 

@@ -203,7 +203,8 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
@@ -250,7 +251,8 @@ protected void checkSubclass () {
 	return new Point (trim.width, trim.height);
 }
 
-@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	int xborder = 0, yborder = 0;
 	Rectangle trim = super.computeTrimInPixels (x, y, width, height);
@@ -417,7 +419,8 @@ GdkColor getBackgroundColor () {
 	return getBaseColor ();
 }
 
-@Override int getBorderWidthInPixels () {
+@Override
+int getBorderWidthInPixels () {
 	checkWidget();
 	if ((this.style & SWT.BORDER) != 0) {
 		return getThickness (handle).x;

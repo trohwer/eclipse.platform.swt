@@ -113,7 +113,8 @@ void addRelation (Control control) {
 	control.labelRelation = this;
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
@@ -295,7 +296,8 @@ public int getAlignment () {
 	return SWT.LEFT;
 }
 
-@Override int getBorderWidthInPixels () {
+@Override
+int getBorderWidthInPixels () {
 	checkWidget();
 	if (frameHandle != 0) {
 		return getThickness (frameHandle).x;

@@ -282,19 +282,10 @@ public boolean getExpanded () {
  * </ul>
  */
 public int getHeaderHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getHeaderHeightInPixels ());
 }
-/**
- * Returns the height of the receiver's header
- *
- * @return the height of the header
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
+
 int getHeaderHeightInPixels () {
 	checkWidget ();
 	GtkAllocation allocation = new GtkAllocation ();
@@ -312,19 +303,10 @@ int getHeaderHeightInPixels () {
  * </ul>
  */
 public int getHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getHeightInPixels());
 }
-/**
- * Gets the height of the receiver.
- *
- * @return the height
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
+
 int getHeightInPixels () {
 	checkWidget ();
 	return height;
@@ -600,21 +582,10 @@ void setForegroundColor (GdkColor color) {
  * </ul>
  */
 public void setHeight (int height) {
+	checkWidget ();
 	setHeightInPixels(DPIUtil.autoScaleUp(height));
 }
 
-/**
- * Sets the height of the receiver. This is height of the item when it is expanded,
- * excluding the height of the header.
- *
- * @param height the new height
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setHeightInPixels (int height) {
 	checkWidget ();
 	if (height < 0) return;

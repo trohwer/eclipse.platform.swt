@@ -1402,17 +1402,6 @@ public Shell getActiveShell () {
 	return activeShell;
 }
 
-/**
- * Returns a rectangle describing the receiver's size and location. Note that
- * on multi-monitor systems the origin can be negative.
- *
- * @return the bounding rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- */
 @Override
 protected Rectangle getBoundsInPixels () {
 	checkDevice ();
@@ -1582,18 +1571,6 @@ public Point getCursorLocation () {
 	return DPIUtil.autoScaleDown(getCursorLocationInPixels());
 }
 
-/**
- * Returns the location of the on-screen pointer relative
- * to the top left corner of the screen.
- *
- * @return the cursor location
- *
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- * @since 3.105
- */
 Point getCursorLocationInPixels () {
 	checkDevice ();
 	int [] x = new int [1], y = new int [1];
@@ -3160,45 +3137,10 @@ boolean isValidThread () {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, Point point) {
+	checkDevice();
 	return DPIUtil.autoScaleDown(mapInPixels(from, to, DPIUtil.autoScaleUp(point)));
 }
 
-/**
- * Maps a point from one coordinate system to another.
- * When the control is null, coordinates are mapped to
- * the display.
- * <p>
- * NOTE: On right-to-left platforms where the coordinate
- * systems are mirrored, special care needs to be taken
- * when mapping coordinates from one control to another
- * to ensure the result is correctly mirrored.
- *
- * Mapping a point that is the origin of a rectangle and
- * then adding the width and height is not equivalent to
- * mapping the rectangle.  When one control is mirrored
- * and the other is not, adding the width and height to a
- * point that was mapped causes the rectangle to extend
- * in the wrong direction.  Mapping the entire rectangle
- * instead of just one point causes both the origin and
- * the corner of the rectangle to be mapped.
- * </p>
- *
- * @param from the source <code>Control</code> or <code>null</code>
- * @param to the destination <code>Control</code> or <code>null</code>
- * @param point to be mapped
- * @return point with mapped coordinates
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the Control from or the Control to have been disposed</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 Point mapInPixels (Control from, Control to, Point point) {
 	checkDevice ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -3242,45 +3184,10 @@ Point mapInPixels (Control from, Control to, Point point) {
  * @since 2.1.2
  */
 public Point map (Control from, Control to, int x, int y) {
+	checkDevice();
 	return map(from, to, new Point(x, y));
 }
 
-/**
- * Maps a point from one coordinate system to another.
- * When the control is null, coordinates are mapped to
- * the display.
- * <p>
- * NOTE: On right-to-left platforms where the coordinate
- * systems are mirrored, special care needs to be taken
- * when mapping coordinates from one control to another
- * to ensure the result is correctly mirrored.
- *
- * Mapping a point that is the origin of a rectangle and
- * then adding the width and height is not equivalent to
- * mapping the rectangle.  When one control is mirrored
- * and the other is not, adding the width and height to a
- * point that was mapped causes the rectangle to extend
- * in the wrong direction.  Mapping the entire rectangle
- * instead of just one point causes both the origin and
- * the corner of the rectangle to be mapped.
- * </p>
- *
- * @param from the source <code>Control</code> or <code>null</code>
- * @param to the destination <code>Control</code> or <code>null</code>
- * @param x coordinates to be mapped
- * @param y coordinates to be mapped
- * @return point with mapped coordinates
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the Control from or the Control to have been disposed</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 Point mapInPixels (Control from, Control to, int x, int y) {
 	checkDevice ();
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);
@@ -3339,45 +3246,10 @@ Point mapInPixels (Control from, Control to, int x, int y) {
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, Rectangle rectangle) {
+	checkDevice();
 	return DPIUtil.autoScaleDown(mapInPixels(from, to, DPIUtil.autoScaleUp(rectangle)));
 }
 
-/**
- * Maps a point from one coordinate system to another.
- * When the control is null, coordinates are mapped to
- * the display.
- * <p>
- * NOTE: On right-to-left platforms where the coordinate
- * systems are mirrored, special care needs to be taken
- * when mapping coordinates from one control to another
- * to ensure the result is correctly mirrored.
- *
- * Mapping a point that is the origin of a rectangle and
- * then adding the width and height is not equivalent to
- * mapping the rectangle.  When one control is mirrored
- * and the other is not, adding the width and height to a
- * point that was mapped causes the rectangle to extend
- * in the wrong direction.  Mapping the entire rectangle
- * instead of just one point causes both the origin and
- * the corner of the rectangle to be mapped.
- * </p>
- *
- * @param from the source <code>Control</code> or <code>null</code>
- * @param to the destination <code>Control</code> or <code>null</code>
- * @param rectangle to be mapped
- * @return rectangle with mapped coordinates
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the rectangle is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the Control from or the Control to have been disposed</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 Rectangle mapInPixels (Control from, Control to, Rectangle rectangle) {
 	checkDevice();
 	if (rectangle == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -3446,47 +3318,10 @@ long /*int*/ menuPositionProc (long /*int*/ menu, long /*int*/ x, long /*int*/ y
  * @since 2.1.2
  */
 public Rectangle map (Control from, Control to, int x, int y, int width, int height) {
+	checkDevice();
 	return map(from, to, new Rectangle(x, y, width, height));
 }
 
-/**
- * Maps a point from one coordinate system to another.
- * When the control is null, coordinates are mapped to
- * the display.
- * <p>
- * NOTE: On right-to-left platforms where the coordinate
- * systems are mirrored, special care needs to be taken
- * when mapping coordinates from one control to another
- * to ensure the result is correctly mirrored.
- *
- * Mapping a point that is the origin of a rectangle and
- * then adding the width and height is not equivalent to
- * mapping the rectangle.  When one control is mirrored
- * and the other is not, adding the width and height to a
- * point that was mapped causes the rectangle to extend
- * in the wrong direction.  Mapping the entire rectangle
- * instead of just one point causes both the origin and
- * the corner of the rectangle to be mapped.
- * </p>
- *
- * @param from the source <code>Control</code> or <code>null</code>
- * @param to the destination <code>Control</code> or <code>null</code>
- * @param x coordinates to be mapped
- * @param y coordinates to be mapped
- * @param width coordinates to be mapped
- * @param height coordinates to be mapped
- * @return rectangle with mapped coordinates
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the Control from or the Control to have been disposed</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- *    <li>ERROR_DEVICE_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 Rectangle mapInPixels (Control from, Control to, int x, int y, int width, int height) {
 	checkDevice();
 	if (from != null && from.isDisposed()) error (SWT.ERROR_INVALID_ARGUMENT);

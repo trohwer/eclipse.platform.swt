@@ -591,34 +591,6 @@ public Point computeSize (int wHint, int hHint) {
 	return computeSize (wHint, hHint, true);
 }
 
-/**
- * Returns the preferred size(in pixels) of the receiver.
- * <p>
- * The <em>preferred size</em> of a control is the size that it would
- * best be displayed at. The width hint and height hint arguments
- * allow the caller to ask a control questions such as "Given a particular
- * width, how high does the control need to be to show all of the contents?"
- * To indicate that the caller does not wish to constrain a particular
- * dimension, the constant <code>SWT.DEFAULT</code> is passed for the hint.
- * </p>
- *
- * @param wHint the width hint (can be <code>SWT.DEFAULT</code>)
- * @param hHint the height hint (can be <code>SWT.DEFAULT</code>)
- * @return the preferred size of the control
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @see Layout
- * @see #getBorderWidth
- * @see #getBounds
- * @see #getSize
- * @see #pack(boolean)
- * @see "computeTrim, getClientArea for controls that implement them"
- * @since 3.105
- */
 Point computeSizeInPixels (int wHint, int hHint) {
 	return computeSizeInPixels (wHint, hHint, true);
 }
@@ -764,41 +736,6 @@ public Point computeSize (int wHint, int hHint, boolean changed) {
 	return DPIUtil.autoScaleDown (computeSizeInPixels (wHint, hHint, changed));
 }
 
-/**
- * Returns the preferred size (in pixels) of the receiver.
- * <p>
- * The <em>preferred size</em> of a control is the size that it would
- * best be displayed at. The width hint and height hint arguments
- * allow the caller to ask a control questions such as "Given a particular
- * width, how high does the control need to be to show all of the contents?"
- * To indicate that the caller does not wish to constrain a particular
- * dimension, the constant <code>SWT.DEFAULT</code> is passed for the hint.
- * </p><p>
- * If the changed flag is <code>true</code>, it indicates that the receiver's
- * <em>contents</em> have changed, therefore any caches that a layout manager
- * containing the control may have been keeping need to be flushed. When the
- * control is resized, the changed flag will be <code>false</code>, so layout
- * manager caches can be retained.
- * </p>
- *
- * @param wHint the width hint (can be <code>SWT.DEFAULT</code>)
- * @param hHint the height hint (can be <code>SWT.DEFAULT</code>)
- * @param changed <code>true</code> if the control's contents have changed, and <code>false</code> otherwise
- * @return the preferred size of the control.
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @see Layout
- * @see #getBorderWidth
- * @see #getBounds
- * @see #getSize
- * @see #pack(boolean)
- * @see "computeTrim, getClientArea for controls that implement them"
- * @since 3.105
- */
 Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
@@ -904,23 +841,10 @@ Accessible _getAccessible () {
  * </ul>
  */
 public Rectangle getBounds () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
 
-/**
- * Returns a rectangle describing the receiver's size and location in points
- * relative to its parent (or its display if its parent is null),
- * unless the receiver is a shell. In this case, the location is
- * relative to the display.
- *
- * @return the receiver's bounding rectangle
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 Rectangle getBoundsInPixels () {
 	checkWidget();
 	long /*int*/ topHandle = topHandle ();
@@ -964,30 +888,6 @@ public void setBounds (Rectangle rect) {
 	setBounds (rect.x, rect.y, Math.max (0, rect.width), Math.max (0, rect.height), true, true);
 }
 
-/**
- * Sets the receiver's size and location in pixels to the rectangular
- * area specified by the argument. The <code>x</code> and
- * <code>y</code> fields of the rectangle are relative to
- * the receiver's parent (or its display if its parent is null).
- * <p>
- * Note: Attempting to set the width or height of the
- * receiver to a negative number will cause that
- * value to be set to zero instead.
- * </p>
-  *<p>
- * Note: Attempting to set the width or height of the
- * receiver to a number higher or equal 2^14 will cause them to be
- * set to (2^14)-1 instead.
- * </p>
- *
- * @param rect the new bounds for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setBoundsInPixels (Rectangle rect) {
 	checkWidget ();
 	if (rect == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -1028,35 +928,6 @@ public void setBounds (int x, int y, int width, int height) {
 	setBounds (rect.x, rect.y, Math.max (0, rect.width), Math.max (0, rect.height), true, true);
 }
 
-/**
- * Sets the receiver's size and location in pixels to the rectangular
- * area specified by the arguments. The <code>x</code> and
- * <code>y</code> arguments are relative to the receiver's
- * parent (or its display if its parent is null), unless
- * the receiver is a shell. In this case, the <code>x</code>
- * and <code>y</code> arguments are relative to the display.
- * <p>
- * Note: Attempting to set the width or height of the
- * receiver to a negative number will cause that
- * value to be set to zero instead.
- * </p>
-  *<p>
- * Note: Attempting to set the width or height of the
- * receiver to a number higher or equal 2^14 will cause them to be
- * set to (2^14)-1 instead.
- * </p>
- *
- * @param x the new x coordinate for the receiver
- * @param y the new y coordinate for the receiver
- * @param width the new width for the receiver
- * @param height the new height for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setBoundsInPixels (int x, int y, int width, int height) {
 	checkWidget();
 	setBounds (x, y, Math.max (0, width), Math.max (0, height), true, true);
@@ -1247,23 +1118,10 @@ int setBounds (int x, int y, int width, int height, boolean move, boolean resize
  * </ul>
  */
 public Point getLocation () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getLocationInPixels());
 }
 
-/**
- * Returns a point describing the receiver's location relative
- * to its parent in pixels (or its display if its parent is null), unless
- * the receiver is a shell. In this case, the point is
- * relative to the display.
- *
- * @return the receiver's location
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 Point getLocationInPixels () {
 	checkWidget();
 	long /*int*/ topHandle = topHandle ();
@@ -1299,21 +1157,6 @@ public void setLocation (Point location) {
 	setBounds (location.x, location.y, 0, 0, true, false);
 }
 
-/**
- * Sets the receiver's location to the point specified by
- * the arguments which are relative to the receiver's
- * parent (or its display if its parent is null), unless
- * the receiver is a shell. In this case, the point is
- * relative to the display.
- *
- * @param location the new location for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setLocationInPixels (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -1341,22 +1184,6 @@ public void setLocation(int x, int y) {
 	setBounds (loc.x, loc.y, 0, 0, true, false);
 }
 
-/**
- * Sets the receiver's location to the point specified by
- * the arguments which are relative to the receiver's
- * parent (or its display if its parent is null), unless
- * the receiver is a shell. In this case, the point is
- * relative to the display.
- *
- * @param x the new x coordinate in for the receiver
- * @param y the new y coordinate for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setLocationInPixels(int x, int y) {
 	checkWidget();
 	setBounds (x, y, 0, 0, true, false);
@@ -1376,23 +1203,10 @@ void setLocationInPixels(int x, int y) {
  * </ul>
  */
 public Point getSize () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getSizeInPixels());
 }
 
-/**
- * Returns a point describing the receiver's size in pixels. The
- * x coordinate of the result is the width of the receiver.
- * The y coordinate of the result is the height of the
- * receiver.
- *
- * @return the receiver's size
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 Point getSizeInPixels () {
 	checkWidget();
 	long /*int*/ topHandle = topHandle ();
@@ -1434,30 +1248,6 @@ public void setSize (Point size) {
 	setBounds (0, 0, Math.max (0, size.x), Math.max (0, size.y), false, true);
 }
 
-/**
- * Sets the receiver's size to the point specified by the argument.
- * <p>
- * Note: Attempting to set the width or height of the
- * receiver to a negative number will cause them to be
- * set to zero instead.
- * </p>
-  *<p>
- * Note: Attempting to set the width or height of the
- * receiver to a number higher or equal 2^14 will cause them to be
- * set to (2^14)-1 instead.
- * </p>
- *
- * @param size the new size in pixels for the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setSizeInPixels (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -1541,28 +1331,6 @@ public void setSize (int width, int height) {
 	setBounds (0, 0, Math.max (0, size.x), Math.max (0, size.y), false, true);
 }
 
-/**
- * Sets the receiver's size to the point specified by the arguments.
- * <p>
- * Note: Attempting to set the width or height of the
- * receiver to a negative number will cause that
- * value to be set to zero instead.
- * </p>
-  *<p>
- * Note: Attempting to set the width or height of the
- * receiver to a number higher or equal 2^14 will cause them to be
- * set to (2^14)-1 instead.
- * </p>
- *
- * @param width the new width in pixels for the receiver
- * @param height the new height in pixels for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 void setSizeInPixels (int width, int height) {
 	checkWidget();
 	setBounds (0, 0, Math.max (0, width), Math.max (0, height), false, true);
@@ -1730,26 +1498,6 @@ public Point toControl (int x, int y) {
 	return toControl (new Point (x, y));
 }
 
-/**
- * Returns a point which is the result of converting the
- * argument, which is specified in display relative coordinates,
- * to coordinates relative to the receiver.
- * <p>
- * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
- * </p>
- *
- * @param x the x coordinate in pixels to be translated
- * @param y the y coordinate in pixels to be translated
- * @return the translated coordinates
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 Point toControlInPixels (int x, int y) {
 	checkWidget ();
 	long /*int*/ window = eventWindow ();
@@ -1788,27 +1536,6 @@ public Point toControl (Point point) {
 	return DPIUtil.autoScaleDown(toControlInPixels (point.x, point.y));
 }
 
-/**
- * Returns a point which is the result of converting the
- * argument, which is specified in display relative coordinates,
- * to coordinates relative to the receiver.
- * <p>
- * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
- * </p>
- *
- * @param point the point to be translated (must not be null)
- * @return the translated coordinates
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 Point toControlInPixels (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -1840,26 +1567,6 @@ public Point toDisplay (int x, int y) {
 	return toDisplay (new Point (x, y));
 }
 
-/**
- * Returns a point which is the result of converting the
- * argument, which is specified in coordinates relative to
- * the receiver, to display relative coordinates.
- * <p>
- * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
- * </p>
- *
- * @param x the x coordinate to be translated
- * @param y the y coordinate to be translated
- * @return the translated coordinates
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 Point toDisplayInPixels (int x, int y) {
 	checkWidget();
 	long /*int*/ window = eventWindow ();
@@ -1898,27 +1605,6 @@ public Point toDisplay (Point point) {
 	return DPIUtil.autoScaleDown(toDisplayInPixels (point.x, point.y));
 }
 
-/**
- * Returns a point which is the result of converting the
- * argument, which is specified in coordinates relative to
- * the receiver, to display relative coordinates.
- * <p>
- * NOTE: To properly map a rectangle or a corner of a rectangle on a right-to-left platform, use
- * {@link Display#map(Control, Control, Rectangle)}.
- * </p>
- *
- * @param point the point to be translated (must not be null)
- * @return the translated coordinates
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 Point toDisplayInPixels (Point point) {
 	checkWidget();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -3087,17 +2773,6 @@ public int getBorderWidth () {
 	return DPIUtil.autoScaleDown(getBorderWidthInPixels());
 }
 
-/**
- * Returns the receiver's border width in pixels.
- *
- * @return the border width
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 int getBorderWidthInPixels () {
 	checkWidget();
 	return 0;
@@ -4246,41 +3921,11 @@ void redraw (boolean all) {
  * @see SWT#DOUBLE_BUFFERED
  */
 public void redraw (int x, int y, int width, int height, boolean all) {
+	checkWidget();
 	Rectangle rect = DPIUtil.autoScaleUp(new Rectangle(x, y, width, height));
 	redrawInPixels(rect.x, rect.y, rect.width, rect.height, all);
 }
 
-/**
- * Causes the rectangular area of the receiver specified by
- * the arguments to be marked as needing to be redrawn.
- * The next time a paint request is processed, that area of
- * the receiver will be painted, including the background.
- * If the <code>all</code> flag is <code>true</code>, any
- * children of the receiver which intersect with the specified
- * area will also paint their intersecting areas. If the
- * <code>all</code> flag is <code>false</code>, the children
- * will not be painted.
- *
- * @param x the x coordinate of the area to draw
- * @param y the y coordinate of the area to draw
- * @param width the width of the area to draw
- * @param height the height of the area to draw
- * @param all <code>true</code> if children should redraw, and <code>false</code> otherwise
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @see #update()
- * @see PaintListener
- * @see SWT#Paint
- * @see SWT#NO_BACKGROUND
- * @see SWT#NO_REDRAW_RESIZE
- * @see SWT#NO_MERGE_PAINTS
- * @see SWT#DOUBLE_BUFFERED
- * @since 3.105
- */
 void redrawInPixels (int x, int y, int width, int height, boolean all) {
 	checkWidget();
 	if (!OS.gtk_widget_get_visible (topHandle ())) return;

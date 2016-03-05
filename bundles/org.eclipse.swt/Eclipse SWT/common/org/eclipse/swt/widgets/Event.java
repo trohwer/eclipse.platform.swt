@@ -289,7 +289,8 @@ public void setBounds (Rectangle rect) {
 	this.width = rect.width;
 	this.height = rect.height;
 }
-public void setBoundsInPixels (Rectangle rect) {
+
+void setBoundsInPixels (Rectangle rect) {
 	setBounds(DPIUtil.autoScaleDown(rect));
 }
 

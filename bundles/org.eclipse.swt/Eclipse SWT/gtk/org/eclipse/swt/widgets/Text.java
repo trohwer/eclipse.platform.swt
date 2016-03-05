@@ -548,7 +548,8 @@ public void clearSelection () {
 	}
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
 	if (hHint != SWT.DEFAULT && hHint < 0) hHint = 0;
@@ -585,7 +586,8 @@ public void clearSelection () {
 	return new Point (trim.width, trim.height);
 }
 
-@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget ();
 	Rectangle trim = super.computeTrimInPixels (x, y, width, height);
 	int xborder = 0, yborder = 0;
@@ -830,7 +832,8 @@ GdkColor getBackgroundColor () {
 	return getBaseColor ();
 }
 
-@Override int getBorderWidthInPixels () {
+@Override
+int getBorderWidthInPixels () {
 	checkWidget();
 	if ((style & SWT.MULTI) != 0) return super.getBorderWidthInPixels ();
 	if ((this.style & SWT.BORDER) != 0) {
@@ -877,18 +880,6 @@ public Point getCaretLocation () {
 	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
 }
 
-/**
- * Returns a point describing the location of the caret relative
- * to the receiver.
- *
- * @return a point, the location of the caret
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 Point getCaretLocationInPixels () {
 	checkWidget ();
 	if ((style & SWT.SINGLE) != 0) {
@@ -1435,27 +1426,6 @@ public int getTopPixel () {
 	return DPIUtil.autoScaleDown(getTopPixelInPixels());
 }
 
-/**
- * Returns the top pixel.
- * <p>
- * The top pixel is the pixel position of the line
- * that is currently at the top of the widget.  On
- * some platforms, a text widget can be scrolled by
- * pixels instead of lines so that a partial line
- * is displayed at the top of the widget.
- * </p><p>
- * The top pixel changes when the widget is scrolled.
- * The top pixel does not include the widget trimming.
- * </p>
- *
- * @return the pixel position of the top line
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- * @since 3.105
- */
 int getTopPixelInPixels () {
 	checkWidget ();
 	if ((style & SWT.SINGLE) != 0) return 0;

@@ -163,25 +163,7 @@ public void add (int[] pointArray) {
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	addInPixels(DPIUtil.autoScaleUp(pointArray));
 }
-/**
- * Adds the given polygon to the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param pointArray points that describe the polygon to merge with the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
-*
- */
 void addInPixels (int[] pointArray) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	/*
 	* Bug in GTK. If gdk_region_polygon() is called with one point,
 	* it segment faults. The fix is to make sure that it is called
@@ -208,26 +190,11 @@ void addInPixels (int[] pointArray) {
  * </ul>
  */
 public void add(Rectangle rect) {
-	addInPixels(DPIUtil.autoScaleUp(rect));
-}
-/**
- * Adds the given rectangle to the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param rect the rectangle to merge with the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the rectangle's width or height is negative</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- * @since 3.105
- */
-void addInPixels(Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	addInPixels(DPIUtil.autoScaleUp(rect));
+}
+void addInPixels(Rectangle rect) {
 	addInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -250,29 +217,11 @@ void addInPixels(Rectangle rect) {
  * @since 3.1
  */
 public void add(int x, int y, int width, int height) {
-	add(new Rectangle(x, y, width, height));
-}
-/**
- * Adds the given rectangle to the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param x the x coordinate of the rectangle
- * @param y the y coordinate of the rectangle
- * @param width the width coordinate of the rectangle
- * @param height the height coordinate of the rectangle
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the rectangle's width or height is negative</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
-void addInPixels(int x, int y, int width, int height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	add(new Rectangle(x, y, width, height));
+}
+void addInPixels(int x, int y, int width, int height) {
 	GdkRectangle gdkRect = new GdkRectangle();
 	gdkRect.x = x;
 	gdkRect.y = y;
@@ -317,24 +266,10 @@ public void add(Region region) {
  * </ul>
  */
 public boolean contains(int x, int y) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return contains(new Point(x, y));
 }
-/**
- * Returns <code>true</code> if the point specified by the
- * arguments is inside the area specified by the receiver,
- * and <code>false</code> otherwise.
- *
- * @param x the x coordinate of the point to test for containment
- * @param y the y coordinate of the point to test for containment
- * @return <code>true</code> if the region contains the point and <code>false</code> otherwise
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- * @since 3.105
- */
 boolean containsInPixels(int x, int y) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return OS.gdk_region_point_in(handle, x, y);
 }
 
@@ -354,24 +289,9 @@ boolean containsInPixels(int x, int y) {
  * </ul>
  */
 public boolean contains(Point pt) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return containsInPixels(DPIUtil.autoScaleUp(pt));
 }
-/**
- * Returns <code>true</code> if the given point is inside the
- * area specified by the receiver, and <code>false</code>
- * otherwise.
- *
- * @param pt the point to test for containment
- * @return <code>true</code> if the region contains the point and <code>false</code> otherwise
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- * @since 3.105
- */
 boolean containsInPixels(Point pt) {
 	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	return containsInPixels(pt.x, pt.y);
@@ -415,24 +335,10 @@ public boolean equals(Object object) {
  * @see Rectangle#union
  */
 public Rectangle getBounds() {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
-/**
- * Returns a rectangle which represents the rectangular
- * union of the collection of polygons the receiver
- * maintains to describe its area.
- *
- * @return a bounding rectangle for the region
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @see Rectangle#union
- * @since 3.105
- */
 Rectangle getBoundsInPixels() {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	GdkRectangle gdkRect = new GdkRectangle();
 	OS.gdk_region_get_clipbox(handle, gdkRect);
 	return new Rectangle(gdkRect.x, gdkRect.y, gdkRect.width, gdkRect.height);
@@ -490,27 +396,12 @@ public int hashCode() {
  * @since 3.0
  */
 public void intersect(Rectangle rect) {
-	intersectInPixels(DPIUtil.autoScaleUp(rect));
-}
-/**
- * Intersects the given rectangle to the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param rect the rectangle to intersect with the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the rectangle's width or height is negative</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
-void intersectInPixels(Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
+	intersectInPixels(DPIUtil.autoScaleUp(rect));
+}
+
+void intersectInPixels(Rectangle rect) {
 	intersectInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -533,29 +424,12 @@ void intersectInPixels(Rectangle rect) {
  * @since 3.1
  */
 public void intersect(int x, int y, int width, int height) {
-	intersect(new Rectangle(x, y, width, height));
-}
-/**
- * Intersects the given rectangle to the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param x the x coordinate of the rectangle
- * @param y the y coordinate of the rectangle
- * @param width the width coordinate of the rectangle
- * @param height the height coordinate of the rectangle
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the rectangle's width or height is negative</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
-void intersectInPixels(int x, int y, int width, int height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	intersect(new Rectangle(x, y, width, height));
+}
+
+void intersectInPixels(int x, int y, int width, int height) {
 	GdkRectangle gdkRect = new GdkRectangle();
 	gdkRect.x = x;
 	gdkRect.y = y;
@@ -608,29 +482,11 @@ public void intersect(Region region) {
  * @see Rectangle#intersects(Rectangle)
  */
 public boolean intersects (int x, int y, int width, int height) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	return intersects(new Rectangle(x, y, width, height));
 }
 
-/**
- * Returns <code>true</code> if the rectangle described by the
- * arguments intersects with any of the polygons the receiver
- * maintains to describe its area, and <code>false</code> otherwise.
- *
- * @param x the x coordinate of the origin of the rectangle
- * @param y the y coordinate of the origin of the rectangle
- * @param width the width of the rectangle
- * @param height the height of the rectangle
- * @return <code>true</code> if the rectangle intersects with the receiver, and <code>false</code> otherwise
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @see Rectangle#intersects(Rectangle)
- * @since 3.105
- */
 boolean intersectsInPixels (int x, int y, int width, int height) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	GdkRectangle gdkRect = new GdkRectangle();
 	gdkRect.x = x;
 	gdkRect.y = y;
@@ -656,28 +512,11 @@ boolean intersectsInPixels (int x, int y, int width, int height) {
  * @see Rectangle#intersects(Rectangle)
  */
 public boolean intersects(Rectangle rect) {
+	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	return intersectsInPixels(DPIUtil.autoScaleUp(rect));
 }
-/**
- * Returns <code>true</code> if the given rectangle intersects
- * with any of the polygons the receiver maintains to describe
- * its area and <code>false</code> otherwise.
- *
- * @param rect the rectangle to test for intersection
- * @return <code>true</code> if the rectangle intersects with the receiver, and <code>false</code> otherwise
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @see Rectangle#intersects(Rectangle)
- * @since 3.105
- */
+
 boolean intersectsInPixels(Rectangle rect) {
-	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	return intersectsInPixels(rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -733,24 +572,7 @@ public void subtract (int[] pointArray) {
 	subtractInPixels(DPIUtil.autoScaleUp(pointArray));
 }
 
-/**
- * Subtracts the given polygon from the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param pointArray points that describe the polygon to merge with the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 void subtractInPixels (int[] pointArray) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	/*
 	* Bug in GTK. If gdk_region_polygon() is called with one point,
 	* it segment faults. The fix is to make sure that it is called
@@ -778,28 +600,12 @@ void subtractInPixels (int[] pointArray) {
  * @since 3.0
  */
 public void subtract(Rectangle rect) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	subtractInPixels(DPIUtil.autoScaleUp(rect));
 }
 
-/**
- * Subtracts the given rectangle from the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param rect the rectangle to subtract from the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- *    <li>ERROR_INVALID_ARGUMENT - if the rectangle's width or height is negative</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 void subtractInPixels(Rectangle rect) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	subtractInPixels (rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -822,30 +628,12 @@ void subtractInPixels(Rectangle rect) {
  * @since 3.1
  */
 public void subtract(int x, int y, int width, int height) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	subtract(new Rectangle(x, y, width, height));
 }
 
-/**
- * Subtracts the given rectangle from the collection of polygons
- * the receiver maintains to describe its area.
- *
- * @param x the x coordinate of the rectangle
- * @param y the y coordinate of the rectangle
- * @param width the width coordinate of the rectangle
- * @param height the height coordinate of the rectangle
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_ARGUMENT - if the rectangle's width or height is negative</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 void subtractInPixels(int x, int y, int width, int height) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (width < 0 || height < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	GdkRectangle gdkRect = new GdkRectangle();
 	gdkRect.x = x;
 	gdkRect.y = y;
@@ -894,24 +682,11 @@ public void subtract(Region region) {
  * @since 3.1
  */
 public void translate (int x, int y) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	translate(new Point(x, y));
 }
 
-/**
- * Translate all of the polygons the receiver maintains to describe
- * its area by the specified point.
- *
- * @param x the x coordinate of the point to translate
- * @param y the y coordinate of the point to translate
- *
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 void translateInPixels (int x, int y) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	OS.gdk_region_offset (handle, x, y);
 }
 
@@ -931,27 +706,12 @@ void translateInPixels (int x, int y) {
  * @since 3.1
  */
 public void translate (Point pt) {
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	translate(DPIUtil.autoScaleUp(pt));
 }
 
-/**
- * Translate all of the polygons the receiver maintains to describe
- * its area by the specified point.
- *
- * @param pt the point to translate
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the argument is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
- * </ul>
- *
- * @since 3.105
- */
 void translateInPixels (Point pt) {
-	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	translateInPixels (pt.x, pt.y);
 }
 

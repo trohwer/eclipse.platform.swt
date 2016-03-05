@@ -235,7 +235,8 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 
 	int width = 0, height = 0;
@@ -284,7 +285,8 @@ protected void checkSubclass () {
 	}
 }
 
-@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	if (isCalendar ()) {
 		return super.computeTrimInPixels (x, y, width, height);
 	}
@@ -1688,7 +1690,8 @@ public void setYear (int year) {
 	}
 }
 
-@Override void setBoundsInPixels (int x, int y, int width, int height) {
+@Override
+void setBoundsInPixels (int x, int y, int width, int height) {
 
 	//Date with Drop down is in container. Needs extra handling.
 	if (isDateWithDropDownButton () && OS.GTK3) {

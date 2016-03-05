@@ -188,7 +188,8 @@ long /*int*/ clientHandle () {
 	return handle;
 }
 
-@Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
+@Override
+Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	Point size = super.computeSizeInPixels (wHint, hHint, changed);
 	if (wHint != SWT.DEFAULT && wHint < 0) wHint = 0;
@@ -207,7 +208,8 @@ long /*int*/ clientHandle () {
 	return size;
 }
 
-@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget();
 	forceResize ();
 	long /*int*/ clientHandle = clientHandle ();
@@ -229,7 +231,8 @@ long /*int*/ clientHandle () {
 	return new Rectangle (x, y, width, height);
 }
 
-@Override Rectangle getClientAreaInPixels () {
+@Override
+Rectangle getClientAreaInPixels () {
 	Rectangle clientRectangle = super.getClientAreaInPixels ();
 
 	if (OS.GTK3) {

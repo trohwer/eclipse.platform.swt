@@ -658,7 +658,8 @@ void closeWidget () {
 	if (event.doit && !isDisposed ()) dispose ();
 }
 
-@Override Rectangle computeTrimInPixels (int x, int y, int width, int height) {
+@Override
+Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget();
 	Rectangle trim = super.computeTrimInPixels (x, y, width, height);
 	int border = 0;
@@ -1051,7 +1052,8 @@ public boolean getFullScreen () {
 	return fullScreen;
 }
 
-@Override Point getLocationInPixels () {
+@Override
+Point getLocationInPixels () {
 	checkWidget ();
 	int [] x = new int [1], y = new int [1];
 	OS.gtk_window_get_position (shellHandle, x,y);
@@ -1080,23 +1082,10 @@ public boolean getMaximized () {
  * @since 3.105
  */
 public Point getMinimumSize () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown (getMinimumSizeInPixels ());
 }
-/**
- * Returns a point describing the minimum receiver's size. The
- * x coordinate of the result is the minimum width of the receiver.
- * The y coordinate of the result is the minimum height of the
- * receiver.
- *
- * @return the receiver's size
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
+
 Point getMinimumSizeInPixels () {
 	checkWidget ();
 	int width = Math.max (1, minWidth + trimWidth ());
@@ -1149,7 +1138,8 @@ public boolean getModified () {
 	return modified;
 }
 
-@Override Point getSizeInPixels () {
+@Override
+Point getSizeInPixels () {
 	checkWidget ();
 	GtkAllocation allocation = new GtkAllocation ();
 	OS.gtk_widget_get_allocation (vboxHandle, allocation);
@@ -2152,24 +2142,10 @@ public void setMinimized (boolean minimized) {
  * @since 3.1
  */
 public void setMinimumSize (int width, int height) {
+	checkWidget ();
 	setMinimumSize (new Point (width, height));
 }
 
-/**
- * Sets the receiver's minimum size to the size specified by the arguments.
- * If the new minimum size is larger than the current size of the receiver,
- * the receiver is resized to the new minimum size.
- *
- * @param width the new minimum width for the receiver
- * @param height the new minimum height for the receiver
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 void setMinimumSizeInPixels (int width, int height) {
 	checkWidget ();
 	GdkGeometry geometry = new GdkGeometry ();
@@ -2196,26 +2172,10 @@ void setMinimumSizeInPixels (int width, int height) {
  * @since 3.1
  */
 public void setMinimumSize (Point size) {
+	checkWidget ();
 	setMinimumSizeInPixels (DPIUtil.autoScaleUp (size));
 }
 
-/**
- * Sets the receiver's minimum size to the size specified by the argument.
- * If the new minimum size is larger than the current size of the receiver,
- * the receiver is resized to the new minimum size.
- *
- * @param size the new minimum size for the receiver
- *
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_NULL_ARGUMENT - if the point is null</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
 void setMinimumSizeInPixels (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
@@ -2708,7 +2668,8 @@ public void forceActive () {
 	bringToTop (true);
 }
 
-@Override Rectangle getBoundsInPixels () {
+@Override
+Rectangle getBoundsInPixels () {
 	checkWidget ();
 	int [] x = new int [1], y = new int [1];
 	OS.gtk_window_get_position (shellHandle, x, y);

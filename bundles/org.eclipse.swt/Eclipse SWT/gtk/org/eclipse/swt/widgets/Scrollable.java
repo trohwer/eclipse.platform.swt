@@ -112,34 +112,6 @@ public Rectangle computeTrim (int x, int y, int width, int height) {
 	return DPIUtil.autoScaleDown(computeTrimInPixels(rect.x, rect.y, rect.width, rect.height));
 }
 
-/**
- * Given a desired <em>client area</em> for the receiver
- * (as described by the arguments), returns the bounding
- * rectangle which would be required to produce that client
- * area.
- * <p>
- * In other words, it returns a rectangle such that, if the
- * receiver's bounds were set to that rectangle, the area
- * of the receiver which is capable of displaying data
- * (that is, not covered by the "trimmings") would be the
- * rectangle described by the arguments (relative to the
- * receiver's parent).
- * </p>
- *
- * @param x the desired x coordinate of the client area
- * @param y the desired y coordinate of the client area
- * @param width the desired width of the client area
- * @param height the desired height of the client area
- * @return the required bounds to produce the given client area
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @see #getClientArea
- * @since 3.105
- */
 Rectangle computeTrimInPixels (int x, int y, int width, int height) {
 	checkWidget();
 	int border = 0;
@@ -223,7 +195,8 @@ void destroyScrollBar (ScrollBar bar) {
 	//bar.destroyHandle ();
 }
 
-@Override int getBorderWidthInPixels () {
+@Override
+int getBorderWidthInPixels () {
 	checkWidget();
 	int border = 0;
 	if (fixedHandle != 0) border += OS.gtk_container_get_border_width (fixedHandle);
@@ -254,21 +227,6 @@ public Rectangle getClientArea () {
 	return DPIUtil.autoScaleDown(getClientAreaInPixels());
 }
 
-/**
- * Returns a rectangle which describes the area of the
- * receiver which is capable of displaying data (that is,
- * not covered by the "trimmings").
- *
- * @return the client area
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @see #computeTrim
- * @since 3.105
- */
 Rectangle getClientAreaInPixels () {
 	checkWidget ();
 	forceResize ();
