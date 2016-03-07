@@ -2018,7 +2018,7 @@ Rectangle getWorkArea() {
 public Monitor [] getMonitors () {
 	checkDevice ();
 	Monitor [] monitors = null;
-	Rectangle workArea = getWorkArea ();
+	Rectangle workArea = DPIUtil.autoScaleDown (getWorkArea ());
 	long /*int*/ screen = OS.gdk_screen_get_default ();
 	if (screen != 0) {
 		int monitorCount = OS.gdk_screen_get_n_monitors (screen);
@@ -2029,19 +2029,19 @@ public Monitor [] getMonitors () {
 				OS.gdk_screen_get_monitor_geometry (screen, i, dest);
 				Monitor monitor = new Monitor ();
 				monitor.handle = i;
-				monitor.x = dest.x;
-				monitor.y = dest.y;
-				monitor.width = dest.width;
-				monitor.height = dest.height;
+				monitor.x = DPIUtil.autoScaleDown (dest.x);
+				monitor.y = DPIUtil.autoScaleDown (dest.y);
+				monitor.width = DPIUtil.autoScaleDown (dest.width);
+				monitor.height = DPIUtil.autoScaleDown (dest.height);
 
 				if (OS.GTK_VERSION >= OS.VERSION (3, 4, 0)) {
 					// workarea was defined in GTK 3.4. If present, it will return the best results
 					// since it takes into account per-monitor trim
 					OS.gdk_screen_get_monitor_workarea (screen, i, dest);
-					monitor.clientX = dest.x;
-					monitor.clientY = dest.y;
-					monitor.clientWidth = dest.width;
-					monitor.clientHeight = dest.height;
+					monitor.clientX = DPIUtil.autoScaleDown (dest.x);
+					monitor.clientY = DPIUtil.autoScaleDown (dest.y);
+					monitor.clientWidth = DPIUtil.autoScaleDown (dest.width);
+					monitor.clientHeight = DPIUtil.autoScaleDown (dest.height);
 				} else {
 					// If we're on an older version of gtk without the workarea function, see if we can use
 					// the getWorkArea function. In the case of multi-monitors, this will return something that
@@ -2075,7 +2075,7 @@ public Monitor [] getMonitors () {
 	if (monitors == null) {
 		/* No multimonitor support detected, default to one monitor */
 		Monitor monitor = new Monitor ();
-		Rectangle bounds = getBoundsInPixels ();
+		Rectangle bounds = getBounds ();
 		monitor.x = bounds.x;
 		monitor.y = bounds.y;
 		monitor.width = bounds.width;
