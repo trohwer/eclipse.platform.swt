@@ -13,7 +13,7 @@ package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -627,10 +627,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 				if (width != 0 && height != 0) {
 					Event event = new Event ();
 					event.gc = gc;
-					event.x = ps.left;
-					event.y = ps.top;
-					event.width = width;
-					event.height = height;
+					event.setBoundsInPixels(new Rectangle(ps.left, ps.top, width, height));
 					sendEvent (SWT.Paint, event);
 					// widget could be disposed at this point
 					event.gc = null;

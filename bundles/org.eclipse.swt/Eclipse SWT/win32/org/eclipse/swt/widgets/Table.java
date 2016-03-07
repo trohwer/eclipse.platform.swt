@@ -3650,11 +3650,9 @@ void sendEraseItemEvent (TableItem item, NMLVCUSTOMDRAW nmcd, long /*int*/ lPara
 	if (drawHot) event.detail |= SWT.HOT;
 	if (drawSelected) event.detail |= SWT.SELECTED;
 	if (drawBackground) event.detail |= SWT.BACKGROUND;
-	event.x = cellRect.left;
-	event.y = cellRect.top;
-	event.width = cellRect.right - cellRect.left;
-	event.height = cellRect.bottom - cellRect.top;
-	gc.setClippingInPixels (event.x, event.y, event.width, event.height);
+	Rectangle boundsInPixels = new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
+	event.setBoundsInPixels(boundsInPixels);
+	gc.setClippingInPixels (boundsInPixels);
 	sendEvent (SWT.EraseItem, event);
 	event.gc = null;
 	int clrSelectionText = data.foreground;
@@ -3770,10 +3768,7 @@ Event sendEraseItemEvent (TableItem item, NMTTCUSTOMDRAW nmcd, int column, RECT 
 	event.index = column;
 	event.gc = gc;
 	event.detail |= SWT.FOREGROUND;
-	event.x = cellRect.left;
-	event.y = cellRect.top;
-	event.width = cellRect.right - cellRect.left;
-	event.height = cellRect.bottom - cellRect.top;
+	event.setBoundsInPixels(new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top));
 	//gc.setClipping (event.x, event.y, event.width, event.height);
 	sendEvent (SWT.EraseItem, event);
 	event.gc = null;
@@ -3794,10 +3789,7 @@ Event sendMeasureItemEvent (TableItem item, int row, int column, long /*int*/ hD
 	event.item = item;
 	event.gc = gc;
 	event.index = column;
-	event.x = itemRect.left;
-	event.y = itemRect.top;
-	event.width = itemRect.right - itemRect.left;
-	event.height = itemRect.bottom - itemRect.top;
+	event.setBoundsInPixels(new Rectangle(itemRect.left, itemRect.top, itemRect.right - itemRect.left, itemRect.bottom - itemRect.top));
 	boolean drawSelected = false;
 	if (OS.IsWindowEnabled (handle)) {
 		LVITEM lvItem = new LVITEM ();
@@ -4105,10 +4097,7 @@ void sendPaintItemEvent (TableItem item, NMLVCUSTOMDRAW nmcd) {
 	if (drawHot) event.detail |= SWT.HOT;
 	if (drawSelected) event.detail |= SWT.SELECTED;
 	if (drawBackground) event.detail |= SWT.BACKGROUND;
-	event.x = itemRect.left;
-	event.y = itemRect.top;
-	event.width = itemRect.right - itemRect.left;
-	event.height = itemRect.bottom - itemRect.top;
+	event.setBoundsInPixels(new Rectangle(itemRect.left, itemRect.top, itemRect.right - itemRect.left, itemRect.bottom - itemRect.top));
 	RECT cellRect = item.getBounds ((int)/*64*/nmcd.dwItemSpec, nmcd.iSubItem, true, true, true, true, hDC);
 	int cellWidth = cellRect.right - cellRect.left;
 	int cellHeight = cellRect.bottom - cellRect.top;
@@ -4136,10 +4125,7 @@ Event sendPaintItemEvent (TableItem item, NMTTCUSTOMDRAW nmcd, int column, RECT 
 	event.index = column;
 	event.gc = gc;
 	event.detail |= SWT.FOREGROUND;
-	event.x = itemRect.left;
-	event.y = itemRect.top;
-	event.width = itemRect.right - itemRect.left;
-	event.height = itemRect.bottom - itemRect.top;
+	event.setBoundsInPixels(new Rectangle(itemRect.left, itemRect.top, itemRect.right - itemRect.left, itemRect.bottom - itemRect.top));
 	//gc.setClipping (cellRect.left, cellRect.top, cellWidth, cellHeight);
 	sendEvent (SWT.PaintItem, event);
 	event.gc = null;
@@ -5732,8 +5718,7 @@ void updateMenuLocation (Event event) {
 		y = Math.min (y, clientArea.y + clientArea.height);
 	}
 	Point pt = toDisplayInPixels (x, y);
-	event.x = pt.x;
-	event.y = pt.y;
+	event.setLocationInPixels(new Point(pt.x, pt.y));
 }
 
 void updateMoveable () {
@@ -6366,10 +6351,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 					if (hooksPaint) {
 						Event event = new Event ();
 						event.gc = gc;
-						event.x = ps.left;
-						event.y = ps.top;
-						event.width = ps.right - ps.left;
-						event.height = ps.bottom - ps.top;
+						event.setBoundsInPixels(new Rectangle(ps.left, ps.top, ps.right - ps.left, ps.bottom - ps.top));
 						sendEvent (SWT.Paint, event);
 						// widget could be disposed at this point
 						event.gc = null;

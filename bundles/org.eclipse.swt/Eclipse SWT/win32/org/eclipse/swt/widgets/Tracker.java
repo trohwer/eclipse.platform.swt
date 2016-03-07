@@ -1014,8 +1014,7 @@ LRESULT wmKeyDown (long /*int*/ hwnd, long /*int*/ wParam, long /*int*/ lParam) 
 			rectsToErase [i] = new Rectangle (current.x, current.y, current.width, current.height);
 		}
 		Event event = new Event ();
-		event.x = oldX + xChange;
-		event.y = oldY + yChange;
+		event.setLocationInPixels(new Point(oldX + xChange, oldY + yChange));
 		Point cursorPos;
 		if ((style & SWT.RESIZE) != 0) {
 			resizeRectangles (xChange, yChange);
@@ -1135,8 +1134,7 @@ LRESULT wmMouse (int message, long /*int*/ wParam, long /*int*/ lParam) {
 			rectsToErase [i] = new Rectangle (current.x, current.y, current.width, current.height);
 		}
 		Event event = new Event ();
-		event.x = newX;
-		event.y = newY;
+		event.setLocationInPixels(new Point(newX, newY));
 		if ((style & SWT.RESIZE) != 0) {
 			if (isMirrored) {
 			   resizeRectangles (oldX - newX, newY - oldY);

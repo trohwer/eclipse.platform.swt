@@ -798,10 +798,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 			if (hooks (SWT.Paint) || filters (SWT.Paint)) {
 				Event event = new Event ();
 				event.gc = gc;
-				event.x = rect.left;
-				event.y = rect.top;
-				event.width = width;
-				event.height = height;
+				event.setBoundsInPixels(new Rectangle(rect.left, rect.top, width, height));
 				sendEvent (SWT.Paint, event);
 				event.gc = null;
 			}

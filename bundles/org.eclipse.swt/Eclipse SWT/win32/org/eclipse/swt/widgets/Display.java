@@ -3702,8 +3702,9 @@ public boolean post (Event event) {
 						width = OS.GetSystemMetrics (OS.SM_CXSCREEN);
 						height = OS.GetSystemMetrics (OS.SM_CYSCREEN);
 					}
-					inputs.dx = ((event.x - x) * 65535 + width - 2) / (width - 1);
-					inputs.dy = ((event.y - y) * 65535 + height - 2) / (height - 1);
+					Point loc = event.getLocationInPixels();
+					inputs.dx = ((loc.x - x) * 65535 + width - 2) / (width - 1);
+					inputs.dy = ((loc.y - y) * 65535 + height - 2) / (height - 1);
 				} else {
 					if (type == SWT.MouseWheel) {
 						if (OS.WIN32_VERSION < OS.VERSION (5, 0)) return false;

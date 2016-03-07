@@ -1898,8 +1898,8 @@ void handleDOMEvent (OleEvent e) {
 	int screenY = pVarResult.getInt();
 	pVarResult.dispose();
 
-	Point position = new Point(screenX, screenY);
-	position = browser.getDisplay().mapInPixels(null, browser, position);
+	Point position = DPIUtil.autoScaleDown(new Point(screenX, screenY)); // To Points
+	position = browser.getDisplay().map(null, browser, position);
 	newEvent.x = position.x; newEvent.y = position.y;
 
 	rgdispid = event.getIDsOfNames(new String[] { PROPERTY_CTRLKEY });

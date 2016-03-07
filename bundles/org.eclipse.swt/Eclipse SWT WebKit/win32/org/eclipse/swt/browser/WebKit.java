@@ -950,8 +950,8 @@ boolean handleEvent (Object[] arguments) {
 	 * coordinates relative to themselves rather than relative to their top-
 	 * level page.  Convert screen-relative coordinates to be browser-relative.
 	 */
-	Point position = new Point (((Double)arguments[1]).intValue (), ((Double)arguments[2]).intValue ());
-	position = browser.getDisplay ().mapInPixels (null, browser, position);
+	Point position = new Point (((Double)arguments[1]).intValue (), ((Double)arguments[2]).intValue ());// Points or Pixles ?
+	position = browser.getDisplay ().map (null, browser, position);
 
 	Event mouseEvent = new Event ();
 	mouseEvent.widget = browser;

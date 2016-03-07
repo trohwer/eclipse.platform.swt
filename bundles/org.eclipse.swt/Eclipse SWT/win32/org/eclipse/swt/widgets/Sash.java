@@ -244,10 +244,7 @@ LRESULT WM_KEYDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 			OS.SetCursorPos (cursorPt.x, cursorPt.y);
 
 			Event event = new Event ();
-			event.x = newX;
-			event.y = newY;
-			event.width = width;
-			event.height = height;
+			event.setBoundsInPixels(new Rectangle(newX, newY, width, height));
 			sendSelectionEvent  (SWT.Selection, event, true);
 			if (isDisposed ()) return LRESULT.ZERO;
 			if (event.doit) {
@@ -287,10 +284,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 
 	/* The event must be sent because doit flag is used */
 	Event event = new Event ();
-	event.x = lastX;
-	event.y = lastY;
-	event.width = width;
-	event.height = height;
+	event.setBoundsInPixels(new Rectangle(lastX, lastY, width, height));
 	if ((style & SWT.SMOOTH) == 0) {
 		event.detail = SWT.DRAG;
 	}
@@ -335,11 +329,8 @@ LRESULT WM_LBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 
 	/* The event must be sent because doit flag is used */
 	Event event = new Event ();
-	event.x = lastX;
-	event.y = lastY;
-	event.width = width;
-	event.height = height;
-	drawBand (event.x, event.y, width, height);
+	event.setBoundsInPixels(new Rectangle(lastX, lastY, width, height));
+	drawBand (lastX, lastY, width, height);
 	sendSelectionEvent (SWT.Selection, event, true);
 	if (isDisposed ()) return result;
 	Rectangle bounds = event.getBoundsInPixels();
@@ -381,10 +372,7 @@ LRESULT WM_MOUSEMOVE (long /*int*/ wParam, long /*int*/ lParam) {
 
 	/* The event must be sent because doit flag is used */
 	Event event = new Event ();
-	event.x = newX;
-	event.y = newY;
-	event.width = width;
-	event.height = height;
+	event.setBoundsInPixels(new Rectangle(newX, newY, width, height));
 	if ((style & SWT.SMOOTH) == 0) {
 		event.detail = SWT.DRAG;
 	}

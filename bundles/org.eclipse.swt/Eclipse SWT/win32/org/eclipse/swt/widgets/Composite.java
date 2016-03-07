@@ -1581,10 +1581,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 				GC gc = GC.win32_new (phdc [0], data);
 				Event event = new Event ();
 				event.gc = gc;
-				event.x = ps.left;
-				event.y = ps.top;
-				event.width = width;
-				event.height = height;
+				event.setBoundsInPixels(new Rectangle(ps.left, ps.top, width, height));
 				sendEvent (SWT.Paint, event);
 				if (data.focusDrawn && !isDisposed ()) updateUIState ();
 				gc.dispose ();
@@ -1669,10 +1666,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 						if ((style & (SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND | SWT.TRANSPARENT)) == 0) {
 							drawBackground (gc.handle, rect);
 						}
-						event.x = rect.left;
-						event.y = rect.top;
-						event.width = rect.right - rect.left;
-						event.height = rect.bottom - rect.top;
+						event.setBoundsInPixels(new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top));
 						event.count = count - 1 - i;
 						sendEvent (SWT.Paint, event);
 					}
@@ -1682,10 +1676,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 						OS.SetRect (rect, ps.left, ps.top, ps.right, ps.bottom);
 						drawBackground (gc.handle, rect);
 					}
-					event.x = ps.left;
-					event.y = ps.top;
-					event.width = width;
-					event.height = height;
+					event.setBoundsInPixels(new Rectangle(ps.left, ps.top, width, height));
 					sendEvent (SWT.Paint, event);
 				}
 				// widget could be disposed at this point
@@ -1758,10 +1749,7 @@ LRESULT WM_PRINTCLIENT (long /*int*/ wParam, long /*int*/ lParam) {
 			GC gc = GC.win32_new (wParam, data);
 			Event event = new Event ();
 			event.gc = gc;
-			event.x = rect.left;
-			event.y = rect.top;
-			event.width = rect.right - rect.left;
-			event.height = rect.bottom - rect.top;
+			event.setBoundsInPixels(new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top));
 			sendEvent (SWT.Paint, event);
 			event.gc = null;
 			gc.dispose ();

@@ -842,7 +842,8 @@ void destroyWidget () {
 public boolean dragDetect (Event event) {
 	checkWidget ();
 	if (event == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return dragDetect (event.button, event.count, event.stateMask, event.x, event.y);
+	Point loc = event.getLocationInPixels();
+	return dragDetect (event.button, event.count, event.stateMask, loc.x, loc.y);
 }
 
 /**
@@ -884,7 +885,7 @@ public boolean dragDetect (Event event) {
 public boolean dragDetect (MouseEvent event) {
 	checkWidget ();
 	if (event == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return dragDetect (event.button, event.count, event.stateMask, event.x, event.y);
+	return dragDetect (event.button, event.count, event.stateMask, DPIUtil.autoScaleUp(event.x), DPIUtil.autoScaleUp(event.y)); // To Pixels
 }
 
 boolean dragDetect (int button, int count, int stateMask, int x, int y) {
@@ -1997,11 +1998,11 @@ public boolean isVisible () {
 void mapEvent (long /*int*/ hwnd, Event event) {
 	if (hwnd != handle) {
 		POINT point = new POINT ();
-		point.x = event.x;
-		point.y = event.y;
+		Point loc = event.getLocationInPixels();
+		point.x = loc.x;
+		point.y = loc.y;
 		OS.MapWindowPoints (hwnd, handle, point, 1);
-		event.x = point.x;
-		event.y = point.y;
+		event.setLocationInPixels(new Point(point.x, point.y));
 	}
 }
 
@@ -2965,8 +2966,7 @@ boolean sendGestureEvent (GESTUREINFO gi) {
 	int type = 0;
 	Point globalPt = new Point(gi.x, gi.y);
 	Point point = toControlInPixels(globalPt);
-	event.x = point.x;
-	event.y = point.y;
+	event.setLocationInPixels(point);
 	switch (gi.dwID) {
 		case OS.GID_ZOOM:
 			type = SWT.Gesture;
@@ -3046,8 +3046,7 @@ void sendTouchEvent (TOUCHINPUT touchInput []) {
 	POINT pt = new POINT ();
 	OS.GetCursorPos (pt);
 	OS.ScreenToClient (handle, pt);
-	event.x = pt.x;
-	event.y = pt.y;
+	event.setLocationInPixels(new Point(pt.x, pt.y));
 	Touch [] touches = new Touch [touchInput.length];
 	Monitor monitor = getMonitor ();
 	for (int i = 0; i < touchInput.length; i++) {
@@ -5632,9 +5631,7 @@ LRESULT WM_TABLET_FLICK (long /*int*/ wParam, long /*int*/ lParam) {
 			event.yDirection = 1;
 			break;
 	}
-
-	event.x = fPoint.x;
-	event.y = fPoint.y;
+	event.setLocationInPixels(new Point(fPoint.x, fPoint.y));
 	event.type = SWT.Gesture;
 	event.detail = SWT.GESTURE_SWIPE;
 	setInputState (event, SWT.Gesture);

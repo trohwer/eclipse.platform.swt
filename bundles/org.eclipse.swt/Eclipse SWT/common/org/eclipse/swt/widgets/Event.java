@@ -278,6 +278,14 @@ Rectangle getBoundsInPixels () {
 	return DPIUtil.autoScaleUp(getBounds());
 }
 
+Point getLocation () {
+	return new Point (x, y);
+}
+
+Point getLocationInPixels () {
+	return DPIUtil.autoScaleUp(new Point(x, y));
+}
+
 /**
  * Sets the bounds.
  *
@@ -292,6 +300,12 @@ public void setBounds (Rectangle rect) {
 
 void setBoundsInPixels (Rectangle rect) {
 	setBounds(DPIUtil.autoScaleDown(rect));
+}
+
+void setLocationInPixels (Point point) {
+	point = DPIUtil.autoScaleDown(point);
+	this.x = point.x;
+	this.y = point.y;
 }
 
 /**

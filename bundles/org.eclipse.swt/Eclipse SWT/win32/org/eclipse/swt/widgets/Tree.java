@@ -648,11 +648,9 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 								}
 							}
 						}
-						event.x = cellRect.left;
-						event.y = cellRect.top;
-						event.width = cellRect.right - cellRect.left;
-						event.height = cellRect.bottom - cellRect.top;
-						gc.setClippingInPixels (event.x, event.y, event.width, event.height);
+						Rectangle boundsInPixels = new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
+						event.setBoundsInPixels(boundsInPixels);
+						gc.setClippingInPixels (boundsInPixels);
 						sendEvent (SWT.EraseItem, event);
 						event.gc = null;
 						int newTextClr = data.foreground;
@@ -865,10 +863,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 						}
 					}
 				}
-				event.x = itemRect.left;
-				event.y = itemRect.top;
-				event.width = itemRect.right - itemRect.left;
-				event.height = itemRect.bottom - itemRect.top;
+				event.setBoundsInPixels(new Rectangle(itemRect.left, itemRect.top, itemRect.right - itemRect.left, itemRect.bottom - itemRect.top));
 				RECT cellRect = item.getBounds (index, true, true, true, true, true, hDC);
 				int cellWidth = cellRect.right - cellRect.left;
 				int cellHeight = cellRect.bottom - cellRect.top;
@@ -1057,11 +1052,9 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 					}
 				}
 			}
-			event.x = cellRect.left;
-			event.y = cellRect.top;
-			event.width = cellRect.right - cellRect.left;
-			event.height = cellRect.bottom - cellRect.top;
-			gc.setClippingInPixels (event.x, event.y, event.width, event.height);
+			Rectangle boundsInPixels2 = new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
+			event.setBoundsInPixels(boundsInPixels2);
+			gc.setClippingInPixels (boundsInPixels2);
 			sendEvent (SWT.EraseItem, event);
 			event.gc = null;
 			int newTextClr = data.foreground;
@@ -4450,10 +4443,7 @@ Event sendEraseItemEvent (TreeItem item, NMTTCUSTOMDRAW nmcd, int column, RECT c
 	event.index = column;
 	event.gc = gc;
 	event.detail |= SWT.FOREGROUND;
-	event.x = cellRect.left;
-	event.y = cellRect.top;
-	event.width = cellRect.right - cellRect.left;
-	event.height = cellRect.bottom - cellRect.top;
+	event.setBoundsInPixels(new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top));
 	//gc.setClipping (event.x, event.y, event.width, event.height);
 	sendEvent (SWT.EraseItem, event);
 	event.gc = null;
@@ -4474,10 +4464,7 @@ Event sendMeasureItemEvent (TreeItem item, int index, long /*int*/ hDC, int deta
 	event.item = item;
 	event.gc = gc;
 	event.index = index;
-	event.x = itemRect.left;
-	event.y = itemRect.top;
-	event.width = itemRect.right - itemRect.left;
-	event.height = itemRect.bottom - itemRect.top;
+	event.setBoundsInPixels(new Rectangle(itemRect.left, itemRect.top, itemRect.right - itemRect.left, itemRect.bottom - itemRect.top));
 	event.detail = detail;
 	sendEvent (SWT.MeasureItem, event);
 	event.gc = null;
@@ -4512,10 +4499,7 @@ Event sendPaintItemEvent (TreeItem item, NMTTCUSTOMDRAW nmcd, int column, RECT i
 	event.index = column;
 	event.gc = gc;
 	event.detail |= SWT.FOREGROUND;
-	event.x = itemRect.left;
-	event.y = itemRect.top;
-	event.width = itemRect.right - itemRect.left;
-	event.height = itemRect.bottom - itemRect.top;
+	event.setBoundsInPixels(new Rectangle(itemRect.left, itemRect.top, itemRect.right - itemRect.left, itemRect.bottom - itemRect.top));
 	//gc.setClipping (cellRect.left, cellRect.top, cellWidth, cellHeight);
 	sendEvent (SWT.PaintItem, event);
 	event.gc = null;
@@ -5666,8 +5650,7 @@ void updateMenuLocation (Event event) {
 		y = Math.min (y, clientArea.y + clientArea.height);
 	}
 	Point pt = toDisplayInPixels (x, y);
-	event.x = pt.x;
-	event.y = pt.y;
+	event.setLocationInPixels(pt);
 }
 
 @Override
@@ -7111,10 +7094,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 				if (hooksPaint) {
 					Event event = new Event ();
 					event.gc = gc;
-					event.x = ps.left;
-					event.y = ps.top;
-					event.width = ps.right - ps.left;
-					event.height = ps.bottom - ps.top;
+					event.setBoundsInPixels(new Rectangle(ps.left, ps.top, ps.right - ps.left, ps.bottom - ps.top));
 					sendEvent (SWT.Paint, event);
 					// widget could be disposed at this point
 					event.gc = null;

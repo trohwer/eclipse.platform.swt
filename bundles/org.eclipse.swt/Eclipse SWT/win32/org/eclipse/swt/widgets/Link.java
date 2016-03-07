@@ -282,10 +282,7 @@ void drawWidget (GC gc, RECT rect) {
 	if (hooks (SWT.Paint) || filters (SWT.Paint)) {
 		Event event = new Event ();
 		event.gc = gc;
-		event.x = rect.left;
-		event.y = rect.top;
-		event.width = rect.right - rect.left;
-		event.height = rect.bottom - rect.top;
+		event.setBoundsInPixels(new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top));
 		sendEvent (SWT.Paint, event);
 		event.gc = null;
 	}

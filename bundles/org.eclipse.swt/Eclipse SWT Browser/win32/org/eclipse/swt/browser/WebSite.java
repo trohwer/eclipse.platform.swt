@@ -322,6 +322,8 @@ int ShowContextMenu(int dwID, long /*int*/ ppt, long /*int*/ pcmdtReserved, long
 	Event event = new Event();
 	POINT pt = new POINT();
 	OS.MoveMemory(pt, ppt, POINT.sizeof);
+	pt.x = DPIUtil.autoScaleDown(pt.x); // To Points
+	pt.y = DPIUtil.autoScaleDown(pt.y); // To Points
 	event.x = pt.x;
 	event.y = pt.y;
 	browser.notifyListeners(SWT.MenuDetect, event);
@@ -329,7 +331,7 @@ int ShowContextMenu(int dwID, long /*int*/ ppt, long /*int*/ pcmdtReserved, long
 	Menu menu = browser.getMenu();
 	if (menu != null && !menu.isDisposed ()) {
 		if (pt.x != event.x || pt.y != event.y) {
-			menu.setLocationInPixels (event.x, event.y);
+			menu.setLocation (event.x, event.y);
 		}
 		menu.setVisible (true);
 		return COM.S_OK;

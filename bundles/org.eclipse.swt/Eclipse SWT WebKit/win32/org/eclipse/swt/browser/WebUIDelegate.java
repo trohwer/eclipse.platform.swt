@@ -48,7 +48,7 @@ int canTakeFocus (long /*int*/ sender, int forward, long /*int*/ result) {
 }
 
 int contextMenuItemsForElement (long /*int*/ sender, long /*int*/ element, long /*int*/ defaultItemsHMenu, long /*int*/ resultHMenu) {
-	Point pt = browser.getDisplay ().getCursorLocationInPixels ();
+	Point pt = browser.getDisplay ().getCursorLocation ();
 	Event event = new Event ();
 	event.x = pt.x;
 	event.y = pt.y;
@@ -57,7 +57,7 @@ int contextMenuItemsForElement (long /*int*/ sender, long /*int*/ element, long 
 		Menu menu = browser.getMenu ();
 		if (menu != null && !menu.isDisposed ()) {
 			if (event.x != pt.x || event.y != pt.y) {
-				menu.setLocationInPixels (event.x, event.y);
+				menu.setLocation (event.x, event.y);
 			}
 			menu.setVisible (true);
 		} else {
