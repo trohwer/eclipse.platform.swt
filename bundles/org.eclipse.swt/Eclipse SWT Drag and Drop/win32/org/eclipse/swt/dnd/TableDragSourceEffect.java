@@ -13,6 +13,7 @@ package org.eclipse.swt.dnd;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
+import org.eclipse.swt.internal.DPIUtil.*;
 import org.eclipse.swt.internal.win32.*;
 import org.eclipse.swt.widgets.*;
 
@@ -143,7 +144,7 @@ public class TableDragSourceEffect extends DragSourceEffect {
 					} else {
 						data.transparentPixel = shdi.crColorKey << 8;
 					}
-					dragSourceImage = new Image(control.getDisplay(), data);
+					dragSourceImage = new Image(control.getDisplay(), new AutoScaleImageDataProvider(data, DPIUtil.getDeviceZoom()));
 					OS.SelectObject (memHdc, oldMemBitmap);
 					OS.DeleteDC (memHdc);
 					OS.DeleteObject (memDib);
