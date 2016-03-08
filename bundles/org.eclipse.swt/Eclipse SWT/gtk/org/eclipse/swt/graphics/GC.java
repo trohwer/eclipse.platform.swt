@@ -2048,8 +2048,9 @@ void fillGradientRectangleInPixels(int x, int y, int width, int height, boolean 
 		return;
 	}
 	ImageData.fillGradientRectangle(this, data.device,
-		x, y, width, height, vertical, fromRGB, toRGB,
-		8, 8, 8);
+		DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(y),
+		DPIUtil.autoScaleDown(width), DPIUtil.autoScaleDown(height),
+		vertical, fromRGB, toRGB, 8, 8, 8);
 }
 
 /**

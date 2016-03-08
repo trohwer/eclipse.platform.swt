@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.swt.graphics;
 import java.io.*;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.*;
 
 /**
  * Instances of this class are device-independent descriptions
@@ -207,12 +206,6 @@ public final class ImageData implements Cloneable {
 	 * Delay Time value).
 	 */
 	public int delayTime;
-
-	/**
-	 * Variable to let the client know whether the image is already scaled
-	 * @since 3.105
-	 */
-	public boolean scaled = false;
 
 	/**
 	 * Arbitrary channel width data to 8-bit conversion table.
@@ -3661,26 +3654,20 @@ static void fillGradientRectangle(GC gc, Device device,
 		fromRGB, toRGB, redBits, greenBits, blueBits);
 	Image image = new Image(device, band);
 	if ((band.width == 1) || (band.height == 1)) {
-			gc.drawImage(image, 0, 0, DPIUtil.autoScaleDown(band.width), DPIUtil.autoScaleDown(band.height),
-					DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(y), DPIUtil.autoScaleDown(width),
-					DPIUtil.autoScaleDown(height));
-		} else {
+		gc.drawImage(image, 0, 0, band.width, band.height, x, y, width, height);
+	} else {
 		if (vertical) {
 			for (int dx = 0; dx < width; dx += band.width) {
 				int blitWidth = width - dx;
 				if (blitWidth > band.width) blitWidth = band.width;
-					gc.drawImage(image, 0, 0, DPIUtil.autoScaleDown(blitWidth), DPIUtil.autoScaleDown(band.height),
-							DPIUtil.autoScaleDown(dx + x), DPIUtil.autoScaleDown(y), DPIUtil.autoScaleDown(blitWidth),
-							DPIUtil.autoScaleDown(band.height));
-				}
+				gc.drawImage(image, 0, 0, blitWidth, band.height, dx + x, y, blitWidth, band.height);
+			}
 		} else {
 			for (int dy = 0; dy < height; dy += band.height) {
 				int blitHeight = height - dy;
 				if (blitHeight > band.height) blitHeight = band.height;
-					gc.drawImage(image, 0, 0, DPIUtil.autoScaleDown(band.width), DPIUtil.autoScaleDown(blitHeight),
-							DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(dy + y), DPIUtil.autoScaleDown(band.width),
-							DPIUtil.autoScaleDown(blitHeight));
-				}
+				gc.drawImage(image, 0, 0, band.width, blitHeight, x, dy + y, band.width, blitHeight);
+			}
 		}
 	}
 	image.dispose();
