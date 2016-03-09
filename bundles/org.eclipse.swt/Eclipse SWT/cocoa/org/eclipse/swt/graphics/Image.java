@@ -11,9 +11,10 @@
 package org.eclipse.swt.graphics;
 
 
-import org.eclipse.swt.internal.cocoa.*;
-import org.eclipse.swt.*;
 import java.io.*;
+
+import org.eclipse.swt.*;
+import org.eclipse.swt.internal.cocoa.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -834,6 +835,27 @@ public Rectangle getBounds() {
 }
 
 /**
+ * Returns the bounds of the receiver. The rectangle will always
+ * have x and y values of 0, and the width and height of the
+ * image.
+ *
+ * @return a rectangle specifying the image's bounds in pixels
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ * @since 3.105
+ */
+public Rectangle getBoundsInPixels() {
+	Rectangle bounds = getBounds();
+	int scaleFactor = (int) NSScreen.mainScreen().backingScaleFactor();
+	bounds.width *= scaleFactor;
+	bounds.height *= scaleFactor;
+	return bounds;
+}
+
+/**
  * Returns an <code>ImageData</code> based on the receiver
  * Modifications made to this <code>ImageData</code> will not
  * affect the Image.
@@ -848,6 +870,26 @@ public Rectangle getBounds() {
  * @see ImageData
  */
 public ImageData getImageData() {
+	return getImageDataAtCurrentZoom();
+}
+
+/**
+ * Returns an <code>ImageData</code> based on the receiver
+ * Modifications made to this <code>ImageData</code> will not
+ * affect the Image.
+ *
+ * @return an <code>ImageData</code> containing the image's data
+ * and attributes at the current zoom level.
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ *
+ * @see ImageData
+ * @since 3.105
+ */
+public ImageData getImageDataAtCurrentZoom() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
