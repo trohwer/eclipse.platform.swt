@@ -855,6 +855,69 @@ public Rectangle getBoundsInPixels() {
 	return bounds;
 }
 
+ImageData _getImageData(NSBitmapImageRep imageRep) {
+	long /*int*/ width = imageRep.pixelsWide();
+	long /*int*/ height = imageRep.pixelsHigh();
+	long /*int*/ bpr = imageRep.bytesPerRow();
+	long /*int*/ bpp = imageRep.bitsPerPixel();
+	long /*int*/ bitmapData = imageRep.bitmapData();
+	long /*int*/ bitmapFormat = imageRep.bitmapFormat();
+	long /*int*/ dataSize = height * bpr;
+	byte[] srcData = new byte[(int)/*64*/dataSize];
+	OS.memmove(srcData, bitmapData, dataSize);
+
+	PaletteData palette;
+	if (bpp == 32 && (bitmapFormat & OS.NSAlphaFirstBitmapFormat) == 0) {
+		palette = new PaletteData(0xFF000000, 0xFF0000, 0xFF00);
+	} else {
+		palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
+	}
+	ImageData data = new ImageData((int)/*64*/width, (int)/*64*/height, (int)/*64*/bpp, palette, 1, srcData);
+	data.bytesPerLine = (int)/*64*/bpr;
+	if (imageRep.hasAlpha() && transparentPixel == -1 && alpha == -1 && alphaData == null) {
+		byte[] alphaData = new byte[(int)/*64*/(width * height)];
+		int offset = (bitmapFormat & OS.NSAlphaFirstBitmapFormat) != 0 ? 0 : 3, a = 0;
+		for (int i = offset; i < srcData.length; i+= 4) {
+			alphaData[a++] = srcData[i];
+		}
+		data.alphaData = alphaData;
+	} else {
+		data.transparentPixel = transparentPixel;
+		if (transparentPixel == -1 && type == SWT.ICON) {
+			/* Get the icon mask data */
+			int maskPad = 2;
+			long /*int*/ maskBpl = (((width + 7) / 8) + (maskPad - 1)) / maskPad * maskPad;
+			byte[] maskData = new byte[(int)/*64*/(height * maskBpl)];
+			int offset = 0, maskOffset = 0;
+			for (int y = 0; y<height; y++) {
+				for (int x = 0; x<width; x++) {
+					if (srcData[offset] != 0) {
+						maskData[maskOffset + (x >> 3)] |= (1 << (7 - (x & 0x7)));
+					} else {
+						maskData[maskOffset + (x >> 3)] &= ~(1 << (7 - (x & 0x7)));
+					}
+					offset += 4;
+				}
+				maskOffset += maskBpl;
+			}
+			data.maskData = maskData;
+			data.maskPad = maskPad;
+		}
+		data.alpha = alpha;
+		if (alpha == -1 && alphaData != null) {
+			data.alphaData = new byte[alphaData.length];
+			System.arraycopy(alphaData, 0, data.alphaData, 0, alphaData.length);
+		}
+	}
+	if (bpp == 32) {
+		int offset = (bitmapFormat & OS.NSAlphaFirstBitmapFormat) != 0 ? 0 : 3;
+		for (int i = offset; i < srcData.length; i+= 4) {
+			srcData[i] = 0;
+		}
+	}
+	return data;
+}
+
 /**
  * Returns an <code>ImageData</code> based on the receiver
  * Modifications made to this <code>ImageData</code> will not
@@ -870,7 +933,15 @@ public Rectangle getBoundsInPixels() {
  * @see ImageData
  */
 public ImageData getImageData() {
-	return getImageDataAtCurrentZoom();
+	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
+	NSAutoreleasePool pool = null;
+	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
+	try {
+		NSBitmapImageRep imageRep = getActualRepresentation();
+		return _getImageData(imageRep);
+	} finally {
+		if (pool != null) pool.release();
+	}
 }
 
 /**
@@ -895,66 +966,7 @@ public ImageData getImageDataAtCurrentZoom() {
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
 		NSBitmapImageRep imageRep = getRepresentation();
-		long /*int*/ width = imageRep.pixelsWide();
-		long /*int*/ height = imageRep.pixelsHigh();
-		long /*int*/ bpr = imageRep.bytesPerRow();
-		long /*int*/ bpp = imageRep.bitsPerPixel();
-		long /*int*/ bitmapData = imageRep.bitmapData();
-		long /*int*/ bitmapFormat = imageRep.bitmapFormat();
-		long /*int*/ dataSize = height * bpr;
-		byte[] srcData = new byte[(int)/*64*/dataSize];
-		OS.memmove(srcData, bitmapData, dataSize);
-
-		PaletteData palette;
-		if (bpp == 32 && (bitmapFormat & OS.NSAlphaFirstBitmapFormat) == 0) {
-			palette = new PaletteData(0xFF000000, 0xFF0000, 0xFF00);
-		} else {
-			palette = new PaletteData(0xFF0000, 0xFF00, 0xFF);
-		}
-		ImageData data = new ImageData((int)/*64*/width, (int)/*64*/height, (int)/*64*/bpp, palette, 1, srcData);
-		data.bytesPerLine = (int)/*64*/bpr;
-		if (imageRep.hasAlpha() && transparentPixel == -1 && alpha == -1 && alphaData == null) {
-			byte[] alphaData = new byte[(int)/*64*/(width * height)];
-			int offset = (bitmapFormat & OS.NSAlphaFirstBitmapFormat) != 0 ? 0 : 3, a = 0;
-			for (int i = offset; i < srcData.length; i+= 4) {
-				alphaData[a++] = srcData[i];
-			}
-			data.alphaData = alphaData;
-		} else {
-			data.transparentPixel = transparentPixel;
-			if (transparentPixel == -1 && type == SWT.ICON) {
-				/* Get the icon mask data */
-				int maskPad = 2;
-				long /*int*/ maskBpl = (((width + 7) / 8) + (maskPad - 1)) / maskPad * maskPad;
-				byte[] maskData = new byte[(int)/*64*/(height * maskBpl)];
-				int offset = 0, maskOffset = 0;
-				for (int y = 0; y<height; y++) {
-					for (int x = 0; x<width; x++) {
-						if (srcData[offset] != 0) {
-							maskData[maskOffset + (x >> 3)] |= (1 << (7 - (x & 0x7)));
-						} else {
-							maskData[maskOffset + (x >> 3)] &= ~(1 << (7 - (x & 0x7)));
-						}
-						offset += 4;
-					}
-					maskOffset += maskBpl;
-				}
-				data.maskData = maskData;
-				data.maskPad = maskPad;
-			}
-			data.alpha = alpha;
-			if (alpha == -1 && alphaData != null) {
-				data.alphaData = new byte[alphaData.length];
-				System.arraycopy(alphaData, 0, data.alphaData, 0, alphaData.length);
-			}
-		}
-		if (bpp == 32) {
-			int offset = (bitmapFormat & OS.NSAlphaFirstBitmapFormat) != 0 ? 0 : 3;
-			for (int i = offset; i < srcData.length; i+= 4) {
-				srcData[i] = 0;
-			}
-		}
-		return data;
+		return _getImageData(imageRep);
 	} finally {
 		if (pool != null) pool.release();
 	}
@@ -981,6 +993,21 @@ public static Image cocoa_new(Device device, int type, NSImage nsImage) {
 	image.type = type;
 	image.handle = nsImage;
 	return image;
+}
+
+// Method to get the Image representation for the actual image without any scaling.
+NSBitmapImageRep getActualRepresentation () {
+	NSArray reps = handle.representations();
+	NSSize size = handle.size();
+	long /*int*/ count = reps.count();
+	NSBitmapImageRep bestRep = null;
+	for (int i = 0; i < count; i++) {
+		NSBitmapImageRep rep = new NSBitmapImageRep(reps.objectAtIndex(i));
+		if (bestRep == null || ((int)size.width == rep.pixelsWide() && (int)size.height == rep.pixelsHigh())) {
+			bestRep = rep;
+		}
+	}
+	return bestRep;
 }
 
 NSBitmapImageRep getRepresentation () {
