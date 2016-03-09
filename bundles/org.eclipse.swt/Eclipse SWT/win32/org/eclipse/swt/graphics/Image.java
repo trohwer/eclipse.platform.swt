@@ -1824,10 +1824,6 @@ public ImageData getImageDataAtCurrentZoom() {
 /**
  * Returns an integer hash code for the receiver. Any two
  * objects that return <code>true</code> when passed to
-=======
- * Returns an integer hash code for the receiver. Any two
- * objects that return <code>true</code> when passed to
->>>>>>> refs/remotes/origin/master
  * <code>equals</code> must return the same value for this
  * method.
  *
