@@ -1687,7 +1687,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 						if (gcData.focusDrawn && !isDisposed ()) updateUIState ();
 					}
 					gc.dispose();
-					if (!isDisposed ()) paintGC.drawImageInPixels (image, ps.left, ps.top);
+					if (!isDisposed ()) paintGC.drawImage (image, DPIUtil.autoScaleDown(ps.left), DPIUtil.autoScaleDown(ps.top));
 					image.dispose ();
 					gc = paintGC;
 				}

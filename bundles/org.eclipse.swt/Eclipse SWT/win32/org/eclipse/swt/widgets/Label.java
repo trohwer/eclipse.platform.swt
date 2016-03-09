@@ -619,7 +619,7 @@ LRESULT WM_PAINT (long /*int*/ wParam, long /*int*/ lParam) {
 							x = Math.max (0, (clientRect.right - imageBounds.width));
 						}
 					}
-					gc.drawImageInPixels (image, x, Math.max (0, (clientRect.bottom - imageBounds.height) / 2));
+					gc.drawImage (image, DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(Math.max (0, (clientRect.bottom - imageBounds.height) / 2)));
 					result = LRESULT.ONE;
 				}
 				int width = ps.right - ps.left;
@@ -703,7 +703,7 @@ LRESULT wmDrawChild (long /*int*/ wParam, long /*int*/ lParam) {
 				data.device = display;
 				GC gc = GC.win32_new (struct.hDC, data);
 				Image image = getEnabled () ? this.image : new Image (display, this.image, SWT.IMAGE_DISABLE);
-				gc.drawImageInPixels (image, x, Math.max (0, (height - imageHeight) / 2));
+				gc.drawImage (image, DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(Math.max (0, (height - imageHeight) / 2)));
 				if (image != this.image) image.dispose ();
 				gc.dispose ();
 				x += imageWidth + margin;

@@ -1448,10 +1448,8 @@ public void setLocation (int x, int y) {
 	checkWidget ();
 	setLocationInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setLocationInPixels (int x, int y) {
+
+void setLocationInPixels (int x, int y) {
 	if ((style & (SWT.BAR | SWT.DROP_DOWN)) != 0) return;
 	this.x = x;
 	this.y = y;

@@ -190,9 +190,9 @@ void drawItem (GC gc, long /*int*/ hTheme, RECT clipRect, boolean drawFocus) {
 	if (image != null) {
 		rect.left += ExpandItem.TEXT_INSET;
 		if (imageHeight > headerHeight) {
-			gc.drawImageInPixels (image, rect.left, rect.top + headerHeight - imageHeight);
+			gc.drawImage (image, DPIUtil.autoScaleDown(rect.left), DPIUtil.autoScaleDown(rect.top + headerHeight - imageHeight));
 		} else {
-			gc.drawImageInPixels (image, rect.left, rect.top + (headerHeight - imageHeight) / 2);
+			gc.drawImage (image, DPIUtil.autoScaleDown(rect.left), DPIUtil.autoScaleDown(rect.top + (headerHeight - imageHeight) / 2));
 		}
 		rect.left += imageWidth;
 	}

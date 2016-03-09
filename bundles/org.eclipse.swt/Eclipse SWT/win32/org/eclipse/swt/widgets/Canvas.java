@@ -115,13 +115,6 @@ public void drawBackground (GC gc, int x, int y, int width, int height) {
 	y = DPIUtil.autoScaleUp(y);
 	width = DPIUtil.autoScaleUp(width);
 	height = DPIUtil.autoScaleUp(height);
-	drawBackgroundInPixels(gc, x, y, width, height);
-}
-
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void drawBackgroundInPixels (GC gc, int x, int y, int width, int height) {
 	drawBackgroundInPixels(gc, x, y, width, height, 0, 0);
 }
 
@@ -216,10 +209,8 @@ public void scroll (int destX, int destY, int x, int y, int width, int height, b
 	height = DPIUtil.autoScaleUp(height);
 	scrollInPixels(destX, destY, x, y, width, height, all);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void scrollInPixels (int destX, int destY, int x, int y, int width, int height, boolean all) {
+
+void scrollInPixels (int destX, int destY, int x, int y, int width, int height, boolean all) {
 	checkWidget ();
 	forceResize ();
 	boolean isFocus = caret != null && caret.isFocusCaret ();

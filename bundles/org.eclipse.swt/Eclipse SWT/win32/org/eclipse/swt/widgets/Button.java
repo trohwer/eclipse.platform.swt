@@ -168,8 +168,8 @@ void _setImage (Image image) {
 		if (image != null) {
 			switch (image.type) {
 				case SWT.BITMAP: {
-					Rectangle rect = image.getBoundsInPixels ();
-					ImageData data = image.getImageDataAtCurrentZoom ();
+					Rectangle rect = image.getBounds ();
+					ImageData data = image.getImageData ();
 					switch (data.getTransparencyType ()) {
 						case SWT.TRANSPARENCY_PIXEL:
 							if (rect.width <= ICON_WIDTH && rect.height <= ICON_HEIGHT) {
@@ -184,8 +184,8 @@ void _setImage (Image image) {
 							image2 = new Image (display, rect.width, rect.height);
 							GC gc = new GC (image2);
 							gc.setBackground (getBackground ());
-							gc.fillRectangleInPixels (rect);
-							gc.drawImageInPixels (image, 0, 0);
+							gc.fillRectangle (rect);
+							gc.drawImage (image, 0, 0);
 							gc.dispose ();
 							hImage = image2.handle;
 							imageBits = OS.BS_BITMAP;

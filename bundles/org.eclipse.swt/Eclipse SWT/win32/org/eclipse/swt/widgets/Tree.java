@@ -525,15 +525,15 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 								if (images != null) image = images [index];
 							}
 							if (image != null) {
-								Rectangle bounds = image.getBoundsInPixels ();
-								if (size == null) size = getImageSize ();
+								Rectangle bounds = image.getBounds (); // Points
+								if (size == null) size = DPIUtil.autoScaleDown (getImageSize ()); // To Points
 								if (!ignoreDrawForeground) {
 									GCData data = new GCData();
 									data.device = display;
 									GC gc = GC.win32_new (hDC, data);
-									RECT iconRect = item.getBounds (index, false, true, false, false, true, hDC);
-									gc.setClippingInPixels (iconRect.left, iconRect.top, iconRect.right - iconRect.left, iconRect.bottom - iconRect.top);
-									gc.drawImageInPixels (image, 0, 0, bounds.width, bounds.height, iconRect.left, iconRect.top, size.x, size.y);
+									RECT iconRect = item.getBounds (index, false, true, false, false, true, hDC); // Pixels
+									gc.setClipping (DPIUtil.autoScaleDown(new Rectangle(iconRect.left, iconRect.top, iconRect.right - iconRect.left, iconRect.bottom - iconRect.top)));
+									gc.drawImage (image, 0, 0, bounds.width, bounds.height, DPIUtil.autoScaleDown(iconRect.left), DPIUtil.autoScaleDown(iconRect.top), size.x, size.y);
 									OS.SelectClipRgn (hDC, 0);
 									gc.dispose ();
 								}
@@ -648,9 +648,9 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 								}
 							}
 						}
-						Rectangle boundsInPixels = new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
-						event.setBoundsInPixels(boundsInPixels);
-						gc.setClippingInPixels (boundsInPixels);
+						Rectangle boundsInPixels = new Rectangle (cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
+						event.setBoundsInPixels (boundsInPixels);
+						gc.setClipping (DPIUtil.autoScaleDown (boundsInPixels));
 						sendEvent (SWT.EraseItem, event);
 						event.gc = null;
 						int newTextClr = data.foreground;
@@ -763,8 +763,8 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 					int inset = i != 0 ? INSET : 0;
 					int offset = i != 0 ? INSET : INSET + 2;
 					if (image != null) {
-						Rectangle bounds = image.getBoundsInPixels ();
-						if (size == null) size = getImageSize ();
+						Rectangle bounds = image.getBounds (); // Points
+						if (size == null) size = DPIUtil.autoScaleDown (getImageSize ()); // To Points
 						if (!ignoreDrawForeground) {
 							//int y1 = rect.top + (index == 0 ? (getItemHeight () - size.y) / 2 : 0);
 							int y1 = rect.top;
@@ -772,8 +772,8 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 							GCData data = new GCData();
 							data.device = display;
 							GC gc = GC.win32_new (hDC, data);
-							gc.setClippingInPixels (x1, rect.top, rect.right - x1, rect.bottom - rect.top);
-							gc.drawImageInPixels (image, 0, 0, bounds.width, bounds.height, x1, y1, size.x, size.y);
+							gc.setClipping (DPIUtil.autoScaleDown(new Rectangle(x1, rect.top, rect.right - x1, rect.bottom - rect.top)));
+							gc.drawImage (image, 0, 0, bounds.width, bounds.height, DPIUtil.autoScaleDown(x1), DPIUtil.autoScaleDown(y1), size.x, size.y);
 							OS.SelectClipRgn (hDC, 0);
 							gc.dispose ();
 						}
@@ -867,7 +867,7 @@ LRESULT CDDS_ITEMPOSTPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int
 				RECT cellRect = item.getBounds (index, true, true, true, true, true, hDC);
 				int cellWidth = cellRect.right - cellRect.left;
 				int cellHeight = cellRect.bottom - cellRect.top;
-				gc.setClippingInPixels (cellRect.left, cellRect.top, cellWidth, cellHeight);
+				gc.setClipping (DPIUtil.autoScaleDown(new Rectangle(cellRect.left, cellRect.top, cellWidth, cellHeight)));
 				sendEvent (SWT.PaintItem, event);
 				if (data.focusDrawn) focusRect = null;
 				event.gc = null;
@@ -1052,9 +1052,9 @@ LRESULT CDDS_ITEMPREPAINT (NMTVCUSTOMDRAW nmcd, long /*int*/ wParam, long /*int*
 					}
 				}
 			}
-			Rectangle boundsInPixels2 = new Rectangle(cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
-			event.setBoundsInPixels(boundsInPixels2);
-			gc.setClippingInPixels (boundsInPixels2);
+			Rectangle boundsInPixels2 = new Rectangle (cellRect.left, cellRect.top, cellRect.right - cellRect.left, cellRect.bottom - cellRect.top);
+			event.setBoundsInPixels (boundsInPixels2);
+			gc.setClipping (DPIUtil.autoScaleDown (boundsInPixels2));
 			sendEvent (SWT.EraseItem, event);
 			event.gc = null;
 			int newTextClr = data.foreground;
@@ -8110,8 +8110,8 @@ LRESULT wmNotifyToolTip (NMTTCUSTOMDRAW nmcd, long /*int*/ lParam) {
 								RECT imageRect = item [0].getBounds (index [0], false, true, false, false, false, hDC);
 								if (imageList == null) size.x = imageRect.right - imageRect.left;
 								if (image != null) {
-									Rectangle rect = image.getBoundsInPixels ();
-									gc.drawImageInPixels (image, rect.x, rect.y, rect.width, rect.height, x, imageRect.top, size.x, size.y);
+									Rectangle rect = image.getBounds (); // Points
+									gc.drawImage (image, rect.x, rect.y, rect.width, rect.height, DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(imageRect.top), DPIUtil.autoScaleDown(size.x), DPIUtil.autoScaleDown(size.y));
 									x += INSET + (index [0] == 0 ? 1 : 0);
 								}
 								x += size.x;

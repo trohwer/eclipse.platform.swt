@@ -275,8 +275,8 @@ void drawWidget (GC gc, RECT rect) {
 	if (hasFocus () && focusIndex != -1) {
 		Rectangle [] rects = getRectangles (focusIndex);
 		for (int i = 0; i < rects.length; i++) {
-			Rectangle rectangle = rects [i];
-			gc.drawFocusInPixels (rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+			Rectangle rectangle = DPIUtil.autoScaleDown(rects [i]);
+			gc.drawFocus (rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 		}
 	}
 	if (hooks (SWT.Paint) || filters (SWT.Paint)) {
