@@ -5718,7 +5718,7 @@ void updateMenuLocation (Event event) {
 		y = Math.min (y, clientArea.y + clientArea.height);
 	}
 	Point pt = toDisplayInPixels (x, y);
-	event.setLocationInPixels(new Point(pt.x, pt.y));
+	event.setLocationInPixels(pt.x, pt.y);
 }
 
 void updateMoveable () {

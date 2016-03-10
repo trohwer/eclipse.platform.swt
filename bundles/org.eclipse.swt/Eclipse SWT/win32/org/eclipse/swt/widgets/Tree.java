@@ -5650,7 +5650,7 @@ void updateMenuLocation (Event event) {
 		y = Math.min (y, clientArea.y + clientArea.height);
 	}
 	Point pt = toDisplayInPixels (x, y);
-	event.setLocationInPixels(pt);
+	event.setLocationInPixels(pt.x, pt.y);
 }
 
 @Override

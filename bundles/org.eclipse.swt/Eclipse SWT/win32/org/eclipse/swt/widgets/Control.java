@@ -1998,7 +1998,7 @@ void mapEvent (long /*int*/ hwnd, Event event) {
 		point.x = loc.x;
 		point.y = loc.y;
 		OS.MapWindowPoints (hwnd, handle, point, 1);
-		event.setLocationInPixels(new Point(point.x, point.y));
+		event.setLocationInPixels(point.x, point.y);
 	}
 }
 
@@ -2962,7 +2962,7 @@ boolean sendGestureEvent (GESTUREINFO gi) {
 	int type = 0;
 	Point globalPt = new Point(gi.x, gi.y);
 	Point point = toControlInPixels(globalPt.x, globalPt.y);
-	event.setLocationInPixels(point);
+	event.setLocationInPixels(point.x, point.y);
 	switch (gi.dwID) {
 		case OS.GID_ZOOM:
 			type = SWT.Gesture;
@@ -3042,7 +3042,7 @@ void sendTouchEvent (TOUCHINPUT touchInput []) {
 	POINT pt = new POINT ();
 	OS.GetCursorPos (pt);
 	OS.ScreenToClient (handle, pt);
-	event.setLocationInPixels(new Point(pt.x, pt.y));
+	event.setLocationInPixels(pt.x, pt.y);
 	Touch [] touches = new Touch [touchInput.length];
 	Monitor monitor = getMonitor ();
 	for (int i = 0; i < touchInput.length; i++) {
@@ -5615,7 +5615,7 @@ LRESULT WM_TABLET_FLICK (long /*int*/ wParam, long /*int*/ lParam) {
 			event.yDirection = 1;
 			break;
 	}
-	event.setLocationInPixels(new Point(fPoint.x, fPoint.y));
+	event.setLocationInPixels(fPoint.x, fPoint.y);
 	event.type = SWT.Gesture;
 	event.detail = SWT.GESTURE_SWIPE;
 	setInputState (event, SWT.Gesture);

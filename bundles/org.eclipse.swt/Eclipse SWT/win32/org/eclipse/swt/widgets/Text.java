@@ -2496,7 +2496,7 @@ int untranslateOffset (int offset) {
 @Override
 void updateMenuLocation (Event event) {
 	Point point = display.mapInPixels (this, null, getCaretLocationInPixels ());
-	event.setLocationInPixels(new Point(point.x, point.y + getLineHeightInPixels ()));
+	event.setLocationInPixels(point.x, point.y + getLineHeightInPixels ());
 }
 
 @Override

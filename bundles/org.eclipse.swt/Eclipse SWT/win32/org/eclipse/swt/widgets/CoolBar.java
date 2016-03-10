@@ -1206,9 +1206,9 @@ LRESULT wmNotifyChild (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 				Event event = new Event();
 				event.detail = SWT.ARROW;
 				if ((style & SWT.VERTICAL) != 0) {
-					event.setLocationInPixels(new Point(lpnm.right, lpnm.top));
+					event.setLocationInPixels(lpnm.right, lpnm.top);
 				} else {
-					event.setLocationInPixels(new Point(lpnm.left, lpnm.bottom));
+					event.setLocationInPixels(lpnm.left, lpnm.bottom);
 				}
 				item.sendSelectionEvent(SWT.Selection, event, false);
 			}

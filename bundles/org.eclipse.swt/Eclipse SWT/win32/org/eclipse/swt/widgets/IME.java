@@ -578,7 +578,7 @@ LRESULT WM_LBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 			if (OS.ImmGetCompositionString (hIMC, OS.GCS_COMPSTR, (TCHAR)null, 0) > 0) {
 				Event event = new Event ();
 				event.detail = SWT.COMPOSITION_OFFSET;
-				event.setLocationInPixels(new Point(OS.GET_X_LPARAM (lParam), OS.GET_Y_LPARAM (lParam)));
+				event.setLocationInPixels(OS.GET_X_LPARAM (lParam), OS.GET_Y_LPARAM (lParam));
 				sendEvent (SWT.ImeComposition, event);
 				int offset = event.index;
 				int length = text.length();

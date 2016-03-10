@@ -1586,7 +1586,7 @@ LRESULT wmNotifyChild (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 				int index = (int)/*64*/OS.SendMessage (handle, OS.TB_COMMANDTOINDEX, lpnmtb.iItem, 0);
 				RECT rect = new RECT ();
 				OS.SendMessage (handle, OS.TB_GETITEMRECT, index, rect);
-				event.setLocationInPixels(new Point(rect.left, rect.bottom));
+				event.setLocationInPixels(rect.left, rect.bottom);
 				child.sendSelectionEvent (SWT.Selection, event, false);
 			}
 			break;

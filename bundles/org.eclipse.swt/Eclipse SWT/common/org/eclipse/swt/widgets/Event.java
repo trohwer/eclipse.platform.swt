@@ -302,10 +302,9 @@ void setBoundsInPixels (Rectangle rect) {
 	setBounds(DPIUtil.autoScaleDown(rect));
 }
 
-void setLocationInPixels (Point point) {
-	point = DPIUtil.autoScaleDown(point);
-	this.x = point.x;
-	this.y = point.y;
+void setLocationInPixels (int x, int y) {
+	this.x = DPIUtil.autoScaleDown(x);
+	this.y = DPIUtil.autoScaleDown(y);
 }
 
 /**
