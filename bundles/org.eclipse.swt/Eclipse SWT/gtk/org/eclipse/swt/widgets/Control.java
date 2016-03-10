@@ -3359,7 +3359,9 @@ long /*int*/ gtk_draw (long /*int*/ widget, long /*int*/ cairo) {
 		data.cairo = cairo;
 	}
 	GC gc = event.gc = GC.gtk_new (this, data);
-	gc.setClipping (DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height)));
+	Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height));
+	// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
+	gc.setClipping (rect2.x, rect2.y, rect2.width, rect2.height);
 	drawWidget (gc);
 	sendEvent (SWT.Paint, event);
 	gc.dispose ();

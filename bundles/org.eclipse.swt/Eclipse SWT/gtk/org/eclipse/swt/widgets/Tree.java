@@ -2818,12 +2818,16 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 				if (OS.GTK_VERSION >= OS.VERSION(3, 9, 0) && cr != 0) {
 					GdkRectangle r = new GdkRectangle();
 					OS.gdk_cairo_get_clip_rectangle(cr, r);
-					gc.setClipping(DPIUtil.autoScaleDown(new Rectangle(rect.x, r.y, r.width, r.height)));
+					Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, r.y, r.width, r.height));
+					// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
+					gc.setClipping(rect2.x, rect2.y, rect2.width, rect2.height);
 					if (OS.GTK_VERSION <= OS.VERSION(3, 14, 8)) {
 						rect.width = r.width;
 					}
 				} else {
-					gc.setClipping(DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height)));
+					Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height));
+					// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
+					gc.setClipping(rect2.x, rect2.y, rect2.width, rect2.height);
 				}
 				Event event = new Event ();
 				event.item = item;
@@ -2934,7 +2938,9 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 					rect.x = getClientWidth () - rect.width - rect.x;
 				}
 
-				gc.setClipping(DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height)));
+				Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height));
+				// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
+				gc.setClipping(rect2.x, rect2.y, rect2.width, rect2.height);
 
 				Event event = new Event ();
 				event.item = item;
