@@ -202,10 +202,8 @@ public void addArc (float x, float y, float width, float height, float startAngl
 	height = DPIUtil.autoScaleUp(height);
 	addArcInPixels(x, y, width, height, startAngle, arcAngle);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void addArcInPixels(float x, float y, float width, float height, float startAngle, float arcAngle) {
+
+void addArcInPixels(float x, float y, float width, float height, float startAngle, float arcAngle) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (width < 0) {
 		x = x + width;
@@ -274,10 +272,8 @@ public void addRectangle (float x, float y, float width, float height) {
 	height = DPIUtil.autoScaleUp(height);
 	addRectangleInPixels(x, y, width, height);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void addRectangleInPixels(float x, float y, float width, float height) {
+
+void addRectangleInPixels(float x, float y, float width, float height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	RectF rect = new RectF();
 	rect.X = x;
@@ -311,10 +307,8 @@ public void addString (String string, float x, float y, Font font) {
 	y = DPIUtil.autoScaleUp(y);
 	addStringInPixels(string, x, y, font);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void addStringInPixels(String string, float x, float y, Font font) {
+
+void addStringInPixels(String string, float x, float y, Font font) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (font == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (font.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -387,10 +381,8 @@ public boolean contains (float x, float y, GC gc, boolean outline) {
 	y = DPIUtil.autoScaleUp(y);
 	return containsInPixels(x, y, gc, outline);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public boolean containsInPixels(float x, float y, GC gc, boolean outline) {
+
+boolean containsInPixels(float x, float y, GC gc, boolean outline) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (gc == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -430,10 +422,7 @@ public void cubicTo (float cx1, float cy1, float cx2, float cy2, float x, float 
 	cubicToInPixels(cx1, cy1, cx2, cy2, x, y);
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void cubicToInPixels(float cx1, float cy1, float cx2, float cy2, float x, float y) {
+void cubicToInPixels(float cx1, float cy1, float cx2, float cy2, float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Gdip.GraphicsPath_AddBezier(handle, currentPoint.X, currentPoint.Y, cx1, cy1, cx2, cy2, x, y);
 	Gdip.GraphicsPath_GetLastPoint(handle, currentPoint);
@@ -461,15 +450,13 @@ void destroy() {
  * </ul>
  */
 public void getBounds (float[] bounds) {
+	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	getBoundsInPixels(bounds);
 	bounds = DPIUtil.autoScaleDown(bounds);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void getBoundsInPixels(float[] bounds) {
+
+void getBoundsInPixels(float[] bounds) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (bounds.length < 4) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	RectF rect = new RectF();
 	Gdip.GraphicsPath_GetBounds(handle, rect, 0, 0);
@@ -494,15 +481,13 @@ public void getBoundsInPixels(float[] bounds) {
  * </ul>
  */
 public void getCurrentPoint (float[] point) {
+	if (point == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	getCurrentPointInPixels(point);
 	point = DPIUtil.autoScaleDown(point);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void getCurrentPointInPixels(float[] point) {
+
+void getCurrentPointInPixels(float[] point) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (point == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (point.length < 2) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	point[0] = currentPoint.X;
 	point[1] = currentPoint.Y;
@@ -579,10 +564,8 @@ public PathData getPathData() {
 public void lineTo (float x, float y) {
 	lineToInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void lineToInPixels(float x, float y) {
+
+void lineToInPixels(float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Gdip.GraphicsPath_AddLine(handle, currentPoint.X, currentPoint.Y, x, y);
 	Gdip.GraphicsPath_GetLastPoint(handle, currentPoint);
@@ -645,10 +628,8 @@ public boolean isDisposed() {
 public void moveTo (float x, float y) {
 	moveToInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void moveToInPixels(float x, float y) {
+
+void moveToInPixels(float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	Gdip.GraphicsPath_StartFigure(handle);
 	currentPoint.X = startPoint.X = x;
@@ -675,10 +656,7 @@ public void quadTo (float cx, float cy, float x, float y) {
 	quadToInPixels(cx, cy, x, y);
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void quadToInPixels(float cx, float cy, float x, float y) {
+void quadToInPixels(float cx, float cy, float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	float cx1 = currentPoint.X + 2 * (cx - currentPoint.X) / 3;
 	float cy1 = currentPoint.Y + 2 * (cy - currentPoint.Y) / 3;

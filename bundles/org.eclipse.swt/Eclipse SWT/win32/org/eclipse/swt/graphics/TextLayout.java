@@ -567,12 +567,11 @@ long /*int*/ createGdipBrush(Color color, int alpha) {
  * </ul>
  */
 public void draw (GC gc, int x, int y) {
+	checkLayout();
 	drawInPixels(gc, DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void drawInPixels (GC gc, int x, int y) {
+
+void drawInPixels (GC gc, int x, int y) {
 	drawInPixels(gc, x, y, -1, -1, null, null);
 }
 
@@ -596,12 +595,11 @@ public void drawInPixels (GC gc, int x, int y) {
  * </ul>
  */
 public void draw (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground) {
+	checkLayout();
 	drawInPixels(gc, DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), selectionStart, selectionEnd, selectionForeground, selectionBackground);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void drawInPixels (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground) {
+
+void drawInPixels (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground) {
 	drawInPixels(gc, x, y, selectionStart, selectionEnd, selectionForeground, selectionBackground, 0);
 }
 
@@ -633,13 +631,11 @@ public void drawInPixels (GC gc, int x, int y, int selectionStart, int selection
  * @since 3.3
  */
 public void draw (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground, int flags) {
+	checkLayout();
 	drawInPixels(gc, DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), selectionStart, selectionEnd, selectionForeground, selectionBackground, flags);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void drawInPixels (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground, int flags) {
-	checkLayout();
+
+void drawInPixels (GC gc, int x, int y, int selectionStart, int selectionEnd, Color selectionForeground, Color selectionBackground, int flags) {
 	computeRuns(gc);
 	if (gc == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
@@ -1604,14 +1600,11 @@ public int getAlignment () {
  * @see #getLineMetrics(int)
  */
 public int getAscent () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getAscentInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
 
-public int getAscentInPixels () {
-	checkLayout();
+int getAscentInPixels () {
 	return ascent;
 }
 
@@ -1630,13 +1623,11 @@ public int getAscentInPixels () {
  * @see #getLineBounds(int)
  */
 public Rectangle getBounds () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels () {
-	checkLayout();
+
+Rectangle getBoundsInPixels () {
 	computeRuns(null);
 	int width = 0;
 	if (wrapWidth != -1) {
@@ -1664,13 +1655,11 @@ public Rectangle getBoundsInPixels () {
  * </ul>
  */
 public Rectangle getBounds (int start, int end) {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getBoundsInPixels(start, end));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels (int start, int end) {
-	checkLayout();
+
+Rectangle getBoundsInPixels (int start, int end) {
 	computeRuns(null);
 	int length = text.length();
 	if (length == 0) return new Rectangle(0, 0, 0, 0);
@@ -1770,13 +1759,11 @@ public Rectangle getBoundsInPixels (int start, int end) {
  * @see #getLineMetrics(int)
  */
 public int getDescent () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getDescentInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getDescentInPixels () {
-	checkLayout();
+
+int getDescentInPixels () {
 	return descent;
 }
 
@@ -1807,13 +1794,11 @@ public Font getFont () {
 * @since 3.2
 */
 public int getIndent () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getIndentInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getIndentInPixels () {
-	checkLayout();
+
+int getIndentInPixels () {
 	return indent;
 }
 
@@ -1886,13 +1871,11 @@ public int getLevel (int offset) {
  * </ul>
  */
 public Rectangle getLineBounds (int lineIndex) {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getLineBoundsInPixels(lineIndex));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getLineBoundsInPixels(int lineIndex) {
-	checkLayout();
+
+Rectangle getLineBoundsInPixels(int lineIndex) {
 	computeRuns(null);
 	if (!(0 <= lineIndex && lineIndex < runs.length)) SWT.error(SWT.ERROR_INVALID_RANGE);
 	int x = getLineIndent(lineIndex);
@@ -2061,13 +2044,11 @@ public int[] getLineOffsets () {
  * @see #getOffsetInPixels(int, int, int[])
  */
 public Point getLocation (int offset, boolean trailing) {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getLocationInPixels(offset, trailing));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getLocationInPixels (int offset, boolean trailing) {
-	checkLayout();
+
+Point getLocationInPixels (int offset, boolean trailing) {
 	computeRuns(null);
 	int length = text.length();
 	if (!(0 <= offset && offset <= length)) SWT.error(SWT.ERROR_INVALID_RANGE);
@@ -2259,14 +2240,11 @@ int _getOffset(int offset, int movement, boolean forward) {
  * @see #getLocationInPixels(int, boolean)
  */
 public int getOffset (Point point, int[] trailing) {
-	return getOffsetInPixels(DPIUtil.autoScaleUp(point), trailing);
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getOffsetInPixels (Point point, int[] trailing) {
 	checkLayout();
-	if (point == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+	if (point == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);	return getOffsetInPixels(DPIUtil.autoScaleUp(point), trailing);
+}
+
+int getOffsetInPixels (Point point, int[] trailing) {
 	return getOffsetInPixels (point.x, point.y, trailing) ;
 }
 
@@ -2291,16 +2269,14 @@ public int getOffsetInPixels (Point point, int[] trailing) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #getLocationInPixels(int, boolean)
+ * @see #getLocation(int, boolean)
  */
 public int getOffset (int x, int y, int[] trailing) {
+	checkLayout();
 	return getOffsetInPixels(DPIUtil.autoScaleUp(x), DPIUtil.autoScaleUp(y), trailing);
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getOffsetInPixels (int x, int y, int[] trailing) {
-	checkLayout();
+
+int getOffsetInPixels (int x, int y, int[] trailing) {
 	computeRuns(null);
 	if (trailing != null && trailing.length < 1) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	int line;
@@ -2539,13 +2515,11 @@ String getSegmentsText() {
  * </ul>
  */
 public int getSpacing () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getSpacingInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getSpacingInPixels () {
-	checkLayout();
+
+int getSpacingInPixels () {
 	return lineSpacing;
 }
 
@@ -2658,13 +2632,11 @@ public int getTextDirection () {
  * </ul>
  */
 public int getWidth () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getWidthInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getWidthInPixels () {
-	checkLayout();
+
+int getWidthInPixels () {
 	return wrapWidth;
 }
 
@@ -2680,13 +2652,11 @@ public int getWidthInPixels () {
 * @since 3.6
 */
 public int getWrapIndent () {
+	checkLayout();
 	return DPIUtil.autoScaleDown(getWrapIndentInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getWrapIndentInPixels () {
-	checkLayout();
+
+int getWrapIndentInPixels () {
 	return wrapIndent;
 }
 
@@ -2947,13 +2917,11 @@ public void setAlignment (int alignment) {
  * @see #getLineMetrics(int)
  */
 public void setAscent (int ascent) {
+	checkLayout();
 	setAscentInPixels(DPIUtil.autoScaleUp(ascent));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setAscentInPixels(int ascent) {
-	checkLayout();
+
+void setAscentInPixels(int ascent) {
 	if (ascent < -1) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.ascent == ascent) return;
 	freeRuns();
@@ -2979,13 +2947,11 @@ public void setAscentInPixels(int ascent) {
  * @see #getLineMetrics(int)
  */
 public void setDescent (int descent) {
+	checkLayout();
 	setDescentInPixels(DPIUtil.autoScaleUp(descent));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setDescentInPixels(int descent) {
-	checkLayout();
+
+void setDescentInPixels(int descent) {
 	if (descent < -1) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.descent == descent) return;
 	freeRuns();
@@ -3033,13 +2999,11 @@ public void setFont (Font font) {
  * @since 3.2
  */
 public void setIndent (int indent) {
+	checkLayout();
 	setIndentInPixels(DPIUtil.autoScaleUp(indent));
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setIndentInPixels (int indent) {
-	checkLayout();
+
+void setIndentInPixels (int indent) {
 	if (indent < 0) return;
 	if (this.indent == indent) return;
 	freeRuns();
@@ -3173,14 +3137,12 @@ public void setSegmentsChars(char[] segmentsChars) {
  * </ul>
  */
 public void setSpacing (int spacing) {
-	setSpacingInPixels(DPIUtil.autoScaleUp(spacing));
-}
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setSpacingInPixels (int spacing) {
 	checkLayout();
 	if (spacing < 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+	setSpacingInPixels(DPIUtil.autoScaleUp(spacing));
+}
+
+void setSpacingInPixels (int spacing) {
 	if (this.lineSpacing == spacing) return;
 	freeRuns();
 	this.lineSpacing = spacing;
@@ -3383,14 +3345,11 @@ public void setTextDirection (int textDirection) {
  * @see #setAlignment(int)
  */
 public void setWidth (int width) {
+	checkLayout();
 	setWidthInPixels(width != SWT.DEFAULT ? DPIUtil.autoScaleUp(width) : width);
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setWidthInPixels (int width) {
-	checkLayout();
+void setWidthInPixels (int width) {
 	if (width < -1 || width == 0) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	if (this.wrapWidth == width) return;
 	freeRuns();
@@ -3412,14 +3371,11 @@ public void setWidthInPixels (int width) {
  * @since 3.6
  */
 public void setWrapIndent (int wrapIndent) {
+	checkLayout();
 	setWrapIndentInPixels(DPIUtil.autoScaleUp(wrapIndent));
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public void setWrapIndentInPixels (int wrapIndent) {
-	checkLayout();
+void setWrapIndentInPixels (int wrapIndent) {
 	if (wrapIndent < 0) return;
 	if (this.wrapIndent == wrapIndent) return;
 	freeRuns();

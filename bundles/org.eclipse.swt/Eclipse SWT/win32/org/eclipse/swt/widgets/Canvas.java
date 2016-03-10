@@ -201,6 +201,7 @@ void reskinChildren (int flags) {
  * </ul>
  */
 public void scroll (int destX, int destY, int x, int y, int width, int height, boolean all) {
+	checkWidget ();
 	destX = DPIUtil.autoScaleUp(destX);
 	destY = DPIUtil.autoScaleUp(destY);
 	x = DPIUtil.autoScaleUp(x);
@@ -211,7 +212,6 @@ public void scroll (int destX, int destY, int x, int y, int width, int height, b
 }
 
 void scrollInPixels (int destX, int destY, int x, int y, int width, int height, boolean all) {
-	checkWidget ();
 	forceResize ();
 	boolean isFocus = caret != null && caret.isFocusCaret ();
 	if (isFocus) caret.killFocus ();

@@ -858,10 +858,11 @@ public void setCursor(Cursor newCursor) {
 public void setRectangles (Rectangle [] rectangles) {
 	checkWidget ();
 	if (rectangles == null) error (SWT.ERROR_NULL_ARGUMENT);
+	Rectangle [] rectanglesInPixels = new Rectangle [rectangles.length];
 	for (int i = 0; i < rectangles.length; i++) {
-		rectangles [i] = DPIUtil.autoScaleUp (rectangles [i]);
+		rectanglesInPixels [i] = DPIUtil.autoScaleUp (rectangles [i]);
 	}
-	setRectanglesInPixels (rectangles);
+	setRectanglesInPixels (rectanglesInPixels);
 }
 
 void setRectanglesInPixels (Rectangle [] rectangles) {

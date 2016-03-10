@@ -187,14 +187,11 @@ public Control getControl () {
  * @since 3.4
  */
 public Rectangle getBounds () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getBoundsInPixels() {
-	checkWidget();
+Rectangle getBoundsInPixels() {
 	int index = parent.indexOf(this);
 	if (index == -1) return new Rectangle (0, 0, 0, 0);
 	RECT itemRect = new RECT ();

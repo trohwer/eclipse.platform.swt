@@ -946,13 +946,11 @@ boolean dragDetect (long /*int*/ hwnd, int x, int y, boolean filter, boolean [] 
  * @since 3.8
  */
 public Point getCaretLocation () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getCaretLocationInPixels () {
-	checkWidget ();
+
+Point getCaretLocationInPixels () {
 	/*
 	* Bug in Windows.  For some reason, Windows is unable
 	* to return the pixel coordinates of the last character
@@ -1122,14 +1120,11 @@ public int getItemCount () {
  * </ul>
  */
 public int getItemHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getItemHeightInPixels () {
-	checkWidget ();
+int getItemHeightInPixels () {
 	int result = (int)/*64*/OS.SendMessage (handle, OS.CB_GETITEMHEIGHT, 0, 0);
 	if (result == OS.CB_ERR) error (SWT.ERROR_CANNOT_GET_ITEM_HEIGHT);
 	return result;
@@ -1395,13 +1390,11 @@ public String getText () {
  * </ul>
  */
 public int getTextHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getTextHeightInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getTextHeightInPixels () {
-	checkWidget ();
+
+int getTextHeightInPixels () {
 	COMBOBOXINFO pcbi = new COMBOBOXINFO ();
 	pcbi.cbSize = COMBOBOXINFO.sizeof;
 	if (((style & SWT.SIMPLE) == 0) && !OS.IsWinCE && OS.GetComboBoxInfo (handle, pcbi)) {

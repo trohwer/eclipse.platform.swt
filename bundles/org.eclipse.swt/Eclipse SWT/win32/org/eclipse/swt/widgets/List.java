@@ -475,14 +475,11 @@ public int getItemCount () {
  * </ul>
  */
 public int getItemHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getItemHeightInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getItemHeightInPixels () {
-	checkWidget ();
+int getItemHeightInPixels () {
 	int result = (int)/*64*/OS.SendMessage (handle, OS.LB_GETITEMHEIGHT, 0, 0);
 	if (result == OS.LB_ERR) error (SWT.ERROR_CANNOT_GET_ITEM_HEIGHT);
 	return result;

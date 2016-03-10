@@ -480,11 +480,7 @@ void copyAreaInPixels(Image image, int x, int y) {
  * </ul>
  */
 public void copyArea (int srcX, int srcY, int width, int height, int destX, int destY) {
-	copyAreaInPixels (srcX, srcY, width, height, destX, destY);
-}
-
-void copyAreaInPixels(int srcX, int srcY, int width, int height, int destX, int destY) {
-	copyAreaInPixels(srcX, srcY, width, height, destX, destY, true);
+	copyArea (srcX, srcY, width, height, destX, destY, true);
 }
 
 /**
@@ -850,7 +846,7 @@ void drawArcInPixels (int x, int y, int width, int height, int startAngle, int a
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangleInPixels(int, int, int, int)
+ * @see #drawRectangle(int, int, int, int)
  */
 public void drawFocus (int x, int y, int width, int height) {
 	x = DPIUtil.autoScaleUp (x);
@@ -1907,12 +1903,12 @@ void drawPointInPixels (int x, int y) {
  * </ul>
  */
 public void drawPolygon (int[] pointArray) {
+	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	drawPolygonInPixels(DPIUtil.autoScaleUp(pointArray));
 }
 
 void drawPolygonInPixels(int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(DRAW);
 	long /*int*/ gdipGraphics = data.gdipGraphics;
 	if (gdipGraphics != 0) {
@@ -2229,10 +2225,6 @@ void drawRoundRectangleGdip (long /*int*/ gdipGraphics, long /*int*/ pen, int x,
 public void drawString (String string, int x, int y) {
 	x = DPIUtil.autoScaleUp(x);
 	y = DPIUtil.autoScaleUp(y);
-	drawStringInPixels(string, x, y);
-}
-
-void drawStringInPixels (String string, int x, int y) {
 	drawStringInPixels(string, x, y, false);
 }
 
@@ -3145,12 +3137,12 @@ public void fillPath (Path path) {
  * @see #drawPolygon
  */
 public void fillPolygon (int[] pointArray) {
+	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	fillPolygonInPixels(DPIUtil.autoScaleUp(pointArray));
 }
 
 void fillPolygonInPixels (int[] pointArray) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FILL);
 	if (data.gdipGraphics != 0) {
 		int mode = OS.GetPolyFillMode(handle) == OS.WINDING ? Gdip.FillModeWinding : Gdip.FillModeAlternate;
@@ -3183,7 +3175,7 @@ void fillPolygonInPixels (int[] pointArray) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangleInPixels(int, int, int, int)
+ * @see #drawRectangle(int, int, int, int)
  */
 public void fillRectangle (int x, int y, int width, int height) {
 	x = DPIUtil.autoScaleUp (x);
@@ -3232,16 +3224,12 @@ void fillRectangleInPixels (int x, int y, int width, int height) {
  *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
  * </ul>
  *
- * @see #drawRectangleInPixels(int, int, int, int)
+ * @see #drawRectangle(int, int, int, int)
  */
 public void fillRectangle (Rectangle rect) {
-	rect = DPIUtil.autoScaleUp(rect);
-	fillRectangleInPixels(rect);
-}
-
-void fillRectangleInPixels (Rectangle rect) {
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	fillRectangleInPixels (rect.x, rect.y, rect.width, rect.height);
+	rect = DPIUtil.autoScaleUp(rect);
+	fillRectangleInPixels(rect.x, rect.y, rect.width, rect.height);
 }
 
 /**
@@ -4550,15 +4538,12 @@ public void setClipping (Path path) {
  * </ul>
  */
 public void setClipping (Rectangle rect) {
-	rect = DPIUtil.autoScaleUp(rect);
-	setClippingInPixels(rect);
-}
-
-void setClippingInPixels (Rectangle rect) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) {
 		setClipping(0);
-	} else {
+	}
+	else {
+		rect = DPIUtil.autoScaleUp(rect);
 		setClippingInPixels(rect.x, rect.y, rect.width, rect.height);
 	}
 }
@@ -4760,13 +4745,13 @@ public void setInterpolation(int interpolation) {
  * @since 3.3
  */
 public void setLineAttributes (LineAttributes attributes) {
+	if (attributes == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	attributes.width = DPIUtil.autoScaleUp(attributes.width);
 	setLineAttributesInPixels(attributes);
 }
 
 void setLineAttributesInPixels (LineAttributes attributes) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (attributes == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	int mask = 0;
 	float lineWidth = attributes.width;
 	if (lineWidth != data.lineWidth) {
@@ -5167,12 +5152,12 @@ public void setTransform(Transform transform) {
  * </ul>
  */
 public Point stringExtent (String string) {
+	if (string == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 	return DPIUtil.autoScaleDown(stringExtentInPixels(string));
 }
 
 Point stringExtentInPixels (String string) {
 	if (handle == 0) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	if (string == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
 	checkGC(FONT);
 	int length = string.length();
 	long /*int*/ gdipGraphics = data.gdipGraphics;
@@ -5215,11 +5200,7 @@ Point stringExtentInPixels (String string) {
  * </ul>
  */
 public Point textExtent (String string) {
-	return DPIUtil.autoScaleDown(textExtentInPixels(string));
-}
-
-Point textExtentInPixels(String string) {
-	return textExtentInPixels(string, SWT.DRAW_DELIMITER | SWT.DRAW_TAB);
+	return DPIUtil.autoScaleDown(textExtentInPixels(string, SWT.DRAW_DELIMITER | SWT.DRAW_TAB));
 }
 
 /**

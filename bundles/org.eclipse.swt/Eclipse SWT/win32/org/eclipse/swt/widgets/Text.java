@@ -937,13 +937,11 @@ public int getCaretLineNumber () {
  * </ul>
  */
 public Point getCaretLocation () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getCaretLocationInPixels () {
-	checkWidget ();
+
+Point getCaretLocationInPixels () {
 	/*
 	* Bug in Windows.  For some reason, Windows is unable
 	* to return the pixel coordinates of the last character
@@ -1171,13 +1169,11 @@ public String getLineDelimiter () {
  * </ul>
  */
 public int getLineHeight () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getLineHeightInPixels ());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getLineHeightInPixels () {
-	checkWidget ();
+
+int getLineHeightInPixels () {
 	long /*int*/ newFont, oldFont = 0;
 	long /*int*/ hDC = OS.GetDC (handle);
 	newFont = OS.SendMessage (handle, OS.WM_GETFONT, 0, 0);
@@ -1523,14 +1519,11 @@ public int getTopIndex () {
  * </ul>
  */
 public int getTopPixel () {
+	checkWidget ();
 	return DPIUtil.autoScaleDown(getTopPixelInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public int getTopPixelInPixels () {
-	checkWidget ();
+int getTopPixelInPixels () {
 	/*
 	* Note, EM_GETSCROLLPOS is implemented in Rich Edit 3.0
 	* and greater.  The plain text widget and previous versions

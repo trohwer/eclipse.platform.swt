@@ -465,11 +465,8 @@ void setPreferredSizeInPixels (int width, int height) {
 public void setPreferredSize (Point size) {
 	checkWidget ();
 	if (size == null) error(SWT.ERROR_NULL_ARGUMENT);
-	setPreferredSizeInPixels(DPIUtil.autoScaleUp(size));
-}
-
-void setPreferredSizeInPixels (Point size) {
-	setPreferredSizeInPixels (size.x, size.y);
+	size = DPIUtil.autoScaleUp(size);
+	setPreferredSizeInPixels(size.x, size.y);
 }
 
 /**
@@ -599,11 +596,8 @@ void setSizeInPixels (int width, int height) {
 public void setSize (Point size) {
 	checkWidget ();
 	if (size == null) error(SWT.ERROR_NULL_ARGUMENT);
-	setSizeInPixels(DPIUtil.autoScaleUp(size));
-}
-
-void setSizeInPixels (Point size) {
-	setSizeInPixels (size.x, size.y);
+	size = DPIUtil.autoScaleUp(size);
+	setSizeInPixels(size.x, size.y);
 }
 
 /**
@@ -704,11 +698,8 @@ void setMinimumSizeInPixels (int width, int height) {
 public void setMinimumSize (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setMinimumSizeInPixels(DPIUtil.autoScaleUp(size));
-}
-
-void setMinimumSizeInPixels (Point size) {
-	setMinimumSizeInPixels (size.x, size.y);
+	size = DPIUtil.autoScaleUp(size);
+	setMinimumSizeInPixels(size.x, size.y);
 }
 
 boolean getWrap() {

@@ -445,7 +445,7 @@ void layoutItems (int index, boolean setScrollbar) {
 		}
 		for (int i = index; i < itemCount; i++) {
 			ExpandItem item = items [i];
-			item.setBounds (spacing, y, 0, 0, true, false);
+			item.setBoundsInPixels (spacing, y, 0, 0, true, false);
 			if (item.expanded) y += item.height;
 			y += item.getHeaderHeightInPixels () + spacing;
 		}
@@ -582,7 +582,7 @@ void setSpacingInPixels (int spacing) {
 	int width = Math.max (0, (rect.right - rect.left) - spacing * 2);
 	for (int i = 0; i < itemCount; i++) {
 		ExpandItem item = items[i];
-		if (item.width != width) item.setBounds (0, 0, width, item.height, false, true);
+		if (item.width != width) item.setBoundsInPixels (0, 0, width, item.height, false, true);
 	}
 	layoutItems (0, true);
 	OS.InvalidateRect (handle, null, true);
@@ -855,7 +855,7 @@ LRESULT WM_SIZE (long /*int*/ wParam, long /*int*/ lParam) {
 	int width = Math.max (0, (rect.right - rect.left) - spacing * 2);
 	for (int i = 0; i < itemCount; i++) {
 		ExpandItem item = items[i];
-		if (item.width != width) item.setBounds (0, 0, width, item.height, false, true);
+		if (item.width != width) item.setBoundsInPixels (0, 0, width, item.height, false, true);
 	}
 	setScrollbar ();
 	OS.InvalidateRect (handle, null, true);

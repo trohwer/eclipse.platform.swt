@@ -366,13 +366,11 @@ public int getSelection () {
  * </ul>
  */
 public Point getSize () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getSizeInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Point getSizeInPixels () {
-	checkWidget();
+
+Point getSizeInPixels () {
 	parent.forceResize ();
 	RECT rect = new RECT ();
 	OS.GetClientRect (parent.scrolledHandle (), rect);
@@ -425,13 +423,11 @@ public int getThumb () {
  * @since 3.6
  */
 public Rectangle getThumbBounds () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getThumbBoundsInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getThumbBoundsInPixels () {
-	checkWidget();
+
+Rectangle getThumbBoundsInPixels () {
 	parent.forceResize ();
 	SCROLLBARINFO info = new SCROLLBARINFO();
 	info.cbSize = SCROLLBARINFO.sizeof;
@@ -473,13 +469,11 @@ public Rectangle getThumbBoundsInPixels () {
  * @since 3.6
  */
 public Rectangle getThumbTrackBounds () {
+	checkWidget();
 	return DPIUtil.autoScaleDown(getThumbTrackBoundsInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-public Rectangle getThumbTrackBoundsInPixels () {
-	checkWidget();
+
+Rectangle getThumbTrackBoundsInPixels () {
 	parent.forceResize ();
 	SCROLLBARINFO info = new SCROLLBARINFO();
 	info.cbSize = SCROLLBARINFO.sizeof;

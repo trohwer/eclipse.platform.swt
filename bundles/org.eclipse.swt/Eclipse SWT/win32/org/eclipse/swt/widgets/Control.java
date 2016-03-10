@@ -622,11 +622,7 @@ public Point computeSize (int wHint, int hHint) {
 	checkWidget ();
 	wHint = (wHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(wHint) : wHint);
 	hHint = (hHint != SWT.DEFAULT ? DPIUtil.autoScaleUp(hHint) : hHint);
-	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint));
-}
-
-Point computeSizeInPixels (int wHint, int hHint) {
-	return computeSizeInPixels (wHint, hHint, true);
+	return DPIUtil.autoScaleDown(computeSizeInPixels(wHint, hHint, true));
 }
 
 /**
@@ -2965,7 +2961,7 @@ boolean sendGestureEvent (GESTUREINFO gi) {
 	Event event = new Event ();
 	int type = 0;
 	Point globalPt = new Point(gi.x, gi.y);
-	Point point = toControlInPixels(globalPt);
+	Point point = toControlInPixels(globalPt.x, globalPt.y);
 	event.setLocationInPixels(point);
 	switch (gi.dwID) {
 		case OS.GID_ZOOM:
@@ -3562,11 +3558,8 @@ void setLocationInPixels (int x, int y) {
 public void setLocation (Point location) {
 	checkWidget ();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setLocationInPixels(DPIUtil.autoScaleUp(location));
-}
-
-void setLocationInPixels (Point location) {
-	setLocationInPixels (location.x, location.y);
+	location = DPIUtil.autoScaleUp(location);
+	setLocationInPixels(location.x, location.y);
 }
 
 /**
@@ -3792,11 +3785,8 @@ void setSizeInPixels (int width, int height) {
 public void setSize (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setSizeInPixels(DPIUtil.autoScaleUp(size));
-}
-
-void setSizeInPixels (Point size) {
-	setSizeInPixels (size.x, size.y);
+	size = DPIUtil.autoScaleUp(size);
+	setSizeInPixels(size.x, size.y);
 }
 
 @Override
@@ -4035,11 +4025,8 @@ Point toControlInPixels (int x, int y) {
 public Point toControl (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return DPIUtil.autoScaleDown(toControlInPixels(DPIUtil.autoScaleUp(point)));
-}
-
-Point toControlInPixels (Point point) {
-	return toControlInPixels (point.x, point.y);
+	point = DPIUtil.autoScaleUp(point);
+	return DPIUtil.autoScaleDown(toControlInPixels(point.x, point.y));
 }
 
 /**
@@ -4097,11 +4084,8 @@ Point toDisplayInPixels (int x, int y) {
 public Point toDisplay (Point point) {
 	checkWidget ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	return DPIUtil.autoScaleDown(toDisplayInPixels(DPIUtil.autoScaleUp(point)));
-}
-
-Point toDisplayInPixels (Point point) {
-	return toDisplayInPixels (point.x, point.y);
+	point = DPIUtil.autoScaleUp(point);
+	return DPIUtil.autoScaleDown(toDisplayInPixels(point.x, point.y));
 }
 
 long /*int*/ topHandle () {

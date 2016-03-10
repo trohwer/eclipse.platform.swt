@@ -1779,11 +1779,8 @@ void setMinimumSizeInPixels (int width, int height) {
 public void setMinimumSize (Point size) {
 	checkWidget ();
 	if (size == null) error (SWT.ERROR_NULL_ARGUMENT);
-	setMinimumSizeInPixels(DPIUtil.autoScaleUp(size));
-}
-
-void setMinimumSizeInPixels (Point size) {
-	setMinimumSizeInPixels (size.x, size.y);
+	size = DPIUtil.autoScaleUp(size);
+	setMinimumSizeInPixels(size.x, size.y);
 }
 
 /**
@@ -1846,8 +1843,8 @@ public void setRegion (Region region) {
 	checkWidget ();
 	if ((style & SWT.NO_TRIM) == 0) return;
 	if (region != null) {
-		Rectangle bounds = region.getBoundsInPixels ();
-		setSizeInPixels (bounds.x + bounds.width, bounds.y + bounds.height);
+		Rectangle bounds = region.getBounds ();
+		setSize (bounds.x + bounds.width, bounds.y + bounds.height);
 	}
 	super.setRegion (region);
 }

@@ -829,12 +829,12 @@ void setItemColors (int foreColor, int backColor) {
  */
 public void setItemLayout (int [] itemOrder, int [] wrapIndices, Point [] sizes) {
 	checkWidget ();
-	if (sizes != null) {
-		for (int i = 0; i < sizes.length; i++) {
-			sizes[i] = DPIUtil.autoScaleUp(sizes[i]);
-		}
+	if (sizes == null) error (SWT.ERROR_NULL_ARGUMENT);
+	Point [] sizesInPoints = new Point [sizes.length];
+	for (int i = 0; i < sizes.length; i++) {
+		sizesInPoints[i] = DPIUtil.autoScaleUp(sizes[i]);
 	}
-	setItemLayoutInPixels (itemOrder, wrapIndices, sizes);
+	setItemLayoutInPixels (itemOrder, wrapIndices, sizesInPoints);
 }
 
 void setItemLayoutInPixels (int [] itemOrder, int [] wrapIndices, Point [] sizes) {

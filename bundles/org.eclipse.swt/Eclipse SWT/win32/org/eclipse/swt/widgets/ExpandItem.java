@@ -391,7 +391,7 @@ void releaseWidget () {
 	control = null;
 }
 
-void setBounds (int x, int y, int width, int height, boolean move, boolean size) {
+void setBoundsInPixels (int x, int y, int width, int height, boolean move, boolean size) {
 	redraw (true);
 	int headerHeight = parent.getBandHeight ();
 	if (move) {
@@ -487,7 +487,7 @@ public void setHeight (int height) {
 
 void setHeightInPixels (int height) {
 	if (height < 0) return;
-	setBounds (0, 0, width, height, false, true);
+	setBoundsInPixels (0, 0, width, height, false, true);
 	if (expanded) parent.layoutItems (parent.indexOf (this) + 1, true);
 }
 
