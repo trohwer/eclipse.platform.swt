@@ -16,6 +16,15 @@ import org.eclipse.swt.graphics.*;
 /**
  * This class hold common constants and utility functions w.r.t. to SWT high DPI
  * functionality.
+ * <p>
+ * The {@code autoScaleUp(..)} methods convert from API coordinates (in
+ * SWT points) to internal high DPI coordinates (in pixels) that interface with
+ * native widgets.
+ * </p>
+ * <p>
+ * The {@code autoScaleDown(..)} convert from high DPI pixels to API coordinates
+ * (in SWT points).
+ * </p>
  *
  * @since 3.105
  */
@@ -39,15 +48,6 @@ public static ImageData autoScaleDown (ImageData imageData) {
 			: imageData.scaledTo (Math.round ((float)imageData.width / scaleFactor), Math.round ((float)imageData.height / scaleFactor));
 }
 
-public static int[] autoScaleUp(int[] pointArray) {
-	if (!getAutoScale () || pointArray == null) return pointArray;
-	float scaleFactor = getScalingFactor ();
-	int [] returnArray = new int[pointArray.length];
-	for (int i = 0; i < pointArray.length; i++) {
-		returnArray [i] =  Math.round (pointArray [i] * scaleFactor);
-	}
-	return returnArray;
-}
 public static int[] autoScaleDown(int[] pointArray) {
 	if (!getAutoScale () || pointArray == null) return pointArray;
 	float scaleFactor = getScalingFactor ();
@@ -125,6 +125,20 @@ public static ImageData autoScaleImageData (ImageData imageData, int targetZoom,
 }
 
 /**
+ * Returns a new rectangle as per the scaleFactor.
+ */
+public static Rectangle autoScaleBounds (Rectangle rect, int targetZoom, int currentZoom) {
+	if (rect == null || targetZoom == currentZoom) return rect;
+	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
+	Rectangle returnRect = new Rectangle (0,0,0,0);
+	returnRect.x = Math.round (rect.x * scaleFactor);
+	returnRect.y = Math.round (rect.y * scaleFactor);
+	returnRect.width = Math.round (rect.width * scaleFactor);
+	returnRect.height = Math.round (rect.height * scaleFactor);
+	return returnRect;
+}
+
+/**
  * Auto-scale up ImageData
  */
 public static ImageData autoScaleUp (ImageData imageData) {
@@ -134,6 +148,16 @@ public static ImageData autoScaleUp (ImageData imageData) {
 			: imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
 }
 
+public static int[] autoScaleUp(int[] pointArray) {
+	if (!getAutoScale () || pointArray == null) return pointArray;
+	float scaleFactor = getScalingFactor ();
+	int [] returnArray = new int[pointArray.length];
+	for (int i = 0; i < pointArray.length; i++) {
+		returnArray [i] =  Math.round (pointArray [i] * scaleFactor);
+	}
+	return returnArray;
+}
+
 /**
  * Auto-scale up int dimensions.
  */
@@ -141,6 +165,12 @@ public static int autoScaleUp (int size) {
 	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return Math.round (size * scaleFactor);
+}
+
+public static float autoScaleUp(float size) {
+	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
+	float scaleFactor = getScalingFactor ();
+	return (size * scaleFactor);
 }
 
 /**
@@ -211,20 +241,6 @@ public static int mapDPIToZoom (int dpi) {
 	return zoom;
 }
 /**
- * Returns a new rectangle as per the scaleFactor.
- */
-public static Rectangle autoScaleBounds (Rectangle rect, int targetZoom, int currentZoom) {
-	if (rect == null || targetZoom == currentZoom) return rect;
-	float scaleFactor = ((float)targetZoom) / (float)currentZoom;
-	Rectangle returnRect = new Rectangle (0,0,0,0);
-	returnRect.x = Math.round (rect.x * scaleFactor);
-	returnRect.y = Math.round (rect.y * scaleFactor);
-	returnRect.width = Math.round (rect.width * scaleFactor);
-	returnRect.height = Math.round (rect.height * scaleFactor);
-	return returnRect;
-}
-
-/**
  * Gets Image data at specified zoom level, if image is missing then
  * fall-back to 100% image. If provider or fall-back image is not available,
  * throw error.
@@ -252,12 +268,6 @@ public static String validateAndGetImagePathAtZoom (ImageFileNameProvider provid
 	if (zoom != 100 && !found [0]) filename = provider.getImagePath (100);
 	if (filename == null) SWT.error (SWT.ERROR_INVALID_ARGUMENT);
 	return filename;
-}
-
-public static float autoScaleUp(float size) {
-	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
-	float scaleFactor = getScalingFactor ();
-	return (size * scaleFactor);
 }
 
 /**
