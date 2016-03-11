@@ -509,10 +509,7 @@ public void setLocation (Point location) {
 	setLocationInPixels (DPIUtil.autoScaleUp (location));
 }
 
-/**
- * @since 3.105
- */
-protected void setLocationInPixels (Point location) {
+void setLocationInPixels (Point location) {
 	checkWidget();
 	if (location == null) error (SWT.ERROR_NULL_ARGUMENT);
 	setLocationInPixels (location.x, location.y);

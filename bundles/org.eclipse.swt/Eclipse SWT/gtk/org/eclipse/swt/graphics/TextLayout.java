@@ -1667,7 +1667,7 @@ public int getWidth () {
 	return DPIUtil.autoScaleDown(getWidthInPixels());
 }
 
-protected int getWidthInPixels () {
+int getWidthInPixels () {
 	return wrapWidth;
 }
 

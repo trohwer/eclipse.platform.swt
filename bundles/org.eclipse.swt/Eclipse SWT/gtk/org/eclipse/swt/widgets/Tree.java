@@ -1392,19 +1392,8 @@ public int getGridLineWidth () {
 	checkWidget ();
 	return DPIUtil.autoScaleDown (getGridLineWidthInPixels ());
 }
-/**
- * Returns the width in pixels of a grid line.
- *
- * @return the width of a grid line in pixels
- *
- * @exception SWTException <ul>
- *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
- *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
- * </ul>
- *
- * @since 3.105
- */
-protected int getGridLineWidthInPixels () {
+
+int getGridLineWidthInPixels () {
 	checkWidget();
 	return 0;
 }
