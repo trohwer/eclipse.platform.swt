@@ -35,21 +35,32 @@ public class DPIUtil {
 	static final int DPI_ZOOM_150 = 144;
 	static final int DPI_ZOOM_100 = 96;
 
-	private static boolean autoScale = true;
+	private static boolean autoScaleEnable = true;
 	private static int deviceZoom = 100;
+
+	/*
+	 * The AutoScale functionality is enabled by default on HighDPI monitors &
+	 * can be disabled by setting below system property to "false"(Ignore case).
+	 */
+	static final String SWT_ENABLE_AUTOSCALE = "swt.enable.autoScale";
+	static {
+		String value = System.getProperty (SWT_ENABLE_AUTOSCALE);
+		if (value != null && "false".equalsIgnoreCase (value))
+			autoScaleEnable = false;
+	}
 
 /**
  * Auto-scale down ImageData
  */
 public static ImageData autoScaleDown (ImageData imageData) {
-	if (!getAutoScale () || imageData == null) return imageData;
+	if (!isAutoScaleEnable () || imageData == null) return imageData;
 	float scaleFactor = getScalingFactor ();
 	return scaleFactor == 1 ? imageData
 			: imageData.scaledTo (Math.round ((float)imageData.width / scaleFactor), Math.round ((float)imageData.height / scaleFactor));
 }
 
 public static int[] autoScaleDown(int[] pointArray) {
-	if (!getAutoScale () || pointArray == null) return pointArray;
+	if (!isAutoScaleEnable () || pointArray == null) return pointArray;
 	float scaleFactor = getScalingFactor ();
 	int [] returnArray = new int[pointArray.length];
 	for (int i = 0; i < pointArray.length; i++) {
@@ -62,7 +73,7 @@ public static int[] autoScaleDown(int[] pointArray) {
  * Auto-scale up float array dimensions.
  */
 public static float[] autoScaleDown (float size[]) {
-	if (!getAutoScale () || size == null) return size;
+	if (!isAutoScaleEnable () || size == null) return size;
 	float scaleFactor = getScalingFactor ();
 	float scaledSize[] = new float[size.length];
 	for (int i = 0; i < scaledSize.length; i++) {
@@ -74,7 +85,7 @@ public static float[] autoScaleDown (float size[]) {
  * Auto-scale down int dimensions.
  */
 public static int autoScaleDown (int size) {
-	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
+	if (!isAutoScaleEnable ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return Math.round (size / scaleFactor);
 }
@@ -82,7 +93,7 @@ public static int autoScaleDown (int size) {
  * Auto-scale down float dimensions.
  */
 public static float autoScaleDown (float size) {
-	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
+	if (!isAutoScaleEnable ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return (size / scaleFactor);
 }
@@ -91,7 +102,7 @@ public static float autoScaleDown (float size) {
  * Returns a new scaled down Point.
  */
 public static Point autoScaleDown (Point point) {
-	if (!getAutoScale () || point == null) return point;
+	if (!isAutoScaleEnable () || point == null) return point;
 	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return point;
 	Point scaledPoint = new Point (0,0);
@@ -104,7 +115,7 @@ public static Point autoScaleDown (Point point) {
  * Returns a new scaled down Rectangle.
  */
 public static Rectangle autoScaleDown (Rectangle rect) {
-	if (!getAutoScale () || rect == null) return rect;
+	if (!isAutoScaleEnable () || rect == null) return rect;
 	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return rect;
 	Rectangle scaledRect = new Rectangle (0,0,0,0);
@@ -119,7 +130,7 @@ public static Rectangle autoScaleDown (Rectangle rect) {
  * Auto-scale image with ImageData
  */
 public static ImageData autoScaleImageData (ImageData imageData, int targetZoom, int currentZoom) {
-	if (!getAutoScale () || imageData == null || targetZoom == currentZoom) return imageData;
+	if (!isAutoScaleEnable () || imageData == null || targetZoom == currentZoom) return imageData;
 	float scaleFactor = ((float) targetZoom)/((float) currentZoom);
 	return imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
 }
@@ -142,14 +153,14 @@ public static Rectangle autoScaleBounds (Rectangle rect, int targetZoom, int cur
  * Auto-scale up ImageData
  */
 public static ImageData autoScaleUp (ImageData imageData) {
-	if (!getAutoScale () || imageData == null) return imageData;
+	if (!isAutoScaleEnable () || imageData == null) return imageData;
 	float scaleFactor = getScalingFactor ();
 	return scaleFactor == 1 ? imageData
 			: imageData.scaledTo (Math.round ((float)imageData.width * scaleFactor), Math.round ((float)imageData.height * scaleFactor));
 }
 
 public static int[] autoScaleUp(int[] pointArray) {
-	if (!getAutoScale () || pointArray == null) return pointArray;
+	if (!isAutoScaleEnable () || pointArray == null) return pointArray;
 	float scaleFactor = getScalingFactor ();
 	int [] returnArray = new int[pointArray.length];
 	for (int i = 0; i < pointArray.length; i++) {
@@ -162,13 +173,13 @@ public static int[] autoScaleUp(int[] pointArray) {
  * Auto-scale up int dimensions.
  */
 public static int autoScaleUp (int size) {
-	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
+	if (!isAutoScaleEnable ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return Math.round (size * scaleFactor);
 }
 
 public static float autoScaleUp(float size) {
-	if (!getAutoScale ()||size == SWT.DEFAULT) return size;
+	if (!isAutoScaleEnable ()||size == SWT.DEFAULT) return size;
 	float scaleFactor = getScalingFactor ();
 	return (size * scaleFactor);
 }
@@ -177,7 +188,7 @@ public static float autoScaleUp(float size) {
  * Returns a new scaled up Point.
  */
 public static Point autoScaleUp (Point point) {
-	if (!getAutoScale () || point == null) return point;
+	if (!isAutoScaleEnable () || point == null) return point;
 	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return point;
 	Point scaledPoint = new Point (0,0);
@@ -190,7 +201,7 @@ public static Point autoScaleUp (Point point) {
  * Returns a new scaled up Rectangle.
  */
 public static Rectangle autoScaleUp (Rectangle rect) {
-	if (!getAutoScale () || rect == null) return rect;
+	if (!isAutoScaleEnable () || rect == null) return rect;
 	float scaleFactor = getScalingFactor ();
 	if (scaleFactor == 1) return rect;
 	Rectangle scaledRect = new Rectangle (0,0,0,0);
@@ -200,8 +211,8 @@ public static Rectangle autoScaleUp (Rectangle rect) {
 	scaledRect.height = Math.round (rect.height * scaleFactor);
 	return scaledRect;
 }
-public static boolean getAutoScale () {
-	return autoScale;
+public static boolean isAutoScaleEnable () {
+	return autoScaleEnable;
 }
 
 /**
@@ -210,7 +221,7 @@ public static boolean getAutoScale () {
  */
 private static float getScalingFactor () {
 	float scalingFactor = 1;
-	if (getAutoScale ()) {
+	if (isAutoScaleEnable ()) {
 		scalingFactor = getDeviceZoom ()/100f;
 	}
 	return scalingFactor;
@@ -274,7 +285,7 @@ public static String validateAndGetImagePathAtZoom (ImageFileNameProvider provid
  * @return the deviceZoom
  */
 public static int getDeviceZoom() {
-	return deviceZoom;
+	return isAutoScaleEnable () ? deviceZoom : 100;
 }
 
 /**

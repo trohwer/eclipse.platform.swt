@@ -1219,7 +1219,7 @@ void drawBitmap(Image srcImage, int srcX, int srcY, int srcWidth, int srcHeight,
 			 * gets introduced in srcX . Below check detects this particular
 			 * scenario and adjusts the dimension for 1 pixel grace value.
 			 */
-			if (DPIUtil.getAutoScale() && DPIUtil.getDeviceZoom() > 100 && ((srcX + srcWidth - imgWidth) == 1)) {
+			if (DPIUtil.isAutoScaleEnable() && DPIUtil.getDeviceZoom() > 100 && ((srcX + srcWidth - imgWidth) == 1)) {
 				srcX--;
 			}
 			else {
