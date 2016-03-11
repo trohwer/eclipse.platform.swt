@@ -4911,6 +4911,10 @@ long /*int*/ gdk_device_get_window_at_position (int[] win_x, int[] win_y) {
 	}
 }
 
+/**
+ * @noreference This method is not intended to be referenced by clients.
+ * @nooverride This method is not intended to be re-implemented or extended by clients.
+ */
 @Override
 protected long /*int*/ gsettingsProc (long /*int*/ gobject, long /*int*/ arg1, long /*int*/ user_data) {
 	switch((int)/*64*/user_data) {

@@ -25,6 +25,7 @@ import org.eclipse.swt.internal.gtk.*;
  */
 public abstract class Device implements Drawable {
 	/**
+	 * @noreference This field is not intended to be referenced by clients.
 	 * @since 3.105
 	 */
 	protected static final int CHANGE_SCALEFACTOR = 1;
@@ -94,6 +95,7 @@ public abstract class Device implements Drawable {
 
 	/*Device Scale Factor in percentage*/
 	/**
+	 * @noreference This field is not intended to be referenced by clients.
 	 * @since 3.105
 	 */
 	protected int scaleFactor;
@@ -1025,8 +1027,11 @@ int _getDPIx () {
 	return scaleFactor * 96/100;
 }
 /**
- * Gets the scaling factor from the device and calculates zoom level
- * @return zoom in percentage. scaling factor 1 corresponds to 100%
+ * Gets the scaling factor from the device and calculates the zoom level.
+ * @return zoom in percentage
+ *
+ * @noreference This method is not intended to be referenced by clients.
+ * @nooverride This method is not intended to be re-implemented or extended by clients.
  * @since 3.105
  */
 protected int getDeviceZoom() {
@@ -1082,6 +1087,8 @@ protected int getDeviceZoom() {
 	}
 }
 /**
+ * @noreference This method is not intended to be referenced by clients.
+ * @nooverride This method is not intended to be re-implemented or extended by clients.
  * @since 3.105
  */
 protected long /*int*/ gsettingsProc (long /*int*/ gobject, long /*int*/ arg1, long /*int*/ user_data) {
