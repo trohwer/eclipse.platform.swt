@@ -32,7 +32,6 @@ public class Snippet367 {
 	private static final String IMAGE_PATH_150 = IMAGES_ROOT + IMAGE_150;
 	private static final String IMAGE_PATH_200 = IMAGES_ROOT + IMAGE_200;
 
-	@SuppressWarnings("restriction")
 	public static void main (String [] args) {
 		final ImageFileNameProvider filenameProvider = zoom -> {
 			switch (zoom) {
