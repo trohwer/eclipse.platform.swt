@@ -763,7 +763,7 @@ Rectangle getTextBoundsInPixels (int index) {
 		Image image = _getImage(index);
 		int imageWidth = 0;
 		if (image != null) {
-			imageWidth = image.getBounds ().width;
+			imageWidth = image.getBoundsInPixels ().width;
 		}
 		if (x [0] < imageWidth) {
 			rect.x += imageWidth;
@@ -1166,8 +1166,8 @@ public void setImage (int index, Image image) {
 		OS.gtk_cell_renderer_get_fixed_size (pixbufRenderer, currentWidth, currentHeight);
 		if (!parent.pixbufSizeSet) {
 			if (image != null) {
-				int iWidth = image.getBounds ().width;
-				int iHeight = image.getBounds ().height;
+				int iWidth = image.getBoundsInPixels ().width;
+				int iHeight = image.getBoundsInPixels ().height;
 				if (iWidth > currentWidth [0] || iHeight > currentHeight [0]) {
 					OS.gtk_cell_renderer_set_fixed_size (pixbufRenderer, iWidth, iHeight);
 					parent.pixbufSizeSet = true;
