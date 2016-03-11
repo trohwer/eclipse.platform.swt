@@ -334,10 +334,8 @@ public Rectangle getBounds () {
 	checkDevice ();
 	return DPIUtil.autoScaleDown (getBoundsInPixels ());
 }
-/**
- * @since 3.105
- */
-protected Rectangle getBoundsInPixels () {
+
+private Rectangle getBoundsInPixels () {
 	return new Rectangle(0, 0, 0, 0);
 }
 
@@ -399,10 +397,8 @@ public Rectangle getClientArea () {
 	checkDevice ();
 	return DPIUtil.autoScaleDown (getClientAreaInPixels ());
 }
-/**
- * @since 3.105
- */
-protected Rectangle getClientAreaInPixels () {
+
+private Rectangle getClientAreaInPixels () {
 	return getBoundsInPixels ();
 }
 

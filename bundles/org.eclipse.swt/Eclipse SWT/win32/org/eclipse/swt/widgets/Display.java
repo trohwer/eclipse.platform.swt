@@ -1512,7 +1512,12 @@ public Menu getMenuBar () {
  * </ul>
  */
 @Override
-protected Rectangle getBoundsInPixels () {
+public Rectangle getBounds() {
+	checkDevice ();
+	return DPIUtil.autoScaleDown(getBoundsInPixels());
+}
+
+Rectangle getBoundsInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		int width = OS.GetSystemMetrics (OS.SM_CXSCREEN);
@@ -1580,7 +1585,12 @@ int getClickCount (int type, int button, long /*int*/ hwnd, long /*int*/ lParam)
  * @see #getBounds
  */
 @Override
-protected Rectangle getClientAreaInPixels () {
+public Rectangle getClientArea () {
+	checkDevice ();
+	return DPIUtil.autoScaleDown(getClientAreaInPixels());
+}
+
+Rectangle getClientAreaInPixels () {
 	checkDevice ();
 	if (OS.GetSystemMetrics (OS.SM_CMONITORS) < 2) {
 		RECT rect = new RECT ();

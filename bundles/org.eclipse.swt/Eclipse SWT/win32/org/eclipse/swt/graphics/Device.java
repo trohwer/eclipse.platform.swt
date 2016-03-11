@@ -370,10 +370,8 @@ public Rectangle getBounds() {
 	checkDevice ();
 	return DPIUtil.autoScaleDown(getBoundsInPixels());
 }
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-protected Rectangle getBoundsInPixels () {
+
+private Rectangle getBoundsInPixels () {
 	long /*int*/ hDC = internal_new_GC (null);
 	int width = OS.GetDeviceCaps (hDC, OS.HORZRES);
 	int height = OS.GetDeviceCaps (hDC, OS.VERTRES);
@@ -440,10 +438,7 @@ public Rectangle getClientArea () {
 	return DPIUtil.autoScaleDown(getClientAreaInPixels());
 }
 
-/**
-* @noreference This method is not intended to be referenced by clients.
-*/
-protected Rectangle getClientAreaInPixels () {
+private Rectangle getClientAreaInPixels () {
 	return getBoundsInPixels ();
 }
 

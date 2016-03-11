@@ -1403,7 +1403,12 @@ public Shell getActiveShell () {
 }
 
 @Override
-protected Rectangle getBoundsInPixels () {
+public Rectangle getBounds () {
+	checkDevice ();
+	return DPIUtil.autoScaleDown (getBoundsInPixels ());
+}
+
+Rectangle getBoundsInPixels () {
 	checkDevice ();
 	return new Rectangle (0, 0, OS.gdk_screen_width (), OS.gdk_screen_height ());
 }
