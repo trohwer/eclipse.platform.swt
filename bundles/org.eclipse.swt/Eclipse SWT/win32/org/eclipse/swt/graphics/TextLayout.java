@@ -1702,7 +1702,7 @@ Rectangle getBoundsInPixels (int start, int end) {
 			int cx = 0;
 			if (run.style != null && run.style.metrics != null) {
 				GlyphMetrics metrics = run.style.metrics;
-				cx = metrics.width * (start - run.start);
+				cx = metrics.getWidthInPixels() * (start - run.start);
 			} else if (!run.tab) {
 				int[] piX = new int[1];
 				long /*int*/ advances = run.justify != 0 ? run.justify : run.advances;
@@ -1719,7 +1719,7 @@ Rectangle getBoundsInPixels (int start, int end) {
 			int cx = run.width;
 			if (run.style != null && run.style.metrics != null) {
 				GlyphMetrics metrics = run.style.metrics;
-				cx = metrics.width * (end - run.start + 1);
+				cx = metrics.getWidthInPixels() * (end - run.start + 1);
 			} else if (!run.tab) {
 				int[] piX = new int[1];
 				long /*int*/ advances = run.justify != 0 ? run.justify : run.advances;
@@ -2096,7 +2096,7 @@ Point getLocationInPixels (int offset, boolean trailing) {
 			int width;
 			if (run.style != null && run.style.metrics != null) {
 				GlyphMetrics metrics = run.style.metrics;
-				width = metrics.width * (offset - run.start + (trailing ? 1 : 0));
+				width = metrics.getWidthInPixels() * (offset - run.start + (trailing ? 1 : 0));
 			} else if (run.tab) {
 				width = (trailing || (offset == length)) ? run.width : 0;
 			} else {
@@ -2303,11 +2303,11 @@ int getOffsetInPixels (int x, int y, int[] trailing) {
 			int xRun = x - run.x;
 			if (run.style != null && run.style.metrics != null) {
 				GlyphMetrics metrics = run.style.metrics;
-				if (metrics.width > 0) {
+				if (metrics.getWidthInPixels() > 0) {
 					if (trailing != null) {
-						trailing[0] = (xRun % metrics.width < metrics.width / 2) ? 0 : 1;
+						trailing[0] = (xRun % metrics.getWidthInPixels() < metrics.getWidthInPixels() / 2) ? 0 : 1;
 					}
-					return untranslateOffset(run.start + xRun / metrics.width);
+					return untranslateOffset(run.start + xRun / metrics.getWidthInPixels());
 				}
 			}
 			if (run.tab) {
@@ -3620,9 +3620,9 @@ void shape (final long /*int*/ hdc, final StyleItem run) {
 			 *  equals zero for FFFC (possibly other unicode code points), the fix
 			 *  is to make sure the glyph is at least one pixel wide.
 			 */
-			run.width = metrics.width * Math.max (1, run.glyphCount);
-			run.ascent = metrics.ascent;
-			run.descent = metrics.descent;
+			run.width = metrics.getWidthInPixels() * Math.max (1, run.glyphCount);
+			run.ascent = metrics.getAscentInPixels();
+			run.descent = metrics.getDescentInPixels();
 			run.leading = 0;
 		} else {
 			TEXTMETRIC lptm = null;

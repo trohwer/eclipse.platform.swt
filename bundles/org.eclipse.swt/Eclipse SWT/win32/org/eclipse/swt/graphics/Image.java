@@ -159,7 +159,7 @@ public final class Image extends Resource implements Drawable {
  */
 Image (Device device) {
 	super(device);
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 }
 
 /**
@@ -199,7 +199,7 @@ Image (Device device) {
  */
 public Image(Device device, int width, int height) {
 	super(device);
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	width = DPIUtil.autoScaleUp (width);
 	height = DPIUtil.autoScaleUp (height);
 	init(width, height);
@@ -461,7 +461,7 @@ public Image(Device device, Image srcImage, int flag) {
 public Image(Device device, Rectangle bounds) {
 	super(device);
 	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	bounds = DPIUtil.autoScaleUp (bounds);
 	init(bounds.width, bounds.height);
 	init();
@@ -493,7 +493,7 @@ public Image(Device device, Rectangle bounds) {
 public Image(Device device, ImageData data) {
 	super(device);
 	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	data = DPIUtil.autoScaleUp (data);
 	init(data);
 	init();
@@ -536,7 +536,7 @@ public Image(Device device, ImageData source, ImageData mask) {
 	if (source.width != mask.width || source.height != mask.height) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	source = DPIUtil.autoScaleUp(source);
 	mask = DPIUtil.autoScaleUp(mask);
 	mask = ImageData.convertMask(mask);
@@ -599,7 +599,7 @@ public Image(Device device, ImageData source, ImageData mask) {
  */
 public Image (Device device, InputStream stream) {
 	super(device);
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	ImageData data = DPIUtil.autoScaleUp(new ImageData(stream));
 	init(data);
 	init();
@@ -640,7 +640,7 @@ public Image (Device device, InputStream stream) {
 public Image (Device device, String filename) {
 	super(device);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	ImageData data = DPIUtil.autoScaleUp(new ImageData(filename));
 	init(data);
 	init();
@@ -678,7 +678,7 @@ public Image (Device device, String filename) {
 public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 	super(device);
 	this.imageFileNameProvider = imageFileNameProvider;
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	boolean[] found = new boolean[1];
 	String fileName = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, currentDeviceZoom, found);
 	if (found[0]) {
@@ -723,7 +723,7 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
 	this.imageDataProvider = imageDataProvider;
-	if (device != null) currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	currentDeviceZoom = DPIUtil.getDeviceZoom ();
 	boolean[] found = new boolean[1];
 	ImageData data =  DPIUtil.validateAndGetImageDataAtZoom(imageDataProvider, currentDeviceZoom, found);
 	if (found[0]) {
