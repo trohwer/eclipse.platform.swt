@@ -112,12 +112,18 @@ public class CTabFolder extends Composite {
 	@Deprecated
 	public static RGB borderOutsideRGB = new RGB (171, 168, 165);
 
+	static final int TOP = 0, BOTTOM = 1, LEFT = 2, RIGHT = 3;
+
 	/* sizing, positioning */
+	int tabPosition = TOP;
 	boolean onBottom = false;
+	boolean onRight = false;
 	boolean single = false;
 	boolean simple = true;
 	int fixedTabHeight = SWT.DEFAULT;
+	int fixedTabWidth = SWT.DEFAULT;
 	int tabHeight;
+	int tabWidth;
 	int minChars = 20;
 	boolean borderVisible = false;
 
@@ -245,7 +251,7 @@ public class CTabFolder extends Composite {
 	Font oldFont;
 
 	// internal constants
-	static final int DEFAULT_WIDTH = 64;
+	static final int DEFAULT_WIDTH = 69;
 	static final int DEFAULT_HEIGHT = 64;
 
 	static final int SELECTION_FOREGROUND = SWT.COLOR_LIST_FOREGROUND;
@@ -301,7 +307,20 @@ void init(int style) {
 	super.setLayout(new CTabFolderLayout());
 	int style2 = super.getStyle();
 	oldFont = getFont();
-	onBottom = (style2 & SWT.BOTTOM) != 0;
+	if ((style2 & SWT.BOTTOM) != 0) {
+		tabPosition = BOTTOM;
+		onBottom = true;
+	}
+	else if ((style2 & SWT.LEFT) != 0) {
+		tabPosition = LEFT;
+	}
+	else if ((style2 & SWT.RIGHT) != 0) {
+		tabPosition = RIGHT;
+		onRight = true;
+	}
+	else {
+		tabPosition = TOP;
+	}
 	showClose = (style2 & SWT.CLOSE) != 0;
 //	showMin = (style2 & SWT.MIN) != 0; - conflicts with SWT.TOP
 //	showMax = (style2 & SWT.MAX) != 0; - conflicts with SWT.BOTTOM
@@ -393,7 +412,7 @@ void onActivate(Event event) {
 }
 
 static int checkStyle (Composite parent, int style) {
-	int mask = SWT.CLOSE | SWT.TOP | SWT.BOTTOM | SWT.FLAT | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.SINGLE | SWT.MULTI;
+	int mask = SWT.CLOSE | SWT.TOP | SWT.BOTTOM | SWT.LEFT | SWT.RIGHT | SWT.FLAT | SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT | SWT.SINGLE | SWT.MULTI;
 	style = style & mask;
 	// TOP and BOTTOM are mutually exclusive.
 	// TOP is the default
@@ -881,16 +900,30 @@ public Rectangle getClientArea() {
 	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.FILL, 0, 0, 0, 0);
 	Point size = getSize();
 	int wrapHeight = getWrappedHeight(size);
-	if (onBottom) {
+	int wrapWidth = getWrappedWidth(size);
+	switch (tabPosition) {
+	case BOTTOM:
 		trim.height += wrapHeight;
-	} else {
+		break;
+	case LEFT:
+		trim.x -= DEFAULT_WIDTH;
+		trim.width += DEFAULT_WIDTH;
+		trim.height += wrapHeight;
+		break;
+	case RIGHT:
+		trim.x -= wrapWidth;
+		trim.width += DEFAULT_WIDTH + 16; // TODO
+		trim.height += wrapHeight;
+		break;
+	default:
 		trim.y -= wrapHeight;
 		trim.height += wrapHeight;
 	}
 	if (minimized) return new Rectangle(-trim.x, -trim.y, 0, 0);
 	int width = size.x - trim.width;
 	int height = size.y - trim.height;
-	return new Rectangle(-trim.x, -trim.y, width, height);
+	Rectangle rect = new Rectangle(-trim.x, -trim.y, width, height);
+	return rect;
 }
 
 /**
@@ -980,6 +1013,19 @@ int getLeftItemEdge (GC gc, int part){
 	if (width != 0) width += SPACING * 2;
 	x += width;
 	return Math.max(0, x);
+}
+int getTopItemEdge (GC gc, int part){
+	Rectangle trim = renderer.computeTrim(part, SWT.NONE, 0, 0, 0, 0);
+	int y = -trim.y;
+	int height = 0;
+	for (int i = 0; i < controls.length; i++) {
+		if ((controlAlignments[i] & SWT.LEAD) != 0 && !controls[i].isDisposed() && controls[i].getVisible()) {
+			height += controls[i].computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		}
+	}
+	if (height != 0) height += SPACING * 2;
+	y += height;
+	return Math.max(0, y);
 }
 /*
  * Return the lowercase of the first non-'&' character following
@@ -1158,6 +1204,36 @@ int getRightItemEdge (GC gc){
 	x -= width;
 	return Math.max(0, x);
 }
+int getBottomItemEdge (GC gc){
+	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BORDER, SWT.NONE, 0, 0, 0, 0);
+	int y = getSize().y - (trim.height + trim.y);
+	int height = 0;
+	for (int i = 0; i < controls.length; i++) {
+		int align = controlAlignments[i];
+		if ((align & SWT.WRAP) == 0 && (align & SWT.LEAD) == 0 && !controls[i].isDisposed() && controls[i].getVisible()) {
+			Point rightSize = controls[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			height += rightSize.y;
+		}
+	}
+	if (height != 0) height += SPACING * 2;
+	y -= height;
+	return Math.max(0, y);
+}
+int getRightItemEdge (GC gc, int part){
+	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BORDER, SWT.NONE, 0, 0, 0, 0);
+	int x = getSize().x - (trim.width + trim.x);
+	int width = 0;
+	for (int i = 0; i < controls.length; i++) {
+		int align = controlAlignments[i];
+		if ((align & SWT.WRAP) == 0 && (align & SWT.LEAD) == 0 && !controls[i].isDisposed() && controls[i].getVisible()) {
+			Point rightSize = controls[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			width += rightSize.x;
+		}
+	}
+	if (width != 0) width += SPACING * 2;
+	x -= width;
+	return Math.max(0, x);
+}
 /**
  * Return the selected tab item, or null if there is no selection.
  *
@@ -1271,6 +1347,14 @@ public int getTabHeight(){
 	checkWidget();
 	if (fixedTabHeight != SWT.DEFAULT) return fixedTabHeight;
 	return tabHeight - 1; // -1 for line drawn across top of tab //TODO: replace w/ computeTrim of tab area?
+}
+/**
+ * @since 3.106
+ */
+public int getTabWidth(){
+	checkWidget();
+	if (fixedTabWidth != SWT.DEFAULT) return fixedTabWidth;
+	return tabWidth - 1; // -1 for line drawn across top of tab //TODO: replace w/ computeTrim of tab area?
 }
 /**
  * Returns the position of the tab.  Possible values are SWT.TOP or SWT.BOTTOM.
@@ -2696,12 +2780,17 @@ boolean setItemLocation(GC gc) {
 	boolean changed = false;
 	if (items.length == 0) return false;
 	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BORDER, SWT.NONE, 0, 0, 0, 0);
+	int borderLeft = -trim.x;
+	int borderRight = trim.width + trim.x;
 	int borderBottom = trim.height + trim.y;
 	int borderTop = -trim.y;
 	Point size = getSize();
 	int y = onBottom ? Math.max(borderBottom, size.y - borderBottom - tabHeight) : borderTop;
+	int xx = onRight ? Math.max(borderRight, size.x - borderRight - tabHeight) - DEFAULT_WIDTH : borderLeft;
 	Point closeButtonSize = renderer.computeSize(CTabFolderRenderer.PART_CLOSE_BUTTON, 0, gc, SWT.DEFAULT, SWT.DEFAULT);
 	int leftItemEdge = getLeftItemEdge(gc, CTabFolderRenderer.PART_BORDER);
+	int rightItemEdge = getRightItemEdge(gc);
+	int topItemEdge = getTopItemEdge(gc, CTabFolderRenderer.PART_BORDER);
 	if (single) {
 		int defaultX = getDisplay().getBounds().width + 10; // off screen
 		for (int i = 0; i < items.length; i++) {
@@ -2722,8 +2811,45 @@ boolean setItemLocation(GC gc) {
 				item.showing = false;
 			}
 		}
+	} else  if(tabPosition == LEFT || tabPosition == RIGHT) {
+		int bottomItemEdge = getBottomItemEdge(gc);
+		int maxHeight = bottomItemEdge - topItemEdge;
+		int maxWidth = rightItemEdge - leftItemEdge;
+		int height = 0, width = 0;
+		for (int i = 0; i < priority.length; i++) {
+			CTabItem item = items[priority[i]];
+			height += item.height;
+			item.showing = i == 0 ? true : item.height > 0 && height <= maxHeight ;
+			if (width <= maxWidth) {
+				item.shortenedText = renderer.shortenText(gc, item.getText(), width);
+				item.shortenedTextWidth = width;
+			}
+		}
+		int topEdge = getTopItemEdge(gc, CTabFolderRenderer.PART_HEADER);
+		int defaultY = getDisplay().getBounds().height + 10; // off screen
+		firstIndex = items.length - 1;
+		for (int i = 0; i < items.length; i++) {
+			CTabItem item = items[i];
+			if (!item.showing) {
+				if (item.y != defaultY) changed = true;
+				item.y = defaultY;
+			} else {
+				firstIndex = Math.min(firstIndex, i);
+				if (item.x != topEdge || item.y != y) changed = true;
+				item.x = xx;
+				item.y = y;
+				int state = SWT.NONE;
+				if (i == selectedIndex) state |= SWT.SELECTED;
+				Rectangle edgeTrim = renderer.computeTrim(i, state, 0, 0, 0, 0);
+				if (showClose || item.showClose) {
+					item.closeRect.x = item.x + item.width  - (edgeTrim.width + edgeTrim.x) - closeButtonSize.x;
+					item.closeRect.y = onRight ? size.y - borderBottom - tabHeight + (tabHeight - closeButtonSize.y)/2: item.y + (tabHeight - closeButtonSize.y)/2;
+				}
+				y = y + item.height;
+//				if (!simple && i == selectedIndex) x -= renderer.curveIndent; //TODO: fix next item position
+			}
+		}
 	} else {
-		int rightItemEdge = getRightItemEdge(gc);
 		int maxWidth = rightItemEdge - leftItemEdge;
 		int width = 0;
 		for (int i = 0; i < priority.length; i++) {
@@ -3495,12 +3621,33 @@ public void setTabHeight(int height) {
  */
 public void setTabPosition(int position) {
 	checkWidget();
-	if (position != SWT.TOP && position != SWT.BOTTOM) {
+	if (position != SWT.TOP && position != SWT.BOTTOM && position != SWT.LEFT && position != SWT.RIGHT) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
-	if (onBottom != (position == SWT.BOTTOM)) {
-		onBottom = position == SWT.BOTTOM;
-		updateFolder(REDRAW);
+	switch (position) {
+	case SWT.BOTTOM:
+		if (tabPosition != BOTTOM) {
+			tabPosition = BOTTOM;
+			updateFolder(REDRAW);
+		}
+		break;
+	case SWT.LEFT:
+		if (tabPosition != LEFT) {
+			tabPosition = LEFT;
+			updateFolder(REDRAW);
+		}
+		break;
+	case SWT.RIGHT:
+		if (tabPosition != RIGHT) {
+			tabPosition = RIGHT;
+			updateFolder(REDRAW);
+		}
+		break;
+	default:
+		if (tabPosition != TOP) {
+			tabPosition = TOP;
+			updateFolder(REDRAW);
+		}
 	}
 }
 /**
@@ -4058,6 +4205,19 @@ int getWrappedHeight (Point size) {
 	return wrapHeight;
 }
 
+int getWrappedWidth (Point size) {
+	boolean[][] positions = new boolean[1][];
+	Rectangle[] rects = computeControlBounds(size, positions);
+	int minX = Integer.MAX_VALUE, maxX = 0, wrapWidth = 0;
+	for (int i = 0; i < rects.length; i++) {
+		if (positions[0][i]) {
+			minX = Math.min(minX, rects[i].x);
+			maxX = Math.max(maxX, rects[i].x + rects[i].width);
+			wrapWidth = maxX - minX;
+		}
+	}
+	return wrapWidth;
+}
 /**
  * Sets whether a chevron is shown when there are more items to be displayed.
  *

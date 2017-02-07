@@ -35,19 +35,19 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 class CTabFolderTab extends Tab {
-	int lastSelectedTab = 0;
+	int lastSelectedTab = 1;// TODO: Test changes
 
 	/* Example widgets and groups that contain them */
 	CTabFolder tabFolder1;
 	Group tabFolderGroup, itemGroup;
 
 	/* Style widgets added to the "Style" group */
-	Button topButton, bottomButton, flatButton, closeButton;
+	Button topButton, bottomButton, left_Button, right_Botton, flatButton, closeButton;
 	Button rightButton, fillButton, wrapButton;
 
 	static String [] CTabItems1 = {ControlExample.getResourceString("CTabItem1_0"),
-								  ControlExample.getResourceString("CTabItem1_1"),
-								  ControlExample.getResourceString("CTabItem1_2")};
+			  ControlExample.getResourceString("CTabItem1_1"),
+			  ControlExample.getResourceString("CTabItem1_2")};
 
 	/* Controls and resources added to the "Fonts" group */
 	static final int SELECTION_FOREGROUND_COLOR = 3;
@@ -249,6 +249,8 @@ class CTabFolderTab extends Tab {
 		int style = getDefaultStyle();
 		if (topButton.getSelection ()) style |= SWT.TOP;
 		if (bottomButton.getSelection ()) style |= SWT.BOTTOM;
+		if (left_Button.getSelection ()) style |= SWT.LEFT;
+		if (right_Botton.getSelection ()) style |= SWT.RIGHT;
 		if (borderButton.getSelection ()) style |= SWT.BORDER;
 		if (flatButton.getSelection ()) style |= SWT.FLAT;
 		if (closeButton.getSelection ()) style |= SWT.CLOSE;
@@ -279,15 +281,21 @@ class CTabFolderTab extends Tab {
 		/* Create the extra widgets */
 		topButton = new Button (styleGroup, SWT.RADIO);
 		topButton.setText ("SWT.TOP");
-		topButton.setSelection(true);
+//		topButton.setSelection(true);// TODO: Test changes
 		bottomButton = new Button (styleGroup, SWT.RADIO);
 		bottomButton.setText ("SWT.BOTTOM");
+		left_Button = new Button (styleGroup, SWT.RADIO);
+		left_Button.setText ("SWT.LEFT");
+		left_Button.setSelection(true);// TODO: Test changes
+		right_Botton = new Button (styleGroup, SWT.RADIO);
+		right_Botton.setText ("SWT.RIGHT");
 		borderButton = new Button (styleGroup, SWT.CHECK);
 		borderButton.setText ("SWT.BORDER");
 		flatButton = new Button (styleGroup, SWT.CHECK);
 		flatButton.setText ("SWT.FLAT");
 		closeButton = new Button (styleGroup, SWT.CHECK);
 		closeButton.setText ("SWT.CLOSE");
+		closeButton.setSelection(true);// TODO: Test changes
 
 		Group topRightGroup = new Group(styleGroup, SWT.NONE);
 		topRightGroup.setLayout (new GridLayout ());

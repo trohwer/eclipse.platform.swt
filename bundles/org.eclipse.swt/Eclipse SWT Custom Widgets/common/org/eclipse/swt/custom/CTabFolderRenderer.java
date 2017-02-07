@@ -391,6 +391,7 @@ public class CTabFolderRenderer {
 		int borderTop = parent.onBottom ? borderLeft : 0;
 		int borderBottom = parent.onBottom ? 0 : borderLeft;
 		int tabHeight = parent.tabHeight;
+		int tabWidth = parent.tabWidth;
 		switch (part) {
 			case PART_BODY:
 				int style = parent.getStyle();
@@ -407,8 +408,23 @@ public class CTabFolderRenderer {
 					y = parent.onBottom ? y - borderTop : y - highlight_header - tabHeight - borderTop;
 					height = borderTop + borderBottom + tabHeight + highlight_header;
 				} else {
-					y = parent.onBottom ? y - marginHeight - highlight_margin - borderTop : y - marginHeight - highlight_header - tabHeight - borderTop;
 					height = height + borderTop + borderBottom + 2*marginHeight + tabHeight + highlight_header + highlight_margin;
+					switch (parent.tabPosition) {
+					case CTabFolder.BOTTOM:
+						y = y - marginHeight - highlight_margin - borderTop;
+						break;
+					case CTabFolder.LEFT:
+						x += tabWidth;
+						y = y - marginHeight - highlight_margin - borderTop;
+						width -= tabWidth;
+						break;
+					case CTabFolder.RIGHT:
+						y = y - marginHeight - highlight_margin - borderTop;
+						width -= tabWidth;
+						break;
+					default:
+						y = y - marginHeight - highlight_header - tabHeight - borderTop;
+					}
 				}
 				break;
 			case PART_HEADER:
