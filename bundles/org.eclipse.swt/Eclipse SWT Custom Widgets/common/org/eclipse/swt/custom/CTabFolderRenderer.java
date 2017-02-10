@@ -415,6 +415,7 @@ public class CTabFolderRenderer {
 						break;
 					case CTabFolder.LEFT:
 						x += tabWidth;
+						if (parent.showClose) x -= (BUTTON_SIZE + BUTTON_TRIM*4);
 						y = y - marginHeight - highlight_margin - borderTop;
 						width -= tabWidth;
 						break;
@@ -1349,54 +1350,84 @@ public class CTabFolderRenderer {
 
 				// draw selected tab background and outline
 				shape = null;
-				if (parent.onBottom) {
-					int[] left = parent.simple ? SIMPLE_BOTTOM_LEFT_CORNER : BOTTOM_LEFT_CORNER;
-					int[] right = parent.simple ? SIMPLE_BOTTOM_RIGHT_CORNER : curve;
-					if (borderLeft == 0 && itemIndex == parent.firstIndex) {
-						left = new int[]{x, y+height};
-					}
-					shape = new int[left.length+right.length+8];
-					int index = 0;
-					shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
-					shape[index++] = y - 1;
-					shape[index++] = x;
-					shape[index++] = y - 1;
-					for (int i = 0; i < left.length/2; i++) {
-						shape[index++] = x + left[2*i];
-						shape[index++] = y + height + left[2*i+1] - 1;
-					}
-					for (int i = 0; i < right.length/2; i++) {
-						shape[index++] = parent.simple ? rightEdge - 1 + right[2*i] : rightEdge - curveIndent + right[2*i];
-						shape[index++] = parent.simple ? y + height + right[2*i+1] - 1 : y + right[2*i+1] - 2;
-					}
-					shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
-					shape[index++] = y - 1;
-					shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
-					shape[index++] = y - 1;
-				} else {
-					int[] left = parent.simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
-					int[] right = parent.simple ? SIMPLE_TOP_RIGHT_CORNER : curve;
-					if (borderLeft == 0 && itemIndex == parent.firstIndex) {
-						left = new int[]{x, y};
-					}
-					shape = new int[left.length+right.length+8];
-					int index = 0;
-					shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
-					shape[index++] = y + height + 1;
-					shape[index++] = x;
-					shape[index++] = y + height + 1;
-					for (int i = 0; i < left.length/2; i++) {
-						shape[index++] = x + left[2*i];
-						shape[index++] = y + left[2*i+1];
-					}
-					for (int i = 0; i < right.length/2; i++) {
-						shape[index++] = parent.simple ? rightEdge - 1 + right[2*i] : rightEdge - curveIndent + right[2*i];
-						shape[index++] = y + right[2*i+1];
-					}
-					shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
-					shape[index++] = y + height + 1;
-					shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
-					shape[index++] = y + height + 1;
+				int[] left, right, top, bottom;
+				int index;
+				switch (parent.tabPosition) {
+					case CTabFolder.BOTTOM:
+						left = parent.simple ? SIMPLE_BOTTOM_LEFT_CORNER : BOTTOM_LEFT_CORNER;
+						right = parent.simple ? SIMPLE_BOTTOM_RIGHT_CORNER : curve;
+						if (borderLeft == 0 && itemIndex == parent.firstIndex) {
+							left = new int[]{x, y+height};
+						}
+						shape = new int[left.length+right.length+8];
+						index = 0;
+						shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
+						shape[index++] = y - 1;
+						shape[index++] = x;
+						shape[index++] = y - 1;
+						for (int i = 0; i < left.length/2; i++) {
+							shape[index++] = x + left[2*i];
+							shape[index++] = y + height + left[2*i+1] - 1;
+						}
+						for (int i = 0; i < right.length/2; i++) {
+							shape[index++] = parent.simple ? rightEdge - 1 + right[2*i] : rightEdge - curveIndent + right[2*i];
+							shape[index++] = parent.simple ? y + height + right[2*i+1] - 1 : y + right[2*i+1] - 2;
+						}
+						shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
+						shape[index++] = y - 1;
+						shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
+						shape[index++] = y - 1;
+						break;
+					case CTabFolder.LEFT:
+						/*top = parent.simple ? SIMPLE_TOP_LEFT_CORNER : BOTTOM_LEFT_CORNER;
+						bottom = parent.simple ? SIMPLE_BOTTOM_RIGHT_CORNER : curve;
+						if (borderLeft == 0 && itemIndex == parent.firstIndex) {
+							top = new int[]{x, y+height};
+						}
+						shape = new int[top.length+bottom.length+8];
+						index = 0;
+						shape[index++] = x + width; // first point repeated here because below we reuse shape to draw outline
+						shape[index++] = y - height;
+						shape[index++] = x + width;
+						shape[index++] = y - height;
+						for (int i = 0; i < top.length/2; i++) {
+							shape[index++] = x + top[2*i];
+							shape[index++] = y + height + top[2*i+1] - 1;
+						}
+						for (int i = 0; i < bottom.length/2; i++) {
+							shape[index++] = parent.simple ? rightEdge - 1 + bottom[2*i] : rightEdge - curveIndent + bottom[2*i];
+							shape[index++] = parent.simple ? y + height + bottom[2*i+1] - 1 : y + bottom[2*i+1] - 2;
+						}
+						shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
+						shape[index++] = y - 1;
+						shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
+						shape[index++] = y - 1;
+						break;*/
+					case CTabFolder.RIGHT:
+					default:
+						left = parent.simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
+						right = parent.simple ? SIMPLE_TOP_RIGHT_CORNER : curve;
+						if (borderLeft == 0 && itemIndex == parent.firstIndex) {
+							left = new int[]{x, y};
+						}
+						shape = new int[left.length+right.length+8];
+						index = 0;
+						shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
+						shape[index++] = y + height + 1;
+						shape[index++] = x;
+						shape[index++] = y + height + 1;
+						for (int i = 0; i < left.length/2; i++) {
+							shape[index++] = x + left[2*i];
+							shape[index++] = y + left[2*i+1];
+						}
+						for (int i = 0; i < right.length/2; i++) {
+							shape[index++] = parent.simple ? rightEdge - 1 + right[2*i] : rightEdge - curveIndent + right[2*i];
+							shape[index++] = y + right[2*i+1];
+						}
+						shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
+						shape[index++] = y + height + 1;
+						shape[index++] = parent.simple ? rightEdge - 1 : rightEdge + curveWidth - curveIndent;
+						shape[index++] = y + height + 1;
 				}
 
 				Rectangle clipping = gc.getClipping();
@@ -1429,7 +1460,15 @@ public class CTabFolderRenderer {
 				drawHighlight(gc, bounds, state, rightEdge);
 
 				// draw outline
-				shape[0] = Math.max(0, borderLeft - 1);
+				switch (parent.tabPosition) {
+				case CTabFolder.LEFT:
+				case CTabFolder.RIGHT:
+					shape[1] = Math.max(0, borderTop - 1);
+					break;
+				case CTabFolder.BOTTOM:
+				default:
+					shape[0] = Math.max(0, borderLeft - 1);
+				}
 				if (borderLeft == 0 && itemIndex == parent.firstIndex) {
 					shape[1] = parent.onBottom ? y + height - 1 : y;
 					shape[5] = shape[3] = shape[1];

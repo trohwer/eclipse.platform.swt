@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.swt.examples.controlexample;
 
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 
 public class CustomControlExample extends ControlExample {
@@ -32,9 +34,9 @@ public class CustomControlExample extends ControlExample {
 	@Override
 	Tab[] createTabs() {
 		return new Tab [] {
+			new CTabFolderTab (this),
 			new CComboTab (this),
 			new CLabelTab (this),
-			new CTabFolderTab (this),
 			new SashFormTab (this),
 			new StyledTextTab (this),
 		};
