@@ -26,17 +26,19 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 	CTabItem[] items = folder.items;
 	CTabFolderRenderer renderer = folder.renderer;
 	// preferred width of tab area to show all tabs
-	int tabW = 0;
+	int tabW = 0, tabH = 0;
 	int selectedIndex = folder.selectedIndex;
 	if (selectedIndex == -1) selectedIndex = 0;
 	GC gc = new GC(folder);
 	for (int i = 0; i < items.length; i++) {
 		if (folder.single) {
 			tabW = Math.max(tabW, renderer.computeSize(i, SWT.SELECTED, gc, SWT.DEFAULT, SWT.DEFAULT).x);
+			tabH = Math.max(tabW, renderer.computeSize(i, SWT.SELECTED, gc, SWT.DEFAULT, SWT.DEFAULT).y);
 		} else {
 			int state = 0;
 			if (i == selectedIndex) state |= SWT.SELECTED;
 			tabW += renderer.computeSize(i, state, gc, SWT.DEFAULT, SWT.DEFAULT).x;
+			tabH += renderer.computeSize(i, state, gc, SWT.DEFAULT, SWT.DEFAULT).y;
 		}
 	}
 
@@ -91,9 +93,17 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 			controlH = Math.max (controlH, size.y);
 		}
 	}
-
 	int minWidth = Math.max(tabW, controlW + folder.marginWidth);
-	int minHeight = (folder.minimized) ? 0 : controlH + wrapHeight;
+	int minHeight = 0;
+	switch (folder.tabPosition) {
+		case CTabFolder.LEFT:
+		case CTabFolder.RIGHT:
+			minHeight = (folder.minimized) ? 0 : Math.max(tabH, controlH + wrapHeight);
+			break;
+		case CTabFolder.BOTTOM:
+		default:
+			minHeight = (folder.minimized) ? 0 : controlH + wrapHeight;
+	}
 	if (minWidth == 0) minWidth = CTabFolder.DEFAULT_WIDTH;
 	if (minHeight == 0) minHeight = CTabFolder.DEFAULT_HEIGHT;
 
