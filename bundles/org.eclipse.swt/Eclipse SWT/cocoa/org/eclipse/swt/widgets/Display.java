@@ -1691,6 +1691,7 @@ public Monitor [] getMonitors () {
 		monitor.clientY = (int)(primaryFrame.height - (visibleFrame.y + visibleFrame.height));
 		monitor.clientWidth = (int)visibleFrame.width;
 		monitor.clientHeight = (int)visibleFrame.height;
+		monitor.zoom = (int) (screen.backingScaleFactor() * 100);
 		monitors [i] = monitor;
 	}
 	return monitors;
@@ -1724,6 +1725,7 @@ public Monitor getPrimaryMonitor () {
 	monitor.clientY = (int)(frame.height - (visibleFrame.y + visibleFrame.height));
 	monitor.clientWidth = (int)visibleFrame.width;
 	monitor.clientHeight = (int)visibleFrame.height;
+	monitor.zoom = (int) (screen.backingScaleFactor() * 100);
 	return monitor;
 }
 

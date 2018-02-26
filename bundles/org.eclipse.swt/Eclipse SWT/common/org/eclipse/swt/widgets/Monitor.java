@@ -25,6 +25,7 @@ public final class Monitor {
 	long /*int*/ handle;
 	int x, y, width, height;
 	int clientX, clientY, clientWidth, clientHeight;
+	int zoom;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -69,6 +70,14 @@ public Rectangle getBounds () {
  */
 public Rectangle getClientArea () {
 	return new Rectangle (clientX, clientY, clientWidth, clientHeight);
+}
+
+public int getZoom() {
+	return zoom;
+}
+
+void setZoom(int zoom) {
+	this.zoom = zoom;
 }
 
 void setBounds (Rectangle rect) {
