@@ -67,6 +67,7 @@ public Rectangle getBounds () {
  * receiver which is capable of displaying data.
  *
  * @return the client area
+ *
  */
 public Rectangle getClientArea () {
 	return new Rectangle (clientX, clientY, clientWidth, clientHeight);
@@ -103,6 +104,7 @@ void setClientArea (Rectangle rect) {
  * @return the receiver's hash
  *
  * @see #equals(Object)
+ *
  */
 @Override
 public int hashCode () {

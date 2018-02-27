@@ -3499,6 +3499,13 @@ long /*int*/ monitorEnumProc (long /*int*/ hmonitor, long /*int*/ hdc, long /*in
 	monitor.setBounds (DPIUtil.autoScaleDown (boundsInPixels));
 	Rectangle clientAreaInPixels = new Rectangle (lpmi.rcWork_left, lpmi.rcWork_top, lpmi.rcWork_right - lpmi.rcWork_left, lpmi.rcWork_bottom - lpmi.rcWork_top);
 	monitor.setClientArea (DPIUtil.autoScaleDown (clientAreaInPixels));
+
+	int [] dpiX = new int [1];
+	int [] dpiY = new int [1];
+	OS.GetDpiForMonitor (hmonitor, 0, dpiX, dpiY);
+	int zoom = (dpiX[0] * 100)/96;
+	monitor.setZoom(zoom);
+
 	monitors [monitorCount++] = monitor;
 	return 1;
 }

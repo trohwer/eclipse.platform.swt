@@ -1497,7 +1497,25 @@ public Monitor getMonitor () {
 	Rectangle clientArea = new Rectangle (lpmi.rcWork_left, lpmi.rcWork_top, lpmi.rcWork_right - lpmi.rcWork_left, lpmi.rcWork_bottom - lpmi.rcWork_top);
 	clientArea = DPIUtil.autoScaleDown (clientArea);
 	monitor.setClientArea (clientArea);
+	monitor.setZoom (getZoom(hmonitor));
 	return monitor;
+}
+
+/**
+ * Returns zoom value for the monitor
+ *
+ * @return the monitor's zoom value
+ */
+public int getMonitorZoom () {
+	Monitor monitor = getMonitor();
+	return getZoom (monitor.handle);
+}
+
+int getZoom (long /*int*/ monitor) {
+	int [] dpiX = new int [1];
+	int [] dpiY = new int [1];
+	OS.GetDpiForMonitor (monitor, 0, dpiX, dpiY);
+	return (dpiX[0] * 100)/96;
 }
 
 /**
