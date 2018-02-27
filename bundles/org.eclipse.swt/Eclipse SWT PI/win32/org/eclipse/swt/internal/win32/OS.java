@@ -4391,6 +4391,11 @@ public static final native int GetDIBits (long /*int*/ hdc, long /*int*/ hbmp, i
 /** @param hDlg cast=(HWND) */
 public static final native long /*int*/ GetDlgItem (long /*int*/ hDlg, int nIDDlgItem);
 public static final native int GetDoubleClickTime ();
+/**
+ * @param hmonitor cast=(HMONITOR)
+ * @param dpiType cast=(MONITOR_DPI_TYPE)
+ */
+public static native final int GetDpiForMonitor (long /*int*/ hmonitor, int dpiType, int [] dpiX, int [] dpiY);
 public static final native long /*int*/ GetFocus ();
 /** @param hdc cast=(HDC) */
 public static final native int GetFontLanguageInfo (long /*int*/ hdc);

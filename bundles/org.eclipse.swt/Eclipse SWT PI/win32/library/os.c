@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4179,6 +4179,25 @@ JNIEXPORT jint JNICALL OS_NATIVE(GetDoubleClickTime)
 	OS_NATIVE_ENTER(env, that, GetDoubleClickTime_FUNC);
 	rc = (jint)GetDoubleClickTime();
 	OS_NATIVE_EXIT(env, that, GetDoubleClickTime_FUNC);
+	return rc;
+}
+#endif
+
+#ifndef NO_GetDpiForMonitor
+JNIEXPORT jint JNICALL OS_NATIVE(GetDpiForMonitor)
+	(JNIEnv *env, jclass that, jintLong arg0, jint arg1, jintArray arg2, jintArray arg3)
+{
+	jint *lparg2=NULL;
+	jint *lparg3=NULL;
+	jint rc = 0;
+	OS_NATIVE_ENTER(env, that, GetDpiForMonitor_FUNC);
+	if (arg2) if ((lparg2 = (*env)->GetIntArrayElements(env, arg2, NULL)) == NULL) goto fail;
+	if (arg3) if ((lparg3 = (*env)->GetIntArrayElements(env, arg3, NULL)) == NULL) goto fail;
+	rc = (jint)GetDpiForMonitor((HMONITOR)arg0, (MONITOR_DPI_TYPE)arg1, lparg2, lparg3);
+fail:
+	if (arg3 && lparg3) (*env)->ReleaseIntArrayElements(env, arg3, lparg3, 0);
+	if (arg2 && lparg2) (*env)->ReleaseIntArrayElements(env, arg2, lparg2, 0);
+	OS_NATIVE_EXIT(env, that, GetDpiForMonitor_FUNC);
 	return rc;
 }
 #endif

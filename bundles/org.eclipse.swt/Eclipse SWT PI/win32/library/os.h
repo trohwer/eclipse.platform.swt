@@ -27,6 +27,7 @@
 #include <wininet.h>
 #include <mshtmhst.h>
 #include <Tabflicks.h>
+#include <ShellScalingApi.h>
 
 #ifndef _WIN32_WCE
 #include <initguid.h>
