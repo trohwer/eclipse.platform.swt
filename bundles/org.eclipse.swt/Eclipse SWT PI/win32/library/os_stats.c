@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -311,6 +311,7 @@ char * OS_nativeFunctionNames[] = {
 	"GetDialogBaseUnits",
 	"GetDlgItem",
 	"GetDoubleClickTime",
+	"GetDpiForMonitor",
 	"GetFocus",
 	"GetFontLanguageInfo",
 	"GetForegroundWindow",
@@ -433,6 +434,7 @@ char * OS_nativeFunctionNames[] = {
 	"GetPixel",
 	"GetPolyFillMode",
 	"GetProcAddress",
+	"GetProcessDpiAwareness",
 	"GetProcessHeap",
 	"GetProcessHeaps",
 	"GetProfileStringA",
@@ -1769,6 +1771,7 @@ char * OS_nativeFunctionNames[] = {
 	"SetPixel",
 	"SetPolyFillMode",
 	"SetProcessDPIAware",
+	"SetProcessDpiAwareness",
 	"SetPropA",
 	"SetPropW",
 	"SetROP2",

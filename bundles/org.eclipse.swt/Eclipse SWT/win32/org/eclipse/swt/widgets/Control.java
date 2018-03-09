@@ -1501,6 +1501,19 @@ public Monitor getMonitor () {
 }
 
 /**
+ * Returns zoom value for the monitor
+ *
+ * @return the monitor's zoom value
+ */
+//public int getMonitorZoom() {
+//	int [] dpiX = new int [1];
+//	int [] dpiY = new int [1];
+//	Monitor monitor = getMonitor();
+//	OS.GetDpiForMonitor (monitor.handle, 0, dpiX, dpiY);
+//	return (dpiX[0] * 100)/96;
+//}
+
+/**
  * Returns the orientation of the receiver, which will be one of the
  * constants <code>SWT.LEFT_TO_RIGHT</code> or <code>SWT.RIGHT_TO_LEFT</code>.
  *
@@ -4960,6 +4973,7 @@ long /*int*/ windowProc (long /*int*/ hwnd, int msg, long /*int*/ wParam, long /
 		case OS.WM_XBUTTONDBLCLK:		result = WM_XBUTTONDBLCLK (wParam, lParam); break;
 		case OS.WM_XBUTTONDOWN:			result = WM_XBUTTONDOWN (wParam, lParam); break;
 		case OS.WM_XBUTTONUP:			result = WM_XBUTTONUP (wParam, lParam); break;
+		case OS.WM_DPICHANGED:			result = WM_DPICHANGED (wParam, lParam); break;
 	}
 	if (result != null) return result.value;
 	// widget could be disposed at this point
@@ -5822,6 +5836,19 @@ LRESULT WM_XBUTTONDOWN (long /*int*/ wParam, long /*int*/ lParam) {
 
 LRESULT WM_XBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 	return wmXButtonUp (handle, wParam, lParam);
+}
+
+LRESULT WM_DPICHANGED (long /*int*/ wParam, long /*int*/ lParam) {
+	System.out.println("Control:WM_DPICHANGED: " + this.getClass());
+	DPIUtil.setDeviceZoom (this.getMonitor().getZoom());
+	return refreshControlForDPIChange () ? LRESULT.ZERO : LRESULT.ONE;
+}
+
+/**
+ * @since 3.107
+ */
+public boolean refreshControlForDPIChange () {
+	return false;
 }
 
 LRESULT wmColorChild (long /*int*/ wParam, long /*int*/ lParam) {

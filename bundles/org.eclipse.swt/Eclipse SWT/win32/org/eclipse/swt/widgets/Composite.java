@@ -467,6 +467,19 @@ public Control [] getChildren () {
 	return _getChildren ();
 }
 
+/**
+ * @since 3.107
+ */
+@Override
+public boolean refreshControlForDPIChange() {
+	boolean refreshed = false;
+	for (Control control: getChildren()) {
+		refreshed |= control.refreshControlForDPIChange();
+	};
+	this.redraw(true);
+	return refreshed;
+}
+
 int getChildrenCount () {
 	/*
 	* NOTE: The current implementation will count

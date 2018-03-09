@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -4183,6 +4183,25 @@ JNIEXPORT jint JNICALL OS_NATIVE(GetDoubleClickTime)
 }
 #endif
 
+#ifndef NO_GetDpiForMonitor
+JNIEXPORT jint JNICALL OS_NATIVE(GetDpiForMonitor)
+	(JNIEnv *env, jclass that, jintLong arg0, jint arg1, jintArray arg2, jintArray arg3)
+{
+	jint *lparg2=NULL;
+	jint *lparg3=NULL;
+	jint rc = 0;
+	OS_NATIVE_ENTER(env, that, GetDpiForMonitor_FUNC);
+	if (arg2) if ((lparg2 = (*env)->GetIntArrayElements(env, arg2, NULL)) == NULL) goto fail;
+	if (arg3) if ((lparg3 = (*env)->GetIntArrayElements(env, arg3, NULL)) == NULL) goto fail;
+	rc = (jint)GetDpiForMonitor((HMONITOR)arg0, (MONITOR_DPI_TYPE)arg1, lparg2, lparg3);
+fail:
+	if (arg3 && lparg3) (*env)->ReleaseIntArrayElements(env, arg3, lparg3, 0);
+	if (arg2 && lparg2) (*env)->ReleaseIntArrayElements(env, arg2, lparg2, 0);
+	OS_NATIVE_EXIT(env, that, GetDpiForMonitor_FUNC);
+	return rc;
+}
+#endif
+
 #ifndef NO_GetFocus
 JNIEXPORT jintLong JNICALL OS_NATIVE(GetFocus)
 	(JNIEnv *env, jclass that)
@@ -5353,6 +5372,22 @@ JNIEXPORT jintLong JNICALL OS_NATIVE(GetProcAddress)
 fail:
 	if (arg1 && lparg1) (*env)->ReleaseByteArrayElements(env, arg1, lparg1, 0);
 	OS_NATIVE_EXIT(env, that, GetProcAddress_FUNC);
+	return rc;
+}
+#endif
+
+#ifndef NO_GetProcessDpiAwareness
+JNIEXPORT jint JNICALL OS_NATIVE(GetProcessDpiAwareness)
+	(JNIEnv *env, jclass that, jintLong arg0, jintArray arg1)
+{
+	jint *lparg1=NULL;
+	jint rc = 0;
+	OS_NATIVE_ENTER(env, that, GetProcessDpiAwareness_FUNC);
+	if (arg1) if ((lparg1 = (*env)->GetIntArrayElements(env, arg1, NULL)) == NULL) goto fail;
+	rc = (jint)GetProcessDpiAwareness(arg0, (PROCESS_DPI_AWARENESS *)lparg1);
+fail:
+	if (arg1 && lparg1) (*env)->ReleaseIntArrayElements(env, arg1, lparg1, 0);
+	OS_NATIVE_EXIT(env, that, GetProcessDpiAwareness_FUNC);
 	return rc;
 }
 #endif
@@ -16328,6 +16363,18 @@ JNIEXPORT jboolean JNICALL OS_NATIVE(SetProcessDPIAware)
 		}
 	}
 	OS_NATIVE_EXIT(env, that, SetProcessDPIAware_FUNC);
+	return rc;
+}
+#endif
+
+#ifndef NO_SetProcessDpiAwareness
+JNIEXPORT jint JNICALL OS_NATIVE(SetProcessDpiAwareness)
+	(JNIEnv *env, jclass that, jint arg0)
+{
+	jint rc = 0;
+	OS_NATIVE_ENTER(env, that, SetProcessDpiAwareness_FUNC);
+	rc = (jint)SetProcessDpiAwareness((PROCESS_DPI_AWARENESS)arg0);
+	OS_NATIVE_EXIT(env, that, SetProcessDpiAwareness_FUNC);
 	return rc;
 }
 #endif

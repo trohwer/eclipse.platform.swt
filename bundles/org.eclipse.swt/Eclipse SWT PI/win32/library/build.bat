@@ -11,7 +11,7 @@
 
 @echo off
 
-IF "x.%SWT_BUILDDIR%"=="x." set "SWT_BUILDDIR=W:"
+IF "x.%SWT_BUILDDIR%"=="x." set "SWT_BUILDDIR=C:\BUILD\swt-builddir"
 echo SWT build dir: %SWT_BUILDDIR%
 
 IF "x.%MSSDK%"=="x." set "MSSDK=%ProgramFiles(x86)%\Windows Kits\10"

@@ -2234,6 +2234,11 @@ public Monitor getPrimaryMonitor () {
 	return result;
 }
 
+@Override
+protected int getDeviceZoom() {
+	return getPrimaryMonitor().getZoom();
+}
+
 /**
  * Returns a (possibly empty) array containing all shells which have
  * not been disposed and have the receiver as their display.

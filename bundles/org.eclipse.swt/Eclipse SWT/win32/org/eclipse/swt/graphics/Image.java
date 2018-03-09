@@ -17,6 +17,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gdip.*;
 import org.eclipse.swt.internal.win32.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -740,12 +741,21 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 
 /**
  * Refresh the Image based on the zoom level, if required.
+ * @param control
  *
  * @return true if image is refreshed
  */
-boolean refreshImageForZoom () {
+boolean refreshImageForZoom (Control control) {
 	boolean refreshed = false;
-	int deviceZoomLevel = DPIUtil.getDeviceZoom();
+	int deviceZoomLevel = currentDeviceZoom;
+	if (control != null) {
+		deviceZoomLevel = control.getMonitor().getZoom();
+	}
+	else {
+		deviceZoomLevel = DPIUtil.getDeviceZoom();
+	}
+	System.out.println("Image:refreshImageForZoom() > " + deviceZoomLevel + " { ");
+
 	if (imageFileNameProvider != null) {
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
@@ -802,6 +812,7 @@ boolean refreshImageForZoom () {
 			currentDeviceZoom = deviceZoomLevel;
 		}
 	}
+	System.out.println(" } " + refreshed);
 	return refreshed;
 }
 

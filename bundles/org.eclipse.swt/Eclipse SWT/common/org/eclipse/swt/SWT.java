@@ -3526,6 +3526,12 @@ public class SWT {
 	public static final int ERROR_THREAD_INVALID_ACCESS = 22;
 
 	/**
+	 * SWT error constant indicating that the DPI awareness is already set, either
+	 * by calling this API previously or through the application (.exe) manifest.
+	 */
+	public static final int E_ACCESSDENIED = 0x80070005;
+
+	/**
 	 * SWT error constant indicating that an attempt was made to
 	 * invoke an SWT operation using a widget which had already
 	 * been disposed

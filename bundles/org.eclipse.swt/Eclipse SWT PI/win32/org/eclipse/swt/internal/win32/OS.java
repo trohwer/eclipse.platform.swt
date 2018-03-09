@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.swt.internal.win32;
 
 
+import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
 
 public class OS extends C {
@@ -124,7 +125,32 @@ public class OS extends C {
 		}
 
 		/* Make the process DPI aware for Windows Vista */
-		if (!OS.IsWinCE && OS.WIN32_VERSION >= OS.VERSION (6, 0)) OS.SetProcessDPIAware ();
+		if (!OS.IsWinCE && OS.WIN32_VERSION >= OS.VERSION (6, 0)) {
+//			if (OS.WIN32_VERSION < OS.VERSION(10, 0)){
+//				OS.SetProcessDPIAware();
+//			}
+//			else
+			{
+				long /*int*/ hResult1;
+				int[] value1 = new int[1];
+				hResult1 = OS.GetProcessDpiAwareness(-1, value1);
+				DPIUtil.BEFORE = value1[0];
+
+				int value = 2;
+				long /*int*/ hResult = OS.SetProcessDpiAwareness(value);
+
+				DPIUtil.RESULT = hResult;
+				int[] value2 = new int[1];
+				hResult1 = OS.GetProcessDpiAwareness(-1, value2);
+
+				DPIUtil.AFTER = value2[0];
+				if (hResult == SWT.E_ACCESSDENIED)
+					System.out.println("The DPI awareness is already set..");
+				else
+					System.err.println("hResult: " + hResult);
+
+			}
+		}
 
 		/* Get the DBCS flag */
 		boolean dbcsEnabled = OS.GetSystemMetrics (SM_DBCSENABLED) != 0;
@@ -2142,6 +2168,7 @@ public class OS extends C {
 	public static final int WM_CUT = 0x300;
 	public static final int WM_DEADCHAR = 0x103;
 	public static final int WM_DESTROY = 0x2;
+	public static final int WM_DPICHANGED = 0x02E0; // 736
 	public static final int WM_DRAWITEM = 0x2b;
 	public static final int WM_ENDSESSION = 0x16;
 	public static final int WM_ENTERIDLE = 0x121;
@@ -4391,6 +4418,11 @@ public static final native int GetDIBits (long /*int*/ hdc, long /*int*/ hbmp, i
 /** @param hDlg cast=(HWND) */
 public static final native long /*int*/ GetDlgItem (long /*int*/ hDlg, int nIDDlgItem);
 public static final native int GetDoubleClickTime ();
+/**
+ * @param hmonitor cast=(HMONITOR)
+ * @param dpiType cast=(MONITOR_DPI_TYPE)
+ */
+public static native final int GetDpiForMonitor (long /*int*/ hmonitor, int dpiType, int [] dpiX, int [] dpiY);
 public static final native long /*int*/ GetFocus ();
 /** @param hdc cast=(HDC) */
 public static final native int GetFontLanguageInfo (long /*int*/ hdc);
@@ -6734,6 +6766,10 @@ public static final native int SetPixel (long /*int*/ hdc, int X, int Y, int crC
 public static final native int SetPolyFillMode (long /*int*/ hdc, int iPolyFillMode);
 /** @method flags=dynamic */
 public static final native boolean SetProcessDPIAware ();
+/** @param value cast=(PROCESS_DPI_AWARENESS) */
+public static final native int SetProcessDpiAwareness (int value);
+/** @param value cast=(PROCESS_DPI_AWARENESS *) */
+public static final native int GetProcessDpiAwareness (long /*int*/ hwnd, int[] value);
 /** @param lprc flags=no_in */
 public static final native boolean SetRect (RECT lprc, int xLeft, int yTop, int xRight, int yBottom);
 /** @param hrgn cast=(HRGN) */

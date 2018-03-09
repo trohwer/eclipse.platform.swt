@@ -11,6 +11,7 @@
 package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.internal.win32.*;
 
 /**
  * Instances of this class are descriptions of monitors.
@@ -69,6 +70,19 @@ public Rectangle getBounds () {
  */
 public Rectangle getClientArea () {
 	return new Rectangle (clientX, clientY, clientWidth, clientHeight);
+}
+
+/**
+ * Returns zoom value for the monitor
+ *
+ * @return the monitor's zoom value
+ * @since 3.107
+ */
+public int getZoom() {
+	int [] dpiX = new int [1];
+	int [] dpiY = new int [1];
+	OS.GetDpiForMonitor (handle, 0, dpiX, dpiY);
+	return (dpiX[0] * 100)/96;
 }
 
 void setBounds (Rectangle rect) {
