@@ -23,7 +23,10 @@ import org.eclipse.swt.internal.win32.*;
  * @since 3.0
  */
 public final class Monitor {
-	long /*int*/ handle;
+	/**
+	 * @since 3.107
+	 */
+	public long /*int*/ handle;
 	int x, y, width, height;
 	int clientX, clientY, clientWidth, clientHeight;
 

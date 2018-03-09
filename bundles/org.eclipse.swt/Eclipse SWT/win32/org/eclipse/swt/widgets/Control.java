@@ -5844,10 +5844,7 @@ LRESULT WM_DPICHANGED (long /*int*/ wParam, long /*int*/ lParam) {
 	return refreshControlForDPIChange () ? LRESULT.ZERO : LRESULT.ONE;
 }
 
-/**
- * @since 3.107
- */
-public boolean refreshControlForDPIChange () {
+boolean refreshControlForDPIChange () {
 	return false;
 }
 
