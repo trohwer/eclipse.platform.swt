@@ -6582,3 +6582,18 @@ static long /*int*/ windowProc(long /*int*/ id, long /*int*/ sel, long /*int*/ a
 }
 
 }
+
+class MonitorUtil {
+	static int getZoomFromHandle (long /*int*/ handle) {
+		long retainCount = new NSObject(handle).retainCount();
+		System.out.println("handle " + handle + " " + retainCount);
+		if (retainCount <= 1) {
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+		}
+		NSScreen screen = new NSScreen (handle);
+		return (int) (screen.backingScaleFactor() * 100);
+	}
+	static int getZoom (Monitor monitor) {
+		return monitor.zoom;
+	}
+}

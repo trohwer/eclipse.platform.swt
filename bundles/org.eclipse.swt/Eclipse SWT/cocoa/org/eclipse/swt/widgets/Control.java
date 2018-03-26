@@ -1848,22 +1848,6 @@ public Monitor getMonitor () {
 	return monitors [index];
 }
 
-public int getMonitorZoom() {
-	Monitor monitor = getMonitor();
-	return getZoom(monitor);
-}
-
-/**
- * Returns the zoom value for the monitor
- * @return monitor's zoom value
- */
-public int getZoom (Monitor monitor) {
-	if (monitor == null) error (SWT.ERROR_NULL_ARGUMENT);
-	NSScreen screen = new NSScreen(monitor.handle);
-	double scaleFactor = screen.backingScaleFactor();
-	return (int) (scaleFactor * 100);
-}
-
 /**
  * Returns the orientation of the receiver, which will be one of the
  * constants <code>SWT.LEFT_TO_RIGHT</code> or <code>SWT.RIGHT_TO_LEFT</code>.

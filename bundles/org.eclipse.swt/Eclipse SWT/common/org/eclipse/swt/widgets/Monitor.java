@@ -73,12 +73,15 @@ public Rectangle getClientArea () {
 	return new Rectangle (clientX, clientY, clientWidth, clientHeight);
 }
 
-public int getZoom() {
-	return zoom;
-}
-
-void setZoom(int zoom) {
-	this.zoom = zoom;
+/**
+ * Returns the zoom value for the monitor
+ *
+ * @return monitor's zoom value
+ *
+ * @since 3.107
+ */
+public int getZoom () {
+	return MonitorUtil.getZoom (this);
 }
 
 void setBounds (Rectangle rect) {
