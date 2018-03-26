@@ -1119,6 +1119,11 @@ char * OS_nativeFunctionNames[] = {
 	"objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSPoint_2",
 #endif
 #ifndef JNI64
+	"objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSRect_2",
+#else
+	"objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSRect_2",
+#endif
+#ifndef JNI64
 	"objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSSize_2Z",
 #else
 	"objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSSize_2Z",

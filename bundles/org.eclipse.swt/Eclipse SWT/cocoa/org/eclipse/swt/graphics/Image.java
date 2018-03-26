@@ -136,6 +136,18 @@ public final class Image extends Resource implements Drawable {
 	 */
 	private AlphaInfo alphaInfo_100, alphaInfo_200;
 
+	private Callback callback_draw_representation;
+
+	private long method;
+
+	private long methodImpl;
+
+	private Callback callback_drawInRect;
+
+	private long method1;
+
+	private long methodImpl1;
+
 	static class AlphaInfo {
 		/**
 		 * The alpha data of the image.
@@ -803,10 +815,13 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
  */
 public Image(Device device, ImageDataProvider imageDataProvider) {
 	super(device);
+
 	if (imageDataProvider == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	this.imageDataProvider = imageDataProvider;
 	ImageData data = imageDataProvider.getImageData (100);
 	if (data == null) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
+
+
 	NSAutoreleasePool pool = null;
 	if (!NSThread.isMainThread()) pool = (NSAutoreleasePool) new NSAutoreleasePool().alloc().init();
 	try {
@@ -819,9 +834,41 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 			handle.addRepresentation(rep);
 			rep.release();
 		}
+		addCallBacks ();
 	} finally {
 		if (pool != null) pool.release();
 	}
+}
+
+void addCallBacks () {
+	System.out.println("add call backs");
+	callback_draw_representation = new Callback(this, "_drawRepresentationInRect", 4);
+	long /*int*/ proc = callback_draw_representation.getAddress();
+	if (proc == 0) SWT.error (SWT.ERROR_NO_MORE_CALLBACKS);
+	method = OS.class_getInstanceMethod(OS.class_NSImage, OS.sel_drawRepresentation_inRect_);
+	if (method != 0) methodImpl = OS.method_setImplementation(method, proc);
+
+	callback_drawInRect = new Callback(this, "_drawAtPoint", 5);
+	proc = 0;
+	proc = callback_draw_representation.getAddress();
+	if (proc == 0) SWT.error (SWT.ERROR_NO_MORE_CALLBACKS);
+	method1 = OS.class_getInstanceMethod(OS.class_NSImage, OS.sel_drawAtPoint_fromRect_operation_fraction_);
+	if (method1 != 0) methodImpl1 = OS.method_setImplementation(method1, proc);
+}
+
+long /*int*/ _drawRepresentationInRect (long id, long sel, long imageRep, long NSRect) {
+	System.out.println("draw representation");
+	return 1;
+}
+
+long /*int*/ _drawInRect (long id, long sel, long NSRect) {
+	System.out.println("draw in rect");
+	return 1;
+}
+
+long /*int*/ _drawAtPoint (long id, long sel, long NSRect, long op, long fraction) {
+	System.out.println("draw at point");
+	return 1;
 }
 
 private AlphaInfo _getAlphaInfoAtCurrentZoom (NSBitmapImageRep rep) {
@@ -1079,6 +1126,14 @@ private NSBitmapImageRep createRepresentation(ImageData imageData, AlphaInfo alp
 
 @Override
 void destroy() {
+	if (method != 0) OS.method_setImplementation(method, methodImpl);
+	if (callback_draw_representation != null) callback_draw_representation.dispose();
+	callback_draw_representation = null;
+
+	if (method1 != 0) OS.method_setImplementation(method1, methodImpl1);
+	if (callback_drawInRect != null) callback_drawInRect.dispose();
+	callback_drawInRect = null;
+
 	if (memGC != null) memGC.dispose();
 	handle.release();
 	handle = null;

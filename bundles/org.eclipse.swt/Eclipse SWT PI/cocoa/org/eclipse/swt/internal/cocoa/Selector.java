@@ -455,6 +455,7 @@ public enum Selector {
 	, sel_drawInteriorWithFrame_inView_("drawInteriorWithFrame:inView:")
 	, sel_drawLabel_inRect_("drawLabel:inRect:")
 	, sel_drawRect_("drawRect:")
+	, sel_drawRepresentation_inRect_("drawRepresentation:inRect:")
 	, sel_drawSortIndicatorWithFrame_inView_ascending_priority_("drawSortIndicatorWithFrame:inView:ascending:priority:")
 	, sel_drawStatusBarBackgroundInRect_withHighlight_("drawStatusBarBackgroundInRect:withHighlight:")
 	, sel_drawTitle_withFrame_inView_("drawTitle:withFrame:inView:")

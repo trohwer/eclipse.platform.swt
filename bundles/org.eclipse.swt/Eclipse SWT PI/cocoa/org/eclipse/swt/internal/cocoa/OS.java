@@ -1334,6 +1334,7 @@ public static final long /*int*/ sel_drawInRect_fromRect_operation_fraction_ = S
 public static final long /*int*/ sel_drawInteriorWithFrame_inView_ = Selector.sel_drawInteriorWithFrame_inView_.value;
 public static final long /*int*/ sel_drawLabel_inRect_ = Selector.sel_drawLabel_inRect_.value;
 public static final long /*int*/ sel_drawRect_ = Selector.sel_drawRect_.value;
+public static final long /*int*/ sel_drawRepresentation_inRect_ = Selector.sel_drawRepresentation_inRect_.value;
 public static final long /*int*/ sel_drawSortIndicatorWithFrame_inView_ascending_priority_ = Selector.sel_drawSortIndicatorWithFrame_inView_ascending_priority_.value;
 public static final long /*int*/ sel_drawStatusBarBackgroundInRect_withHighlight_ = Selector.sel_drawStatusBarBackgroundInRect_withHighlight_.value;
 public static final long /*int*/ sel_drawTitle_withFrame_inView_ = Selector.sel_drawTitle_withFrame_inView_.value;
@@ -3387,7 +3388,7 @@ public static final native void CFRunLoopStop(long /*int*/ rl);
 public static final native long /*int*/ CFStringCreateWithCharacters(long /*int*/ alloc, char[] chars, long /*int*/ numChars);
 /**
  * @param allocator cast=(CFAllocatorRef)
- * @param fsRef cast=(struct FSRef*)
+ * @param fsRef cast=(structFSRef*)
  */
 public static final native long /*int*/ CFURLCreateFromFSRef(long /*int*/ allocator, byte[] fsRef);
 /**
@@ -3907,6 +3908,11 @@ public static final native boolean objc_msgSend_bool(long /*int*/ id, long /*int
  * @param arg1 flags=struct
  */
 public static final native boolean objc_msgSend_bool(long /*int*/ id, long /*int*/ sel, long /*int*/ arg0, NSPoint arg1);
+/**
+ * @method flags=cast
+ * @param arg1 flags=struct
+ */
+public static final native boolean objc_msgSend_bool(long /*int*/ id, long /*int*/ sel, long /*int*/ arg0, NSRect arg1);
 /**
  * @method flags=cast
  * @param arg1 flags=struct

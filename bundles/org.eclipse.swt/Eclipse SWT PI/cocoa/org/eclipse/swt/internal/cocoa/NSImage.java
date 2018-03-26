@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,8 +42,16 @@ public void drawAtPoint(NSPoint point, NSRect fromRect, long /*int*/ op, double 
 	OS.objc_msgSend(this.id, OS.sel_drawAtPoint_fromRect_operation_fraction_, point, fromRect, op, delta);
 }
 
+public void drawInRect(NSRect rect) {
+	OS.objc_msgSend(this.id, OS.sel_drawInRect_, rect);
+}
+
 public void drawInRect(NSRect rect, NSRect fromRect, long /*int*/ op, double /*float*/ delta) {
 	OS.objc_msgSend(this.id, OS.sel_drawInRect_fromRect_operation_fraction_, rect, fromRect, op, delta);
+}
+
+public boolean drawRepresentation(NSImageRep imageRep, NSRect rect) {
+	return OS.objc_msgSend_bool(this.id, OS.sel_drawRepresentation_inRect_, imageRep != null ? imageRep.id : 0, rect);
 }
 
 public static NSImage imageNamed(NSString name) {

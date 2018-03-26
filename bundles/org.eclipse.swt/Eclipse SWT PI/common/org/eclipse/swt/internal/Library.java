@@ -28,7 +28,7 @@ public class Library {
 	/**
 	 * SWT Minor version number (must be in the range 0..999)
 	 */
-    static int MINOR_VERSION = 858;
+    static int MINOR_VERSION = 863;
 
 	/**
 	 * SWT revision number (must be >= 0)
@@ -55,7 +55,7 @@ public class Library {
 
 static {
 	DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$
-	SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
+	SEPARATOR = File.separator;
 	USER_HOME = System.getProperty ("user.home");
 	SWT_LIB_DIR = ".swt" + SEPARATOR + "lib" + SEPARATOR + os() + SEPARATOR + arch(); //$NON-NLS-1$ $NON-NLS-2$
 	JAVA_VERSION = parseVersion(System.getProperty("java.version")); //$NON-NLS-1$

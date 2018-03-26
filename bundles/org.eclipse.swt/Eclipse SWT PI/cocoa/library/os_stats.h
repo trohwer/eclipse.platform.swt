@@ -1129,6 +1129,11 @@ typedef enum {
 	objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSPoint_2_FUNC,
 #endif
 #ifndef JNI64
+	objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSRect_2_FUNC,
+#else
+	objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSRect_2_FUNC,
+#endif
+#ifndef JNI64
 	objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSSize_2Z_FUNC,
 #else
 	objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSSize_2Z_FUNC,

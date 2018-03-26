@@ -1265,7 +1265,7 @@ JNIEXPORT jintLong JNICALL OS_NATIVE(CFURLCreateFromFSRef)
 	jintLong rc = 0;
 	OS_NATIVE_ENTER(env, that, CFURLCreateFromFSRef_FUNC);
 	if (arg1) if ((lparg1 = (*env)->GetByteArrayElements(env, arg1, NULL)) == NULL) goto fail;
-	rc = (jintLong)CFURLCreateFromFSRef((CFAllocatorRef)arg0, (struct FSRef*)lparg1);
+	rc = (jintLong)CFURLCreateFromFSRef((CFAllocatorRef)arg0, (structFSRef*)lparg1);
 fail:
 	if (arg1 && lparg1) (*env)->ReleaseByteArrayElements(env, arg1, lparg1, 0);
 	OS_NATIVE_EXIT(env, that, CFURLCreateFromFSRef_FUNC);
@@ -9901,6 +9901,33 @@ fail:
 	OS_NATIVE_EXIT(env, that, objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSPoint_2_FUNC);
 #else
 	OS_NATIVE_EXIT(env, that, objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSPoint_2_FUNC);
+#endif
+	return rc;
+}
+#endif
+
+#if (!defined(NO_objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSRect_2) && !defined(JNI64)) || (!defined(NO_objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSRect_2) && defined(JNI64))
+#ifndef JNI64
+JNIEXPORT jboolean JNICALL OS_NATIVE(objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSRect_2)(JNIEnv *env, jclass that, jintLong arg0, jintLong arg1, jintLong arg2, jobject arg3)
+#else
+JNIEXPORT jboolean JNICALL OS_NATIVE(objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSRect_2)(JNIEnv *env, jclass that, jintLong arg0, jintLong arg1, jintLong arg2, jobject arg3)
+#endif
+{
+	NSRect _arg3, *lparg3=NULL;
+	jboolean rc = 0;
+#ifndef JNI64
+	OS_NATIVE_ENTER(env, that, objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSRect_2_FUNC);
+#else
+	OS_NATIVE_ENTER(env, that, objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSRect_2_FUNC);
+#endif
+	if (arg3) if ((lparg3 = getNSRectFields(env, arg3, &_arg3)) == NULL) goto fail;
+	rc = (jboolean)((BOOL (*)(jintLong, jintLong, jintLong, NSRect))objc_msgSend_bool)(arg0, arg1, arg2, *lparg3);
+fail:
+	if (arg3 && lparg3) setNSRectFields(env, arg3, lparg3);
+#ifndef JNI64
+	OS_NATIVE_EXIT(env, that, objc_1msgSend_1bool__IIILorg_eclipse_swt_internal_cocoa_NSRect_2_FUNC);
+#else
+	OS_NATIVE_EXIT(env, that, objc_1msgSend_1bool__JJJLorg_eclipse_swt_internal_cocoa_NSRect_2_FUNC);
 #endif
 	return rc;
 }

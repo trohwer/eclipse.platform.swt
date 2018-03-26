@@ -2601,6 +2601,12 @@ void initClasses () {
 	OS.class_addMethod(cls, OS.sel_shouldChangeTextInRange_replacementString_, shouldChangeTextInRange_replacementString_Proc, "@:{NSRange}@");
 	OS.objc_registerClassPair(cls);
 
+//	className = "SWTImage";
+//	cls = OS.objc_allocateClassPair(OS.class_NSImage, className, 0);
+//	OS.class_addMethod(cls, OS.sel_drawRect_, drawRectProc, "@:{NSRect}");
+//	OS.class_addMethod(cls, OS.sel_drawRepresentation_inRect_, proc4, "@:@{NSRect}");
+//	OS.objc_registerClassPair(cls);
+
 	className = "SWTImageView";
 	cls = OS.objc_allocateClassPair(OS.class_NSImageView, className, 0);
 	OS.class_addIvar(cls, SWT_OBJECT, size, (byte)align, types);
@@ -6339,6 +6345,11 @@ static long /*int*/ windowProc(long /*int*/ id, long /*int*/ sel, long /*int*/ a
 }
 
 static long /*int*/ windowProc(long /*int*/ id, long /*int*/ sel, long /*int*/ arg0, long /*int*/ arg1) {
+//	if (sel == OS.sel_drawRepresentation_inRect_){
+//		System.out.println("draw representation");
+//		return 0;
+//	}
+
 	Widget widget = LookupWidget(id, sel);
 	if (widget == null) return 0;
 
