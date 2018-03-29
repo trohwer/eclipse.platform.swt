@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gdip.*;
+import org.eclipse.swt.internal.ole.win32.*;
 import org.eclipse.swt.internal.win32.*;
 
 /**
@@ -5840,7 +5841,10 @@ LRESULT WM_XBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 
 LRESULT WM_DPICHANGED (long /*int*/ wParam, long /*int*/ lParam) {
 	System.out.println("Control:WM_DPICHANGED: " + this.getClass());
-	DPIUtil.setDeviceZoom (this.getMonitor().getZoom());
+	DPIUtil.setDeviceZoom (DPIUtil.mapDPIToZoom (OS.HIWORD (wParam)));
+	RECT rect = new RECT ();
+	COM.MoveMemory(rect, lParam, RECT.sizeof);
+	this.setBoundsInPixels(rect.left, rect.top, rect.right - rect.left, rect.bottom-rect.top);
 	return refreshControlForDPIChange () ? LRESULT.ZERO : LRESULT.ONE;
 }
 
