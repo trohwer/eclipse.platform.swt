@@ -744,9 +744,11 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
  * @param control
  *
  * @return true if image is refreshed
+ * @since 3.107
  */
-boolean refreshImageForZoom (Control control) {
+public boolean refreshImageForZoom (Control control) {
 	boolean refreshed = false;
+	System.out.print("Image:refreshImageForZoom() : " + currentDeviceZoom + " { ");
 	int deviceZoomLevel = currentDeviceZoom;
 	if (control != null) {
 		deviceZoomLevel = control.getMonitor().getZoom();
@@ -754,7 +756,6 @@ boolean refreshImageForZoom (Control control) {
 	else {
 		deviceZoomLevel = DPIUtil.getDeviceZoom();
 	}
-	System.out.println("Image:refreshImageForZoom() > " + deviceZoomLevel + " { ");
 
 	if (imageFileNameProvider != null) {
 		if (deviceZoomLevel != currentDeviceZoom) {
@@ -1410,8 +1411,12 @@ public Rectangle getBounds() {
 	return getBounds (100);
 }
 
-Rectangle getBounds(int zoom) {
-	Rectangle bounds = getBoundsInPixels();
+/**
+ * @since 3.107
+ */
+public Rectangle getBounds(int zoom) {
+	// Read the bounds in pixels from native layer.
+	Rectangle bounds = _getBoundsInPixelsFromNative();
 	if (bounds != null && zoom != currentDeviceZoom) {
 		bounds = DPIUtil.autoScaleBounds(bounds, zoom, currentDeviceZoom);
 	}
@@ -1439,6 +1444,10 @@ public Rectangle getBoundsInPixels() {
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
 	}
+	return _getBoundsInPixelsFromNative();
+}
+
+Rectangle _getBoundsInPixelsFromNative() {
 	switch (type) {
 		case SWT.BITMAP:
 			BITMAP bm = new BITMAP();

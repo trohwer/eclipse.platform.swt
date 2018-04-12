@@ -69,7 +69,7 @@ public abstract class Control extends Widget implements Drawable {
 	Image backgroundImage;
 	Region region;
 	Font font;
-	int drawCount, foreground, background, backgroundAlpha = 255;
+	int drawCount, foreground, background, backgroundAlpha = 255, currentDeviceZoom = DPIUtil.getDeviceZoom();
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -5841,7 +5841,8 @@ LRESULT WM_XBUTTONUP (long /*int*/ wParam, long /*int*/ lParam) {
 
 LRESULT WM_DPICHANGED (long /*int*/ wParam, long /*int*/ lParam) {
 	System.out.println("Control:WM_DPICHANGED: " + this.getClass());
-	DPIUtil.setDeviceZoom (DPIUtil.mapDPIToZoom (OS.HIWORD (wParam)));
+	this.currentDeviceZoom = DPIUtil.mapDPIToZoom (OS.HIWORD (wParam));
+	DPIUtil.setDeviceZoom (currentDeviceZoom);
 	RECT rect = new RECT ();
 	COM.MoveMemory(rect, lParam, RECT.sizeof);
 	this.setBoundsInPixels(rect.left, rect.top, rect.right - rect.left, rect.bottom-rect.top);
