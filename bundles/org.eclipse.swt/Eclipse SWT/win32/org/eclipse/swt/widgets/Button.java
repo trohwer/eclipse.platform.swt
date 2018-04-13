@@ -402,6 +402,17 @@ int computeLeftMargin () {
 	return margin;
 }
 
+@Override
+boolean refreshControlForDPIChange() {
+	boolean refreshed = false;
+	// Refresh image on DPI change
+	if(image != null) {
+		refreshed |= image.refreshImageForZoom(this);
+		_setImage(image);
+	}
+	return refreshed;
+}
+
 @Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0, border = getBorderWidthInPixels ();
@@ -444,7 +455,7 @@ int computeLeftMargin () {
 			}
 			if (hasImage) {
 				if (image != null) {
-					Rectangle rect = image.getBoundsInPixels ();
+					Rectangle rect = image.getBounds(getShell().currentDeviceZoom);
 					width = rect.width;
 					if (hasText && text.length () != 0) {
 						width += MARGIN * 2;

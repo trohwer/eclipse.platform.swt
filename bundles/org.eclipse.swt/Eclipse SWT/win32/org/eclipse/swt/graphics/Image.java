@@ -1416,7 +1416,7 @@ public Rectangle getBounds() {
  */
 public Rectangle getBounds(int zoom) {
 	// Read the bounds in pixels from native layer.
-	Rectangle bounds = _getBoundsInPixelsFromNative();
+	Rectangle bounds = getBoundsInPixelsFromNative();
 	if (bounds != null && zoom != currentDeviceZoom) {
 		bounds = DPIUtil.autoScaleBounds(bounds, zoom, currentDeviceZoom);
 	}
@@ -1444,10 +1444,10 @@ public Rectangle getBoundsInPixels() {
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
 	}
-	return _getBoundsInPixelsFromNative();
+	return getBoundsInPixelsFromNative();
 }
 
-Rectangle _getBoundsInPixelsFromNative() {
+Rectangle getBoundsInPixelsFromNative() {
 	switch (type) {
 		case SWT.BITMAP:
 			BITMAP bm = new BITMAP();

@@ -65,19 +65,21 @@ public class Snippet371 {
 		Shell shell = new Shell(display);
 		shell.setText("Dynamic DPI Test");
 		shell.setLayout(new RowLayout(SWT.VERTICAL));
-		shell.setSize(400, 300);
-		Label label = new Label (shell, SWT.NONE);
+		shell.setLocation(100, 200);
+		shell.setSize(400, 400);
+		Label label = new Label (shell, SWT.BORDER);
 		label.setText("PerMonitorV2 value before:after:Error");
 		Text text = new Text(shell, SWT.BORDER);
 		text.setText(DPIUtil.BEFORE + ":" + DPIUtil.AFTER + ":" + DPIUtil.RESULT);
-		Composite composite = new Composite(shell, SWT.NONE);
+		Composite composite = new Composite(shell, SWT.BORDER);
 		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		Label label1 = new Label (composite, SWT.NONE);
+		Label label1 = new Label (composite, SWT.BORDER);
 		final Image eclipse = new Image(display, filenameProvider);
 		label1.setImage (eclipse);
 
 		Button createDialog = new Button(composite, SWT.PUSH);
-		createDialog.setText("Open image in a new child dialog");
+		createDialog.setText("eclipse in child dialog");
+		createDialog.setImage(eclipse);
 		createDialog.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -85,7 +87,7 @@ public class Snippet371 {
 				dialog.setText("Child Dialog");
 				RowLayout rowLayout = new RowLayout (SWT.VERTICAL);
 				dialog.setLayout (rowLayout);
-				Label label = new Label (dialog, SWT.NONE);
+				Label label = new Label (dialog, SWT.BORDER);
 				label.setImage(eclipse);
 				Point location = shell.getLocation();
 				dialog.setLocation(location.x + 250, location.y + 50);
@@ -98,24 +100,32 @@ public class Snippet371 {
 		button.setText("Refresh-Current Monitor [Handle : Zoom] ");
 		Text text1 = new Text(shell, SWT.BORDER);
 		Monitor monitor = button.getMonitor();
-		text1.setText(monitor.handle + " : " + monitor.getZoom());
+		text1.setText("" + monitor.getZoom());
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				Monitor monitor = button.getMonitor();
-				text1.setText(monitor.handle + " : " + monitor.getZoom());
+				text1.setText("" + monitor.getZoom());
 			}
 		});
 		Button button2 = new Button(shell, SWT.PUSH);
 		button2.setText("Refresh-Both Monitors [Handle : Zoom]");
 		Text text2 = new Text(shell, SWT.BORDER);
 		Monitor[] monitors = display.getMonitors();
-		text2.setText(monitors[0].handle + " : " + monitors[0].getZoom() + " - " + monitors[1].handle + " : " + monitors[1].getZoom());
+		StringBuffer text2String = new StringBuffer();
+		for (int i = 0; i < monitors.length; i++) {
+			text2String.append(monitors[i].getZoom()  + (i < (monitors.length -1) ? " - " : ""));
+		}
+		text2.setText(text2String.toString());
 		button2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				Monitor[] monitors = display.getMonitors();
-				text2.setText(monitors[0].handle + " : " + monitors[0].getZoom() + " - " + monitors[1].handle + " : " + monitors[1].getZoom());
+				StringBuffer text2String = new StringBuffer();
+				for (int i = 0; i < monitors.length; i++) {
+					text2String.append(monitors[i].getZoom()  + (i < (monitors.length -1) ? " - " : ""));
+				}
+				text2.setText(text2String.toString());
 			}
 		});
 
