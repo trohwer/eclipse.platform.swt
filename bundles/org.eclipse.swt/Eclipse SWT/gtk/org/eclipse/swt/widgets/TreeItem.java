@@ -1553,6 +1553,13 @@ public void setImage (int index, Image image) {
 		int imageIndex = imageList.indexOf (image);
 		if (imageIndex == -1) imageIndex = imageList.add (image);
 		pixbuf = imageList.getPixbuf (imageIndex);
+		if (GTK.GTK3) {
+			Rectangle imgSize = image.getBounds();
+			long /*int*/ scaledPixbuf = GDK.gdk_pixbuf_scale_simple(pixbuf, imgSize.width, imgSize.height, GDK.GDK_INTERP_BILINEAR);
+			if (scaledPixbuf !=0) {
+				pixbuf = scaledPixbuf;
+			}
+		}
 	}
 	int modelIndex = parent.columnCount == 0 ? Tree.FIRST_COLUMN : parent.columns [index].modelIndex;
 	/*
@@ -1574,8 +1581,8 @@ public void setImage (int index, Image image) {
 		GTK.gtk_cell_renderer_get_fixed_size (pixbufRenderer, currentWidth, currentHeight);
 		if (!parent.pixbufSizeSet) {
 			if (image != null) {
-				int iWidth = image.getBoundsInPixels ().width;
-				int iHeight = image.getBoundsInPixels ().height;
+				int iWidth = image.getBounds ().width;
+				int iHeight = image.getBounds ().height;
 				if (iWidth > currentWidth [0] || iHeight > currentHeight [0]) {
 					GTK.gtk_cell_renderer_set_fixed_size (pixbufRenderer, iWidth, iHeight);
 					parent.pixbufSizeSet = true;
