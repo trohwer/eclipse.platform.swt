@@ -30,6 +30,10 @@ import org.eclipse.swt.graphics.*;
  */
 public class DPIUtil {
 
+	public static int BEFORE = -1;
+	public static long RESULT = -1;
+	public static int AFTER = -1;
+
 	private static final int DPI_ZOOM_100 = 96;
 
 	private static int deviceZoom = 100;

@@ -148,7 +148,9 @@ static int checkStyle (int style) {
 	boolean drawImage = (bits & OS.SS_OWNERDRAW) == OS.SS_OWNERDRAW;
 	if (drawImage) {
 		if (image != null) {
-			Rectangle rect = image.getBoundsInPixels();
+			// There exists a possibility of DPI change
+			image.refreshImageForZoom(this);
+			Rectangle rect = image.getBounds(getShell().currentDeviceZoom);
 			width += rect.width;
 			height += rect.height;
 			if (IMAGE_AND_TEXT) {

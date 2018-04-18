@@ -17,6 +17,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gdip.*;
 import org.eclipse.swt.internal.win32.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -730,12 +731,23 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 
 /**
  * Refresh the Image based on the zoom level, if required.
+ * @param control
  *
  * @return true if image is refreshed
+ * @since 3.107
  */
-boolean refreshImageForZoom () {
+public boolean refreshImageForZoom (Control control) {
 	boolean refreshed = false;
-	int deviceZoomLevel = DPIUtil.getDeviceZoom();
+	StringBuilder sb = new StringBuilder();
+	sb.append("Image:refreshImageForZoom() Current[" + currentDeviceZoom + "] to new[");
+	int deviceZoomLevel = currentDeviceZoom;
+	if (control != null) {
+		deviceZoomLevel = control.getMonitor().getZoom();
+	}
+	else {
+		deviceZoomLevel = DPIUtil.getDeviceZoom();
+	}
+
 	if (imageFileNameProvider != null) {
 		if (deviceZoomLevel != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
@@ -792,6 +804,8 @@ boolean refreshImageForZoom () {
 			currentDeviceZoom = deviceZoomLevel;
 		}
 	}
+	sb.append(currentDeviceZoom + "] >> " + refreshed);
+	if (refreshed) System.out.println(sb.toString());
 	return refreshed;
 }
 
@@ -1256,8 +1270,12 @@ public Rectangle getBounds() {
 	return getBounds (100);
 }
 
-Rectangle getBounds(int zoom) {
-	Rectangle bounds = getBoundsInPixels();
+/**
+ * @since 3.107
+ */
+public Rectangle getBounds(int zoom) {
+	// Read the bounds in pixels from native layer.
+	Rectangle bounds = getBoundsInPixelsFromNative();
 	if (bounds != null && zoom != currentDeviceZoom) {
 		bounds = DPIUtil.autoScaleBounds(bounds, zoom, currentDeviceZoom);
 	}
@@ -1285,6 +1303,10 @@ public Rectangle getBoundsInPixels() {
 	if (width != -1 && height != -1) {
 		return new Rectangle(0, 0, width, height);
 	}
+	return getBoundsInPixelsFromNative();
+}
+
+Rectangle getBoundsInPixelsFromNative() {
 	switch (type) {
 		case SWT.BITMAP:
 			BITMAP bm = new BITMAP();
