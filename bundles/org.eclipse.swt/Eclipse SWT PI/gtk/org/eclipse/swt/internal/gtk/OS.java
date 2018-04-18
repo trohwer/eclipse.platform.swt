@@ -76,8 +76,8 @@ public class OS extends C {
 	static {
 		if (!OS.IsWin32) {
 			// only applicable for X11 but OS.isX11() is not available yet
-			String scalingProperty = "GDK_SCALE";
-			C.setenv(ascii(scalingProperty), ascii("1"), 1);
+			//String scalingProperty = "GDK_SCALE";
+			//C.setenv(ascii(scalingProperty), ascii("1"), 1);
 		}
 		String propertyName = "SWT_GTK3";
 		String gtk3 = getEnvironmentalVariable (propertyName);
