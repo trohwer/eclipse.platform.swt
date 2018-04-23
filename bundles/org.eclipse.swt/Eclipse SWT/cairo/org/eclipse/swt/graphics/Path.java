@@ -11,7 +11,6 @@
 package org.eclipse.swt.graphics;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 
 /**
@@ -215,10 +214,6 @@ public Path (Device device, PathData data) {
  */
 public void addArc(float x, float y, float width, float height, float startAngle, float arcAngle) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
-	width = DPIUtil.autoScaleUp(width);
-	height = DPIUtil.autoScaleUp(height);
 	addArcInPixels(x, y, width, height, startAngle, arcAngle);
 }
 
@@ -288,10 +283,6 @@ public void addPath(Path path) {
  */
 public void addRectangle(float x, float y, float width, float height) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
-	width = DPIUtil.autoScaleUp(width);
-	height = DPIUtil.autoScaleUp(height);
 	addRectangleInPixels(x, y, width, height);
 }
 
@@ -322,11 +313,8 @@ public void addString(String string, float x, float y, Font font) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (font == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (font.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
 	// Scale up the font
 	FontData fd = font.getFontData()[0];
-	fd.setHeight(DPIUtil.autoScaleUp(fd.getHeight()));
 	Font scaledFont = new Font(font.getDevice(), fd);
 	addStringInPixels(string, x, y, scaledFont);
 	scaledFont.dispose(); // Dispose the scaled up font
@@ -380,8 +368,6 @@ public boolean contains(float x, float y, GC gc, boolean outline) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (gc == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (gc.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
 	return containsInPixels(x, y, gc, outline);
 }
 boolean containsInPixels(float x, float y, GC gc, boolean outline) {
@@ -419,12 +405,6 @@ boolean containsInPixels(float x, float y, GC gc, boolean outline) {
  */
 public void cubicTo(float cx1, float cy1, float cx2, float cy2, float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	cx1 = DPIUtil.autoScaleUp(cx1);
-	cy1 = DPIUtil.autoScaleUp(cy1);
-	cx2 = DPIUtil.autoScaleUp(cx2);
-	cy2 = DPIUtil.autoScaleUp(cy2);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
 	cubicToInPixels(cx1, cy1, cx2, cy2, x, y);
 }
 void cubicToInPixels(float cx1, float cy1, float cx2, float cy2, float x, float y) {
@@ -458,9 +438,6 @@ public void getBounds(float[] bounds) {
 	if (bounds == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (bounds.length < 4) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	getBoundsInPixels(bounds);
-	for (int i = 0; i < bounds.length; i++) {
-		bounds [i] = DPIUtil.autoScaleDown(bounds[i]);
-	}
 }
 void getBoundsInPixels(float[] bounds) {
 	long /*int*/ copy = Cairo.cairo_copy_path(handle);
@@ -536,9 +513,6 @@ void getBoundsInPixels(float[] bounds) {
 public void getCurrentPoint(float[] point) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	getCurrentPointInPixels(point);
-	for (int i = 0; i < point.length; i++) {
-		point [i] = DPIUtil.autoScaleDown(point[i]);
-	}
 }
 
 void getCurrentPointInPixels(float[] point) {
@@ -564,7 +538,6 @@ void getCurrentPointInPixels(float[] point) {
 public PathData getPathData() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	PathData result = getPathDataInPixels();
-	result.points = DPIUtil.autoScaleDown(result.points);
 	return result;
 }
 
@@ -643,8 +616,6 @@ PathData getPathDataInPixels() {
  */
 public void lineTo(float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
 	lineToInPixels(x, y);
 }
 void lineToInPixels(float x, float y) {
@@ -672,8 +643,6 @@ void lineToInPixels(float x, float y) {
  */
 public void moveTo(float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
 	moveToInPixels(x, y);
 }
 void moveToInPixels(float x, float y) {
@@ -703,10 +672,6 @@ void moveToInPixels(float x, float y) {
  */
 public void quadTo(float cx, float cy, float x, float y) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	x = DPIUtil.autoScaleUp(x);
-	y = DPIUtil.autoScaleUp(y);
-	cx = DPIUtil.autoScaleUp(cx);
-	cy = DPIUtil.autoScaleUp(cy);
 	quadToInPixels(cx, cy, x, y);
 }
 void quadToInPixels(float cx, float cy, float x, float y) {

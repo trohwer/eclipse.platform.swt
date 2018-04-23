@@ -873,7 +873,7 @@ GdkColor getBackgroundGdkColor () {
  */
 public Point getCaretLocation () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown(getCaretLocationInPixels());
+	return getCaretLocationInPixels();
 }
 
 
@@ -1159,7 +1159,7 @@ String getText (int start, int stop) {
  */
 public int getTextHeight () {
 	checkWidget();
-	return DPIUtil.autoScaleDown(getTextHeightInPixels());
+	return getTextHeightInPixels();
 }
 
 

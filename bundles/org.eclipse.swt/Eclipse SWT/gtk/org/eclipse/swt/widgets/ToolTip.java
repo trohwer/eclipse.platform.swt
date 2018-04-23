@@ -259,7 +259,7 @@ void configure () {
 	}
 	GTK.gtk_widget_realize(handle);
 	Region region = new Region (display);
-	region.add(DPIUtil.autoScaleDown(polyline));
+	region.add((polyline));
 	if (GTK.GTK3) {
 		GTK.gtk_widget_shape_combine_region (handle, region.handle);
 	} else {
@@ -712,7 +712,7 @@ void setLocationInPixels (int x, int y) {
  */
 public void setLocation (Point location) {
 	checkWidget ();
-	setLocationInPixels(DPIUtil.autoScaleUp(location));
+	setLocationInPixels((location));
 }
 
 void setLocationInPixels (Point location) {

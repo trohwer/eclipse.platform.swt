@@ -11,7 +11,6 @@
 package org.eclipse.swt.graphics;
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.*;
 
 /**
  * Instances of this class represent glyph metrics.
@@ -72,15 +71,15 @@ public GlyphMetrics(int ascent, int descent, int width) {
 }
 
 int getAscentInPixels() {
-	return DPIUtil.autoScaleUp(ascent);
+	return ascent;
 }
 
 int getDescentInPixels() {
-	return DPIUtil.autoScaleUp(descent);
+	return descent;
 }
 
 int getWidthInPixels() {
-	return DPIUtil.autoScaleUp(width);
+	return width;
 }
 
 /**

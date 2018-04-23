@@ -14,7 +14,6 @@ package org.eclipse.swt.widgets;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gtk.*;
 
 /**
@@ -293,7 +292,7 @@ public int getSelection () {
  */
 public Point getSize () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getSizeInPixels ());
+	return getSizeInPixels ();
 }
 
 Point getSizeInPixels () {
@@ -336,7 +335,7 @@ public int getThumb () {
  */
 public Rectangle getThumbBounds () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown(getThumbBoundsInPixels());
+	return getThumbBoundsInPixels();
 }
 
 Rectangle getThumbBoundsInPixels () {
@@ -386,7 +385,7 @@ Rectangle getThumbBoundsInPixels () {
  */
 public Rectangle getThumbTrackBounds () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown(getThumbTrackBoundsInPixels());
+	return getThumbTrackBoundsInPixels();
 }
 
 Rectangle getThumbTrackBoundsInPixels () {

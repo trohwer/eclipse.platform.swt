@@ -12,7 +12,6 @@ package org.eclipse.swt.graphics;
 
 
 import org.eclipse.swt.*;
-import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
 
@@ -161,7 +160,7 @@ static void gdk_region_get_rectangles(long /*int*/ region, long /*int*/[] rectan
 public void add (int[] pointArray) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	addInPixels(DPIUtil.autoScaleUp(pointArray));
+	addInPixels(pointArray);
 }
 void addInPixels (int[] pointArray) {
 	/*
@@ -192,7 +191,7 @@ void addInPixels (int[] pointArray) {
 public void add(Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	addInPixels(DPIUtil.autoScaleUp(rect));
+	addInPixels(rect);
 }
 void addInPixels(Rectangle rect) {
 	addInPixels (rect.x, rect.y, rect.width, rect.height);
@@ -290,7 +289,7 @@ boolean containsInPixels(int x, int y) {
  */
 public boolean contains(Point pt) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return containsInPixels(DPIUtil.autoScaleUp(pt));
+	return containsInPixels(pt);
 }
 boolean containsInPixels(Point pt) {
 	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -336,7 +335,7 @@ public boolean equals(Object object) {
  */
 public Rectangle getBounds() {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return DPIUtil.autoScaleDown(getBoundsInPixels());
+	return getBoundsInPixels();
 }
 Rectangle getBoundsInPixels() {
 	GdkRectangle gdkRect = new GdkRectangle();
@@ -398,7 +397,7 @@ public int hashCode() {
 public void intersect(Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	intersectInPixels(DPIUtil.autoScaleUp(rect));
+	intersectInPixels(rect);
 }
 
 void intersectInPixels(Rectangle rect) {
@@ -514,7 +513,7 @@ boolean intersectsInPixels (int x, int y, int width, int height) {
 public boolean intersects(Rectangle rect) {
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
-	return intersectsInPixels(DPIUtil.autoScaleUp(rect));
+	return intersectsInPixels(rect);
 }
 
 boolean intersectsInPixels(Rectangle rect) {
@@ -570,7 +569,7 @@ public boolean isEmpty() {
 public void subtract (int[] pointArray) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pointArray == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	subtractInPixels(DPIUtil.autoScaleUp(pointArray));
+	subtractInPixels(pointArray);
 }
 
 void subtractInPixels (int[] pointArray) {
@@ -603,7 +602,7 @@ void subtractInPixels (int[] pointArray) {
 public void subtract(Rectangle rect) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (rect == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	subtractInPixels(DPIUtil.autoScaleUp(rect));
+	subtractInPixels(rect);
 }
 
 void subtractInPixels(Rectangle rect) {
@@ -709,7 +708,6 @@ void translateInPixels (int x, int y) {
 public void translate (Point pt) {
 	if (isDisposed()) SWT.error(SWT.ERROR_GRAPHIC_DISPOSED);
 	if (pt == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
-	pt = DPIUtil.autoScaleUp(pt);
 	translateInPixels(pt.x, pt.y);
 }
 

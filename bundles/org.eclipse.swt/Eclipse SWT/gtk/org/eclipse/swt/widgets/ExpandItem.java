@@ -200,8 +200,8 @@ void drawChevron (GC gc, int x, int y) {
 				px+3,py+2, px+4,py+2, px+4,py+1,  px+5,py+1, px+5,py, px+6,py};
 	}
 	gc.setForeground (display.getSystemColor (SWT.COLOR_TITLE_FOREGROUND));
-	gc.drawPolyline (DPIUtil.autoScaleDown(polyline1));
-	gc.drawPolyline (DPIUtil.autoScaleDown(polyline2));
+	gc.drawPolyline (polyline1);
+	gc.drawPolyline (polyline2);
 }
 
 void drawItem (GC gc, boolean drawFocus) {
@@ -283,7 +283,7 @@ public boolean getExpanded () {
  */
 public int getHeaderHeight () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getHeaderHeightInPixels ());
+	return getHeaderHeightInPixels ();
 }
 
 int getHeaderHeightInPixels () {
@@ -311,7 +311,7 @@ int getHeaderHeightInPixels () {
  */
 public int getHeight () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown(getHeightInPixels());
+	return getHeightInPixels();
 }
 
 int getHeightInPixels () {
@@ -604,7 +604,7 @@ void setForegroundRGBA (GdkRGBA rgba) {
  */
 public void setHeight (int height) {
 	checkWidget ();
-	setHeightInPixels(DPIUtil.autoScaleUp(height));
+	setHeightInPixels(height);
 }
 
 void setHeightInPixels (int height) {

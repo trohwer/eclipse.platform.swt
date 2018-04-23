@@ -2421,7 +2421,7 @@ void onDispose (Event e) {
 }
 
 void onResize (Event e) {
-	Rectangle rect = DPIUtil.autoScaleUp(browser.getClientArea ());
+	Rectangle rect = (browser.getClientArea ());
 	if (WEBKIT2){
 		if (webView == 0)
 			return;

@@ -13,7 +13,6 @@ package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gtk.*;
 
 /**
@@ -108,8 +107,7 @@ long /*int*/ clientHandle () {
  */
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget();
-	Rectangle rect = DPIUtil.autoScaleUp(new Rectangle (x, y, width, height));
-	return DPIUtil.autoScaleDown(computeTrimInPixels(rect.x, rect.y, rect.width, rect.height));
+	return computeTrimInPixels(x, y, width, height);
 }
 
 Rectangle computeTrimInPixels (int x, int y, int width, int height) {
@@ -224,7 +222,7 @@ int getBorderWidthInPixels () {
  */
 public Rectangle getClientArea () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown(getClientAreaInPixels());
+	return getClientAreaInPixels();
 }
 
 Rectangle getClientAreaInPixels () {

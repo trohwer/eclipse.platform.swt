@@ -1122,7 +1122,7 @@ void setLocationInPixels (int x, int y) {
  */
 public void setLocation (Point location) {
 	checkWidget ();
-	setLocationInPixels (DPIUtil.autoScaleUp (location));
+	setLocationInPixels (location);
 }
 
 void setLocationInPixels (Point location) {

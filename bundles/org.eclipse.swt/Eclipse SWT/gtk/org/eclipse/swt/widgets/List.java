@@ -539,7 +539,7 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget();
-	return DPIUtil.autoScaleDown(getItemHeightInPixels());
+	return getItemHeightInPixels();
 }
 
 int getItemHeightInPixels () {

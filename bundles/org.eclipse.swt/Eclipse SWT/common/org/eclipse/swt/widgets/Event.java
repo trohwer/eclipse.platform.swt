@@ -12,7 +12,6 @@ package org.eclipse.swt.widgets;
 
 
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.*;
 
 /**
  * Instances of this class provide a description of a particular
@@ -275,7 +274,7 @@ public Rectangle getBounds () {
 	return new Rectangle (x, y, width, height);
 }
 Rectangle getBoundsInPixels () {
-	return DPIUtil.autoScaleUp(getBounds());
+	return getBounds();
 }
 
 Point getLocation () {
@@ -283,7 +282,7 @@ Point getLocation () {
 }
 
 Point getLocationInPixels () {
-	return DPIUtil.autoScaleUp(new Point(x, y));
+	return new Point(x, y);
 }
 
 /**
@@ -299,12 +298,12 @@ public void setBounds (Rectangle rect) {
 }
 
 void setBoundsInPixels (Rectangle rect) {
-	setBounds(DPIUtil.autoScaleDown(rect));
+	setBounds(rect);
 }
 
 void setLocationInPixels (int x, int y) {
-	this.x = DPIUtil.autoScaleDown(x);
-	this.y = DPIUtil.autoScaleDown(y);
+	this.x = x;
+	this.y = y;
 }
 
 /**

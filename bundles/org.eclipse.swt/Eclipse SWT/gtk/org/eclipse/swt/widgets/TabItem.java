@@ -154,7 +154,7 @@ void destroyWidget () {
  */
 public Rectangle getBounds () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getBoundsInPixels ());
+	return (getBoundsInPixels ());
 }
 
 Rectangle getBoundsInPixels () {

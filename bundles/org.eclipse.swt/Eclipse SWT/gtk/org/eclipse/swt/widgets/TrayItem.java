@@ -308,7 +308,7 @@ long /*int*/ gtk_size_allocate (long /*int*/ widget, long /*int*/ allocation) {
 					int theByte = maskData [index] & 0xFF;
 					int mask = 1 << (x & 0x7);
 					if ((theByte & mask) != 0) {
-						Rectangle rect = DPIUtil.autoScaleDown(new Rectangle(xoffset + x, yoffset + y, 1, 1));
+						Rectangle rect = (new Rectangle(xoffset + x, yoffset + y, 1, 1));
 						region.add(rect.x, rect.y, rect.width, rect.height);
 					}
 				}

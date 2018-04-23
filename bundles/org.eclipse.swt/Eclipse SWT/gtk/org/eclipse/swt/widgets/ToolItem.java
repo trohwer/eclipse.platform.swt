@@ -300,7 +300,7 @@ public void dispose () {
  */
 public Rectangle getBounds () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getBoundsInPixels ());
+	return (getBoundsInPixels ());
 }
 
 Rectangle getBoundsInPixels () {
@@ -459,7 +459,7 @@ public String getToolTipText () {
  */
 public int getWidth () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getWidthInPixels ());
+	return (getWidthInPixels ());
 }
 
 int getWidthInPixels () {
@@ -533,9 +533,9 @@ long /*int*/ gtk_clicked (long /*int*/ widget) {
 						event.detail = SWT.ARROW;
 						GtkAllocation allocation = new GtkAllocation ();
 						GTK.gtk_widget_get_allocation (topHandle, allocation);
-						event.x = DPIUtil.autoScaleDown(allocation.x);
-						if ((style & SWT.MIRRORED) != 0) event.x = DPIUtil.autoScaleDown (parent.getClientWidth ()- allocation.width) - event.x;
-						event.y = DPIUtil.autoScaleDown(allocation.y + allocation.height);
+						event.x = (allocation.x);
+						if ((style & SWT.MIRRORED) != 0) event.x = (parent.getClientWidth ()- allocation.width) - event.x;
+						event.y = (allocation.y + allocation.height);
 					}
 					break;
 				}
@@ -1316,7 +1316,7 @@ void setToolTipText (Shell shell, String newString) {
  */
 public void setWidth (int width) {
 	checkWidget ();
-	setWidthInPixels(DPIUtil.autoScaleUp(width));
+	setWidthInPixels((width));
 }
 
 void setWidthInPixels (int width) {

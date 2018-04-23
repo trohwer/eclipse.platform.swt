@@ -13,7 +13,6 @@ package org.eclipse.swt.widgets;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.cairo.*;
 import org.eclipse.swt.internal.gtk.*;
 
@@ -316,9 +315,7 @@ void reskinChildren (int flags) {
 public void scroll (int destX, int destY, int x, int y, int width, int height, boolean all) {
 	checkWidget();
 	if (width <= 0 || height <= 0) return;
-	Point destination = DPIUtil.autoScaleUp (new Point (destX, destY));
-	Rectangle srcRect = DPIUtil.autoScaleUp (new Rectangle (x, y, width, height));
-	scrollInPixels(destination.x, destination.y, srcRect.x, srcRect.y, srcRect.width, srcRect.height, all);
+	scrollInPixels(destX, destY, x, y, width, height, all);
 }
 
 void scrollInPixels (int destX, int destY, int x, int y, int width, int height, boolean all) {
