@@ -1485,7 +1485,7 @@ GdkColor getForegroundGdkColor () {
  */
 public int getGridLineWidth () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getGridLineWidthInPixels ());
+	return (getGridLineWidthInPixels ());
 }
 
 int getGridLineWidthInPixels () {
@@ -1539,7 +1539,7 @@ public Color getHeaderForeground () {
  */
 public int getHeaderHeight () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getHeaderHeightInPixels ());
+	return (getHeaderHeightInPixels ());
 }
 
 int getHeaderHeightInPixels () {
@@ -1641,7 +1641,7 @@ public TableItem getItem (int index) {
  */
 public TableItem getItem (Point point) {
 	checkWidget();
-	return getItemInPixels(DPIUtil.autoScaleUp(point));
+	return getItemInPixels((point));
 }
 
 TableItem getItemInPixels (Point point) {
@@ -1691,7 +1691,7 @@ public int getItemCount () {
  */
 public int getItemHeight () {
 	checkWidget ();
-	return DPIUtil.autoScaleDown (getItemHeightInPixels ());
+	return (getItemHeightInPixels ());
 }
 
 int getItemHeightInPixels () {
@@ -2844,11 +2844,11 @@ void sendMeasureEvent (long /*int*/ cell, long /*int*/ width, long /*int*/ heigh
 			event.index = columnIndex;
 			event.gc = gc;
 			Rectangle eventRect = new Rectangle (0, 0, contentWidth [0], contentHeight [0]);
-			event.setBounds (DPIUtil.autoScaleDown (eventRect));
+			event.setBounds ((eventRect));
 			if (isSelected) event.detail = SWT.SELECTED;
 			sendEvent (SWT.MeasureItem, event);
 			gc.dispose ();
-			Rectangle rect = DPIUtil.autoScaleUp (event.getBounds ());
+			Rectangle rect = (event.getBounds ());
 			contentWidth [0] = rect.width - imageWidth;
 			if (contentHeight [0] < rect.height) contentHeight [0] = rect.height;
 			if (width != 0) C.memmove (width, contentWidth, 4);
@@ -3007,7 +3007,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 				if (GTK.GTK_VERSION >= OS.VERSION(3, 9, 0) && cr != 0) {
 					GdkRectangle r = new GdkRectangle();
 					GDK.gdk_cairo_get_clip_rectangle(cr, r);
-					Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, r.y, r.width, r.height));
+					Rectangle rect2 = (new Rectangle(rect.x, r.y, r.width, r.height));
 					// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
 					gc.setClipping(rect2.x, rect2.y, rect2.width, rect2.height);
 
@@ -3015,7 +3015,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 						rect.width = r.width;
 					}
 				} else {
-					Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height));
+					Rectangle rect2 = (new Rectangle(rect.x, rect.y, rect.width, rect.height));
 					// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
 					gc.setClipping(rect2.x, rect2.y, rect2.width, rect2.height);
 
@@ -3026,7 +3026,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 				event.gc = gc;
 				event.detail = drawState;
 				Rectangle eventRect = new Rectangle (rect.x, rect.y, rect.width, rect.height);
-				event.setBounds (DPIUtil.autoScaleDown (eventRect));
+				event.setBounds ((eventRect));
 				sendEvent (SWT.EraseItem, event);
 				if (GTK.GTK3) {
 					drawForegroundRGBA = null;
@@ -3072,7 +3072,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 		gc.setBackground (item.getBackground (columnIndex));
 		GdkRectangle rect = new GdkRectangle ();
 		OS.memmove (rect, background_area, GdkRectangle.sizeof);
-		gc.fillRectangle(DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height)));
+		gc.fillRectangle((new Rectangle(rect.x, rect.y, rect.width, rect.height)));
 		gc.dispose ();
 	}
 	if ((drawState & SWT.FOREGROUND) != 0 || GTK.GTK_IS_CELL_RENDERER_TOGGLE (cell)) {
@@ -3154,7 +3154,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 				gc.setFont (item.getFont (columnIndex));
 				if ((style & SWT.MIRRORED) != 0) rect.x = getClientWidth () - rect.width - rect.x;
 
-				Rectangle rect2 = DPIUtil.autoScaleDown(new Rectangle(rect.x, rect.y, rect.width, rect.height));
+				Rectangle rect2 = new Rectangle(rect.x, rect.y, rect.width, rect.height);
 				// Caveat: rect2 is necessary because GC#setClipping(Rectangle) got broken by bug 446075
 				gc.setClipping(rect2.x, rect2.y, rect2.width, rect2.height);
 
@@ -3163,7 +3163,7 @@ void rendererRender (long /*int*/ cell, long /*int*/ cr, long /*int*/ window, lo
 				event.index = columnIndex;
 				event.gc = gc;
 				Rectangle eventRect = new Rectangle (rect.x + contentX [0], rect.y, contentWidth [0], rect.height);
-				event.setBounds (DPIUtil.autoScaleDown (eventRect));
+				event.setBounds ((eventRect));
 				event.detail = drawState;
 				sendEvent (SWT.PaintItem, event);
 				gc.dispose();
