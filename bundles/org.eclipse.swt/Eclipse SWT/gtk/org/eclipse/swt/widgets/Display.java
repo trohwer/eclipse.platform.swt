@@ -1573,7 +1573,7 @@ public Shell getActiveShell () {
 @Override
 public Rectangle getBounds () {
 	checkDevice ();
-	return DPIUtil.autoScaleDown (getBoundsInPixels ());
+	return getBoundsInPixels ();
 }
 
 Rectangle getBoundsInPixels () {
@@ -1749,7 +1749,7 @@ long /*int*/ filterProc (long /*int*/ xEvent, long /*int*/ gdkEvent, long /*int*
  * </ul>
  */
 public Point getCursorLocation () {
-	return DPIUtil.autoScaleDown(getCursorLocationInPixels());
+	return getCursorLocationInPixels();
 }
 
 Point getCursorLocationInPixels () {
@@ -2659,7 +2659,7 @@ Rectangle getWorkArea() {
 public Monitor [] getMonitors () {
 	checkDevice ();
 	Monitor [] monitors = null;
-	Rectangle workArea = DPIUtil.autoScaleDown (getWorkArea ());
+	Rectangle workArea = getWorkArea ();
 	long /*int*/ screen = GDK.gdk_screen_get_default ();
 	if (screen != 0) {
 		int monitorCount = GDK.gdk_screen_get_n_monitors (screen);
@@ -2670,19 +2670,19 @@ public Monitor [] getMonitors () {
 				GDK.gdk_screen_get_monitor_geometry (screen, i, dest);
 				Monitor monitor = new Monitor ();
 				monitor.handle = i;
-				monitor.x = DPIUtil.autoScaleDown (dest.x);
-				monitor.y = DPIUtil.autoScaleDown (dest.y);
-				monitor.width = DPIUtil.autoScaleDown (dest.width);
-				monitor.height = DPIUtil.autoScaleDown (dest.height);
+				monitor.x = dest.x;
+				monitor.y = dest.y;
+				monitor.width = dest.width;
+				monitor.height = dest.height;
 
 				if (GTK.GTK_VERSION >= OS.VERSION (3, 4, 0)) {
 					// workarea was defined in GTK 3.4. If present, it will return the best results
 					// since it takes into account per-monitor trim
 					GDK.gdk_screen_get_monitor_workarea (screen, i, dest);
-					monitor.clientX = DPIUtil.autoScaleDown (dest.x);
-					monitor.clientY = DPIUtil.autoScaleDown (dest.y);
-					monitor.clientWidth = DPIUtil.autoScaleDown (dest.width);
-					monitor.clientHeight = DPIUtil.autoScaleDown (dest.height);
+					monitor.clientX = dest.x;
+					monitor.clientY = dest.y;
+					monitor.clientWidth = dest.width;
+					monitor.clientHeight = dest.height;
 				} else {
 					// If we're on an older version of gtk without the workarea function, see if we can use
 					// the getWorkArea function. In the case of multi-monitors, this will return something that
@@ -4086,16 +4086,16 @@ public Point map (Control from, Control to, int x, int y) {
 	Point point = new Point (x, y);
 	if (from == to) return point;
 	if (from != null) {
-		Point origin = DPIUtil.autoScaleDown (from.getWindowOrigin ());
-		if ((from.style & SWT.MIRRORED) != 0) point.x = DPIUtil.autoScaleDown (from.getClientWidth ()) - point.x;
+		Point origin = from.getWindowOrigin ();
+		if ((from.style & SWT.MIRRORED) != 0) point.x = from.getClientWidth () - point.x;
 		point.x += origin.x;
 		point.y += origin.y;
 	}
 	if (to != null) {
-		Point origin = DPIUtil.autoScaleDown (to.getWindowOrigin ());
+		Point origin = to.getWindowOrigin ();
 		point.x -= origin.x;
 		point.y -= origin.y;
-		if ((to.style & SWT.MIRRORED) != 0) point.x = DPIUtil.autoScaleDown (to.getClientWidth ()) - point.x;
+		if ((to.style & SWT.MIRRORED) != 0) point.x = to.getClientWidth () - point.x;
 	}
 	return point;
 }
@@ -4215,16 +4215,16 @@ public Rectangle map (Control from, Control to, int x, int y, int width, int hei
 	if (from == to) return rect;
 	boolean fromRTL = false, toRTL = false;
 	if (from != null) {
-		Point origin = DPIUtil.autoScaleDown (from.getWindowOrigin ());
-		if (fromRTL = (from.style & SWT.MIRRORED) != 0) rect.x = DPIUtil.autoScaleDown (from.getClientWidth ()) - rect.x;
+		Point origin = from.getWindowOrigin ();
+		if (fromRTL = (from.style & SWT.MIRRORED) != 0) rect.x = from.getClientWidth () - rect.x;
 		rect.x += origin.x;
 		rect.y += origin.y;
 	}
 	if (to != null) {
-		Point origin = DPIUtil.autoScaleDown (to.getWindowOrigin ());
+		Point origin = to.getWindowOrigin ();
 		rect.x -= origin.x;
 		rect.y -= origin.y;
-		if (toRTL = (to.style & SWT.MIRRORED) != 0) rect.x = DPIUtil.autoScaleDown (to.getClientWidth ()) - rect.x;
+		if (toRTL = (to.style & SWT.MIRRORED) != 0) rect.x = to.getClientWidth () - rect.x;
 	}
 
 	if (fromRTL != toRTL) rect.x -= rect.width;
@@ -4369,7 +4369,7 @@ public boolean post (Event event) {
 					return true;
 				}
 				case SWT.MouseMove: {
-					Rectangle loc = DPIUtil.autoScaleUp(event.getBounds ());
+					Rectangle loc = event.getBounds ();
 					setCursorLocationInPixels(new Point(loc.x, loc.y));
 					return true;
 				}
@@ -5116,7 +5116,6 @@ void setCursorLocationInPixels (Point location) {
 public void setCursorLocation (Point point) {
 	checkDevice ();
 	if (point == null) error (SWT.ERROR_NULL_ARGUMENT);
-	point = DPIUtil.autoScaleUp(point);
 	setCursorLocationInPixels(point);
 }
 
