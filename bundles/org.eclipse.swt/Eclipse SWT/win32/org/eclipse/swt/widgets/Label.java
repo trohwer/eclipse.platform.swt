@@ -128,6 +128,19 @@ static int checkStyle (int style) {
 	return checkBits (style, SWT.LEFT, SWT.CENTER, SWT.RIGHT, 0, 0, 0);
 }
 
+@Override
+boolean refreshControlForDPIChange() {
+	boolean refreshed = false;
+	// Refresh image on DPI change
+	if(image != null) {
+		refreshed = image.setZoom (this.currentDeviceZoom);
+		if (refreshed) {
+			setImage  (image);
+		}
+	}
+	return refreshed;
+}
+
 @Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0, border = getBorderWidthInPixels ();
@@ -149,8 +162,8 @@ static int checkStyle (int style) {
 	if (drawImage) {
 		if (image != null) {
 			// There exists a possibility of DPI change
-			image.refreshImageForZoom(this);
-			Rectangle rect = image.getBounds(getShell().currentDeviceZoom);
+//			if (image.setZoom(this.currentDeviceZoom)) setImage  (image);
+			Rectangle rect = image.getBounds(this.currentDeviceZoom);
 			width += rect.width;
 			height += rect.height;
 			if (IMAGE_AND_TEXT) {
@@ -549,7 +562,7 @@ LRESULT wmDrawChild (long /*int*/ wParam, long /*int*/ lParam) {
 			int margin = drawText && drawImage ? MARGIN : 0;
 			int imageWidth = 0, imageHeight = 0;
 			if (drawImage) {
-				Rectangle rect = image.getBoundsInPixels ();
+				Rectangle rect = image.getBounds(this.currentDeviceZoom);
 				imageWidth = rect.width;
 				imageHeight = rect.height;
 			}

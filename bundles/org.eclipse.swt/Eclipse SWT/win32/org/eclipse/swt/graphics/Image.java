@@ -17,7 +17,6 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
 import org.eclipse.swt.internal.gdip.*;
 import org.eclipse.swt.internal.win32.*;
-import org.eclipse.swt.widgets.*;
 
 /**
  * Instances of this class are graphics which have been prepared
@@ -118,6 +117,11 @@ public final class Image extends Resource implements Drawable {
 	 * the global alpha value to be used for every pixel
 	 */
 	int alpha = -1;
+
+	/**
+	 * image data at 100% zoom
+	 */
+	ImageData dataAt100;
 
 	/**
 	 * ImageFileNameProvider to provide file names at various Zoom levels
@@ -244,6 +248,7 @@ public Image(Device device, Image srcImage, int flag) {
 	if (srcImage.isDisposed()) SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	Rectangle rect = srcImage.getBoundsInPixels();
 	this.type = srcImage.type;
+	this.dataAt100 = srcImage.dataAt100;
 	this.imageDataProvider = srcImage.imageDataProvider;
 	this.imageFileNameProvider = srcImage.imageFileNameProvider;
 	this.currentDeviceZoom = srcImage.currentDeviceZoom;
@@ -488,6 +493,7 @@ public Image(Device device, ImageData data) {
 	super(device);
 	if (data == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	dataAt100 = data;
 	data = DPIUtil.autoScaleUp (device, data);
 	init(data);
 	init();
@@ -531,6 +537,8 @@ public Image(Device device, ImageData source, ImageData mask) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	currentDeviceZoom = DPIUtil.getDeviceZoom ();
+	dataAt100 = applyMask(source, ImageData.convertMask(mask));
+	init(this.device, this, DPIUtil.autoScaleUp(device, dataAt100));
 	source = DPIUtil.autoScaleUp(device, source);
 	mask = DPIUtil.autoScaleUp(device, mask);
 	mask = ImageData.convertMask(mask);
@@ -594,7 +602,8 @@ public Image(Device device, ImageData source, ImageData mask) {
 public Image (Device device, InputStream stream) {
 	super(device);
 	currentDeviceZoom = DPIUtil.getDeviceZoom ();
-	ImageData data = DPIUtil.autoScaleUp(device, new ImageData(stream));
+	dataAt100 = new ImageData (stream);
+	ImageData data = DPIUtil.autoScaleUp(device, dataAt100);
 	init(data);
 	init();
 }
@@ -635,7 +644,8 @@ public Image (Device device, String filename) {
 	super(device);
 	if (filename == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	currentDeviceZoom = DPIUtil.getDeviceZoom ();
-	ImageData data = DPIUtil.autoScaleUp(device, new ImageData(filename));
+	dataAt100 = new ImageData(filename);
+	ImageData data = DPIUtil.autoScaleUp(device, dataAt100);
 	init(data);
 	init();
 }
@@ -679,7 +689,8 @@ public Image(Device device, ImageFileNameProvider imageFileNameProvider) {
 		initNative (fileName);
 		if (this.handle == 0) init(new ImageData (fileName));
 	} else {
-		ImageData resizedData = DPIUtil.autoScaleUp (device, new ImageData (fileName));
+		dataAt100 = new ImageData (fileName);
+		ImageData resizedData = DPIUtil.autoScaleUp (device, dataAt100);
 		init(resizedData);
 	}
 	init();
@@ -723,35 +734,29 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 	if (found[0]) {
 		init(data);
 	} else {
-		ImageData resizedData = DPIUtil.autoScaleUp(device, data);
+		dataAt100 = data;
+		ImageData resizedData = DPIUtil.autoScaleUp(device, dataAt100);
 		init (resizedData);
 	}
 	init();
 }
 
 /**
- * Refresh the Image based on the zoom level, if required.
- * @param control
+ * Set zoom and refresh the Image based on the zoom level, if required.
+ * @param zoom
  *
  * @return true if image is refreshed
- * @since 3.107
+ * @noreference This method is not intended to be referenced by clients.
  */
-public boolean refreshImageForZoom (Control control) {
+public boolean setZoom (int zoom) {
 	boolean refreshed = false;
 	StringBuilder sb = new StringBuilder();
 	sb.append("Image:refreshImageForZoom() Current[" + currentDeviceZoom + "] to new[");
-	int deviceZoomLevel = currentDeviceZoom;
-	if (control != null) {
-		deviceZoomLevel = control.getMonitor().getZoom();
-	}
-	else {
-		deviceZoomLevel = DPIUtil.getDeviceZoom();
-	}
 
 	if (imageFileNameProvider != null) {
-		if (deviceZoomLevel != currentDeviceZoom) {
+		if (zoom != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
-			String filename = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, deviceZoomLevel, found);
+			String filename = DPIUtil.validateAndGetImagePathAtZoom (imageFileNameProvider, zoom, found);
 			/* Avoid re-creating the fall-back image, when current zoom is already 100% */
 			if (found[0] || currentDeviceZoom != 100) {
 				/* Release current native resources */
@@ -769,12 +774,12 @@ public boolean refreshImageForZoom (Control control) {
 				init ();
 				refreshed = true;
 			}
-			currentDeviceZoom = deviceZoomLevel;
+			currentDeviceZoom = zoom;
 		}
 	} else if (imageDataProvider != null) {
-		if (deviceZoomLevel != currentDeviceZoom) {
+		if (zoom != currentDeviceZoom) {
 			boolean[] found = new boolean[1];
-			ImageData data = DPIUtil.validateAndGetImageDataAtZoom (imageDataProvider, deviceZoomLevel, found);
+			ImageData data = DPIUtil.validateAndGetImageDataAtZoom (imageDataProvider, zoom, found);
 			/* Avoid re-creating the fall-back image, when current zoom is already 100% */
 			if (found[0] || currentDeviceZoom != 100) {
 				/* Release current native resources */
@@ -791,17 +796,29 @@ public boolean refreshImageForZoom (Control control) {
 				init();
 				refreshed = true;
 			}
-			currentDeviceZoom = deviceZoomLevel;
+			currentDeviceZoom = zoom;
 		}
 	} else {
-		if (deviceZoomLevel != currentDeviceZoom) {
-			ImageData data = getImageDataAtCurrentZoom();
+		// Cache data at 100% zoom before refresh.
+//		if (dataAt100 == null && currentDeviceZoom == 100) {
+//			dataAt100 = getImageDataAtCurrentZoom();
+//			System.out.println("Cached dataAt100: " + dataAt100);
+//		}
+		if (zoom != currentDeviceZoom) {
+			ImageData resizedData = null;
+			if (dataAt100 != null) {
+				System.out.println("Using dataAt100... to " + dataAt100 + " target zoom: " + zoom);
+				resizedData = DPIUtil.autoScaleImageData(device, dataAt100, zoom, 100);
+			}
+			else {
+				System.out.println("currentDeviceZoom: " + currentDeviceZoom);
+				resizedData = DPIUtil.autoScaleImageData(device, getImageDataAtCurrentZoom(), zoom, currentDeviceZoom);
+			}
 			destroy ();
-			ImageData resizedData = DPIUtil.autoScaleImageData(device, data, deviceZoomLevel, currentDeviceZoom);
 			init(resizedData);
 			init();
 			refreshed = true;
-			currentDeviceZoom = deviceZoomLevel;
+			currentDeviceZoom = zoom;
 		}
 	}
 	sb.append(currentDeviceZoom + "] >> " + refreshed);
@@ -1271,7 +1288,19 @@ public Rectangle getBounds() {
 }
 
 /**
- * @since 3.107
+ * Returns the bounds of the receiver at specified zoom. The rectangle will always
+ * have x and y values of 0, and the width and height of the
+ * image at specified zoom.
+ *
+ * @param zoom
+ *
+ * @return a rectangle specifying the image's bounds in points.
+ *
+ * @exception SWTException <ul>
+ *    <li>ERROR_GRAPHIC_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_INVALID_IMAGE - if the image is not a bitmap or an icon</li>
+ * </ul>
+ * @noreference This method is not intended to be referenced by clients.
  */
 public Rectangle getBounds(int zoom) {
 	// Read the bounds in pixels from native layer.
@@ -1401,7 +1430,12 @@ public ImageData getImageData (int zoom) {
 		}
 		// AutoScale the image at 100% zoom
 		return DPIUtil.autoScaleUp (device, new ImageData (fileName));
-	} else {
+	}
+	else if (dataAt100 != null) {
+		return DPIUtil.autoScaleImageData(device, dataAt100, zoom, 100);
+	}
+	else {
+		System.out.println("never try to come here because of loss of image.." + currentDeviceZoom + " to " + zoom);
 		return DPIUtil.autoScaleImageData (device, getImageDataAtCurrentZoom (), zoom, currentDeviceZoom);
 	}
 }
@@ -1928,6 +1962,11 @@ static long /*int*/ [] init(Device device, Image image, ImageData i) {
 }
 
 static long /*int*/ [] init(Device device, Image image, ImageData source, ImageData mask) {
+	ImageData imageData = applyMask(source, mask);
+	return init(device, image, imageData);
+}
+
+static ImageData applyMask(ImageData source, ImageData mask) {
 	/* Create a temporary image and locate the black pixel */
 	ImageData imageData;
 	int blackIndex = 0;
@@ -1998,8 +2037,9 @@ static long /*int*/ [] init(Device device, Image image, ImageData source, ImageD
 	}
 	imageData.maskPad = mask.scanlinePad;
 	imageData.maskData = mask.data;
-	return init(device, image, imageData);
+	return imageData;
 }
+
 void init(ImageData i) {
 	if (i == null) SWT.error(SWT.ERROR_NULL_ARGUMENT);
 	init(device, this, i);

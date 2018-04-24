@@ -188,6 +188,23 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
+@Override
+boolean refreshControlForDPIChange() {
+	boolean refreshed = false;
+	// Refresh image on DPI change
+	ToolItem[] items = getItems();
+	boolean itemRefreshed = false;
+	for (ToolItem item : items) {
+		if (item.image != null) {
+			itemRefreshed = item.image.setZoom(this.currentDeviceZoom);
+			if (itemRefreshed) item.setImage(item.image);
+			refreshed |= itemRefreshed;
+		}
+	}
+	setRedraw(true);
+	return refreshed;
+}
+
 @Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = 0, height = 0;
 	if ((style & SWT.VERTICAL) != 0) {

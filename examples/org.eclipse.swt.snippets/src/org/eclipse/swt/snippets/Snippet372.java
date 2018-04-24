@@ -111,9 +111,22 @@ public class Snippet372 {
 		Label label1 = new Label (composite, SWT.BORDER);
 		label1.setImage (eclipse);
 
+		// Label with text only
+//		Label label2 = new Label (composite, SWT.BORDER);
+//		label2.setText ("label");
+
+		// Button with text + Old Image Constructor
+		Button oldButton1 = new Button(composite, SWT.PUSH);
+		oldButton1.setText("Old Const.");
+		oldButton1.setImage(new Image(display, filenameProvider.getImagePath(100)));
+
+		// Button with Old Image Constructor
+//		Button oldButton2 = new Button(composite, SWT.PUSH);
+//		oldButton2.setImage(new Image(display, filenameProvider.getImagePath(100)));
+
 		// Button with Image
 		Button createDialog = new Button(composite, SWT.PUSH);
-		createDialog.setText("eclipse in child dialog");
+		createDialog.setText("Child Dialog");
 		createDialog.setImage(eclipse);
 		createDialog.addSelectionListener(new SelectionAdapter() {
 			@Override

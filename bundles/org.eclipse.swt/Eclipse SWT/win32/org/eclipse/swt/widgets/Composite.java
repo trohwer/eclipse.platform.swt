@@ -471,6 +471,7 @@ public Control [] getChildren () {
 boolean refreshControlForDPIChange() {
 	boolean refreshed = false;
 	for (Control control: getChildren()) {
+		control.currentDeviceZoom = this.currentDeviceZoom;
 		refreshed |= control.refreshControlForDPIChange();
 	};
 	this.redraw(true);

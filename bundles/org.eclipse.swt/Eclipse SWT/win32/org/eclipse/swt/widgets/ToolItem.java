@@ -961,7 +961,7 @@ void updateImages (boolean enabled) {
 	ImageList hotImageList = parent.getHotImageList ();
 	ImageList disabledImageList = parent.getDisabledImageList();
 	if (info.iImage == OS.I_IMAGENONE) {
-		Rectangle bounds = image.getBoundsInPixels ();
+		Rectangle bounds = image.getBounds(getParent().getShell().currentDeviceZoom);
 		int listStyle = parent.style & SWT.RIGHT_TO_LEFT;
 		if (imageList == null) {
 			imageList = display.getImageListToolBar (listStyle, bounds.width, bounds.height);
