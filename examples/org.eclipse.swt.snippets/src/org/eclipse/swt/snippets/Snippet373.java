@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.*;
  * For a list of all SWT example snippets see
  * http://www.eclipse.org/swt/snippets/
  */
-public class Snippet372 {
+public class Snippet373 {
 	private static final String IMAGE_100 = "eclipse16.png";
 	private static final String IMAGE_150 = "eclipse24.png";
 	private static final String IMAGE_200 = "eclipse32.png";
