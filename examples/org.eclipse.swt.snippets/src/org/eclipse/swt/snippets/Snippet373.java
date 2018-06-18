@@ -80,11 +80,13 @@ public class Snippet373 {
 		fileItem.setImage(eclipse);
 		Menu submenu = new Menu (shell, SWT.DROP_DOWN);
 		fileItem.setMenu (submenu);
-		MenuItem item = new MenuItem (submenu, SWT.PUSH);
-		item.addListener (SWT.Selection, e -> System.out.println ("Select All"));
-		item.setText ("Select &All\tCtrl+A");
-		item.setAccelerator (SWT.MOD1 + 'A');
-		item.setImage(eclipse);
+		MenuItem subItem = new MenuItem (submenu, SWT.PUSH);
+		subItem.addListener (SWT.Selection, e -> System.out.println ("Select All"));
+		subItem.setText ("Select &All\tCtrl+A");
+		subItem.setAccelerator (SWT.MOD1 + 'A');
+		subItem.setImage(eclipse);
+
+		System.out.println(bar.getItems());
 
 		// CTabFolder
 		CTabFolder folder = new CTabFolder(shell, SWT.BORDER);
@@ -112,13 +114,13 @@ public class Snippet373 {
 		label1.setImage (eclipse);
 
 		// Label with text only
-//		Label label2 = new Label (composite, SWT.BORDER);
-//		label2.setText ("label");
+		Label label2 = new Label (composite, SWT.BORDER);
+		label2.setText ("No Image");
 
 		// Button with text + Old Image Constructor
 		Button oldButton1 = new Button(composite, SWT.PUSH);
-		oldButton1.setText("Old Const.");
-		oldButton1.setImage(new Image(display, filenameProvider.getImagePath(100)));
+		oldButton1.setText("Old Img");
+		oldButton1.setImage(new Image(display, IMAGE_PATH_100));
 
 		// Button with Old Image Constructor
 //		Button oldButton2 = new Button(composite, SWT.PUSH);

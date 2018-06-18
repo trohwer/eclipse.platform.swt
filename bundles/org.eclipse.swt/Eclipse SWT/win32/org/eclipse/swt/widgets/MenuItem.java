@@ -779,6 +779,10 @@ public void setImage (Image image) {
 	checkWidget ();
 	if ((style & SWT.SEPARATOR) != 0) return;
 	super.setImage (image);
+	_setImage (image);
+}
+
+void _setImage (Image image) {
 	MENUITEMINFO info = new MENUITEMINFO ();
 	info.cbSize = MENUITEMINFO.sizeof;
 	info.fMask = OS.MIIM_BITMAP;
@@ -1078,6 +1082,22 @@ public void setToolTipText (String toolTip) {
 	itemToolTip = new MenuItemToolTip (this.getParent().getShell());
 	itemToolTip.setMessage (toolTip);
 	itemToolTip.setVisible (false);
+}
+
+@Override
+boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	// Refresh the menu image
+	refreshed = image.setZoom (zoom);
+	_setImage (image);
+
+	// Refresh the sub menu
+	if (menu != null) {
+		for (MenuItem item : menu.getItems()) {
+			refreshed |= item.setZoom (zoom);
+		}
+	}
+	return refreshed;
 }
 
 void showTooltip (int x, int y) {

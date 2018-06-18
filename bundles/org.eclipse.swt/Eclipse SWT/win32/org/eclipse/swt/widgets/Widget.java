@@ -45,7 +45,7 @@ import org.eclipse.swt.internal.win32.*;
  * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
  */
 public abstract class Widget {
-	int style, state;
+	int style, state, currentDeviceZoom = DPIUtil.getDeviceZoom();
 	Display display;
 	EventTable eventTable;
 	Object data;
@@ -1452,6 +1452,17 @@ boolean showMenu (int x, int y, int detail) {
 		menu.setVisible (true);
 		return true;
 	}
+	return false;
+}
+
+/**
+ * Set zoom and refresh the Widget based on the zoom level, if required.
+ * @param zoom
+ *
+ * @return true if Widget is refreshed
+ */
+boolean setZoom (int zoom) {
+	this.currentDeviceZoom = zoom;
 	return false;
 }
 

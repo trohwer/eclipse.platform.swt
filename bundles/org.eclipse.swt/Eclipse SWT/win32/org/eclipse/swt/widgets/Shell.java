@@ -2005,6 +2005,15 @@ public void setVisible (boolean visible) {
 }
 
 @Override
+boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	if (menuBar != null) {
+		refreshed |= menuBar.setZoom (zoom);
+	}
+	return refreshed;
+}
+
+@Override
 void subclass () {
 	super.subclass ();
 	if (ToolTipProc != 0) {

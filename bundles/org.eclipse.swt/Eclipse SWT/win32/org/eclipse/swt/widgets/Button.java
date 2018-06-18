@@ -303,20 +303,6 @@ int computeLeftMargin () {
 	return margin;
 }
 
-@Override
-boolean refreshControlForDPIChange() {
-	boolean refreshed = false;
-	// Refresh image on DPI change
-	if(image != null) {
-		refreshed = image.setZoom (this.currentDeviceZoom);
-		if (refreshed) {
-			_setImage  (image);
-			updateImageList();
-		}
-	}
-	return refreshed;
-}
-
 @Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	checkWidget ();
 	int width = 0, height = 0, border = getBorderWidthInPixels ();
@@ -1090,6 +1076,20 @@ public void setText (String string) {
 //		}
 //	}
 	_setText (string);
+}
+
+@Override
+boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	// Refresh image on DPI change
+	if(image != null) {
+		refreshed = image.setZoom (zoom);
+		if (refreshed) {
+			_setImage  (image);
+			updateImageList();
+		}
+	}
+	return refreshed;
 }
 
 @Override

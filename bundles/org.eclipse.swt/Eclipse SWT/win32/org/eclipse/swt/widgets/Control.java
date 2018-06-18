@@ -69,7 +69,7 @@ public abstract class Control extends Widget implements Drawable {
 	Image backgroundImage;
 	Region region;
 	Font font;
-	int drawCount, foreground, background, backgroundAlpha = 255, currentDeviceZoom = DPIUtil.getDeviceZoom();
+	int drawCount, foreground, background, backgroundAlpha = 255;
 
 /**
  * Prevents uninitialized instances from being created outside the package.
@@ -5747,11 +5747,7 @@ LRESULT WM_DPICHANGED (long /*int*/ wParam, long /*int*/ lParam) {
 	RECT rect = new RECT ();
 	COM.MoveMemory(rect, lParam, RECT.sizeof);
 	this.setBoundsInPixels(rect.left, rect.top, rect.right - rect.left, rect.bottom-rect.top);
-	return refreshControlForDPIChange () ? LRESULT.ZERO : LRESULT.ONE;
-}
-
-boolean refreshControlForDPIChange () {
-	return false;
+	return setZoom (currentDeviceZoom) ? LRESULT.ZERO : LRESULT.ONE;
 }
 
 LRESULT wmColorChild (long /*int*/ wParam, long /*int*/ lParam) {

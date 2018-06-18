@@ -807,7 +807,7 @@ public boolean setZoom (int zoom) {
 		if (zoom != currentDeviceZoom) {
 			ImageData resizedData = null;
 			if (dataAt100 != null) {
-				System.out.println("Using dataAt100... to " + dataAt100 + " target zoom: " + zoom);
+				System.out.println("Using cached Imagedata At100... going from[" + currentDeviceZoom + "] to target zoom[" + zoom + "]");
 				resizedData = DPIUtil.autoScaleImageData(device, dataAt100, zoom, 100);
 			}
 			else {

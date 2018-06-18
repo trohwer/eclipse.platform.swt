@@ -467,17 +467,6 @@ public Control [] getChildren () {
 	return _getChildren ();
 }
 
-@Override
-boolean refreshControlForDPIChange() {
-	boolean refreshed = false;
-	for (Control control: getChildren()) {
-		control.currentDeviceZoom = this.currentDeviceZoom;
-		refreshed |= control.refreshControlForDPIChange();
-	};
-	this.redraw(true);
-	return refreshed;
-}
-
 int getChildrenCount () {
 	/*
 	* NOTE: The current implementation will count
@@ -1226,6 +1215,17 @@ boolean setTabGroupFocus () {
 		}
 	}
 	return false;
+}
+
+@Override
+boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	for (Control control: getChildren()) {
+		control.currentDeviceZoom = this.currentDeviceZoom;
+		refreshed |= control.setZoom(zoom);
+	};
+	this.redraw(true);
+	return refreshed;
 }
 
 @Override
