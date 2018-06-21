@@ -86,8 +86,6 @@ public class Snippet373 {
 		subItem.setAccelerator (SWT.MOD1 + 'A');
 		subItem.setImage(eclipse);
 
-		System.out.println(bar.getItems());
-
 		// CTabFolder
 		CTabFolder folder = new CTabFolder(shell, SWT.BORDER);
 		for (int i = 0; i < 2; i++) {

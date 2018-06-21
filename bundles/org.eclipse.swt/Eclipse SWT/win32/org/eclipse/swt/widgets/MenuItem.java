@@ -779,10 +779,6 @@ public void setImage (Image image) {
 	checkWidget ();
 	if ((style & SWT.SEPARATOR) != 0) return;
 	super.setImage (image);
-	_setImage (image);
-}
-
-void _setImage (Image image) {
 	MENUITEMINFO info = new MENUITEMINFO ();
 	info.cbSize = MENUITEMINFO.sizeof;
 	info.fMask = OS.MIIM_BITMAP;
@@ -1088,8 +1084,10 @@ public void setToolTipText (String toolTip) {
 boolean setZoom (int zoom) {
 	boolean refreshed = super.setZoom (zoom);
 	// Refresh the menu image
-	refreshed = image.setZoom (zoom);
-	_setImage (image);
+	if (image != null) {
+		refreshed = image.setZoom (zoom);
+		setImage (image);
+	}
 
 	// Refresh the sub menu
 	if (menu != null) {

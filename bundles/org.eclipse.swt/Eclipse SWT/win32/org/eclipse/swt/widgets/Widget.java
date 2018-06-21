@@ -1462,8 +1462,9 @@ boolean showMenu (int x, int y, int detail) {
  * @return true if Widget is refreshed
  */
 boolean setZoom (int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
 	this.currentDeviceZoom = zoom;
-	return false;
+	return refreshed;
 }
 
 /**

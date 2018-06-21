@@ -187,21 +187,13 @@ void checkBuffered () {
 protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
-
 @Override
-boolean refreshControlForDPIChange() {
-	boolean refreshed = false;
+boolean setZoom(int zoom) {
+	boolean refreshed = super.setZoom (zoom);
 	// Refresh image on DPI change
-	ToolItem[] items = getItems();
-	boolean itemRefreshed = false;
-	for (ToolItem item : items) {
-		if (item.image != null) {
-			itemRefreshed = item.image.setZoom(this.currentDeviceZoom);
-			if (itemRefreshed) item.setImage(item.image);
-			refreshed |= itemRefreshed;
-		}
+	for (ToolItem item : _getItems ()) {
+		refreshed |=item.setZoom (zoom);
 	}
-	setRedraw(true);
 	return refreshed;
 }
 

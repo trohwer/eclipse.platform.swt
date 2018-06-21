@@ -721,6 +721,17 @@ public void setImage (Image image) {
 	updateImages (getEnabled () && parent.getEnabled ());
 }
 
+@Override
+boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	// Refresh the menu image
+	if (image != null) {
+		refreshed = image.setZoom (zoom);
+		setImage (image);
+	}
+	return refreshed;
+}
+
 boolean setRadioSelection (boolean value) {
 	if ((style & SWT.RADIO) == 0) return false;
 	if (getSelection () != value) {
