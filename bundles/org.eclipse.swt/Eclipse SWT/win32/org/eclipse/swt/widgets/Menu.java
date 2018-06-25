@@ -1275,8 +1275,9 @@ public void setVisible (boolean visible) {
 }
 
 @Override
-boolean setZoom (int zoom) {
-	boolean refreshed = super.setZoom (zoom);
+public boolean setZoom (int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
+	this.currentDeviceZoom = zoom;
 	for (MenuItem item : getItems()) {
 		refreshed |= item.setZoom (zoom);
 	}

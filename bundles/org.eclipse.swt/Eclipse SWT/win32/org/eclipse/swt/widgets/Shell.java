@@ -2005,11 +2005,17 @@ public void setVisible (boolean visible) {
 }
 
 @Override
-boolean setZoom (int zoom) {
+public boolean setZoom (int zoom) {
 	boolean refreshed = super.setZoom (zoom);
+	// Refresh the image
+	if (image != null) {
+		refreshed = image.setZoom (zoom);
+		setImage (image);
+	}
 	if (menuBar != null) {
 		refreshed |= menuBar.setZoom (zoom);
 	}
+	this.requestLayout();
 	return refreshed;
 }
 

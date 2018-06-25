@@ -64,6 +64,8 @@ public class Snippet373 {
 		System.setProperty("swt.autoScale", "quarter");
 		Display display = new Display();
 		final Image eclipse = new Image(display, filenameProvider);
+		final Image eclipseCTab1 = new Image(display, filenameProvider);
+		final Image eclipseCTab2 = new Image(display, filenameProvider);
 
 		Shell shell = new Shell(display);
 		shell.setImage(eclipse);
@@ -94,7 +96,7 @@ public class Snippet373 {
 			Text textMsg = new Text(folder, SWT.MULTI);
 			textMsg.setText("Content for Item "+i);
 			cTabItem.setControl(textMsg);
-			cTabItem.setImage(eclipse);
+			cTabItem.setImage((i % 2 == 1) ? eclipseCTab1 : eclipseCTab2);
 		}
 
 		// PerMonitorV2 setting
@@ -152,6 +154,7 @@ public class Snippet373 {
 			int style = i % 2 == 1 ? SWT.DROP_DOWN : SWT.PUSH;
 			ToolItem toolItem = new ToolItem (toolBar, style);
 			toolItem.setImage (eclipse);
+			toolItem.setEnabled(i % 2 == 0);
 		}
 		toolBar.pack ();
 

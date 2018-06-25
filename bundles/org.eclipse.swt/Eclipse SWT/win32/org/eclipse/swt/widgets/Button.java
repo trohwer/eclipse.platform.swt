@@ -1079,9 +1079,9 @@ public void setText (String string) {
 }
 
 @Override
-boolean setZoom (int zoom) {
+public boolean setZoom (int zoom) {
 	boolean refreshed = super.setZoom (zoom);
-	// Refresh image on DPI change
+	// Refresh the image
 	if(image != null) {
 		refreshed = image.setZoom (zoom);
 		if (refreshed) {

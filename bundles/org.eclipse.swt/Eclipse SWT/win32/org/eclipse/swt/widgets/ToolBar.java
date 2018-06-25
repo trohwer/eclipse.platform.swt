@@ -187,9 +187,11 @@ void checkBuffered () {
 protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
+
 @Override
-boolean setZoom(int zoom) {
-	boolean refreshed = super.setZoom (zoom);
+public boolean setZoom(int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
+	this.currentDeviceZoom = zoom;
 	// Refresh image on DPI change
 	for (ToolItem item : _getItems ()) {
 		refreshed |=item.setZoom (zoom);

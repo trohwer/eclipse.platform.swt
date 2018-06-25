@@ -45,7 +45,12 @@ import org.eclipse.swt.internal.win32.*;
  * @see <a href="http://www.eclipse.org/swt/">Sample code and further information</a>
  */
 public abstract class Widget {
-	int style, state, currentDeviceZoom = DPIUtil.getDeviceZoom();
+	/**
+	 * s
+	 * @since 3.107
+	 */
+	protected int currentDeviceZoom = DPIUtil.getDeviceZoom();
+	int style, state;
 	Display display;
 	EventTable eventTable;
 	Object data;
@@ -1460,8 +1465,9 @@ boolean showMenu (int x, int y, int detail) {
  * @param zoom
  *
  * @return true if Widget is refreshed
+ * @since 3.107
  */
-boolean setZoom (int zoom) {
+public boolean setZoom (int zoom) {
 	boolean refreshed = (this.currentDeviceZoom == zoom);
 	this.currentDeviceZoom = zoom;
 	return refreshed;

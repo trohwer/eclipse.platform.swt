@@ -1081,9 +1081,10 @@ public void setToolTipText (String toolTip) {
 }
 
 @Override
-boolean setZoom (int zoom) {
-	boolean refreshed = super.setZoom (zoom);
-	// Refresh the menu image
+public boolean setZoom (int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
+	this.currentDeviceZoom = zoom;
+	// Refresh the image
 	if (image != null) {
 		refreshed = image.setZoom (zoom);
 		setImage (image);
