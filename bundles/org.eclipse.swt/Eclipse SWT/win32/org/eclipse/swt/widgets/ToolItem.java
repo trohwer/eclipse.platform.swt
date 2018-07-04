@@ -721,6 +721,44 @@ public void setImage (Image image) {
 	updateImages (getEnabled () && parent.getEnabled ());
 }
 
+@Override
+public boolean setZoom (int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
+	this.currentDeviceZoom = zoom;
+	int listStyle = parent.style & SWT.RIGHT_TO_LEFT;
+	// Refresh the image
+	if (image != null) {
+		Rectangle bounds = image.getBounds(zoom);
+		if (parent.getImageList() == null) {
+			parent.setImageList (display.getImageListToolBar (listStyle, bounds.width, bounds.height));
+		}
+		if (parent.getDisabledImageList() == null) {
+			parent.setDisabledImageList (display.getImageListToolBarDisabled (listStyle, bounds.width, bounds.height));
+		}
+		if (parent.getHotImageList() == null) {
+			parent.setHotImageList (display.getImageListToolBarHot (listStyle, bounds.width, bounds.height));
+		}
+		refreshed = image.setZoom (zoom);
+		parent.getImageList().add(image);
+
+		if (disabledImage != null) {
+			refreshed = disabledImage.setZoom (zoom);
+		}
+		else {
+			disabledImage2 = new Image (display, image, SWT.IMAGE_DISABLE);
+		}
+		parent.getDisabledImageList().add(disabledImage != null ? disabledImage : disabledImage2);
+
+		if (hotImage != null) {
+			refreshed = hotImage.setZoom (zoom);
+		}
+		parent.getHotImageList().add(hotImage != null ? hotImage : image);
+		setImage (image);
+	}
+
+	return refreshed;
+}
+
 boolean setRadioSelection (boolean value) {
 	if ((style & SWT.RADIO) == 0) return false;
 	if (getSelection () != value) {
@@ -961,7 +999,7 @@ void updateImages (boolean enabled) {
 	ImageList hotImageList = parent.getHotImageList ();
 	ImageList disabledImageList = parent.getDisabledImageList();
 	if (info.iImage == OS.I_IMAGENONE) {
-		Rectangle bounds = image.getBoundsInPixels ();
+		Rectangle bounds = image.getBounds(getParent().getShell().currentDeviceZoom);
 		int listStyle = parent.style & SWT.RIGHT_TO_LEFT;
 		if (imageList == null) {
 			imageList = display.getImageListToolBar (listStyle, bounds.width, bounds.height);

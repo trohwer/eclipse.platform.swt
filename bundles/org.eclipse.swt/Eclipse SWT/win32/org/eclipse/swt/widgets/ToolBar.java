@@ -188,6 +188,36 @@ protected void checkSubclass () {
 	if (!isValidSubclass ()) error (SWT.ERROR_INVALID_SUBCLASS);
 }
 
+@Override
+public boolean setZoom(int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
+	this.currentDeviceZoom = zoom;
+	// Reset ImageList
+	if (imageList != null) {
+		imageList.dispose();
+		imageList = null;
+	}
+	if (hotImageList != null) {
+		hotImageList.dispose();
+		hotImageList = null;
+	}
+	if (disabledImageList != null) {
+		disabledImageList.dispose();
+		disabledImageList = null;
+	}
+
+	// Refresh image on DPI change
+	for (ToolItem item : _getItems ()) {
+		refreshed |=item.setZoom (zoom);
+	}
+	setImageList (imageList);
+	setDisabledImageList (disabledImageList);
+	setHotImageList (hotImageList);
+
+	layoutItems ();
+	return refreshed;
+}
+
 @Override Point computeSizeInPixels (int wHint, int hHint, boolean changed) {
 	int width = 0, height = 0;
 	if ((style & SWT.VERTICAL) != 0) {

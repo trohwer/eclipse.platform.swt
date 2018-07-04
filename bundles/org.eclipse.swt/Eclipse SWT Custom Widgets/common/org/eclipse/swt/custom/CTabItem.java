@@ -444,4 +444,17 @@ public void setToolTipText (String string) {
 	toolTipText = string;
 }
 
+@Override
+public boolean setZoom (int zoom) {
+	boolean refreshed = (this.currentDeviceZoom == zoom);
+	this.currentDeviceZoom = zoom;
+	// Refresh the image
+	Image image = getImage();
+	if (image != null) {
+		refreshed |= image.setZoom (zoom);
+		setImage (image);
+	}
+	return refreshed;
+}
+
 }

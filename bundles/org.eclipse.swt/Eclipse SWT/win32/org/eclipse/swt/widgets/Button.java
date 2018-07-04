@@ -284,7 +284,7 @@ int computeLeftMargin () {
 	if ((style & (SWT.PUSH | SWT.TOGGLE)) == 0) return MARGIN;
 	int margin = 0;
 	if (image != null && text.length () != 0) {
-		Rectangle bounds = image.getBoundsInPixels ();
+		Rectangle bounds = image.getBounds (this.currentDeviceZoom);
 		margin += bounds.width + MARGIN * 2;
 		long /*int*/ oldFont = 0;
 		long /*int*/ hDC = OS.GetDC (handle);
@@ -338,7 +338,12 @@ int computeLeftMargin () {
 			boolean hasImage = image != null, hasText = true;
 			if (hasImage) {
 				if (image != null) {
-					Rectangle rect = image.getBoundsInPixels ();
+					// There exists a possibility of DPI change
+					if (image.setZoom(this.currentDeviceZoom)) {
+						_setImage(image);
+						updateImageList();
+					}
+					Rectangle rect = image.getBounds(getShell().currentDeviceZoom);
 					width = rect.width;
 					if (hasText && text.length () != 0) {
 						width += MARGIN * 2;
@@ -1074,6 +1079,20 @@ public void setText (String string) {
 }
 
 @Override
+public boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	// Refresh the image
+	if(image != null) {
+		refreshed = image.setZoom (zoom);
+		if (refreshed) {
+			_setImage  (image);
+			updateImageList();
+		}
+	}
+	return refreshed;
+}
+
+@Override
 boolean updateTextDirection(int textDirection) {
 	if (super.updateTextDirection(textDirection)) {
 // TODO: Keep for now, to follow up
@@ -1379,11 +1398,11 @@ LRESULT wmNotifyChild (NMHDR hdr, long /*int*/ wParam, long /*int*/ lParam) {
 							GC gc = GC.win32_new (nmcd.hdc, data);
 
 							int margin = computeLeftMargin();
-							int imageWidth = image.getBoundsInPixels().width;
+							int imageWidth = image.getBounds(this.currentDeviceZoom).width;
 							left += (imageWidth + (isRadioOrCheck() ? 2 * MARGIN : MARGIN)); // for SWT.RIGHT_TO_LEFT right and left are inverted
 
 							int x = margin + (isRadioOrCheck() ? radioOrCheckTextPadding : 3);
-							int y = Math.max (0, (nmcd.bottom - image.getBoundsInPixels().height) / 2);
+							int y = Math.max (0, (nmcd.bottom - image.getBounds(this.currentDeviceZoom).height) / 2);
 							gc.drawImage (image, DPIUtil.autoScaleDown(x), DPIUtil.autoScaleDown(y));
 							gc.dispose ();
 						}

@@ -1218,6 +1218,17 @@ boolean setTabGroupFocus () {
 }
 
 @Override
+public boolean setZoom (int zoom) {
+	boolean refreshed = super.setZoom (zoom);
+	for (Control control: getChildren()) {
+//		control.currentDeviceZoom = this.currentDeviceZoom;
+		refreshed |= control.setZoom(zoom);
+	};
+	this.redraw(true);
+	return refreshed;
+}
+
+@Override
 boolean updateTextDirection(int textDirection) {
 	super.updateTextDirection (textDirection);
 	/*
