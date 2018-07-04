@@ -56,7 +56,7 @@ public class Snippet373 {
 		default:
 			path = IMAGE_PATH_100;
 		}
-		System.out.println("ImageFileNameProvider: " + zoom + " : " + path);
+		System.out.println("Snippet373: ImageFileNameProvider: " + zoom + " : " + path);
 		return path;
 	};
 
@@ -64,6 +64,12 @@ public class Snippet373 {
 		System.setProperty("swt.autoScale", "quarter");
 		Display display = new Display();
 		final Image eclipse = new Image(display, filenameProvider);
+		final Image eclipseToolBar1 = new Image(display, filenameProvider);
+		final Image eclipseToolBar2 = new Image(display, filenameProvider);
+		final Image eclipseTableHeader = new Image(display, filenameProvider);
+		final Image eclipseTableItem = new Image(display, filenameProvider);
+		final Image eclipseTree1 = new Image(display, filenameProvider);
+		final Image eclipseTree2 = new Image(display, filenameProvider);
 		final Image eclipseCTab1 = new Image(display, filenameProvider);
 		final Image eclipseCTab2 = new Image(display, filenameProvider);
 
@@ -71,8 +77,8 @@ public class Snippet373 {
 		shell.setImage(eclipse);
 		shell.setText("DynamicDPI @ " + DPIUtil.getDeviceZoom() );
 		shell.setLayout(new RowLayout(SWT.VERTICAL));
-		shell.setLocation(100, 200);
-		shell.setSize(400, 400);
+		shell.setLocation(100, 100);
+		shell.setSize(500, 500);
 
 		// Menu
 		Menu bar = new Menu (shell, SWT.BAR);
@@ -153,7 +159,7 @@ public class Snippet373 {
 		for (int i=0; i<2; i++) {
 			int style = i % 2 == 1 ? SWT.DROP_DOWN : SWT.PUSH;
 			ToolItem toolItem = new ToolItem (toolBar, style);
-			toolItem.setImage (eclipse);
+			toolItem.setImage ((i % 2 == 0) ? eclipseToolBar1 : eclipseToolBar2);
 			toolItem.setEnabled(i % 2 == 0);
 		}
 		toolBar.pack ();
@@ -191,6 +197,42 @@ public class Snippet373 {
 			}
 		});
 
+		// Table
+		Table table = new Table (shell, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+		table.setLinesVisible (true);
+		table.setHeaderVisible (true);
+		String titles[] = {"Title 1"};
+		for (int i=0; i<titles.length; i++) {
+			TableColumn column = new TableColumn (table, SWT.NONE);
+			column.setText (titles [i]);
+			column.setImage(eclipseTableHeader);
+		}
+		for (int i = 0; i < 1; i++) {
+			TableItem item = new TableItem (table, SWT.NONE);
+			item.setText (0, "Data " + i);
+			item.setImage(0, eclipseTableItem);
+		}
+		for (int i=0; i<titles.length; i++) {
+			table.getColumn (i).pack ();
+		}
+
+		// Tree
+		final Tree tree = new Tree (shell, SWT.BORDER);
+		for (int i=0; i<1; i++) {
+			TreeItem iItem = new TreeItem (tree, 0);
+			iItem.setText ("TreeItem (0) -" + i);
+			iItem.setImage(eclipseTree1);
+			TreeItem jItem = null;
+			for (int j=0; j<1; j++) {
+				jItem = new TreeItem (iItem, 0);
+				jItem.setText ("TreeItem (1) -" + j);
+				jItem.setImage(eclipseTree2);
+				jItem.setExpanded(true);
+			}
+			tree.select(jItem);
+		}
+
+		// Shell Location
 		Monitor primary = display.getPrimaryMonitor();
 		Rectangle bounds = primary.getBounds();
 		Rectangle rect = shell.getBounds();

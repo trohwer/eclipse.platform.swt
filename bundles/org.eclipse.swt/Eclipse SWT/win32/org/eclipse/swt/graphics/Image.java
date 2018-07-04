@@ -12,6 +12,7 @@ package org.eclipse.swt.graphics;
 
 
 import java.io.*;
+import java.util.*;
 
 import org.eclipse.swt.*;
 import org.eclipse.swt.internal.*;
@@ -134,9 +135,17 @@ public final class Image extends Resource implements Drawable {
 	private ImageDataProvider imageDataProvider;
 
 	/**
-	 * Attribute to cache current device zoom level
+	 * Style flag used to differentiate normal, gray-scale and disabled images based
+	 * on image data providers. Without this, a normal and a disabled image of the
+	 * same image data provider would be considered equal.
 	 */
-	private int currentDeviceZoom = 100;
+	private int styleFlag = SWT.IMAGE_COPY;
+
+	/**
+	 * Attribute to cache current device zoom level
+	 * @since 3.107
+	 */
+	public int currentDeviceZoom = 100;
 
 	/**
 	 * width of the image
@@ -251,6 +260,7 @@ public Image(Device device, Image srcImage, int flag) {
 	this.dataAt100 = srcImage.dataAt100;
 	this.imageDataProvider = srcImage.imageDataProvider;
 	this.imageFileNameProvider = srcImage.imageFileNameProvider;
+	this.styleFlag = srcImage.styleFlag | flag;
 	this.currentDeviceZoom = srcImage.currentDeviceZoom;
 	switch (flag) {
 		case SWT.IMAGE_COPY: {
@@ -294,7 +304,8 @@ public Image(Device device, Image srcImage, int flag) {
 			break;
 		}
 		case SWT.IMAGE_DISABLE: {
-			ImageData data = srcImage.getImageDataAtCurrentZoom();
+			ImageData data = srcImage.getImageData(srcImage.currentDeviceZoom);
+//			System.out.println(srcImage.currentDeviceZoom + " : " + data.width + "::" + data.height + ":::" + rect.toString());
 			PaletteData palette = data.palette;
 			RGB[] rgbs = new RGB[3];
 			rgbs[0] = device.getSystemColor(SWT.COLOR_BLACK).getRGB();
@@ -751,7 +762,7 @@ public Image(Device device, ImageDataProvider imageDataProvider) {
 public boolean setZoom (int zoom) {
 	boolean refreshed = false;
 	StringBuilder sb = new StringBuilder();
-	sb.append("Image:refreshImageForZoom() Current[" + currentDeviceZoom + "] to new[");
+	sb.append("Image:setZoom() From[" + currentDeviceZoom + "] To[");
 
 	if (imageFileNameProvider != null) {
 		if (zoom != currentDeviceZoom) {
@@ -800,10 +811,10 @@ public boolean setZoom (int zoom) {
 		}
 	} else {
 		// Cache data at 100% zoom before refresh.
-//		if (dataAt100 == null && currentDeviceZoom == 100) {
-//			dataAt100 = getImageDataAtCurrentZoom();
-//			System.out.println("Cached dataAt100: " + dataAt100);
-//		}
+		if (dataAt100 == null && currentDeviceZoom == 100) {
+			dataAt100 = getImageDataAtCurrentZoom();
+			System.out.println("Cached dataAt100: " + dataAt100);
+		}
 		if (zoom != currentDeviceZoom) {
 			ImageData resizedData = null;
 			if (dataAt100 != null) {
@@ -822,7 +833,11 @@ public boolean setZoom (int zoom) {
 		}
 	}
 	sb.append(currentDeviceZoom + "] >> " + refreshed);
-	if (refreshed) System.out.println(sb.toString());
+	if (refreshed) {
+		// Reset width and height to -1, which invokes getBoundsInPixelsFromNative
+		width = height = -1;
+		System.out.println(sb.toString());
+	}
 	return refreshed;
 }
 
@@ -1194,11 +1209,11 @@ public boolean equals (Object object) {
 	if (object == this) return true;
 	if (!(object instanceof Image)) return false;
 	Image image = (Image) object;
-	if (device != image.device || transparentPixel != image.transparentPixel) return false;
+	if (device != image.device || transparentPixel != image.transparentPixel || currentDeviceZoom != image.currentDeviceZoom) return false;
 	if (imageDataProvider != null && image.imageDataProvider != null) {
-		return imageDataProvider.equals (image.imageDataProvider);
+		return (styleFlag == image.styleFlag) && imageDataProvider.equals (image.imageDataProvider);
 	} else if (imageFileNameProvider != null && image.imageFileNameProvider != null) {
-		return imageFileNameProvider.equals (image.imageFileNameProvider);
+		return (styleFlag == image.styleFlag) && imageFileNameProvider.equals (image.imageFileNameProvider);
 	} else {
 		return handle == image.handle;
 	}
@@ -1736,7 +1751,7 @@ public int hashCode () {
 	if (imageDataProvider != null) {
 		return imageDataProvider.hashCode();
 	} else if (imageFileNameProvider != null) {
-		return imageFileNameProvider.hashCode();
+		return Objects.hash(imageFileNameProvider, styleFlag, transparentPixel, currentDeviceZoom);
 	} else {
 		return (int)/*64*/handle;
 	}
