@@ -338,12 +338,7 @@ int computeLeftMargin () {
 			boolean hasImage = image != null, hasText = true;
 			if (hasImage) {
 				if (image != null) {
-					// There exists a possibility of DPI change
-					if (image.setZoom(this.currentDeviceZoom)) {
-						_setImage(image);
-						updateImageList();
-					}
-					Rectangle rect = image.getBounds(getShell().currentDeviceZoom);
+					Rectangle rect = image.getBounds(this.currentDeviceZoom);
 					width = rect.width;
 					if (hasText && text.length () != 0) {
 						width += MARGIN * 2;
@@ -1081,13 +1076,12 @@ public void setText (String string) {
 @Override
 public boolean setZoom (int zoom) {
 	boolean refreshed = super.setZoom (zoom);
+	this.currentDeviceZoom = zoom;
 	// Refresh the image
 	if(image != null) {
 		refreshed = image.setZoom (zoom);
-		if (refreshed) {
-			_setImage  (image);
-			updateImageList();
-		}
+		_setImage  (image);
+		updateImageList();
 	}
 	return refreshed;
 }
